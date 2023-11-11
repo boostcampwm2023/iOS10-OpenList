@@ -1,5 +1,5 @@
 //
-//  AddTapViewFactory.swift
+//  AddTabViewFactory.swift
 //  OpenList
 //
 //  Created by 김영균 on 11/10/23.
@@ -15,7 +15,7 @@ protocol AddTabFactoryable: Factoryable {
 	func make() -> ViewControllable
 }
 
-final class AddTapViewFactory: AddTabFactoryable {
+final class AddTabViewFactory: AddTabFactoryable {
 	private let component: AddTabComponent
 	
 	init(component: AddTabComponent){

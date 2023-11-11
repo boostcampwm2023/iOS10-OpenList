@@ -19,7 +19,7 @@ final class TabBarComponent:
 	}
 	
 	fileprivate var addTabFactoryable: AddTabFactoryable {
-		return AddTapViewFactory(component: .init(parent: self))
+		return AddTabViewFactory(component: .init(parent: self))
 	}
 	
 	fileprivate var checklistTabFactoryable: CheckListTabFactoryable {

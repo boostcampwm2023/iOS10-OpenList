@@ -30,7 +30,7 @@
 		5FA1F8D72AFF802900869079 /* CheckListTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8CA2AFF802900869079 /* CheckListTabViewModel.swift */; };
 		5FA1F8D82AFF802900869079 /* AddTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8CC2AFF802900869079 /* AddTabRouter.swift */; };
 		5FA1F8D92AFF802900869079 /* AddTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8CD2AFF802900869079 /* AddTabViewController.swift */; };
-		5FA1F8DA2AFF802900869079 /* AddTapViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8CE2AFF802900869079 /* AddTapViewFactory.swift */; };
+		5FA1F8DA2AFF802900869079 /* AddTabViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8CE2AFF802900869079 /* AddTabViewFactory.swift */; };
 		5FA1F8DF2AFF809C00869079 /* libCustomNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA1F8DD2AFF809C00869079 /* libCustomNetwork.a */; };
 		5FA1F8E02AFF809C00869079 /* libCustomSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA1F8DE2AFF809C00869079 /* libCustomSocket.a */; };
 		5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8E22AFF818E00869079 /* TabBarViewFactory.swift */; };
@@ -62,7 +62,7 @@
 		5FA1F8CA2AFF802900869079 /* CheckListTabViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTabViewModel.swift; sourceTree = "<group>"; };
 		5FA1F8CC2AFF802900869079 /* AddTabRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTabRouter.swift; sourceTree = "<group>"; };
 		5FA1F8CD2AFF802900869079 /* AddTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTabViewController.swift; sourceTree = "<group>"; };
-		5FA1F8CE2AFF802900869079 /* AddTapViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTapViewFactory.swift; sourceTree = "<group>"; };
+		5FA1F8CE2AFF802900869079 /* AddTabViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTabViewFactory.swift; sourceTree = "<group>"; };
 		5FA1F8DD2AFF809C00869079 /* libCustomNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F8DE2AFF809C00869079 /* libCustomSocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomSocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F8E22AFF818E00869079 /* TabBarViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewFactory.swift; sourceTree = "<group>"; };
@@ -226,7 +226,7 @@
 			children = (
 				5FA1F8CC2AFF802900869079 /* AddTabRouter.swift */,
 				5FA1F8CD2AFF802900869079 /* AddTabViewController.swift */,
-				5FA1F8CE2AFF802900869079 /* AddTapViewFactory.swift */,
+				5FA1F8CE2AFF802900869079 /* AddTabViewFactory.swift */,
 			);
 			path = AddTabScene;
 			sourceTree = "<group>";
@@ -343,7 +343,7 @@
 				5FA1F8D02AFF802900869079 /* RecommendTabViewFactory.swift in Sources */,
 				5FA1F8B92AFF7FE100869079 /* DefaultSampleRepository.swift in Sources */,
 				5FA1F8AB2AFF7F7300869079 /* SceneDelegate.swift in Sources */,
-				5FA1F8DA2AFF802900869079 /* AddTapViewFactory.swift in Sources */,
+				5FA1F8DA2AFF802900869079 /* AddTabViewFactory.swift in Sources */,
 				5FA1F8D62AFF802900869079 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8B32AFF7FBB00869079 /* Component.swift in Sources */,
 			);
