@@ -32,6 +32,7 @@ final class CheckListTabViewFactory: CheckListTabFactoryable {
 		let viewModel = CheckListTabViewModel(useCase: component.sampleUseCase)
 		let router = CheckListTabRouter()
 		let viewController = CheckListTabViewController(router: router, viewModel: viewModel)
+		router.viewController = viewController
 		return viewController
 	}
 }
