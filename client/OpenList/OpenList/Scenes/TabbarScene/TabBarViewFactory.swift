@@ -14,6 +14,10 @@ final class TabBarComponent:
 	CheckListTabDependency,
 	AddTabDependency,
 	RecommendTabDependency {
+	var sampleRepository: SampleRepository {
+		return DefaultSampleRepository()
+	}
+	
 	fileprivate var addTabFactoryable: AddTabFactoryable {
 		return AddTapViewFactory(component: .init(parent: self))
 	}

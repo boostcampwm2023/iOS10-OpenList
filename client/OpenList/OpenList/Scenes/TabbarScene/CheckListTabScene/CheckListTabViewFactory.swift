@@ -7,9 +7,15 @@
 
 import Foundation
 
-protocol CheckListTabDependency: Dependency {}
+protocol CheckListTabDependency: Dependency {
+	var sampleRepository: SampleRepository { get }
+}
 
-final class CheckListTabComponent: Component<CheckListTabDependency> {}
+final class CheckListTabComponent: Component<CheckListTabDependency> {
+	fileprivate var sampleUseCase: SampleUseCase {
+		return DefaultSampleUseCase(sampleRepository: self.parent.sampleRepository)
+	}
+}
 
 protocol CheckListTabFactoryable: Factoryable {
 	func make() -> ViewControllable
@@ -23,8 +29,9 @@ final class CheckListTabViewFactory: CheckListTabFactoryable {
 	}
 	
 	func make() -> ViewControllable {
+		let viewModel = CheckListTabViewModel(useCase: component.sampleUseCase)
 		let router = CheckListTabRouter()
-		let viewController = CheckListTabViewController(router: router)
+		let viewController = CheckListTabViewController(router: router, viewModel: viewModel)
 		return viewController
 	}
 }

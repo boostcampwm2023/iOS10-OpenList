@@ -12,10 +12,12 @@ protocol CheckListTabRoutingLogic {}
 final class CheckListTabViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
 	private let router: CheckListTabRoutingLogic
+	private let viewModel: CheckListTabViewModel
 	
 	// MARK: - Initializers
-	init(router: CheckListTabRoutingLogic) {
+	init(router: CheckListTabRoutingLogic, viewModel: CheckListTabViewModel) {
 		self.router = router
+		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
 	}
 	
