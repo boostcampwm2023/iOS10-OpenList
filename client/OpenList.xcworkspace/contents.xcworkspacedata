@@ -5,10 +5,13 @@
       location = "group:Projects"
       name = "Projects">
       <FileRef
+         location = "group:CustomNetwork/CustomNetwork.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:CustomSocket/CustomSocket.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:CustomNetwork/CustomNetwork.xcodeproj">
+         location = "group:OpenList/OpenList.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>
