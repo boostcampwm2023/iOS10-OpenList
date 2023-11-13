@@ -61,7 +61,7 @@ private extension TabBarViewFactory {
 		checkListTabNavigationController.navigationController.tabBarItem = configureTabBarItem(of: .checklistTab)
 		recommendTabNavigationController.navigationController.tabBarItem = configureTabBarItem(of: .recommendTab)
 		
-		let navigationControllers = [addTabNavigationController, checkListTabNavigationController, recommendTabNavigationController]
+		let navigationControllers = [checkListTabNavigationController, addTabNavigationController, recommendTabNavigationController]
 		let tabBarControllable = TabBarControllable()
 		tabBarControllable.tabBarController.viewControllers = navigationControllers.map { $0.navigationController }
 		tabBarControllable.tabBarController.selectedIndex = TabBarPage.checklistTab.pageOrderNumber()
