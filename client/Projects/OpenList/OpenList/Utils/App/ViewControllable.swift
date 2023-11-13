@@ -11,6 +11,23 @@ protocol ViewControllable: AnyObject {
 	var uiviewController: UIViewController { get }
 }
 
+extension ViewControllable {
+	func pushViewController(_ viewControllable: ViewControllable, animated: Bool) {
+		self.uiviewController.navigationController?.pushViewController(
+			viewControllable.uiviewController,
+			animated: animated
+		)
+	}
+	
+	func popViewController(animated: Bool) {
+		self.uiviewController.navigationController?.popViewController(animated: animated)
+	}
+	
+	func popToRootViewController(animated: Bool) {
+		self.uiviewController.navigationController?.popToRootViewController(animated: animated)
+	}
+}
+
 extension ViewControllable where Self: UIViewController {
 	var uiviewController: UIViewController {
 		return self

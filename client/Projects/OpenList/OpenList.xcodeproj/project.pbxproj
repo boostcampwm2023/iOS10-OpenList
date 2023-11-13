@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
+		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
 		5FA1F88E2AFF7DA400869079 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88D2AFF7DA400869079 /* Assets.xcassets */; };
 		5FA1F8912AFF7DA400869079 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88F2AFF7DA400869079 /* LaunchScreen.storyboard */; };
 		5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8A52AFF7E6C00869079 /* AppComponent.swift */; };
@@ -37,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F8615DF2B02249C00CF2686 /* ViewModelable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelable.swift; sourceTree = "<group>"; };
+		5F8615E12B0224E100CF2686 /* ViewBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBindable.swift; sourceTree = "<group>"; };
 		5FA1F8812AFF7DA200869079 /* OpenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F88D2AFF7DA400869079 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5FA1F8902AFF7DA400869079 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -159,7 +163,9 @@
 				5FA1F8AF2AFF7FBB00869079 /* Component.swift */,
 				5FA1F8B22AFF7FBB00869079 /* Dependency.swift */,
 				5FA1F8B12AFF7FBB00869079 /* Factoryable.swift */,
+				5F8615E12B0224E100CF2686 /* ViewBindable.swift */,
 				5FA1F8B02AFF7FBB00869079 /* ViewControllable.swift */,
+				5F8615DF2B02249C00CF2686 /* ViewModelable.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -326,9 +332,11 @@
 				5FA1F8B52AFF7FBB00869079 /* Factoryable.swift in Sources */,
 				5FA1F8AD2AFF7F9F00869079 /* AppRouter.swift in Sources */,
 				5FA1F8B62AFF7FBB00869079 /* Dependency.swift in Sources */,
+				5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */,
 				5FA1F8D92AFF802900869079 /* AddTabViewController.swift in Sources */,
 				5FA1F8D32AFF802900869079 /* TabBarPage.swift in Sources */,
 				5FA1F8B42AFF7FBB00869079 /* ViewControllable.swift in Sources */,
+				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				5FA1F8D42AFF802900869079 /* CheckListTabViewController.swift in Sources */,
 				5FA1F8D52AFF802900869079 /* CheckListTabRouter.swift in Sources */,
