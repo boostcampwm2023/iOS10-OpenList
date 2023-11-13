@@ -15,11 +15,9 @@ protocol RecommendTabFactoryable: Factoryable {
 	func make() -> ViewControllable
 }
 
-final class RecommendTabViewFactory: RecommendTabFactoryable {
-	private let component: RecommendTabComponent
-	
-	init(component: RecommendTabComponent){
-		self.component = component
+final class RecommendTabViewFactory: Factory<RecommendTabDependency>, RecommendTabFactoryable {
+	override init(parent: RecommendTabDependency) {
+		super.init(parent: parent)
 	}
 	
 	func make() -> ViewControllable {

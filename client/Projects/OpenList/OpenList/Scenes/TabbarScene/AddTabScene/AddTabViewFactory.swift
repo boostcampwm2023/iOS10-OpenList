@@ -15,11 +15,9 @@ protocol AddTabFactoryable: Factoryable {
 	func make() -> ViewControllable
 }
 
-final class AddTabViewFactory: AddTabFactoryable {
-	private let component: AddTabComponent
-	
-	init(component: AddTabComponent){
-		self.component = component
+final class AddTabViewFactory: Factory<AddTabDependency>, AddTabFactoryable {
+	override init(parent: AddTabDependency) {
+		super.init(parent: parent)
 	}
 	
 	func make() -> ViewControllable {

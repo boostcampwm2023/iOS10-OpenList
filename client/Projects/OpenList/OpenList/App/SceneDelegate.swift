@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		let navigationControllable = NavigationControllable(navigationController: UINavigationController())
 		let component = AppComponent(navigationControllable: navigationControllable)
-		let tabBarViewFactory = TabBarViewFactory(component: .init(parent: component))
+		let tabBarViewFactory = TabBarViewFactory(parent: component)
 		let appRootRouter = AppRouter(window: window, tabBarFactoryable: tabBarViewFactory)
 		appRootRouter.showTapFlow()
 	}

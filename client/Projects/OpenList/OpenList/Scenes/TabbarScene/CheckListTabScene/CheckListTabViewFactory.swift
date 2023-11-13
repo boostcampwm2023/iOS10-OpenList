@@ -21,14 +21,13 @@ protocol CheckListTabFactoryable: Factoryable {
 	func make() -> ViewControllable
 }
 
-final class CheckListTabViewFactory: CheckListTabFactoryable {
-	private let component: CheckListTabComponent
-	
-	init(component: CheckListTabComponent){
-		self.component = component
+final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListTabFactoryable {
+	override init(parent: CheckListTabDependency) {
+		super.init(parent: parent)
 	}
 	
 	func make() -> ViewControllable {
+		let component = CheckListTabComponent(parent: parent)
 		let viewModel = CheckListTabViewModel(useCase: component.sampleUseCase)
 		let router = CheckListTabRouter()
 		let viewController = CheckListTabViewController(router: router, viewModel: viewModel)

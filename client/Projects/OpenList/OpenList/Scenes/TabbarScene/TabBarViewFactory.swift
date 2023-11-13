@@ -19,15 +19,15 @@ final class TabBarComponent:
 	}
 	
 	fileprivate var addTabFactoryable: AddTabFactoryable {
-		return AddTabViewFactory(component: .init(parent: self))
+		return AddTabViewFactory(parent: self)
 	}
 	
 	fileprivate var checklistTabFactoryable: CheckListTabFactoryable {
-		return CheckListTabViewFactory(component: .init(parent: self))
+		return CheckListTabViewFactory(parent: self)
 	}
 	
 	fileprivate var recommendTabFactoryable: RecommendTabFactoryable {
-		return RecommendTabViewFactory(component: .init(parent: self))
+		return RecommendTabViewFactory(parent: self)
 	}
 }
 
@@ -35,14 +35,13 @@ protocol TabBarFactoryable: Factoryable {
 	func make() -> ViewControllable
 }
 
-final class TabBarViewFactory: TabBarFactoryable {
-	private let component: TabBarComponent
-	
-	init(component: TabBarComponent){
-		self.component = component
+final class TabBarViewFactory: Factory<TabBarDependency>, TabBarFactoryable {
+	override init(parent: TabBarDependency) {
+		super.init(parent: parent)
 	}
 	
 	func make() -> ViewControllable {
+		let component = TabBarComponent(parent: parent)
 		let tabBarController = setTabViewControllers(component: component)
 		return tabBarController
 	}

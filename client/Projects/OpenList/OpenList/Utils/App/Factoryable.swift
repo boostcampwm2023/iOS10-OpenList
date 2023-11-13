@@ -8,3 +8,11 @@
 import Foundation
 
 protocol Factoryable: AnyObject { }
+
+class Factory<ParentDependencyType> {
+	let parent: ParentDependencyType
+	
+	init(parent: ParentDependencyType) {
+		self.parent = parent
+	}
+}
