@@ -7,21 +7,21 @@
 
 import Combine
 
-protocol CheckListTableViewModelable: ViewModelable 
+protocol CheckListTableViewModelable: ViewModelable
 where Input == CheckListTableInput,
-      State == CheckListTableState,
-      Output == AnyPublisher<State, Never> { }
+	State == CheckListTableState,
+  Output == AnyPublisher<State, Never> { }
 
-final class CheckListTableViewModel {
-
-}
+final class CheckListTableViewModel { }
 
 extension CheckListTableViewModel: CheckListTableViewModelable {
   func transform(_ input: Input) -> Output {
 		let viewLoad = viewLoad(input)
-    return Publishers.MergeMany([
-      viewLoad
-		]).eraseToAnyPublisher()
+    return Publishers.MergeMany(
+			[
+				viewLoad
+			]
+		).eraseToAnyPublisher()
   }
 }
 
@@ -30,9 +30,9 @@ private extension CheckListTableViewModel {
 		return input.viewLoad
 			.map { _ in
 				let dummy = [
-					CheckListTableItem(title: "hello"),
-					CheckListTableItem(title: "hello2"),
-					CheckListTableItem(title: "hello3")
+					CheckListTableItem(title: "hello", achievementRate: 0.0),
+					CheckListTableItem(title: "hello2", achievementRate: 0.4),
+					CheckListTableItem(title: "hello3", achievementRate: 1.0)
 				]
 				return .reload(dummy)
 			}

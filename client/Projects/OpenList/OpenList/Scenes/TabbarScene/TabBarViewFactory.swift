@@ -11,7 +11,7 @@ protocol TabBarDependency: Dependency {}
 
 final class TabBarComponent:
 	Component<TabBarDependency>,
-	CheckListTabDependency,
+	CheckListTableDependency,
 	AddTabDependency,
 	RecommendTabDependency {
 	var sampleRepository: SampleRepository {
@@ -22,8 +22,8 @@ final class TabBarComponent:
 		return AddTabViewFactory(parent: self)
 	}
 	
-	fileprivate var checklistTabFactoryable: CheckListTabFactoryable {
-		return CheckListTabViewFactory(parent: self)
+	fileprivate var checklistTabFactoryable: CheckListTableFactoryable {
+		return CheckListTableViewFactory(parent: self)
 	}
 	
 	fileprivate var recommendTabFactoryable: RecommendTabFactoryable {

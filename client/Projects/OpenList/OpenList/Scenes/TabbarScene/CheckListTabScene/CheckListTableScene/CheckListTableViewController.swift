@@ -5,8 +5,8 @@
 //  Created by wi_seong on 11/13/23.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 protocol CheckListTableRoutingLogic: AnyObject { }
 
@@ -114,7 +114,7 @@ private extension CheckListTableViewController {
 	}
 	
 	func setupDataSource() -> CheckListTableDataSource {
-		let cellRegistration = CheckListTableCellRegistration { cell, indexPath, itemIdentifier in
+		let cellRegistration = CheckListTableCellRegistration { cell, _, itemIdentifier in
 			cell.configure(item: itemIdentifier)
 		}
 		
