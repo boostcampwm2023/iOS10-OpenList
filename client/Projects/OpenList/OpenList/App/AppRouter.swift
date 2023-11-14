@@ -8,7 +8,7 @@
 import UIKit
 
 final class AppRouter {
-	var window : UIWindow?
+	var window: UIWindow?
 	var tabBarFactoryable: TabBarFactoryable
 	
 	init(window: UIWindow?, tabBarFactoryable: TabBarFactoryable) {

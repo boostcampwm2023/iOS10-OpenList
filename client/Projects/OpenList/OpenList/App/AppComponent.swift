@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class AppComponent: EmptyComponent, TabBarDependency { 
+final class AppComponent: EmptyComponent, TabBarDependency {
 	var navigationControllable: NavigationControllable
 	
 	init(navigationControllable: NavigationControllable) {
