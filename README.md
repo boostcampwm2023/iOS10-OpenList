@@ -1,17 +1,82 @@
-# iOS10-OpenList
-오리 꽥꽥 🦆
+<img height="75" align="left" alt="OpenListAppIcon" src="https://hackmd.io/_uploads/rkuPMDeNa.png"/> 
 
-[📚위키 바로가기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki)
+# OpenList 
+**친구와 함께, AI와 함께 체크리스트 작성을!**
 
-## 팀원소개
+# TEAM
 |S006|S008|S021|J050|J080|
 |:---:|:---:|:---:|:---:|:---:|
 |<img src="https://github.com/SeongHunTed.png" width="120">|<img src="https://github.com/klmyoungyun.png" width="120"/>|<img src="https://github.com/wi-seong-cheol.png" width="120"/>|<img src="https://github.com/pminsung12.png" width="120"/>|<img src="https://github.com/YangDongsuk.png" width="120"/>|
 |[김성훈](https://github.com/SeongHunTed)|[김영균](https://github.com/klmyoungyun)|[위성철](https://github.com/wi-seong-cheol)|[박민성](https://github.com/pminsung12)|[양동석](https://github.com/YangDongsuk)|
 |iOS|iOS|iOS|WEB|WEB|
 
+# Content
+- [주요기능](#주요기능)
+- [기술 스택](#기술-스택)
+- [규칙](#규칙)
+- [위키](https://github.com/boostcampwm2023/iOS10-OpenList/wiki)
 
-## 규칙
+# 주요기능
+- `CRDT` 기술을 사용하여 사람들과 체크리스트 동시 편집
+- `Naver Clova Studio` 를 활용한 AI가 추천한 체크리스트 제공
+
+# 기술 스택
+## 클라이언트
+**`Xcode 및 MacOS 버전`**
+- 15.0.1 / Sonoma(14.0)
+
+**`의존성 관리 도구`**
+- Swift Package Manager
+
+**`미니멈 타겟`**
+- 16.0
+
+**`UI 프레임워크`**
+- UIKit
+
+**`비동기 프레임워크`**
+- [Combine](https://developer.apple.com/documentation/combine)
+
+**`아키텍처`**
+- [Butterfly Architecture](https://medium.com/@jungkim/%EB%B2%84%ED%84%B0%ED%94%8C%EB%9D%BC%EC%9D%B4-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EB%A5%BC-%EC%86%8C%EA%B0%9C%ED%95%A9%EB%8B%88%EB%8B%A4-9d4abd71c3c1)
+- Router Pattern
+
+**`기타`**
+- [Core Data](https://developer.apple.com/documentation/coredata/)
+- [Swift.Network](https://developer.apple.com/documentation/network)
+- [APNs](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns)
+
+**`오픈소스`**
+- [SwiftLint](https://github.com/realm/SwiftLint)
+
+## 서버
+**`Nest 버전`**
+- [NestJS](https://nestjs.com/) v.10.2.0
+- [TypeScript](https://www.typescriptlang.org/) v.5.1.3
+
+**`데이터베이스`**
+- [Postgresql](https://www.postgresql.org/)
+- [TypeORM](https://typeorm.io/)
+- [Redis](https://redis.io/)
+
+**`테스트`**
+- [Jest](https://jestjs.io/)
+
+**`AI`**
+- [CLOVA Studio](https://www.ncloud.com/product/aiService/clovaStudio)
+
+**`DevOps`**
+- [Docker](https://www.docker.com/)
+- [Ncloud](https://www.docker.com/)
+- [Nginx](https://www.nginx.com/)
+- [GitHub Actions](https://docs.github.com/ko/actions)
+
+## 협업 도구
+- [XD](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
+- [Notion](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
+- [Slack](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
+
+# 규칙
 <details>
 <summary>
 <b>
