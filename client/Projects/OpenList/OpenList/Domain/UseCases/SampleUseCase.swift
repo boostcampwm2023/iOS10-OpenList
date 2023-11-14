@@ -11,8 +11,10 @@ protocol SampleUseCase {}
 
 final class DefaultSampleUseCase: SampleUseCase {
 	private let sampleRepository: SampleRepository
-	
+
 	init(sampleRepository: SampleRepository) {
+		let url = URL(string: "https://www.google.com")!
+		print(url)
 		self.sampleRepository = sampleRepository
 	}
 }

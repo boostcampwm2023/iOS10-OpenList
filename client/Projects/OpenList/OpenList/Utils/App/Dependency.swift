@@ -13,5 +13,6 @@ protocol Dependency: AnyObject { }
 
 protocol Parent: Dependency {
 	associatedtype ParentDependency
+	
 	var parent: ParentDependency { get }
 }

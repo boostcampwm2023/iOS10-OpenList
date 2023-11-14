@@ -69,6 +69,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA1F8752AFF7D6900869079 /* Build configuration list for PBXNativeTarget "CustomNetwork" */;
 			buildPhases = (
+				5F70C80F2B0352A700826B5D /* SwiftLint */,
 				5FA1F86A2AFF7D6900869079 /* Sources */,
 				5FA1F86B2AFF7D6900869079 /* Frameworks */,
 				5FA1F86C2AFF7D6900869079 /* CopyFiles */,
@@ -114,6 +115,28 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5F70C80F2B0352A700826B5D /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5FA1F86A2AFF7D6900869079 /* Sources */ = {
@@ -251,6 +274,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -264,6 +288,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
