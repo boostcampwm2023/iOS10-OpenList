@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+
+  postgresql_db:
+    image: postgres:15
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+
+  nestjs_server:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgresql_db
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      HASH_ROUNDS: ${HASH_ROUNDS}
+      PROTOCOL: ${PROTOCOL}
+      HOST: ${HOST}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+
