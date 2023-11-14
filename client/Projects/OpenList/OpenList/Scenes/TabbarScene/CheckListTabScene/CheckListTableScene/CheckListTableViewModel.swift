@@ -32,7 +32,8 @@ private extension CheckListTableViewModel {
 				let dummy = [
 					CheckListTableItem(title: "hello", achievementRate: 0.0),
 					CheckListTableItem(title: "hello2", achievementRate: 0.4),
-					CheckListTableItem(title: "hello3", achievementRate: 1.0)
+					CheckListTableItem(title: "hello3", achievementRate: 1.0),
+					CheckListTableItem(title: "hello", achievementRate: 0.0)
 				]
 				return .reload(dummy)
 			}

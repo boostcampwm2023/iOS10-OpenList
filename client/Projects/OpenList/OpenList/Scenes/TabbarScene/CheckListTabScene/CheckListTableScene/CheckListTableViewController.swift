@@ -45,6 +45,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.view.backgroundColor = .systemBackground
+		self.setupLongGestureRecognizerOnCollection()
 		self.setupConfigure()
 		self.setupLayout()
 		self.bind()
@@ -130,6 +131,59 @@ private extension CheckListTableViewController {
 		)
 		
 		return dataSource
+	}
+	
+	func setupLongGestureRecognizerOnCollection() {
+		let longPressedGesture = UILongPressGestureRecognizer(
+			target: self,
+			action: #selector(handleLongPress(gestureRecognizer:))
+		)
+		longPressedGesture.minimumPressDuration = 0.5
+		longPressedGesture.delegate = self
+		longPressedGesture.delaysTouchesBegan = true
+		collectionView.addGestureRecognizer(longPressedGesture)
+	}
+}
+
+extension CheckListTableViewController: UIGestureRecognizerDelegate {
+	@objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+		if gestureRecognizer.state != .began {
+			return
+		}
+		
+		let point = gestureRecognizer.location(in: collectionView)
+		
+		if let indexPath = collectionView.indexPathForItem(at: point) {
+			showActionSheet()
+			print("Long press at item: \(indexPath.row)")
+		}
+	}
+	
+	func showActionSheet() {
+		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let moveFolderAction = UIAlertAction(title: "폴더 이동", style: .default) { _ in
+			print("didPress move folder")
+		}
+		
+		let shareAction = UIAlertAction(title: "게시", style: .default) { _ in
+			print("didPress share")
+		}
+		
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+			print("didPress delete")
+		}
+		
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+			print("didPress cancel")
+		}
+		
+		actionSheet.addAction(moveFolderAction)
+		actionSheet.addAction(shareAction)
+		actionSheet.addAction(deleteAction)
+		actionSheet.addAction(cancelAction)
+		
+		self.present(actionSheet, animated: true, completion: nil)
 	}
 }
 
