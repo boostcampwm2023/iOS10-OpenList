@@ -8,8 +8,10 @@
 import UIKit
 
 final class CheckListTableCell: UICollectionViewCell {
+	private let cellContentInset: UIEdgeInsets = .init(top: 12, left: 20, bottom: 12, right: 20)
 	private let backView: UIView = .init()
 	private let titleLabel: UILabel = .init()
+	private let achievementPercentLabel: UILabel = .init()
 	private let gaugeView: GaugeView = .init()
 	
 	override init(frame: CGRect) {
@@ -25,6 +27,7 @@ final class CheckListTableCell: UICollectionViewCell {
 	
 	func configure(item: CheckListTableItem) {
 		titleLabel.text = item.title
+		achievementPercentLabel.text = String(Int(item.achievementRate * 100)) + "%"
 		gaugeView.configure(with: item.achievementRate)
 	}
 }
@@ -38,9 +41,9 @@ private extension CheckListTableCell {
 		layer.masksToBounds = false
 		layer.shadowPath = UIBezierPath(
 			roundedRect: .init(
-				origin: .init(x: 20, y: 12),
+				origin: .init(x: cellContentInset.left, y: cellContentInset.top),
 				size: .init(
-					width: frame.width - 40,
+					width: frame.width - cellContentInset.left * 2,
 					height: 48
 				)
 			),
@@ -53,11 +56,16 @@ private extension CheckListTableCell {
 		
 		titleLabel.textColor = .black
 		titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+		
+		achievementPercentLabel.font = .systemFont(ofSize: 12)
+		achievementPercentLabel.textColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
 	}
 	
 	func setupLayout() {
+		let contentInset: UIEdgeInsets = .init(top: 14, left: 10, bottom: 14, right: 10)
 		[
 			titleLabel,
+			achievementPercentLabel,
 			gaugeView
 		].forEach {
 			$0.translatesAutoresizingMaskIntoConstraints = false
@@ -68,20 +76,24 @@ private extension CheckListTableCell {
 		contentView.addSubview(backView)
 		
 		NSLayoutConstraint.activate([
-			backView.heightAnchor.constraint(equalToConstant: 48),
-			backView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-			backView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-			backView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-			backView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+			backView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: cellContentInset.top),
+			backView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -cellContentInset.bottom),
+			backView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: cellContentInset.left),
+			backView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -cellContentInset.right),
 			
-			titleLabel.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
-			titleLabel.leadingAnchor.constraint(equalTo: backView.leadingAnchor, constant: 10),
-			titleLabel.trailingAnchor.constraint(equalTo: gaugeView.leadingAnchor, constant: -10),
+			titleLabel.topAnchor.constraint(equalTo: backView.topAnchor, constant: contentInset.top),
+			titleLabel.bottomAnchor.constraint(equalTo: backView.bottomAnchor, constant: -contentInset.bottom),
+			titleLabel.leadingAnchor.constraint(equalTo: backView.leadingAnchor, constant: contentInset.left),
+			titleLabel.trailingAnchor.constraint(equalTo: gaugeView.leadingAnchor, constant: 4),
 			
-			gaugeView.widthAnchor.constraint(equalToConstant: 48),
+			achievementPercentLabel.topAnchor.constraint(equalTo: backView.topAnchor, constant: contentInset.top),
+			achievementPercentLabel.centerXAnchor.constraint(equalTo: gaugeView.centerXAnchor),
+			
+			gaugeView.widthAnchor.constraint(equalToConstant: 44),
 			gaugeView.heightAnchor.constraint(equalToConstant: 4),
-			gaugeView.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
-			gaugeView.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -10)
+			gaugeView.topAnchor.constraint(equalTo: achievementPercentLabel.bottomAnchor, constant: 2),
+			gaugeView.bottomAnchor.constraint(equalTo: backView.bottomAnchor, constant: -contentInset.bottom),
+			gaugeView.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -contentInset.right)
 		])
 	}
 }
