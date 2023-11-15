@@ -2,16 +2,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersModel } from './entities/user.entity';
+import { UserModel } from './entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UsersModel)
-    private readonly usersRepository: Repository<UsersModel>,
+    @InjectRepository(UserModel)
+    private readonly usersRepository: Repository<UserModel>,
   ) {}
-  async create(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     const userObject = this.usersRepository.create(createUserDto);
     const emailExists = await this.usersRepository.exist({
       where: {
@@ -25,7 +25,7 @@ export class UsersService {
     return newUser;
   }
 
-  async findAll() {
+  async findAllUsers() {
     const users = await this.usersRepository.find();
     return users;
   }
@@ -37,12 +37,8 @@ export class UsersService {
     }
     return user;
   }
-  async findOne(id: number) {
-    const user = await this.findUserById(id);
-    return user;
-  }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findUserById(id);
     const updatedUser = await this.usersRepository.save({
       ...user,
@@ -51,9 +47,8 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(id: number) {
+  async removeUser(id: number) {
     const user = await this.findUserById(id);
-
     await this.usersRepository.remove(user);
     return { message: '삭제되었습니다.' };
   }

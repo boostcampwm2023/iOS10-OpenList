@@ -2,7 +2,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, Generated } from 'typeorm';
 
 @Entity()
-export class UsersModel extends BaseModel {
+export class UserModel extends BaseModel {
   @Column({ unique: true })
   email: string;
 
