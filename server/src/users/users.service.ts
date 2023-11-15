@@ -38,8 +38,16 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+    const updatedUser = await this.usersRepository.save({
+      ...user,
+      ...updateUserDto,
+    });
+    return updatedUser;
   }
 
   remove(id: number) {
