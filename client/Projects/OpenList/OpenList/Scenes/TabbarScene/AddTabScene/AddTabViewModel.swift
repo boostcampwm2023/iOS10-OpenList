@@ -55,8 +55,7 @@ private extension AddTabViewModel {
 		return input.nextButtonDidTap
 			.withUnretained(self)
 			.map { (owner, _) in
-				let data = owner.persistenceUseCase.saveCheckList()
-				print(data)
+				_ = owner.persistenceUseCase.saveCheckList()
 				return .dismiss
 			}
 			.eraseToAnyPublisher()

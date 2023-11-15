@@ -30,7 +30,7 @@ extension UIControl {
 	// Subscription
 	fileprivate class EventSubscription<EventSubscriber: Subscriber>: Subscription
 	where EventSubscriber.Input == UIControl,
-				EventSubscriber.Failure == Never {
+	EventSubscriber.Failure == Never {
 		let control: UIControl
 		let event: UIControl.Event
 		var subscriber: EventSubscriber?
