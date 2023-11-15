@@ -17,10 +17,12 @@ final class CheckListTableCell: UICollectionViewCell {
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		
-		setupConfigure()
-		setupLayout()
+		setViewAttributes()
+		setViewHierarchies()
+		setConstraints()
 	}
 	
+	@available(*, unavailable)
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
@@ -33,11 +35,14 @@ final class CheckListTableCell: UICollectionViewCell {
 }
 
 private extension CheckListTableCell {
-	func setupConfigure() {
-		backView.backgroundColor = .white
-		backView.layer.masksToBounds = true
-		backView.layer.cornerRadius = 10
-		
+	func setViewAttributes() {
+		setLayerAttributes()
+		setBackViewAttributes()
+		setTitleLabelAttributes()
+		setAchievementPercentLabelAttributes()
+	}
+	
+	func setLayerAttributes() {
 		layer.masksToBounds = false
 		layer.shadowPath = UIBezierPath(
 			roundedRect: .init(
@@ -53,16 +58,25 @@ private extension CheckListTableCell {
 		layer.shadowOpacity = 0.3
 		layer.shadowOffset = CGSize(width: 0, height: 3)
 		layer.shadowRadius = 6
-		
+	}
+	
+	func setBackViewAttributes() {
+		backView.backgroundColor = .white
+		backView.layer.masksToBounds = true
+		backView.layer.cornerRadius = 10
+	}
+	
+	func setTitleLabelAttributes() {
 		titleLabel.textColor = .black
 		titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-		
+	}
+	
+	func setAchievementPercentLabelAttributes() {
 		achievementPercentLabel.font = .systemFont(ofSize: 12)
 		achievementPercentLabel.textColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
 	}
 	
-	func setupLayout() {
-		let contentInset: UIEdgeInsets = .init(top: 14, left: 10, bottom: 14, right: 10)
+	func setViewHierarchies() {
 		[
 			titleLabel,
 			achievementPercentLabel,
@@ -74,6 +88,10 @@ private extension CheckListTableCell {
 		
 		backView.translatesAutoresizingMaskIntoConstraints = false
 		contentView.addSubview(backView)
+	}
+	
+	func setConstraints() {
+		let contentInset: UIEdgeInsets = .init(top: 14, left: 10, bottom: 14, right: 10)
 		
 		NSLayoutConstraint.activate([
 			backView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: cellContentInset.top),

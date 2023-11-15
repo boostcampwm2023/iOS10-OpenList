@@ -44,12 +44,13 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.view.backgroundColor = .systemBackground
-		self.setupLongGestureRecognizerOnCollection()
-		self.setupConfigure()
-		self.setupLayout()
-		self.bind()
-		self.viewLoad.send()
+		view.backgroundColor = .systemBackground
+		setLongGestureRecognizerOnCollection()
+		setViewAttributes()
+		setViewHierarchies()
+		setConstraints()
+		bind()
+		viewLoad.send()
 	}
 }
 
@@ -95,19 +96,19 @@ private extension CheckListTableViewController {
 
 // MARK: SetUp
 private extension CheckListTableViewController {
-	func setupConfigure() {
+	func setViewAttributes() {
 		dataSource = setupDataSource()
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
-		
-		collectionView.delegate = self
 	}
 	
-	func setupLayout() {
+	func setViewHierarchies() {
 		view.addSubview(collectionView)
+	}
+	
+	func setConstraints() {
 		collectionView.frame = view.bounds
-		
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
 		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
@@ -133,7 +134,7 @@ private extension CheckListTableViewController {
 		return dataSource
 	}
 	
-	func setupLongGestureRecognizerOnCollection() {
+	func setLongGestureRecognizerOnCollection() {
 		let longPressedGesture = UILongPressGestureRecognizer(
 			target: self,
 			action: #selector(handleLongPress(gestureRecognizer:))
@@ -186,5 +187,3 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		self.present(actionSheet, animated: true, completion: nil)
 	}
 }
-
-extension CheckListTableViewController: UICollectionViewDelegate { }
