@@ -30,8 +30,12 @@ export class UsersService {
     return users;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
