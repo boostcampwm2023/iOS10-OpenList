@@ -25,24 +25,25 @@ export class UsersService {
     return newUser;
   }
 
-  findAll() {
-    const users = this.usersRepository.find();
+  async findAll() {
+    const users = await this.usersRepository.find();
     return users;
   }
 
-  async findOne(id: number) {
+  async findUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
       throw new BadRequestException('존재하지 않는 유저입니다.');
     }
     return user;
   }
+  async findOne(id: number) {
+    const user = await this.findUserById(id);
+    return user;
+  }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    if (!user) {
-      throw new BadRequestException('존재하지 않는 유저입니다.');
-    }
+    const user = await this.findUserById(id);
     const updatedUser = await this.usersRepository.save({
       ...user,
       ...updateUserDto,
@@ -51,10 +52,7 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    if (!user) {
-      throw new BadRequestException('존재하지 않는 유저입니다.');
-    }
+    const user = await this.findUserById(id);
 
     await this.usersRepository.remove(user);
     return { message: '삭제되었습니다.' };
