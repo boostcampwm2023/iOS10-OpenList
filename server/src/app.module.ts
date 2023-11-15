@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule} from "@nestjs/config";
 import {TestModel} from "./app.entity";
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import {TestModel} from "./app.entity";
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
     TypeOrmModule.forFeature([TestModel]),
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
