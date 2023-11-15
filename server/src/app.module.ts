@@ -5,6 +5,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule} from "@nestjs/config";
 import {TestModel} from "./app.entity";
 import { CommonModule } from './common/common.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CommonModule } from './common/common.module';
     }),
     TypeOrmModule.forFeature([TestModel]),
     CommonModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
