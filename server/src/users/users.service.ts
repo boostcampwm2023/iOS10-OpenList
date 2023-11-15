@@ -50,7 +50,13 @@ export class UsersService {
     return updatedUser;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+
+    await this.usersRepository.remove(user);
+    return { message: '삭제되었습니다.' };
   }
 }
