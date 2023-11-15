@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TestModel } from './app.entity';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
-import { UsersModel } from './users/entities/users.entity';
+import { UsersModel } from './users/entities/user.entity';
 
 @Module({
   imports: [
