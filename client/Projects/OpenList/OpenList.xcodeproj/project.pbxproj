@@ -449,7 +449,6 @@
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
-				4DD946EB2B038F200054C104 /* CheckListTableItem.swift in Sources */,
 				5FA1F8BF2AFF800600869079 /* SampleUseCase.swift in Sources */,
 				5FA1F8D82AFF802900869079 /* AddTabRouter.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
