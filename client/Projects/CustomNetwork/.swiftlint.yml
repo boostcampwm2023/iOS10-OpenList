@@ -80,6 +80,4 @@ indentation_width:
  include_comments: false
  
 included:
-- /Users/kimyounggyun/Desktop/boostcamp/iOS10-OpenList/client/Projects/OpenList
-- /Users/kimyounggyun/Desktop/boostcamp/iOS10-OpenList/client/Projects/CustomNetwork
-- /Users/kimyounggyun/Desktop/boostcamp/iOS10-OpenList/client/Projects/CustomSocket
+ - CustomNetwork

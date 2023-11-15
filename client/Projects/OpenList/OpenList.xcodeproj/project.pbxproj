@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3397FB2B02399300963664 /* Publisher+Operator.swift */; };
+		4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398032B023BE800963664 /* CheckListTableAction.swift */; };
+		4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398042B023BE800963664 /* CheckListTableRouter.swift */; };
+		4D33980A2B023BE800963664 /* CheckListTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398052B023BE800963664 /* CheckListTableViewModel.swift */; };
+		4D33980B2B023BE800963664 /* CheckListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398062B023BE800963664 /* CheckListTableViewController.swift */; };
+		4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398072B023BE800963664 /* CheckListTableViewFactory.swift */; };
+		4D3398152B02436100963664 /* CheckListTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398142B02436100963664 /* CheckListTableCell.swift */; };
+		4D3398172B024FEE00963664 /* GaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398162B024FEE00963664 /* GaugeView.swift */; };
+		4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD947042B044FF20054C104 /* CheckListTableItem.swift */; };
 		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
 		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
 		5FA1F88E2AFF7DA400869079 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88D2AFF7DA400869079 /* Assets.xcassets */; };
@@ -39,6 +48,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D3397FB2B02399300963664 /* Publisher+Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operator.swift"; sourceTree = "<group>"; };
+		4D3398032B023BE800963664 /* CheckListTableAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableAction.swift; sourceTree = "<group>"; };
+		4D3398042B023BE800963664 /* CheckListTableRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableRouter.swift; sourceTree = "<group>"; };
+		4D3398052B023BE800963664 /* CheckListTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableViewModel.swift; sourceTree = "<group>"; };
+		4D3398062B023BE800963664 /* CheckListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableViewController.swift; sourceTree = "<group>"; };
+		4D3398072B023BE800963664 /* CheckListTableViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableViewFactory.swift; sourceTree = "<group>"; };
+		4D3398142B02436100963664 /* CheckListTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListTableCell.swift; sourceTree = "<group>"; };
+		4D3398162B024FEE00963664 /* GaugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaugeView.swift; sourceTree = "<group>"; };
+		4DD947042B044FF20054C104 /* CheckListTableItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableItem.swift; sourceTree = "<group>"; };
 		5F8615DF2B02249C00CF2686 /* ViewModelable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelable.swift; sourceTree = "<group>"; };
 		5F8615E12B0224E100CF2686 /* ViewBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBindable.swift; sourceTree = "<group>"; };
 		5FA1F8812AFF7DA200869079 /* OpenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +103,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4D3397F92B02396800963664 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4D3397FB2B02399300963664 /* Publisher+Operator.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		4D3398022B023BE800963664 /* CheckListTableScene */ = {
+			isa = PBXGroup;
+			children = (
+				4D3398132B02434F00963664 /* View */,
+				4D3398032B023BE800963664 /* CheckListTableAction.swift */,
+				4D3398042B023BE800963664 /* CheckListTableRouter.swift */,
+				4D3398052B023BE800963664 /* CheckListTableViewModel.swift */,
+				4D3398062B023BE800963664 /* CheckListTableViewController.swift */,
+				4D3398072B023BE800963664 /* CheckListTableViewFactory.swift */,
+			);
+			path = CheckListTableScene;
+			sourceTree = "<group>";
+		};
+		4D3398132B02434F00963664 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4D3398142B02436100963664 /* CheckListTableCell.swift */,
+				4D3398162B024FEE00963664 /* GaugeView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4DD946E92B038F120054C104 /* Entites */ = {
+			isa = PBXGroup;
+			children = (
+				4DD947042B044FF20054C104 /* CheckListTableItem.swift */,
+			);
+			path = Entites;
+			sourceTree = "<group>";
+		};
 		5FA1F8782AFF7DA200869079 = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +181,7 @@
 		5FA1F8992AFF7E1300869079 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				4DD946E92B038F120054C104 /* Entites */,
 				5FA1F8BA2AFF7FEA00869079 /* Repositories */,
 				5FA1F8BB2AFF7FF000869079 /* UseCases */,
 			);
@@ -219,6 +276,7 @@
 		5FA1F8C62AFF802900869079 /* CheckListTabScene */ = {
 			isa = PBXGroup;
 			children = (
+				4D3398022B023BE800963664 /* CheckListTableScene */,
 				5FA1F8C72AFF802900869079 /* CheckListTabViewController.swift */,
 				5FA1F8C82AFF802900869079 /* CheckListTabRouter.swift */,
 				5FA1F8C92AFF802900869079 /* CheckListTabViewFactory.swift */,
@@ -250,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				5FA1F8832AFF7DA200869079 /* App */,
+				4D3397F92B02396800963664 /* Extension */,
 				5FA1F8982AFF7E0F00869079 /* Data */,
 				5FA1F8992AFF7E1300869079 /* Domain */,
 				5FA1F89A2AFF7E1600869079 /* Scenes */,
@@ -335,7 +394,6 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/newInputFile",
 			);
 			name = SwiftLint;
 			outputFileListPaths = (
@@ -353,6 +411,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D33980A2B023BE800963664 /* CheckListTableViewModel.swift in Sources */,
 				5FA1F8B52AFF7FBB00869079 /* Factoryable.swift in Sources */,
 				5FA1F8AD2AFF7F9F00869079 /* AppRouter.swift in Sources */,
 				5FA1F8B62AFF7FBB00869079 /* Dependency.swift in Sources */,
@@ -365,19 +424,27 @@
 				5FA1F8D42AFF802900869079 /* CheckListTabViewController.swift in Sources */,
 				5FA1F8D52AFF802900869079 /* CheckListTabRouter.swift in Sources */,
 				5FA1F8BD2AFF7FFD00869079 /* SampleRepository.swift in Sources */,
+				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
+				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
 				5FA1F8BF2AFF800600869079 /* SampleUseCase.swift in Sources */,
 				5FA1F8D82AFF802900869079 /* AddTabRouter.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
 				5FA1F8D72AFF802900869079 /* CheckListTabViewModel.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
 				5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */,
+				4D33980B2B023BE800963664 /* CheckListTableViewController.swift in Sources */,
 				5FA1F8D02AFF802900869079 /* RecommendTabViewFactory.swift in Sources */,
 				5FA1F8B92AFF7FE100869079 /* DefaultSampleRepository.swift in Sources */,
 				5FA1F8AB2AFF7F7300869079 /* SceneDelegate.swift in Sources */,
 				5FA1F8DA2AFF802900869079 /* AddTabViewFactory.swift in Sources */,
 				5FA1F8D62AFF802900869079 /* CheckListTabViewFactory.swift in Sources */,
+				4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */,
+				4D3398172B024FEE00963664 /* GaugeView.swift in Sources */,
 				5FA1F8B32AFF7FBB00869079 /* Component.swift in Sources */,
+				4D3398152B02436100963664 /* CheckListTableCell.swift in Sources */,
+				4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */,
+				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
