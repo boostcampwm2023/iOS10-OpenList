@@ -46,6 +46,6 @@ final class ConfirmButton: UIButton {
 	private func configure() {
 		backgroundColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
 		layer.cornerRadius = 10
-		titleLabel?.font = .boldSystemFont(ofSize: 20)
+		titleLabel?.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
 	}
 }
