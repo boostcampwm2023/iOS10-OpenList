@@ -32,6 +32,7 @@ final class DetailCheckListDiffableDataSource: CheckListDataSource {
 		makeSections()
 	}
 }
+
 extension DetailCheckListDiffableDataSource {
 	func appendItems(_ items: [AnyHashable], to section: Section) {
 		var snapshot = snapshot()

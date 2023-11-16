@@ -7,7 +7,7 @@
 
 import UIKit
 
-public extension UITableView {
+extension UITableView {
 	/// 테이블 뷰의 셀을 반환합니다.
 	/// - Parameters:
 	/// 	- type: 셀의 타입입니다. (예: `MyCell.self`)

@@ -97,7 +97,6 @@ private extension DetailCheckListViewController {
 	
 	func setHeaderViewAttributes() {
 		headerView.translatesAutoresizingMaskIntoConstraints = false
-		headerView.configure(title: "필리핀 여행 체크리스트 짐싸기", isLocked: true)
 	}
 	
 	func setViewHierarchies() {
