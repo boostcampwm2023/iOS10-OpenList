@@ -51,7 +51,32 @@ final class TabBarControllable: ViewControllable {
 	var uiviewController: UIViewController { return self.tabBarController }
 	var tabBarController: UITabBarController
 	
-	init(tabBarController: UITabBarController = UITabBarController()) {
+	init(tabBarController: UITabBarController = CustomTabBarController()) {
 		self.tabBarController = tabBarController
+	}
+}
+
+final class CustomTabBarController: UITabBarController {
+	private var index = true
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		delegate = self
+	}
+	
+	override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+		item.title == "추가" ? (index = false) : (index = true)
+	}
+}
+
+extension CustomTabBarController: UITabBarControllerDelegate {
+	func tabBarController(
+		_ tabBarController: UITabBarController,
+		shouldSelect viewController: UIViewController
+	) -> Bool {
+		if index == false {
+			present(viewController, animated: true)
+		}
+		return index
 	}
 }
