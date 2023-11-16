@@ -38,6 +38,10 @@ enum TabBarPage: String, CaseIterable {
 	}
 	
 	func tabIconName() -> String {
-		return self.rawValue
+		switch self {
+		case .checklistTab: return "checklist.tab"
+		case .addTab: return "add.tab"
+		case .recommendTab: return "recommand.tab"
+		}
 	}
 }

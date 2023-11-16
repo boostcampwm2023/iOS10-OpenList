@@ -49,7 +49,7 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 		selectedIndex = TabBarPage.checklistTab.pageOrderNumber()
 		view.backgroundColor = .systemBackground
 		tabBar.backgroundColor = .systemBackground
-		tabBar.tintColor = .black
+		tabBar.tintColor = .primary1
 	}
 }
 
@@ -63,7 +63,7 @@ private extension TabBarViewController {
 	func makeTabBarItem(of page: TabBarPage) -> UITabBarItem {
 		return UITabBarItem(
 			title: page.pageTitleValue(),
-			image: nil,
+			image: .init(named: page.tabIconName()),
 			tag: page.pageOrderNumber()
 		)
 	}
