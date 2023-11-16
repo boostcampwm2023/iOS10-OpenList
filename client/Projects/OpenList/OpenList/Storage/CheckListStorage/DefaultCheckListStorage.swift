@@ -1,5 +1,5 @@
 //
-//  CheckListStorage.swift
+//  DefaultCheckListStorage.swift
 //  OpenList
 //
 //  Created by 김영균 on 11/16/23.
@@ -7,13 +7,6 @@
 
 import CoreData
 import Foundation
-
-protocol CheckListStorage {
-	@discardableResult
-	func saveCheckList(id: UUID, title: String) async throws -> LocalStorageCheckListResponseDTO
-	func fetchAllCheckList() async throws -> [LocalStorageCheckListResponseDTO]
-	func fetchCheckList(id: NSManagedObjectID) async throws -> LocalStorageCheckListResponseDTO
-}
 
 final class DefaultCheckListStorage {
 	private let coreDataStorage: CoreDataStorage
@@ -36,9 +29,11 @@ private extension DefaultCheckListStorage {
 extension DefaultCheckListStorage: CheckListStorage {
 	func fetchCheckList(id: NSManagedObjectID) async throws -> LocalStorageCheckListResponseDTO {
 		do {
-			guard let object = try coreDataStorage.backgroundViewContext.existingObject(with: id) as? CheckListResponseEntity,
+			guard
+				let object = try coreDataStorage.backgroundViewContext.existingObject(with: id) as? CheckListResponseEntity,
 				let id = object.id,
-				let title = object.title else {
+				let title = object.title
+			else {
 				throw CoreDataStorageError.noData
 			}
 			return LocalStorageCheckListResponseDTO(coreDataID: object.objectID, id: id, title: title)

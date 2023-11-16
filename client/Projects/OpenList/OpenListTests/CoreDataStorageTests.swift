@@ -39,7 +39,7 @@ final class CoreDataStorageTests: XCTestCase {
 				entity.title = "checkList3"
 				try context.save()
 				
-				let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CheckListResponseEntity")
+				let fetchRequest = CheckListResponseEntity.fetchRequest()
 				
 				let result = try context.fetch(fetchRequest).first
 				print(result)

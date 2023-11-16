@@ -21,7 +21,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
 	private let router: CheckListTableRoutingLogic
 	private let viewModel: any CheckListTableViewModelable
-	private let viewLoad: PassthroughSubject<Void, Never> = .init()
+	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var cancellables: Set<AnyCancellable> = []
@@ -50,7 +50,11 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewHierarchies()
 		setConstraints()
 		bind()
-		viewLoad.send()
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		viewAppear.send()
 	}
 }
 
@@ -60,7 +64,7 @@ extension CheckListTableViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = CheckListTableInput(viewLoad: viewLoad)
+		let input = CheckListTableInput(viewAppear: viewAppear)
 		
 		let output = viewModel.transform(input)
 		

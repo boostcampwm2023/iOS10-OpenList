@@ -9,9 +9,6 @@ import Foundation
 
 final class AppComponent: EmptyComponent, TabBarDependency {
 	var navigationControllable: NavigationControllable
-	var persistenceRepository: PersistenceRepository {
-		return DefaultPersistenceRepository(coreDataStorage: coreDataStorage)
-	}
 	var coreDataStorage: CoreDataStorage {
 		return CoreDataStorage.shared
 	}

@@ -15,6 +15,7 @@ where Input == AddTabInput,
 final class AddTabViewModel {
 	private let validCheckUseCase: ValidCheckUseCase
 	private let persistenceUseCase: PersistenceUseCase
+	private var title: String = ""
 	
 	enum Constant {
 		static let titleMaxLength = 30
@@ -46,6 +47,7 @@ private extension AddTabViewModel {
 			.withUnretained(self)
 			.map { (owner, text) in
 				let state = owner.validCheckUseCase.validateTextLength(text, in: Constant.titleMaxLength)
+				owner.title = text
 				return .valid(state)
 			}
 			.eraseToAnyPublisher()
@@ -55,7 +57,10 @@ private extension AddTabViewModel {
 		return input.nextButtonDidTap
 			.withUnretained(self)
 			.map { (owner, _) in
-				_ = owner.persistenceUseCase.saveCheckList()
+				Task {
+					let result = await owner.persistenceUseCase.saveCheckList(title: owner.title)
+					print(result)
+				}
 				return .dismiss
 			}
 			.eraseToAnyPublisher()
