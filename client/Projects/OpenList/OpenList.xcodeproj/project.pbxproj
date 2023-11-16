@@ -19,6 +19,13 @@
 		4D967CDA2B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D967CD82B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf */; };
 		4D967CDB2B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D967CD92B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf */; };
 		4D967CE12B051E3E0032E0D7 /* DefaultSampleRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CE02B051E3E0032E0D7 /* DefaultSampleRepository.swift */; };
+		4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CF02B05AF940032E0D7 /* CoreDataStorage.swift */; };
+		4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CF22B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld */; };
+		4D967D032B05B9190032E0D7 /* CoreDataStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967D022B05B9190032E0D7 /* CoreDataStorageTests.swift */; };
+		4D967D042B05B98A0032E0D7 /* CoreDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CF02B05AF940032E0D7 /* CoreDataStorage.swift */; };
+		4D967D0B2B05CC990032E0D7 /* MockEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967D0A2B05CC990032E0D7 /* MockEntity.swift */; };
+		4D967D0F2B05CFF00032E0D7 /* CheckListResponseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967D0E2B05CFF00032E0D7 /* CheckListResponseEntity.swift */; };
+		4D967D102B05D16D0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CF22B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld */; };
 		4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD947042B044FF20054C104 /* CheckListTableItem.swift */; };
 		5F70C82E2B04A96E00826B5D /* DetailCheckListAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C8292B04A96E00826B5D /* DetailCheckListAction.swift */; };
 		5F70C82F2B04A96E00826B5D /* DetailCheckListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82A2B04A96E00826B5D /* DetailCheckListRouter.swift */; };
@@ -72,9 +79,18 @@
 		78C2F0222B049A8A00E4EC4E /* PersistenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0212B049A8A00E4EC4E /* PersistenceUseCase.swift */; };
 		78C2F0242B049AF100E4EC4E /* PersistenceRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0232B049AF100E4EC4E /* PersistenceRepository.swift */; };
 		78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */; };
-		78C2F0472B05BE8700E4EC4E /* CoreDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0462B05BE8700E4EC4E /* CoreDataStorage.swift */; };
 		78C2F0492B05C00800E4EC4E /* DefaultPersistenceRespository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0482B05C00800E4EC4E /* DefaultPersistenceRespository.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4D967CFD2B05B8C30032E0D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FA1F8792AFF7DA200869079 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA1F8802AFF7DA200869079;
+			remoteInfo = OpenList;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4D3397FB2B02399300963664 /* Publisher+Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operator.swift"; sourceTree = "<group>"; };
@@ -89,6 +105,12 @@
 		4D967CD82B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansCJKkr-Medium.otf"; sourceTree = "<group>"; };
 		4D967CD92B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansCJKkr-Regular.otf"; sourceTree = "<group>"; };
 		4D967CE02B051E3E0032E0D7 /* DefaultSampleRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSampleRepository.swift; sourceTree = "<group>"; };
+		4D967CF02B05AF940032E0D7 /* CoreDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorage.swift; sourceTree = "<group>"; };
+		4D967CF32B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataStorage.xcdatamodel; sourceTree = "<group>"; };
+		4D967CF92B05B8C30032E0D7 /* OpenListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D967D022B05B9190032E0D7 /* CoreDataStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorageTests.swift; sourceTree = "<group>"; };
+		4D967D0A2B05CC990032E0D7 /* MockEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntity.swift; sourceTree = "<group>"; };
+		4D967D0E2B05CFF00032E0D7 /* CheckListResponseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListResponseEntity.swift; sourceTree = "<group>"; };
 		4DD947042B044FF20054C104 /* CheckListTableItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableItem.swift; sourceTree = "<group>"; };
 		5F70C8292B04A96E00826B5D /* DetailCheckListAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCheckListAction.swift; sourceTree = "<group>"; };
 		5F70C82A2B04A96E00826B5D /* DetailCheckListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCheckListRouter.swift; sourceTree = "<group>"; };
@@ -146,11 +168,17 @@
 		78C2F0252B049B1D00E4EC4E /* DefaultPersistenceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPersistenceRepository.swift; sourceTree = "<group>"; };
 		78C2F0282B049B5E00E4EC4E /* CoreDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorage.swift; sourceTree = "<group>"; };
 		78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListTextField.swift; sourceTree = "<group>"; };
-		78C2F0462B05BE8700E4EC4E /* CoreDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorage.swift; sourceTree = "<group>"; };
 		78C2F0482B05C00800E4EC4E /* DefaultPersistenceRespository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPersistenceRespository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4D967CF62B05B8C30032E0D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5FA1F87E2AFF7DA200869079 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -209,7 +237,6 @@
 		4D967CDE2B051E3E0032E0D7 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				78C2F0452B05BE6700E4EC4E /* LocalStorage */,
 				4D967CDF2B051E3E0032E0D7 /* Repositories */,
 			);
 			path = Data;
@@ -222,6 +249,57 @@
 				78C2F0482B05C00800E4EC4E /* DefaultPersistenceRespository.swift */,
 			);
 			path = Repositories;
+			sourceTree = "<group>";
+		};
+		4D967CEE2B05AF7F0032E0D7 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				4D967D0C2B05CFC30032E0D7 /* CheckListStorage */,
+				4D967CEF2B05AF860032E0D7 /* CoreDataStorage */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		4D967CEF2B05AF860032E0D7 /* CoreDataStorage */ = {
+			isa = PBXGroup;
+			children = (
+				4D967CF02B05AF940032E0D7 /* CoreDataStorage.swift */,
+				4D967CF22B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld */,
+			);
+			path = CoreDataStorage;
+			sourceTree = "<group>";
+		};
+		4D967CFA2B05B8C30032E0D7 /* OpenListTests */ = {
+			isa = PBXGroup;
+			children = (
+				4D967D082B05CC7F0032E0D7 /* Mock */,
+				4D967D022B05B9190032E0D7 /* CoreDataStorageTests.swift */,
+			);
+			path = OpenListTests;
+			sourceTree = "<group>";
+		};
+		4D967D082B05CC7F0032E0D7 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				4D967D0A2B05CC990032E0D7 /* MockEntity.swift */,
+			);
+			path = Mock;
+			sourceTree = "<group>";
+		};
+		4D967D0C2B05CFC30032E0D7 /* CheckListStorage */ = {
+			isa = PBXGroup;
+			children = (
+				4D967D0D2B05CFD80032E0D7 /* EntityMapping */,
+			);
+			path = CheckListStorage;
+			sourceTree = "<group>";
+		};
+		4D967D0D2B05CFD80032E0D7 /* EntityMapping */ = {
+			isa = PBXGroup;
+			children = (
+				4D967D0E2B05CFF00032E0D7 /* CheckListResponseEntity.swift */,
+			);
+			path = EntityMapping;
 			sourceTree = "<group>";
 		};
 		4DD946E92B038F120054C104 /* Entites */ = {
@@ -270,6 +348,7 @@
 			isa = PBXGroup;
 			children = (
 				5FA1F8E12AFF80AA00869079 /* OpenList */,
+				4D967CFA2B05B8C30032E0D7 /* OpenListTests */,
 				5FA1F8822AFF7DA200869079 /* Products */,
 				5FA1F8DC2AFF809C00869079 /* Frameworks */,
 				78C2F0442B05BDB100E4EC4E /* Recovered References */,
@@ -280,6 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				5FA1F8812AFF7DA200869079 /* OpenList.app */,
+				4D967CF92B05B8C30032E0D7 /* OpenListTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -428,6 +508,7 @@
 				78C2F0042B04653B00E4EC4E /* DesignSystem */,
 				5FA1F8832AFF7DA200869079 /* App */,
 				4D3397F92B02396800963664 /* Extension */,
+				4D967CEE2B05AF7F0032E0D7 /* Storage */,
 				4D967CDE2B051E3E0032E0D7 /* Data */,
 				5FA1F8992AFF7E1300869079 /* Domain */,
 				5FA1F89A2AFF7E1600869079 /* Scenes */,
@@ -472,17 +553,27 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		78C2F0452B05BE6700E4EC4E /* LocalStorage */ = {
-			isa = PBXGroup;
-			children = (
-				78C2F0462B05BE8700E4EC4E /* CoreDataStorage.swift */,
-			);
-			path = LocalStorage;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4D967CF82B05B8C30032E0D7 /* OpenListTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D967CFF2B05B8C30032E0D7 /* Build configuration list for PBXNativeTarget "OpenListTests" */;
+			buildPhases = (
+				4D967CF52B05B8C30032E0D7 /* Sources */,
+				4D967CF62B05B8C30032E0D7 /* Frameworks */,
+				4D967CF72B05B8C30032E0D7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4D967CFE2B05B8C30032E0D7 /* PBXTargetDependency */,
+			);
+			name = OpenListTests;
+			productName = OpenListTests;
+			productReference = 4D967CF92B05B8C30032E0D7 /* OpenListTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		5FA1F8802AFF7DA200869079 /* OpenList */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA1F8952AFF7DA400869079 /* Build configuration list for PBXNativeTarget "OpenList" */;
@@ -511,6 +602,11 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					4D967CF82B05B8C30032E0D7 = {
+						CreatedOnToolsVersion = 15.0.1;
+						LastSwiftMigration = 1500;
+						TestTargetID = 5FA1F8802AFF7DA200869079;
+					};
 					5FA1F8802AFF7DA200869079 = {
 						CreatedOnToolsVersion = 15.0.1;
 						LastSwiftMigration = 1500;
@@ -531,11 +627,19 @@
 			projectRoot = "";
 			targets = (
 				5FA1F8802AFF7DA200869079 /* OpenList */,
+				4D967CF82B05B8C30032E0D7 /* OpenListTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4D967CF72B05B8C30032E0D7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5FA1F87F2AFF7DA200869079 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -572,6 +676,17 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4D967CF52B05B8C30032E0D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D967D102B05D16D0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
+				4D967D042B05B98A0032E0D7 /* CoreDataStorage.swift in Sources */,
+				4D967D032B05B9190032E0D7 /* CoreDataStorageTests.swift in Sources */,
+				4D967D0B2B05CC990032E0D7 /* MockEntity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5FA1F87D2AFF7DA200869079 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -600,6 +715,7 @@
 				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				5FA1F8D42AFF802900869079 /* CheckListTabViewController.swift in Sources */,
+				4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */,
 				5FA1F8D52AFF802900869079 /* CheckListTabRouter.swift in Sources */,
 				5FA1F8BD2AFF7FFD00869079 /* SampleRepository.swift in Sources */,
 				78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */,
@@ -611,6 +727,7 @@
 				5F70C83D2B04C39F00826B5D /* CheckListItemTextField.swift in Sources */,
 				5FA1F8BF2AFF800600869079 /* SampleUseCase.swift in Sources */,
 				4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */,
+				4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
 				78C2F0022B03D58700E4EC4E /* AddTabViewFactory.swift in Sources */,
 				5FA1F8D72AFF802900869079 /* CheckListTabViewModel.swift in Sources */,
@@ -618,13 +735,13 @@
 				5F70C8392B04BF7A00826B5D /* LocalCheckListItem.swift in Sources */,
 				5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */,
 				5F70C8322B04A96E00826B5D /* DetailCheckListViewModel.swift in Sources */,
+				4D967D0F2B05CFF00032E0D7 /* CheckListResponseEntity.swift in Sources */,
 				4D33980B2B023BE800963664 /* CheckListTableViewController.swift in Sources */,
 				5FA1F8D02AFF802900869079 /* RecommendTabViewFactory.swift in Sources */,
 				5FA1F8AB2AFF7F7300869079 /* SceneDelegate.swift in Sources */,
 				5FA1F8D62AFF802900869079 /* CheckListTabViewFactory.swift in Sources */,
 				5F70C8422B04C7F800826B5D /* DetailCheckListDiffableDataSource.swift in Sources */,
 				4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */,
-				78C2F0472B05BE8700E4EC4E /* CoreDataStorage.swift in Sources */,
 				5F70C8402B04C6F000826B5D /* UITableView+Extensions.swift in Sources */,
 				4D3398172B024FEE00963664 /* GaugeView.swift in Sources */,
 				5FA1F8B32AFF7FBB00869079 /* Component.swift in Sources */,
@@ -643,6 +760,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4D967CFE2B05B8C30032E0D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA1F8802AFF7DA200869079 /* OpenList */;
+			targetProxy = 4D967CFD2B05B8C30032E0D7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		5FA1F88F2AFF7DA400869079 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -655,6 +780,47 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4D967D002B05B8C30032E0D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2KQLD72485;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wi-seong.OpenListTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenList.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OpenList";
+			};
+			name = Debug;
+		};
+		4D967D012B05B8C30032E0D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2KQLD72485;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wi-seong.OpenListTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenList.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OpenList";
+			};
+			name = Release;
+		};
 		5FA1F8932AFF7DA400869079 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -842,6 +1008,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4D967CFF2B05B8C30032E0D7 /* Build configuration list for PBXNativeTarget "OpenListTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D967D002B05B8C30032E0D7 /* Debug */,
+				4D967D012B05B8C30032E0D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5FA1F87C2AFF7DA200869079 /* Build configuration list for PBXProject "OpenList" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -861,6 +1036,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4D967CF22B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4D967CF32B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodel */,
+			);
+			currentVersion = 4D967CF32B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodel */;
+			path = CoreDataStorage.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5FA1F8792AFF7DA200869079 /* Project object */;
 }

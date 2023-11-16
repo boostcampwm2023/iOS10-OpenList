@@ -17,6 +17,6 @@ final class DefaultPersistenceRepository {
 
 extension DefaultPersistenceRepository: PersistenceRepository {
 	func saveCheckList() -> Data {
-		return coreDataStorage.save()
+		return Data()
 	}
 }
