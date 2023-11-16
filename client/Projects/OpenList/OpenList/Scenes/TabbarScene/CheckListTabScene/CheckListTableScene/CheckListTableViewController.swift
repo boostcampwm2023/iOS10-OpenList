@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol CheckListTableRoutingLogic: AnyObject { }
+protocol CheckListTableRoutingLogic: AnyObject {
+	func pushDetailViewController()
+}
 
 final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - CollectionView Type
@@ -21,6 +23,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
 	private let router: CheckListTableRoutingLogic
 	private let viewModel: any CheckListTableViewModelable
+	private let detailCheckListViewControllable: ViewControllable
 	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
@@ -29,10 +32,12 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - Initializers
 	init(
 		router: CheckListTableRoutingLogic,
-		viewModel: some CheckListTableViewModelable
+		viewModel: some CheckListTableViewModelable,
+		detailCheckListViewControllable: ViewControllable
 	) {
 		self.router = router
 		self.viewModel = viewModel
+		self.detailCheckListViewControllable = detailCheckListViewControllable
 		super.init(nibName: nil, bundle: nil)
 	}
 	
@@ -50,10 +55,6 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewHierarchies()
 		setConstraints()
 		bind()
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
 		viewAppear.send()
 	}
 }
@@ -105,6 +106,8 @@ private extension CheckListTableViewController {
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
+		
+		collectionView.delegate = self
 	}
 	
 	func setViewHierarchies() {
@@ -190,4 +193,10 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		
 		self.present(actionSheet, animated: true, completion: nil)
 	}
+}
+
+extension CheckListTableViewController: UICollectionViewDelegate {
+		func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+			router.pushDetailViewController()
+		}
 }

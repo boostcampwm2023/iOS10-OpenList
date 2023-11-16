@@ -11,9 +11,15 @@ protocol CheckListTableDependency: Dependency {
 	var persistenceUseCase: PersistenceUseCase { get }
 }
 
-final class CheckListTableComponent: Component<CheckListTableDependency> {
+final class CheckListTableComponent:
+	Component<CheckListTableDependency>,
+	DetailCheckListDependency {
 	fileprivate var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
+	}
+	
+	fileprivate var detailCheckListFactoryable: DetailCheckListFactoryable {
+		return DetailCheckListViewFactory(parent: self)
 	}
 }
 
@@ -32,8 +38,14 @@ final class CheckListTableViewFactory: Factory<CheckListTableDependency>, CheckL
 		let viewModel = CheckListTableViewModel(
 			persistenceUseCase: component.persistenceUseCase
 		)
-		let viewController = CheckListTableViewController(router: router, viewModel: viewModel)
+		let detailViewControllable = component.detailCheckListFactoryable.make()
+		let viewController = CheckListTableViewController(
+			router: router,
+			viewModel: viewModel,
+			detailCheckListViewControllable: detailViewControllable
+		)
 		router.viewController = viewController
+		router.detailViewController = detailViewControllable
 		return viewController
 	}
 }

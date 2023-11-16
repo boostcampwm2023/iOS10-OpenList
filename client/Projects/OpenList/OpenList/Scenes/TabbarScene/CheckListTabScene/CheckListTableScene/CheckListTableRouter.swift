@@ -9,7 +9,13 @@ import Foundation
 
 final class CheckListTableRouter {
 	weak var viewController: ViewControllable?
+	weak var detailViewController: ViewControllable?
 }
 
 // MARK: - RoutingLogic
-extension CheckListTableRouter: CheckListTableRoutingLogic {}
+extension CheckListTableRouter: CheckListTableRoutingLogic {
+	func pushDetailViewController() {
+		guard let detailViewController else { return }
+		viewController?.pushViewController(detailViewController, animated: true)
+	}
+}
