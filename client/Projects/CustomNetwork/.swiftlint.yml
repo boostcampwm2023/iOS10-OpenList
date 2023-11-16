@@ -78,6 +78,3 @@ trailing_whitespace:
 indentation_width:
  indentation_width: 2
  include_comments: false
- 
-included:
- - CustomNetwork

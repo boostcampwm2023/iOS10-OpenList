@@ -69,6 +69,9 @@ private extension CheckListTableCell {
 	func setTitleLabelAttributes() {
 		titleLabel.textColor = .black
 		titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+		
+		achievementPercentLabel.font = .systemFont(ofSize: 12)
+		achievementPercentLabel.textColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
 	}
 	
 	func setAchievementPercentLabelAttributes() {
