@@ -701,7 +701,6 @@
 				78C2F0012B03D58700E4EC4E /* AddTabViewController.swift in Sources */,
 				78C2F0242B049AF100E4EC4E /* PersistenceRepository.swift in Sources */,
 				5F70C82E2B04A96E00826B5D /* DetailCheckListAction.swift in Sources */,
-				5FA1F8AD2AFF7F9F00869079 /* AppRouter.swift in Sources */,
 				5F70C82F2B04A96E00826B5D /* DetailCheckListRouter.swift in Sources */,
 				5FA1F8B62AFF7FBB00869079 /* Dependency.swift in Sources */,
 				78C2F00F2B048B6C00E4EC4E /* TabBarViewController.swift in Sources */,

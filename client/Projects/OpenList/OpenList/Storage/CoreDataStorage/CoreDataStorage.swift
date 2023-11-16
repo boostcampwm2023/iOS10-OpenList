@@ -19,7 +19,7 @@ final class CoreDataStorage {
 	// MARK: - Core Data stack
 	private lazy var persistentContainer: NSPersistentContainer = {
 		guard let modelURL = Bundle.main.url(forResource: "CoreDataStorage", withExtension: "momd"),
-					let mom = NSManagedObjectModel(contentsOf: modelURL)
+			let mom = NSManagedObjectModel(contentsOf: modelURL)
 		else {
 			fatalError("Unable to located Core Data model")
 		}
