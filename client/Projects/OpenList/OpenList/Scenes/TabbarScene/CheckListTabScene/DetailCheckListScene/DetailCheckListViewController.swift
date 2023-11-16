@@ -13,6 +13,7 @@ protocol DetailCheckListRoutingLogic: AnyObject {}
 final class DetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
 		static let checkListItemHeight: CGFloat = 44
+		static let headerHeight: CGFloat = 24
 		static let topPadding: CGFloat = 16
 		static let horizontalPadding: CGFloat = 20
 		static let spacingBetweenTitleAndCheckList: CGFloat = 32
@@ -26,6 +27,7 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
+	private let headerView: CheckListHeaderView = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -75,6 +77,7 @@ private extension DetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
 		setCheckListViewAttributes()
+		setHeaderViewAttributes()
 	}
 	
 	func setCheckListViewAttributes() {
@@ -92,14 +95,32 @@ private extension DetailCheckListViewController {
 		checkListView.addGestureRecognizer(tapGesture)
 	}
 	
+	func setHeaderViewAttributes() {
+		headerView.translatesAutoresizingMaskIntoConstraints = false
+		headerView.configure(title: "필리핀 여행 체크리스트 짐싸기", isLocked: true)
+	}
+	
 	func setViewHierarchies() {
 		view.addSubview(checkListView)
+		view.addSubview(headerView)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
+			headerView.topAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				constant: LayoutConstant.topPadding
+			),
+			headerView.leadingAnchor.constraint(
+				equalTo: view.leadingAnchor,
+				constant: LayoutConstant.horizontalPadding
+			),
+			headerView.trailingAnchor.constraint(
+				lessThanOrEqualTo: view.trailingAnchor,
+				constant: -LayoutConstant.horizontalPadding
+			),
 			checkListView.topAnchor.constraint(
-				equalTo: view.topAnchor,
+				equalTo: headerView.bottomAnchor,
 				constant: LayoutConstant.spacingBetweenTitleAndCheckList
 			),
 			checkListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
