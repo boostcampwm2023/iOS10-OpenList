@@ -11,10 +11,24 @@ enum CoreDataStorageError: Error {
 	case readError(Error)
 	case saveError(Error)
 	case deleteError(Error)
+	case selfCapturingError
+	case noData
 }
 
 final class CoreDataStorage {
 	static let shared = CoreDataStorage()
+	
+	private init() {}
+	
+	var viewContext: NSManagedObjectContext {
+		return persistentContainer.viewContext
+	}
+	
+	var backgroundViewContext: NSManagedObjectContext {
+		let newBackgroundContext = persistentContainer.newBackgroundContext()
+		newBackgroundContext.automaticallyMergesChangesFromParent = true
+		return newBackgroundContext
+	}
 	
 	// MARK: - Core Data stack
 	private lazy var persistentContainer: NSPersistentContainer = {

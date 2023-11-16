@@ -13,7 +13,7 @@ final class AppComponent: EmptyComponent, TabBarDependency {
 		return DefaultPersistenceRepository(coreDataStorage: coreDataStorage)
 	}
 	var coreDataStorage: CoreDataStorage {
-		return CoreDataStorage()
+		return CoreDataStorage.shared
 	}
 	
 	init(navigationControllable: NavigationControllable) {
