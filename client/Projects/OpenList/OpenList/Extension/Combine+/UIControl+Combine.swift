@@ -15,9 +15,11 @@ extension UIControl {
 	
 	// Publisher
 	struct EventPublisher: Publisher {
+		// swiftlint:disable nesting
 		typealias Output = UIControl
 		typealias Failure = Never
 		
+		// swiftlint:enable nesting
 		let control: UIControl
 		let event: UIControl.Event
 		
