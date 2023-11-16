@@ -184,17 +184,17 @@ private extension AddTabViewController {
 		guard let keyboardFrame = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
 		let keyboardHeight = keyboardFrame.cgRectValue.height
 		
-		titleTextFieldCenterYConstraint.constant -= (keyboardHeight / 2)
-		nextButtonBottomConstraints.constant -= keyboardHeight
 		UIView.animate(withDuration: 0.3) {
+			self.titleTextFieldCenterYConstraint.constant -= (keyboardHeight / 2)
+			self.nextButtonBottomConstraints.constant -= keyboardHeight
 			self.view.layoutIfNeeded()
 		}
 	}
 	
 	@objc func keyboardWillHide(_ sender: Notification) {
-		titleTextFieldCenterYConstraint.constant = 0
-		nextButtonBottomConstraints.constant = 0
 		UIView.animate(withDuration: 0.3) {
+			self.titleTextFieldCenterYConstraint.constant = 0
+			self.nextButtonBottomConstraints.constant = 0
 			self.view.layoutIfNeeded()
 		}
 	}
