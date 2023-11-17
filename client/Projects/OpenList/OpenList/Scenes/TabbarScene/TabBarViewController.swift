@@ -8,18 +8,18 @@
 import UIKit
 
 final class TabBarViewController: UITabBarController, ViewControllable {
-	private let checkListTabViewControllable: ViewControllable
-	private let addTabViewControllable: ViewControllable
-	private let recommendTabViewControllable: ViewControllable
+	private let checkListTabFactoryable: CheckListTableFactoryable
+	private let addTabFactoryable: AddTabFactoryable
+	private let recommendTabFactoryable: RecommendTabFactoryable
 	
 	init(
-		checkListTabViewControllable: ViewControllable,
-		addTabViewControllable: ViewControllable,
-		recommendTabViewControllable: ViewControllable
+		checkListTabFactoryable: CheckListTableFactoryable,
+		addTabFactoryable: AddTabFactoryable,
+		recommendTabFactoryable: RecommendTabFactoryable
 	) {
-		self.checkListTabViewControllable = checkListTabViewControllable
-		self.addTabViewControllable = addTabViewControllable
-		self.recommendTabViewControllable = recommendTabViewControllable
+		self.checkListTabFactoryable = checkListTabFactoryable
+		self.addTabFactoryable = addTabFactoryable
+		self.recommendTabFactoryable = recommendTabFactoryable
 		super.init(nibName: nil, bundle: nil)
 	}
 	
@@ -36,9 +36,11 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 		emptyViewController.view.backgroundColor = .systemBackground
 		emptyViewController.tabBarItem = makeTabBarItem(of: .addTab)
 		
+		let checkListTabViewControllable = checkListTabFactoryable.make()
 		let checkListTabNavigationController = makeTabNavigationController(of: checkListTabViewControllable)
 		checkListTabNavigationController.navigationController.tabBarItem = makeTabBarItem(of: .checklistTab)
 		
+		let recommendTabViewControllable = recommendTabFactoryable.make()
 		let recommendTabNavigationController = makeTabNavigationController(of: recommendTabViewControllable)
 		recommendTabNavigationController.navigationController.tabBarItem = makeTabBarItem(of: .recommendTab)
 		self.viewControllers = [
@@ -75,6 +77,7 @@ extension TabBarViewController: UITabBarControllerDelegate {
 		shouldSelect viewController: UIViewController
 	) -> Bool {
 		if viewController.tabBarItem.tag == TabBarPage.addTab.pageOrderNumber() {
+			let addTabViewControllable = addTabFactoryable.make()
 			let addTabNavigationViewController = makeTabNavigationController(of: addTabViewControllable)
 			present(addTabNavigationViewController.uiviewController, animated: true)
 			return false

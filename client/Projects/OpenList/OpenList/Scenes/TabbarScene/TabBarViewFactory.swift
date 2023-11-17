@@ -53,9 +53,9 @@ final class TabBarViewFactory: Factory<TabBarDependency>, TabBarFactoryable {
 	func make() -> ViewControllable {
 		let component = TabBarComponent(parent: parent)
 		let tabBarViewController = TabBarViewController(
-			checkListTabViewControllable: component.checklistTabFactoryable.make(),
-			addTabViewControllable: component.addTabFactoryable.make(),
-			recommendTabViewControllable: component.recommendTabFactoryable.make()
+			checkListTabFactoryable: component.checklistTabFactoryable,
+			addTabFactoryable: component.addTabFactoryable,
+			recommendTabFactoryable: component.recommendTabFactoryable
 		)
 		return tabBarViewController
 	}
