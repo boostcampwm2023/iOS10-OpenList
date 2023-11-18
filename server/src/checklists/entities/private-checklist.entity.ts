@@ -8,7 +8,7 @@ export class PrivateChecklistModel extends ChecklistModel {
   @ManyToOne(() => UserModel, (user) => user.privateChecklists, {
     nullable: false,
   })
-  author: UserModel;
+  editor: UserModel;
 
   @ManyToOne(() => FolderModel, (folder) => folder.privateChecklists, {
     nullable: false,
