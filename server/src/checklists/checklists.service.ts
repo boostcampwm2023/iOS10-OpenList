@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChecklistDto } from './dto/create-checklist.dto';
-import { UpdateChecklistDto } from './dto/update-checklist.dto';
+import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
+import { UpdatePrivateChecklistDto } from './dto/update-private-checklist.dto';
 
 @Injectable()
 export class ChecklistsService {
-  create(createChecklistDto: CreateChecklistDto) {
+  create(createChecklistDto: CreatePrivateChecklistDto) {
     return 'This action adds a new checklist';
   }
 
@@ -16,7 +16,7 @@ export class ChecklistsService {
     return `This action returns a #${id} checklist`;
   }
 
-  update(id: number, updateChecklistDto: UpdateChecklistDto) {
+  update(id: number, updateChecklistDto: UpdatePrivateChecklistDto) {
     return `This action updates a #${id} checklist`;
   }
 
