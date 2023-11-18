@@ -1,5 +1,7 @@
 import { BaseModel } from 'src/common/entity/base.entity';
-import { Column, Entity, Generated } from 'typeorm';
+import { Column, Entity, Generated, OneToMany } from 'typeorm';
+import { PrivateChecklistModel } from '../../checklists/entities/private-checklist.entity';
+import { SharedChecklistModel } from '../../checklists/entities/shared-checklist.entity';
 
 @Entity()
 export class UserModel extends BaseModel {
@@ -18,4 +20,10 @@ export class UserModel extends BaseModel {
 
   @Column({ default: 'testimagelink' })
   profileImage: string;
+
+  @OneToMany(() => PrivateChecklistModel, (checklist) => checklist.author)
+  privateChecklists: PrivateChecklistModel[];
+
+  @OneToMany(() => SharedChecklistModel, (checklist) => checklist.author)
+  sharedChecklists: SharedChecklistModel[];
 }

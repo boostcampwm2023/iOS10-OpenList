@@ -9,6 +9,8 @@ import { UserModel } from './users/entities/user.entity';
 import { FoldersModule } from './folders/folders.module';
 import { FolderModel } from './folders/entities/folder.entity';
 import { ChecklistsModule } from './checklists/checklists.module';
+import { PrivateChecklistModel } from './checklists/entities/private-checklist.entity';
+import { SharedChecklistModel } from './checklists/entities/shared-checklist.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,12 @@ import { ChecklistsModule } from './checklists/checklists.module';
       username: process.env['DB_USERNAME'],
       password: process.env['DB_PASSWORD'],
       database: process.env['DB_DATABASE'],
-      entities: [UserModel, FolderModel],
+      entities: [
+        UserModel,
+        FolderModel,
+        PrivateChecklistModel,
+        SharedChecklistModel,
+      ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
     CommonModule,
