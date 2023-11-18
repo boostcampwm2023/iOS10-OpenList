@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { UserModel } from './users/entities/user.entity';
 import { FoldersModule } from './folders/folders.module';
 import { FolderModel } from './folders/entities/folder.entity';
+import { ChecklistsModule } from './checklists/checklists.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FolderModel } from './folders/entities/folder.entity';
     CommonModule,
     UsersModule,
     FoldersModule,
+    ChecklistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
