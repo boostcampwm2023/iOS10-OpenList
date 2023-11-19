@@ -4,7 +4,6 @@ import { IsOptional } from 'class-validator';
 
 export class UpdateSharedChecklistDto extends PickType(SharedChecklistModel, [
   'title',
-  'progress',
 ]) {
   @IsOptional()
   editors: number[] = [];
