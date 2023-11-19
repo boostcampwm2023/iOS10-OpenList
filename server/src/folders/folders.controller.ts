@@ -31,12 +31,12 @@ export class FoldersController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateFolderDto: UpdateFolderDto) {
+  putFolder(@Param('id') id: number, @Body() updateFolderDto: UpdateFolderDto) {
     return this.foldersService.updateFolder(id, updateFolderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  deleteFolder(@Param('id') id: number) {
     return this.foldersService.removeFolder(id);
   }
 }
