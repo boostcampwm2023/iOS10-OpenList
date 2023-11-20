@@ -2,6 +2,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, Generated, ManyToMany, OneToMany } from 'typeorm';
 import { PrivateChecklistModel } from '../../checklists/entities/private-checklist.entity';
 import { SharedChecklistModel } from '../../checklists/entities/shared-checklist.entity';
+import { FolderModel } from '../../folders/entities/folder.entity';
 
 @Entity()
 export class UserModel extends BaseModel {
@@ -20,6 +21,9 @@ export class UserModel extends BaseModel {
 
   @Column({ default: 'testimagelink' })
   profileImage: string;
+
+  @OneToMany(() => FolderModel, (folder) => folder.owner)
+  folders: FolderModel[];
 
   @OneToMany(() => PrivateChecklistModel, (checklist) => checklist.editor)
   privateChecklists: PrivateChecklistModel[];
