@@ -6,5 +6,5 @@ export class CreateSharedChecklistDto extends PickType(SharedChecklistModel, [
   'title',
 ]) {
   @IsNumber({}, { each: true })
-  editors: number[] = [];
+  editorsId: number[] = [];
 }
