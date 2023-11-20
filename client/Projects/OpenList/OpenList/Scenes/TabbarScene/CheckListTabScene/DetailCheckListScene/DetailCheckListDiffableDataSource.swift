@@ -8,7 +8,8 @@
 import UIKit
 
 // 도메인 모델이 나오면 변경 예정
-struct CheckListItem: Hashable {
+struct CheckListItem: Hashable, Identifiable {
+	let id = UUID()
 	let title: String
 	var isChecked: Bool
 }
@@ -61,7 +62,7 @@ private extension DetailCheckListDiffableDataSource {
 		var snapshot = snapshot()
 		let previousProducts = snapshot.itemIdentifiers(inSection: section)
 		snapshot.deleteItems(previousProducts)
-		snapshot.appendItems(items, toSection: .checkList)
+		snapshot.appendItems(items, toSection: section)
 		apply(snapshot, animatingDifferences: false)
 	}
 }
