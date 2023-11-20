@@ -107,7 +107,6 @@ private extension DetailCheckListViewController {
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
 		checkListView.registerCell(LocalCheckListItem.self)
 		checkListView.registerCell(CheckListItemPlaceholder.self)
-		checkListView.dataSource = dataSource
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
 		checkListView.separatorStyle = .none
@@ -157,7 +156,7 @@ private extension DetailCheckListViewController {
 	func makeDataSource() {
 		dataSource = DetailCheckListDiffableDataSource(
 			tableView: checkListView,
-			cellProvider: { tableView, indexPath, itemIdentifier in
+			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
 				case is CheckListItem:
 					let cell = tableView.dequeueCell(LocalCheckListItem.self, for: indexPath)
