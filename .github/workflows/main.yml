@@ -42,6 +42,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
+          context: ./server   # Docker 빌드 컨텍스트를 'server' 디렉토리로 설정
+          file: ./server/Dockerfile   # 'server' 디렉토리 내의 Dockerfile 사용
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
   # 배포 Job
