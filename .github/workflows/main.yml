@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.VERSION }} # runner 설정에서 읽어들일거에요.
+          key: ${{ runner.os }}-buildx-${{ env.VERSION }} # runner 설정에서 읽음.
           restore-keys: |
             ${{ runner.os }}-buildx-
       # GitHub 컨테이너 레지스트리에 로그인 후 빌드 & 푸시    
@@ -62,4 +62,4 @@ jobs:
       - name: Docker run
         run: |
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 8080:5000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 80:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
