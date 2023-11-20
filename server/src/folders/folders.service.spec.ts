@@ -6,12 +6,15 @@ import { BadRequestException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
+import { UsersService } from '../users/users.service';
+import { UserModel } from '../users/entities/user.entity';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('FoldersService', () => {
   let service: FoldersService;
   let mockFoldersRepository: MockRepository<FolderModel>;
+  let mockUsersRepository: MockRepository<UserModel>;
 
   beforeEach(async () => {
     mockFoldersRepository = {
@@ -23,12 +26,21 @@ describe('FoldersService', () => {
       exist: jest.fn(),
     };
 
+    mockUsersRepository = {
+      findOne: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FoldersService,
+        UsersService,
         {
           provide: getRepositoryToken(FolderModel),
           useValue: mockFoldersRepository,
+        },
+        {
+          provide: getRepositoryToken(UserModel),
+          useValue: mockUsersRepository,
         },
       ],
     }).compile();
@@ -40,27 +52,54 @@ describe('FoldersService', () => {
     const createFolderDto: CreateFolderDto = {
       title: 'blackpink in your area',
     };
+    const user = new UserModel(); // 새로운 UserModel 인스턴스 생성
+    mockUsersRepository.findOne.mockResolvedValue(user); // 존재하는 사용자를 반환
     mockFoldersRepository.exist.mockResolvedValue(false);
-    mockFoldersRepository.create.mockReturnValue(createFolderDto);
-    mockFoldersRepository.save.mockResolvedValue({ id: 1, ...createFolderDto });
 
-    const result = await service.createFolder(createFolderDto);
+    // createFolderDto와 owner를 포함한 객체를 create 메서드에 전달
+    const expectedFolderObject = {
+      ...createFolderDto,
+      owner: user,
+    };
+    mockFoldersRepository.create.mockReturnValue(expectedFolderObject);
+    mockFoldersRepository.save.mockResolvedValue({
+      id: 1,
+      ...expectedFolderObject,
+    });
+
+    const result = await service.createFolder(1, createFolderDto);
 
     expect(mockFoldersRepository.exist).toHaveBeenCalledWith({
       where: { title: createFolderDto.title },
     });
-    expect(mockFoldersRepository.create).toHaveBeenCalledWith(createFolderDto);
-    expect(mockFoldersRepository.save).toHaveBeenCalledWith(createFolderDto);
-    expect(result).toEqual({ id: 1, ...createFolderDto });
+    expect(mockFoldersRepository.create).toHaveBeenCalledWith(
+      expectedFolderObject,
+    ); // 수정된 부분
+    expect(mockFoldersRepository.save).toHaveBeenCalledWith(
+      expectedFolderObject,
+    ); // 수정된 부분
+    expect(result).toEqual({ id: 1, ...expectedFolderObject });
   });
 
   it('service.createFolder(createFolderDto) : 이미 존재하는 폴더명일 경우 BadRequestException을 던진다.', async () => {
     const createFolderDto: CreateFolderDto = {
       title: 'blackpink in your area',
     };
+    mockUsersRepository.findOne.mockResolvedValue(new UserModel()); // 존재하는 사용자를 반환
     mockFoldersRepository.exist.mockResolvedValue(true);
 
-    await expect(service.createFolder(createFolderDto)).rejects.toThrow(
+    await expect(service.createFolder(1, createFolderDto)).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('service.createFolder(createFolderDto) : 존재하지 않는 사용자일 경우 BadRequestException을 던진다.', async () => {
+    const createFolderDto: CreateFolderDto = {
+      title: 'new folder',
+    };
+    mockUsersRepository.findOne.mockResolvedValue(null); // 존재하지 않는 사용자를 반환
+
+    await expect(service.createFolder(1, createFolderDto)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -72,7 +111,7 @@ describe('FoldersService', () => {
     ];
     mockFoldersRepository.find.mockResolvedValue(mockFolders);
 
-    const result = await service.findAllFolders();
+    const result = await service.findAllFolders(1);
 
     expect(mockFoldersRepository.find).toHaveBeenCalled();
     expect(result).toEqual(mockFolders);
@@ -86,6 +125,7 @@ describe('FoldersService', () => {
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
       where: { id: 1 },
+      relations: ['owner'],
     });
     expect(result).toEqual(folder);
   });
@@ -116,6 +156,7 @@ describe('FoldersService', () => {
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
       where: { id: 1 },
+      relations: ['owner'],
     });
     expect(mockFoldersRepository.save).toHaveBeenCalledWith({
       ...existingFolder,
@@ -124,11 +165,11 @@ describe('FoldersService', () => {
     expect(result.title).toEqual('newJeans in your area');
   });
 
-  it('service.updateFolder(id, updateFolderDto) : 존재하지 않는 폴더명일 경우 BadRequestException을 던진다.', async () => {
+  it('service.updateFolder(id, updateFolderDto) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
     const updateFolderDto: UpdateFolderDto = { title: 'UpdatedFolder' };
-    mockFoldersRepository.findOne.mockResolvedValue(null);
+    mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
 
-    await expect(service.updateFolder(1, updateFolderDto)).rejects.toThrow(
+    await expect(service.updateFolder(9999, updateFolderDto)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -142,13 +183,17 @@ describe('FoldersService', () => {
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
       where: { id: 1 },
+      relations: ['owner'],
     });
     expect(mockFoldersRepository.remove).toHaveBeenCalledWith(folder);
     expect(result).toEqual({ message: '삭제되었습니다.' });
   });
 
-  it('service.removeFolder(id) : 존재하지 않는 폴더명일 경우 BadRequestException을 던진다.', async () => {
-    mockFoldersRepository.findOne.mockResolvedValue(null);
-    await expect(service.removeFolder(1)).rejects.toThrow(BadRequestException);
+  it('service.removeFolder(id) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
+    mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
+
+    await expect(service.removeFolder(9999)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 });
