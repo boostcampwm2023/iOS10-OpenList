@@ -4,18 +4,24 @@ import { UpdateFolderDto } from './dto/update-folder.dto';
 import { FolderModel } from './entities/folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class FoldersService {
   constructor(
     @InjectRepository(FolderModel)
-    private folderRepository: Repository<FolderModel>,
+    private readonly folderRepository: Repository<FolderModel>,
+    private readonly usersService: UsersService,
   ) {}
-  async createFolder(createFolderDto: CreateFolderDto) {
-    const folderObject = this.folderRepository.create(createFolderDto);
+  async createFolder(uId, dto: CreateFolderDto) {
+    const owner = await this.usersService.findUserById(uId);
+    const folderObject = this.folderRepository.create({
+      ...dto,
+      owner,
+    });
     const folderExists = await this.folderRepository.exist({
       where: {
-        title: createFolderDto.title,
+        title: dto.title,
       },
     });
     if (folderExists) {
@@ -25,24 +31,30 @@ export class FoldersService {
     return newFolder;
   }
 
-  async findAllFolders() {
-    const folders = await this.folderRepository.find();
+  async findAllFolders(uId) {
+    const folders = await this.folderRepository.find({
+      where: { owner: { id: uId } },
+      relations: ['owner'],
+    });
     return folders;
   }
 
   async findFolderById(id: number) {
-    const folder = await this.folderRepository.findOne({ where: { id } });
+    const folder = await this.folderRepository.findOne({
+      where: { id },
+      relations: ['owner'],
+    });
     if (!folder) {
       throw new BadRequestException('존재하지 않는 폴더입니다.');
     }
     return folder;
   }
 
-  async updateFolder(id: number, updateFolderDto: UpdateFolderDto) {
+  async updateFolder(id: number, dto: UpdateFolderDto) {
     const folder = await this.findFolderById(id);
     const updatedFolder = await this.folderRepository.save({
       ...folder,
-      ...updateFolderDto,
+      ...dto,
     });
     return updatedFolder;
   }

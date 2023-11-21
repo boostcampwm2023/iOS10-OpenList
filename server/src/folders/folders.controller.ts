@@ -17,12 +17,14 @@ export class FoldersController {
 
   @Post()
   postFolder(@Body() createFolderDto: CreateFolderDto) {
-    return this.foldersService.createFolder(createFolderDto);
+    const uId = 1;
+    return this.foldersService.createFolder(uId, createFolderDto);
   }
 
   @Get()
   getFolders() {
-    return this.foldersService.findAllFolders();
+    const uId = 1;
+    return this.foldersService.findAllFolders(uId);
   }
 
   @Get(':id')
@@ -31,12 +33,12 @@ export class FoldersController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateFolderDto: UpdateFolderDto) {
+  putFolder(@Param('id') id: number, @Body() updateFolderDto: UpdateFolderDto) {
     return this.foldersService.updateFolder(id, updateFolderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  deleteFolder(@Param('id') id: number) {
     return this.foldersService.removeFolder(id);
   }
 }
