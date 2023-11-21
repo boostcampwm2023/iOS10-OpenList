@@ -17,7 +17,20 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
-
+	
+	// MARK: - UI Components
+	enum Section {
+		case category
+	}
+	
+	typealias CategoryDataSource = UICollectionViewDiffableDataSource<Section, String>
+	typealias CategoryCellRegistration = UICollectionView.CellRegistration<CategoryCollectionViewCell, String>
+	
+	private let nextButton = ConfirmButton(title: "다음")
+	private let skipButton = UIButton()
+	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+	private var dataSource: CategoryDataSource?
+	
   // MARK: - Initializers
 	init(
 		router: MajorCategoryRoutingLogic,
@@ -36,9 +49,11 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemBackground
+		setViewAttributes()
+		setViewHierarchies()
+		setViewConstraints()
 		bind()
-		viewWillAppear.send()
+		viewLoad.send()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -69,13 +84,125 @@ extension MajorCategoryViewController: ViewBindable {
 		switch state {
 		case .error(let error):
 			handleError(error)
-		case .load(let category):
-			print(category)
+		case .load(let categories):
+			reload(categories: categories)
 		case .viewWillAppear(let title):
 			navigationItem.title = title
 		}
 	}
 
 	func handleError(_ error: OutputError) {
+	}
+}
+
+// MARK: - Helper
+private extension MajorCategoryViewController {
+	func reload(categories: [String]) {
+		guard var snapshot = dataSource?.snapshot() else {
+			return
+		}
+		snapshot.appendItems(categories, toSection: .category)
+		dataSource?.apply(snapshot, animatingDifferences: true)
+	}
+}
+
+// MARK: - UI Configure
+private extension MajorCategoryViewController {
+	func setViewAttributes() {
+		view.backgroundColor = .systemBackground
+		dataSource = setDataSource()
+		snapShot()
+		setCollectionView()
+		setSkipButton()
+		setNextButton()
+	}
+	
+	func setCollectionView() {
+		let layout: UICollectionViewCompositionalLayout = {
+			let itemSize = NSCollectionLayoutSize(
+				widthDimension: .estimated(58),
+				heightDimension: .absolute(36)
+			)
+			let item = NSCollectionLayoutItem(layoutSize: itemSize)
+					
+			let groupSize = NSCollectionLayoutSize(
+				widthDimension: .fractionalWidth(1.0),
+				heightDimension: .absolute(36)
+			)
+			let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+			group.interItemSpacing = NSCollectionLayoutSpacing.fixed(8)
+			
+			let section = NSCollectionLayoutSection(group: group)
+			section.interGroupSpacing = 10
+			return UICollectionViewCompositionalLayout(section: section)
+		}()
+		collectionView.delegate = self
+		collectionView.collectionViewLayout = layout
+		collectionView.allowsMultipleSelection = false
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+	}
+	
+	func snapShot() {
+		var snapShot = NSDiffableDataSourceSnapshot<Section, String>()
+		snapShot.appendSections([.category])
+		dataSource?.apply(snapShot)
+	}
+	
+	func setDataSource() -> CategoryDataSource {
+		let cellRegistration = CategoryCellRegistration { cell, _, itemIdentifier in
+			cell.configure(categoryItem: itemIdentifier)
+		}
+		
+		let dataSource = CategoryDataSource(
+			collectionView: collectionView,
+			cellProvider: { collectionView, indexPath, item in
+				return collectionView.dequeueConfiguredReusableCell(
+					using: cellRegistration,
+					for: indexPath,
+					item: item
+				)
+			}
+		)
+		return dataSource
+	}
+	
+	func setSkipButton() {
+		skipButton.titleLabel?.text = "건너뛰기"
+		skipButton.translatesAutoresizingMaskIntoConstraints = false
+	}
+	
+	func setNextButton() {
+		nextButton.isEnabled = false
+		nextButton.translatesAutoresizingMaskIntoConstraints = false
+	}
+	
+	func setViewHierarchies() {
+		view.addSubview(nextButton)
+		view.addSubview(skipButton)
+		view.addSubview(collectionView)
+	}
+	
+	func setViewConstraints() {
+		let safeArea = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+			nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+			nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+			nextButton.heightAnchor.constraint(equalToConstant: 56),
+			
+			skipButton.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -10),
+			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			
+			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
+			collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20)
+		])
+	}
+}
+
+extension MajorCategoryViewController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		nextButton.isEnabled = true
 	}
 }
