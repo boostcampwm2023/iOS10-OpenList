@@ -20,6 +20,10 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Add SSH key to known_hosts
+        run: |
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
       - name: Transfer app directory to the server
         run: |
           scp -r app root@223.130.130.221:/var/www/html/
