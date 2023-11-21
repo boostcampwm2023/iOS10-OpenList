@@ -79,8 +79,7 @@ extension AddCheckListTitleViewController: ViewBindable {
 		case .valid(let state):
 			setButtonIsEnabled(state)
 		case .dismiss:
-//			dismiss(animated: true)
-			print("next Button Tapped")
+			debugPrint("Dismiss")
 		}
 	}
 

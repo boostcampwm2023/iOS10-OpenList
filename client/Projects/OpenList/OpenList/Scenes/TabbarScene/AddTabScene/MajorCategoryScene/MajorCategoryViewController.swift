@@ -118,6 +118,11 @@ private extension MajorCategoryViewController {
 	}
 	
 	func setCollectionView() {
+		collectionView.register(
+			CategoryHeaderView.self,
+			forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+			withReuseIdentifier: CategoryHeaderView.identifier)
+		
 		let layout: UICollectionViewCompositionalLayout = {
 			let itemSize = NSCollectionLayoutSize(
 				widthDimension: .estimated(58),
@@ -132,8 +137,21 @@ private extension MajorCategoryViewController {
 			let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 			group.interItemSpacing = NSCollectionLayoutSpacing.fixed(8)
 			
+			let headerSize = NSCollectionLayoutSize(
+				widthDimension: .fractionalWidth(1.0),
+				heightDimension: .absolute(134)
+			)
+			
+			let header = NSCollectionLayoutBoundarySupplementaryItem(
+				layoutSize: headerSize,
+				elementKind: UICollectionView.elementKindSectionHeader,
+				alignment: .top
+			)
+			
 			let section = NSCollectionLayoutSection(group: group)
 			section.interGroupSpacing = 10
+			section.boundarySupplementaryItems = [header]
+			
 			return UICollectionViewCompositionalLayout(section: section)
 		}()
 		collectionView.delegate = self
@@ -163,9 +181,23 @@ private extension MajorCategoryViewController {
 				)
 			}
 		)
+		
+		dataSource.supplementaryViewProvider = { [weak self] (collectionView, kind, indexPath) in
+			guard self != nil, kind == UICollectionView.elementKindSectionHeader else { return nil }
+			
+			guard let headerView = collectionView.dequeueReusableSupplementaryView(
+				ofKind: kind,
+				withReuseIdentifier: CategoryHeaderView.identifier,
+				for: indexPath
+			) as? CategoryHeaderView else { return nil }
+			
+			headerView.configure(.major)
+			
+			return headerView
+		}
 		return dataSource
 	}
-	
+
 	func setSkipButton() {
 		skipButton.titleLabel?.text = "건너뛰기"
 		skipButton.translatesAutoresizingMaskIntoConstraints = false
