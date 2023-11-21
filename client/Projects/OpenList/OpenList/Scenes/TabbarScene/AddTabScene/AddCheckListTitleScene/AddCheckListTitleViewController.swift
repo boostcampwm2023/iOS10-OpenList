@@ -1,5 +1,5 @@
 //
-//  AddTabViewController.swift
+//  AddCheckListTitleViewController.swift
 //  OpenList
 //
 //  Created by Hoon on 11/15/23.
@@ -8,12 +8,13 @@
 import Combine
 import UIKit
 
-protocol AddTabRoutingLogic: AnyObject { }
+protocol AddCheckListTitleRoutingLogic: AnyObject { }
 
-final class AddTabViewController: UIViewController, ViewControllable {
+final class AddCheckListTitleViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
-  private let router: AddTabRoutingLogic
-  private let viewModel: any AddTabViewModelable
+  private let router: AddCheckListTitleRoutingLogic
+  private let viewModel: any AddCheckListTitleViewModelable
+	private let viewLoad: PassthroughSubject<Void, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
 
 	// MARK: - UI Components
@@ -25,8 +26,8 @@ final class AddTabViewController: UIViewController, ViewControllable {
 
   // MARK: - Initializers
 	init(
-		router: AddTabRoutingLogic,
-		viewModel: some AddTabViewModelable
+		router: AddCheckListTitleRoutingLogic,
+		viewModel: some AddCheckListTitleViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -51,12 +52,12 @@ final class AddTabViewController: UIViewController, ViewControllable {
 }
 
 // MARK: - Bind Methods
-extension AddTabViewController: ViewBindable {
-	typealias State = AddTabState
+extension AddCheckListTitleViewController: ViewBindable {
+	typealias State = AddCheckListTitleState
 	typealias OutputError = Error
 
 	func bind() {
-		let input = AddTabInput(
+		let input = AddCheckListTitleInput(
 			textFieldDidChange: titleTextField.valuePublisher,
 			nextButtonDidTap: nextButton.tapPublisher
 		)
@@ -86,14 +87,14 @@ extension AddTabViewController: ViewBindable {
 }
 
 // MARK: - Helper
-private extension AddTabViewController {
+private extension AddCheckListTitleViewController {
 	func setButtonIsEnabled(_ state: Bool) {
 		nextButton.isEnabled = state
 	}
 }
 
 // MARK: - SetUp
-private extension AddTabViewController {
+private extension AddCheckListTitleViewController {
 	enum Constraint {
 		static let defaultSpace = 20.0
 		static let buttonHeight = 56.0
@@ -185,7 +186,7 @@ private extension AddTabViewController {
 }
 
 // MARK: - KeyBoard Action
-private extension AddTabViewController {
+private extension AddCheckListTitleViewController {
 	func setupKeyBoardEvent() {
 		NotificationCenter.default.addObserver(
 			self,
@@ -222,7 +223,7 @@ private extension AddTabViewController {
 }
 
 // MARK: - TextField Delegate
-extension AddTabViewController: UITextFieldDelegate {
+extension AddCheckListTitleViewController: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		titleTextField.resignFirstResponder()
 		return true
