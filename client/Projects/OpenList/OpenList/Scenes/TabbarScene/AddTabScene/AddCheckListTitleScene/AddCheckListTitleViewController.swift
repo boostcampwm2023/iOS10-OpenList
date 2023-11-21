@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol AddCheckListTitleRoutingLogic: AnyObject { }
+protocol AddCheckListTitleRoutingLogic: AnyObject {
+	func routeToMajorCategoryScene(with title: String)
+}
 
 final class AddCheckListTitleViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
@@ -77,7 +79,8 @@ extension AddCheckListTitleViewController: ViewBindable {
 		case .valid(let state):
 			setButtonIsEnabled(state)
 		case .dismiss:
-			dismiss(animated: true)
+//			dismiss(animated: true)
+			print("next Button Tapped")
 		}
 	}
 
@@ -90,6 +93,11 @@ extension AddCheckListTitleViewController: ViewBindable {
 private extension AddCheckListTitleViewController {
 	func setButtonIsEnabled(_ state: Bool) {
 		nextButton.isEnabled = state
+	}
+	
+	@objc func nextButtonTapped() {
+		guard let title = titleTextField.text else { return }
+		router.routeToMajorCategoryScene(with: title)
 	}
 }
 
@@ -128,6 +136,7 @@ private extension AddCheckListTitleViewController {
 	
 	func setNextButton() {
 		nextButton.isEnabled = false
+		nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
 	}
 	
 	func setViewHierachies() {
