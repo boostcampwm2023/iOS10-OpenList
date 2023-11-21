@@ -3,11 +3,11 @@ name: Transfer App Directory via using scp command on Push or Merge to Server
 on:
   push:
     branches:
-      - '.client/release/*'
+      - 'client/release/*'
   pull_request:
     types: [closed]
     branches:
-      - '.client/release/*'
+      - 'client/release/*'
 
 jobs:
   transfer-app:
