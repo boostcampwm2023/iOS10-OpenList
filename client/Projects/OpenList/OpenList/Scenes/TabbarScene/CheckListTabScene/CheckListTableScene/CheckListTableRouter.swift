@@ -9,13 +9,20 @@ import Foundation
 
 final class CheckListTableRouter {
 	weak var viewController: ViewControllable?
-	weak var detailViewController: ViewControllable?
+	
+	private var detailCheckListViewFactory: DetailCheckListFactoryable
+	weak var detailCheckListViewControllable: ViewControllable?
+	
+	init(detailCheckListViewFactory: DetailCheckListFactoryable) {
+		self.detailCheckListViewFactory = detailCheckListViewFactory
+	}
 }
 
 // MARK: - RoutingLogic
 extension CheckListTableRouter: CheckListTableRoutingLogic {
-	func pushDetailViewController() {
-		guard let detailViewController else { return }
-		viewController?.pushViewController(detailViewController, animated: true)
+	func routeToDetailScene(with title: String) {
+		let detailCheckListViewControllable = detailCheckListViewFactory.make(with: title)
+		self.detailCheckListViewControllable = detailCheckListViewControllable
+		viewController?.pushViewController(detailCheckListViewControllable, animated: true)
 	}
 }

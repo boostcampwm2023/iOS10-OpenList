@@ -12,7 +12,7 @@ protocol DetailCheckListDependency: Dependency {}
 final class DetailCheckListComponent: Component<DetailCheckListDependency> {}
 
 protocol DetailCheckListFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with title: String) -> ViewControllable
 }
 
 final class DetailCheckListViewFactory: Factory<DetailCheckListDependency>, DetailCheckListFactoryable {
@@ -20,9 +20,9 @@ final class DetailCheckListViewFactory: Factory<DetailCheckListDependency>, Deta
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
+	func make(with title: String) -> ViewControllable {
 		let router = DetailCheckListRouter()
-		let viewModel = DetailCheckListViewModel()
+		let viewModel = DetailCheckListViewModel(title: title)
 		let viewController = DetailCheckListViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

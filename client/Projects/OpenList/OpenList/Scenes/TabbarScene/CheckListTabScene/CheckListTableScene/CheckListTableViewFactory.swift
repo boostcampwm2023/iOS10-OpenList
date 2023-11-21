@@ -34,18 +34,10 @@ final class CheckListTableViewFactory: Factory<CheckListTableDependency>, CheckL
 	
 	func make() -> ViewControllable {
 		let component = CheckListTableComponent(parent: parent)
-		let router = CheckListTableRouter()
-		let viewModel = CheckListTableViewModel(
-			persistenceUseCase: component.persistenceUseCase
-		)
-		let detailViewControllable = component.detailCheckListFactoryable.make()
-		let viewController = CheckListTableViewController(
-			router: router,
-			viewModel: viewModel,
-			detailCheckListViewControllable: detailViewControllable
-		)
+		let router = CheckListTableRouter(detailCheckListViewFactory: component.detailCheckListFactoryable)
+		let viewModel = CheckListTableViewModel(persistenceUseCase: component.persistenceUseCase)
+		let viewController = CheckListTableViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
-		router.detailViewController = detailViewControllable
 		return viewController
 	}
 }

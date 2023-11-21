@@ -29,6 +29,9 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	private let checkListView: UITableView = .init()
 	private let headerView: CheckListHeaderView = .init()
 	
+	// Event Properties
+	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	
 	// MARK: - Initializers
 	init(
 		router: DetailCheckListRoutingLogic,
@@ -58,6 +61,11 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 		setViewConstraints()
 		bind()
 	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		viewWillAppear.send(())
+	}
 }
 
 // MARK: - Bind Methods
@@ -65,9 +73,23 @@ extension DetailCheckListViewController: ViewBindable {
 	typealias State = DetailCheckListState
 	typealias OutputError = Error
 	
-	func bind() {}
+	func bind() {
+		let input = DetailCheckListInput(viewWillAppear: viewWillAppear)
+		let output = viewModel.transform(input)
+		
+		output
+			.receive(on: DispatchQueue.main)
+			.withUnretained(self)
+			.sink { (owner, output) in owner.render(output) }
+			.store(in: &cancellables)
+	}
 	
-	func render(_ state: State) {}
+	func render(_ state: State) {
+		switch state {
+		case let .title(title):
+			headerView.configure(title: title!, isLocked: true)
+		}
+	}
 	
 	func handleError(_ error: OutputError) {}
 }

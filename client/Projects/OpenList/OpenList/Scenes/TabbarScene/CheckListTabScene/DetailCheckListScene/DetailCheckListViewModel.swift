@@ -12,12 +12,31 @@ where Input == DetailCheckListInput,
   State == DetailCheckListState,
   Output == AnyPublisher<State, Never> { }
 
-final class DetailCheckListViewModel {}
+final class DetailCheckListViewModel {
+	private var title: String
+	
+	init(title: String) {
+		self.title = title
+	}
+}
 
 extension DetailCheckListViewModel: DetailCheckListViewModelable {
   func transform(_ input: Input) -> Output {
-    return Publishers.MergeMany<Output>().eraseToAnyPublisher()
+    return Publishers.MergeMany<Output>(
+			viewWillAppear(input)
+		).eraseToAnyPublisher()
   }
 }
-
-private extension DetailCheckListViewModel {}
+			
+private extension DetailCheckListViewModel {
+	func viewWillAppear(_ input: Input) -> Output {
+		return input.viewWillAppear
+			.flatMap { [weak self] () -> AnyPublisher<String?, Never> in
+				return Just(self?.title).eraseToAnyPublisher()
+			}
+			.map { title in
+				return .title(title)
+			}
+			.eraseToAnyPublisher()
+	}
+}
