@@ -120,6 +120,11 @@ export class AuthService {
     return match[1];
   }
 
+  /**
+   * 이메일과 provider를 통해 유저를 등록하고 토큰을 발급한다.
+   * @param user
+   * @returns { accessToken: string, refreshToken: string}
+   */
   async registerUser(user: registerUserDto) {
     const newUser = await this.usersService.createUser(user);
     return this.loginUser(newUser);
