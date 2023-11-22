@@ -27,9 +27,10 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	typealias CategoryCellRegistration = UICollectionView.CellRegistration<CategoryCollectionViewCell, String>
 	
 	private let nextButton = ConfirmButton(title: "다음")
-	private let skipButton = UIButton()
+	private let skipButton: UIButton = .init(type: .system)
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
+	private let gradationView: UIView = .init()
 	
   // MARK: - Initializers
 	init(
@@ -112,6 +113,7 @@ private extension MajorCategoryViewController {
 		view.backgroundColor = .systemBackground
 		dataSource = setDataSource()
 		snapShot()
+		setGradationView()
 		setCollectionView()
 		setSkipButton()
 		setNextButton()
@@ -139,7 +141,7 @@ private extension MajorCategoryViewController {
 			
 			let headerSize = NSCollectionLayoutSize(
 				widthDimension: .fractionalWidth(1.0),
-				heightDimension: .absolute(134)
+				heightDimension: .absolute(34)
 			)
 			
 			let header = NSCollectionLayoutBoundarySupplementaryItem(
@@ -208,7 +210,13 @@ private extension MajorCategoryViewController {
 		nextButton.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
+	func setGradationView() {
+		gradationView.translatesAutoresizingMaskIntoConstraints = false
+		gradationView.backgroundColor = .primary1
+	}
+	
 	func setViewHierarchies() {
+		view.addSubview(gradationView)
 		view.addSubview(nextButton)
 		view.addSubview(skipButton)
 		view.addSubview(collectionView)
@@ -217,6 +225,11 @@ private extension MajorCategoryViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
+			gradationView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+			gradationView.heightAnchor.constraint(equalToConstant: 100),
+			
 			nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
 			nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
@@ -226,7 +239,7 @@ private extension MajorCategoryViewController {
 			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			
 			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
-			collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor),
 			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20)
 		])

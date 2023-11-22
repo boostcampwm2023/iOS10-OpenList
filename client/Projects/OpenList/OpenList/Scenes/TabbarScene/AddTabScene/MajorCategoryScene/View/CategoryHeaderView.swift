@@ -17,7 +17,6 @@ final class CategoryHeaderView: UICollectionReusableView {
 		case sub = "소 카테고리"
 	}
 
-	private let gradationView: UIView = .init(frame: .zero)
 	private let categoryLabel: UILabel = .init()
 	
 	// MARK: - Initializers
@@ -40,30 +39,21 @@ final class CategoryHeaderView: UICollectionReusableView {
 
 private extension CategoryHeaderView {
 	func setViewAttributes() {
-		gradationView.backgroundColor = UIColor.primary1
-		gradationView.translatesAutoresizingMaskIntoConstraints = false
-		
 		categoryLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .large)
 		categoryLabel.textColor = .black
 		categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
 	func setViewHierachies() {
-		addSubview(gradationView)
 		addSubview(categoryLabel)
 	}
 	
 	func setViewConstraints() {
 		let safeArea = safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			gradationView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-			gradationView.heightAnchor.constraint(equalToConstant: 100),
-			
 			categoryLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
 			categoryLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-			categoryLabel.topAnchor.constraint(equalTo: gradationView.bottomAnchor),
+			categoryLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
 			categoryLabel.heightAnchor.constraint(equalToConstant: 24)
 		])
 	}
