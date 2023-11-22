@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PrivateChecklistsService } from './private-checklists.service';
-import { PrivateChecklistModel } from './entities/private-checklist.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { FoldersService } from '../folders/folders.service';
-import { UsersService } from '../users/users.service';
-import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
 import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FolderModel } from '../folders/entities/folder.entity';
-import { UserModel } from '../users/entities/user.entity';
+import { UserModel } from '../../users/entities/user.entity';
+import { UsersService } from '../../users/users.service';
+import { FolderModel } from '../entities/folder.entity';
+import { FoldersService } from '../folders.service';
+import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
 import { UpdatePrivateChecklistDto } from './dto/update-private-checklist.dto';
+import { PrivateChecklistModel } from './entities/private-checklist.entity';
+import { PrivateChecklistsService } from './private-checklists.service';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 

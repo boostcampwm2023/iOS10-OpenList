@@ -1,7 +1,7 @@
 import { Entity, ManyToOne } from 'typeorm';
-import { ChecklistModel } from '../../common/entity/checklist.entity';
-import { UserModel } from '../../users/entities/user.entity';
-import { FolderModel } from '../../folders/entities/folder.entity';
+import { ChecklistModel } from '../../../common/entity/checklist.entity';
+import { UserModel } from '../../../users/entities/user.entity';
+import { FolderModel } from '../../entities/folder.entity';
 
 @Entity()
 export class PrivateChecklistModel extends ChecklistModel {
