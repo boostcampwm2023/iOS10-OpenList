@@ -53,10 +53,16 @@ public final class RGASTree<T: Codable & Equatable>: Codable {
 	}
 	
 	convenience init(root: RGASNode<T>?, leftChild: RGASTree<T>?, rightChild: RGASTree<T>?) {
-		let a = leftChild?.size ?? 0
-		let b = rightChild?.size ?? 0
+		let leftSize = leftChild?.size ?? 0
+		let rightSize = rightChild?.size ?? 0
 		let rootSize = root?.size ?? 0
-		self.init(root: root, leftChild: leftChild, rightChild: rightChild, parent: nil, size: a + b + rootSize)
+		self.init(
+			root: root,
+			leftChild: leftChild,
+			rightChild: rightChild,
+			parent: nil,
+			size: leftSize + rightSize + rootSize
+		)
 	}
 	
 	func clone() -> RGASTree {

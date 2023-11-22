@@ -61,7 +61,14 @@ public final class RGASNode<T: Codable & Equatable>: Codable {
 	}
 	
 	convenience init(node: RGASNode, content: [T]?, offset: Int) {
-		self.init(key: node.key?.clone(), next: node.next, link: node.link, content: content, tomb: node.tomb, tree: node.tree)
+		self.init(
+			key: node.key?.clone(),
+			next: node.next,
+			link: node.link,
+			content: content,
+			tomb: node.tomb,
+			tree: node.tree)
+		
 		self.key?.offset = offset
 	}
 	
@@ -110,8 +117,10 @@ extension RGASNode {
 extension RGASNode: CustomDebugStringConvertible {
 	// toString, getContentAsString, equals, makeTombstone, getNextVisible, getLinkVisible and hashCode
 	public var debugDescription: String {
+		let key = key?.debugDescription ?? "nil"
 		let nextKey = next?.key?.debugDescription ?? "nil"
 		let linkKey = link?.key?.debugDescription ?? "nil"
+		let content = content?.debugDescription ?? "nil"
 		return "[\(key), \(nextKey), \(linkKey), \(tomb), \(content), \(size)]"
 	}
 	

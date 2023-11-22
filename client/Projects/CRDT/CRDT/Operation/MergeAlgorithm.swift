@@ -31,12 +31,12 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 		// Implement reset logic if needed.
 	}
 	
-	public func applyLocal(op: SequenceOperation<T>) throws -> CRDTMessage {
-		guard let messages = try? oldApplyLocal(op) else {
+	public func applyLocal(to sequenceOperation: SequenceOperation<T>) throws -> CRDTMessage {
+		guard let messages = try? oldApplyLocal(sequenceOperation) else {
 			return EmptyCRDTMessage()
 		}
 		
-		var crdtMessage: CRDTMessage? = nil
+		var crdtMessage: CRDTMessage?
 		for message in messages {
 			if crdtMessage == nil {
 				crdtMessage = OperationBasedOneMessage(operation: message)
@@ -72,10 +72,16 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 		try integrateRemote(message: MergeAlgorithm<T>.CRDTMessage2SequenceMessage(mess))
 	}
 	
-	static func CRDTMessage2SequenceMessage(_ message: CRDTMessage) -> any Operation {
+	static func CRDTMessage2SequenceMessage(_ message: CRDTMessage) throws -> any Operation {
 		// Convert CRDTMessage to SequenceMessage
 		// Implement conversion logic.
-		return (message as! OperationBasedOneMessage).operation
+		guard let operationBasedOneMessage = message as? OperationBasedOneMessage else {
+			throw CRDTError.downCast(
+				from: message,
+				.init(debugDescription: "\(self) message is not OperationBasedOneMessage")
+			)
+		}
+		return operationBasedOneMessage.operation
 	}
 	
 	var lookup: String {

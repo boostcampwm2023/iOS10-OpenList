@@ -96,10 +96,10 @@ extension OperationBasedMessagesBag: OperationBasedMessage {
 // MARK: - CustomDebugStringConvertible
 extension OperationBasedMessagesBag: CustomDebugStringConvertible {
 	var debugDescription: String {
-		var s = "BAG:"
-		for m in operations {
-			s += " + \(m)"
+		var string = "BAG:"
+		for operation in operations {
+			string += " + \(operation)"
 		}
-		return s
+		return string
 	}
 }

@@ -35,11 +35,11 @@ extension VectorClock {
 	///  - r: 벡터 시계의 키값
 	///  - O: 합칠 벡터 시계
 	/// - Returns: 합칠 조건이 맞으면 true, 아니면 false
-	func readyFor(replica: Int, O: VectorClock) -> Bool {
-		if self[safe: replica] != O.clock[replica]! - 1 {
+	func readyFor(replica: Int, to vectorClock: VectorClock) -> Bool {
+		if self[safe: replica] != vectorClock.clock[replica]! - 1 {
 			return false
 		}
-		for (key, value) in O.clock {
+		for (key, value) in vectorClock.clock {
 			if key != replica && self[safe: key] < value {
 				return false
 			}
@@ -53,13 +53,13 @@ extension VectorClock {
 	}
 	
 	/// 레플리카 r을 키값으로 갖는 엔트리를 1 증가시킨다.
-	func increase(_ r: Int) {
-		clock[r, default: 0] += 1
+	func increase(_ replica: Int) {
+		clock[replica, default: 0] += 1
 	}
 	
 	/// 레플리카 r을 키값으로 갖는 엔트리를 n 증가시킨다.
-	func increase(_ r: Int, n: Int) {
-		clock[r, default: 0] += n
+	func increase(_ replica: Int, to value: Int) {
+		clock[replica, default: 0] += value
 	}
 }
 
@@ -71,29 +71,25 @@ extension VectorClock: Comparable {
 	/// VectorClock > T인지 불린 값을 반환합니다.
 	/// 모든 레플리카 i에 대해 ∀i: VectorClock[i] >= T[i], ∃j: VectorClock[j] > T[j]
 	static func > (lhs: VectorClock, rhs: VectorClock) -> Bool {
-		var gt = false
+		var greaterThan = false
 		for (key, value) in rhs.clock {
 			if lhs[safe: key] < value {
 				return false
 			} else if lhs[safe: key] > value {
-				gt = true
+				greaterThan = true
 			}
 		}
-		if gt { return true }
-		for (key, value) in lhs.clock {
-			if rhs[safe: key] < value {
-				return true
-			}
+		if greaterThan { return true }
+		for (key, value) in lhs.clock where rhs[safe: key] < value {
+			return true
 		}
 		return false
 	}
 	
 	static func == (lhs: VectorClock, rhs: VectorClock) -> Bool {
 		let keys = Set(lhs.clock.keys).union(rhs.clock.keys)
-		for key in keys {
-			if lhs[safe: key] != rhs[safe: key] {
-				return false
-			}
+		for key in keys where lhs[safe: key] != rhs[safe: key] {
+			return false
 		}
 		return true
 	}

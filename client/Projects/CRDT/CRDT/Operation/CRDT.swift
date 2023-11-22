@@ -28,11 +28,11 @@ public class CRDT<T> {
 		self.init(replicaNumber: 0) // Default replica number or some initial value
 	}
 	
-	final func applyRemote(_ msg: CRDTMessage) throws {
-		try msg.execute(on: self)
+	final func applyRemote(_ message: CRDTMessage) throws {
+		try message.execute(on: self)
 	}
 	
-	func applyOneRemote(_ op: CRDTMessage) throws {
+	func applyOneRemote(_ message: CRDTMessage) throws {
 		throw CRDTError.notOverrided(.init(debugDescription: "applyOneRemote(_:) must be overridden"))
 	}
 	

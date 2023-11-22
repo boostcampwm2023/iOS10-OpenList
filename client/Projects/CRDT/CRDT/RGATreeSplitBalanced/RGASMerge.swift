@@ -15,10 +15,6 @@ public final class RGASMerge<T: Codable & Equatable>: MergeAlgorithm<T> {
 		super.init(doc: doc, siteId: siteID)
 	}
 	
-	override func setReplicaNumber(_ r: Int) {
-		super.setReplicaNumber(r)
-	}
-	
 	override func integrateRemote(message: any Operation) throws {
 		guard let rgaop = message as? (any RGASOperation) else {
 			throw CRDTError.typeIsNil(from: message, .init(debugDescription: "\(self) message is not RGASOperation Type"))
@@ -35,33 +31,40 @@ public final class RGASMerge<T: Codable & Equatable>: MergeAlgorithm<T> {
 		try rgadoc.apply(operation: rgaop)
 	}
 	
-	override func localInsert(_ so: SequenceOperation<T>) throws -> [any Operation] {
+	override func localInsert(_ sequenceOperation: SequenceOperation<T>) throws -> [any Operation] {
 		var lop = [any Operation]()
 		guard let rgadoc = getDoc() as? RGASDocument<T> else {
 			throw CRDTError.documentCastFailure(.init(debugDescription: "\(self) getDoc() is not RGADocument Type"))
 		}
 		
-		let position = rgadoc.findPosInLocalTree(position: so.position)
+		let position = rgadoc.findPosInLocalTree(position: sequenceOperation.position)
 		let s3vpos = position.node?.key
 		
 		siteVectorClock.increase(getReplicaNumber())
 		let s3vtms = RGASS3Vector(sid: getReplicaNumber(), vectorClock: siteVectorClock, offset: 0)
 		
-		let rgaop = RGASInsertion<T>(content: so.content, s3vpos: s3vpos, s3vtms: s3vtms, off1: position.offset)
+		let rgaop = RGASInsertion<T>(
+			content: sequenceOperation.content,
+			s3vpos: s3vpos,
+			s3vtms: s3vtms,
+			off1: position.offset
+		)
 		lop.append(rgaop)
 		
-		try rgadoc.insert(position: position, content: so.content, s3vtms: s3vtms)
+		try rgadoc.insert(position: position, content: sequenceOperation.content, s3vtms: s3vtms)
 		
 		return lop
 	}
 	
-	override func localDelete(_ so: SequenceOperation<T>) throws -> [any Operation] {
+	override func localDelete(_ sequenceOperation: SequenceOperation<T>) throws -> [any Operation] {
 		guard let rgadoc = getDoc() as? RGASDocument<T> else {
 			throw CRDTError.documentCastFailure(.init(debugDescription: "\(self) getDoc() is not RGADocument Type"))
 		}
 		
-		let positionStart = rgadoc.findPosInLocalTree(position: so.position + 1)
-		let positionEnd = rgadoc.findPosInLocalTree(position: so.position + so.getLengthOfADel())
+		let positionStart = rgadoc.findPosInLocalTree(position: sequenceOperation.position + 1)
+		let positionEnd = rgadoc.findPosInLocalTree(
+			position: sequenceOperation.position + sequenceOperation.getLengthOfADel()
+		)
 		
 		var lop = [any Operation]()
 		var node = positionStart.node

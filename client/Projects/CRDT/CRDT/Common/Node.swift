@@ -44,7 +44,7 @@ public struct Node: Codable {
 		if let myMessage = message as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)
 		} else if let myMessages = message as? OperationBasedMessagesBag {
-			try! container.encode(myMessages, forKey: .message)
+			try container.encode(myMessages, forKey: .message)
 		} else {
 			throw EncodingError.invalidValue(
 				message,

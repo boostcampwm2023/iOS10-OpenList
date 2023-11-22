@@ -8,10 +8,9 @@
 import Foundation
 
 /// An error that occurs during the CRDT Operation
-public enum CRDTError : Error {
-	
+public enum CRDTError: Error {
 	/// The context in which the error occurred.
-	public struct Context : Sendable {
+	public struct Context: Sendable {
 		/// A description of what went wrong, for debugging purposes.
 		public let debugDescription: String
 		
