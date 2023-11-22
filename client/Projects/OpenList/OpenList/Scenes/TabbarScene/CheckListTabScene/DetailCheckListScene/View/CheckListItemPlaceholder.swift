@@ -9,6 +9,11 @@ import UIKit
 
 protocol CheckListItemPlaceholderDelegate: AnyObject {
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath)
+	func textField(
+		_ textField: CheckListItemTextField,
+		shouldChangeCharactersIn range: NSRange,
+		replacementString string: String
+	) -> Bool
 }
 
 final class CheckListItemPlaceholder: UITableViewCell {
@@ -101,5 +106,14 @@ extension CheckListItemPlaceholder: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
+	}
+	
+	func textField(
+		_ textField: UITextField,
+		shouldChangeCharactersIn range: NSRange,
+		replacementString string: String
+	) -> Bool {
+		guard let delegate else { return true }
+		return delegate.textField(self.textField, shouldChangeCharactersIn: range, replacementString: string)
 	}
 }
