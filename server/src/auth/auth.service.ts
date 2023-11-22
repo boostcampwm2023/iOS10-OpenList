@@ -2,8 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 
 type TokenType = 'access' | 'refresh';
 @Injectable()
@@ -59,23 +57,15 @@ export class AuthService {
     return this.signToken({ ...payload }, 'access');
   }
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
-
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  /**
+   * user 정보를 통해 access,refresh 토큰을 발급 후 반환한다.
+   * @param user
+   * @returns { accessToken: string, refreshToken: string}
+   */
+  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
+    return {
+      accessToken: this.signToken(user, 'access'),
+      refreshToken: this.signToken(user, 'refresh'),
+    };
   }
 }
