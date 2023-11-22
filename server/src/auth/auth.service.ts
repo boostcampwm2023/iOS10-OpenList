@@ -52,7 +52,9 @@ export class AuthService {
   refreshAccessToken(refreshToken: string) {
     const payload = this.verifyToken(refreshToken);
     if (payload.tokenType !== 'refresh') {
-      throw new Error('access토큰 재발급은 refresh 토큰으로만 가능합니다.');
+      throw new UnauthorizedException(
+        'access토큰 재발급은 refresh 토큰으로만 가능합니다.',
+      );
     }
     return this.signToken({ ...payload }, 'access');
   }
@@ -67,5 +69,37 @@ export class AuthService {
       accessToken: this.signToken(user, 'access'),
       refreshToken: this.signToken(user, 'refresh'),
     };
+  }
+
+  /**
+   * 이메일과 provider를 통해 유저를 인증한다.
+   * 없는 이메일이면 UnauthorizedException을 발생시킨다.
+   * provider가 다르면 UnauthorizedException을 발생시키고 어떤 provider로 가입되어 있는지 알려준다.
+   * @param user
+   * @returns existUser
+   */
+  async authenticateWithEmailAndProvider(
+    user: Pick<UserModel, 'email' | 'provider'>,
+  ) {
+    const existUser = await this.usersService.findUserByEmail(user.email);
+    if (!existUser) {
+      throw new UnauthorizedException('존재하지 않는 유저입니다.');
+    }
+    if (existUser.provider !== user.provider) {
+      throw new UnauthorizedException(
+        `해당 이메일은 ${user.provider}로 가입된 유저입니다.`,
+      );
+    }
+    return existUser;
+  }
+
+  /**
+   * 이메일과 provider를 통해 유저를 인증하고 토큰을 발급한다.
+   * @param user
+   * @returns { accessToken: string, refreshToken: string}
+   */
+  async loginWithEmailAndProvider(user: Pick<UserModel, 'email' | 'provider'>) {
+    const existUser = await this.authenticateWithEmailAndProvider(user);
+    return this.loginUser(existUser);
   }
 }
