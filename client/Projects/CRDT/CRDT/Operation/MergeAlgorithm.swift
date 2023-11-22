@@ -16,8 +16,6 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 		super.init(replicaNumber: siteId)
 	}
 	
-//	init(doc: Doca
-	
 	// This method should be overridden in subclasses.
 	func integrateRemote(message: any Operation) throws {
 		fatalError("integrateRemote(message:) must be overridden")
@@ -33,7 +31,10 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 	
 	public func applyLocal(to sequenceOperation: SequenceOperation<T>) throws -> CRDTMessage {
 		guard let messages = try? oldApplyLocal(sequenceOperation) else {
-			return EmptyCRDTMessage()
+			throw CRDTError.typeIsNil(
+				from: sequenceOperation,
+				.init(debugDescription: "\(self) sequenceOperation is nil")
+			)
 		}
 		
 		var crdtMessage: CRDTMessage?
@@ -45,7 +46,13 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 			}
 		}
 		
-		return crdtMessage ?? EmptyCRDTMessage()
+		guard let crdtMessage else {
+			throw CRDTError.typeIsNil(
+				from: sequenceOperation,
+				.init(debugDescription: "\(self) sequenceOperation is nil")
+			)
+		}
+		return crdtMessage
 	}
 	
 	private func oldApplyLocal(_ opt: SequenceOperation<T>) throws -> [any Operation]? {

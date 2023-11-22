@@ -41,9 +41,9 @@ struct RGASInsertion<T: Codable>: RGASOperation {
 
 extension RGASInsertion: CustomDebugStringConvertible {
 	var debugDescription: String {
-		let s3va = s3vpos?.debugDescription
+		let s3va = s3vpos?.debugDescription ?? "nil"
 		let s3vb = s3vtms.debugDescription
 		let contentdebugDescription = type == .delete ? "del(" : "ins('\(content)',"
-		return "\(contentdebugDescription), sv3pos: \(s3va == nil ? "nil" : s3va!), sv3tms: \(s3vb), off1: \(offset1)"
+		return "\(contentdebugDescription), sv3pos: \(s3va), sv3tms: \(s3vb), off1: \(offset1)"
 	}
 }

@@ -38,6 +38,35 @@ private extension OperationBasedViewController {
 		}
 	}
 	
+	func insertOperation(range: NSRange, content: [String]) throws {
+		let sequenceOperation = SequenceOperation<String>(
+			type: .insert,
+			position: range.location,
+			argument: 0,
+			content: content
+		)
+		let message = try merge0.applyLocal(to: sequenceOperation)
+		try sendMessage(to: message)
+	}
+	
+	func deleteOperation(range: NSRange, content: [String]) throws {
+		let sequenceOperation = SequenceOperation<String>(
+			type: .delete,
+			position: range.location,
+			argument: 1,
+			content: content
+		)
+		let message = try merge0.applyLocal(to: sequenceOperation)
+		try sendMessage(to: message)
+	}
+	
+	func sendMessage(to message: CRDTMessage) throws {
+		let node = Node(id: deviceId, message: message)
+		let data = try encoder.encode(node)
+		printDocument(document: rgaSDocument)
+		WebSocket.shared.send(data: data)
+	}
+	
 	func apply<T>(
 		rgaDocument: RGASDocument<T>,
 		sequenceOperation: SequenceOperation<String>,
@@ -115,49 +144,19 @@ extension OperationBasedViewController: UITextFieldDelegate {
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
-		let stringArray = string.map { String($0) }
-		switch range.length {
-		case 0:
-			let sequenceOperation = SequenceOperation<String>(
-				type: .insert,
-				position: range.location,
-				argument: 0,
-				content: stringArray
-			)
-			let message = try? merge0.applyLocal(to: sequenceOperation)
-			let node = Node(id: deviceId, message: message!)
-			guard let data = try? encoder.encode(node) else {
-				break
+		let content = string.map { String($0) }
+		
+		do {
+			switch range.length {
+			case 0:
+				try insertOperation(range: range, content: content)
+			case 1:
+				try deleteOperation(range: range, content: content)
+			default:
+				try deleteOperation(range: range, content: content)
 			}
-			printDocument(document: rgaSDocument)
-			WebSocket.shared.send(data: data)
-		case 1:
-			let sequenceOperation = SequenceOperation<String>(
-				type: .delete,
-				position: range.location,
-				argument: 1,
-				content: stringArray
-			)
-			let message = try? merge0.applyLocal(to: sequenceOperation)
-			let node = Node(id: deviceId, message: message!)
-			guard let data = try? encoder.encode(node) else {
-				break
-			}
-			printDocument(document: rgaSDocument)
-			WebSocket.shared.send(data: data)
-		default:
-			let sequenceOperation = SequenceOperation<String>(
-				type: .delete,
-				position: range.location,
-				argument: range.length,
-				content: stringArray
-			)
-			let message = try? merge0.applyLocal(to: sequenceOperation)
-			let node = Node(id: deviceId, message: message!)
-			guard let data = try? encoder.encode(node) else {
-				break
-			}
-			WebSocket.shared.send(data: data)
+		} catch {
+			print(error)
 		}
 		return true
 	}
