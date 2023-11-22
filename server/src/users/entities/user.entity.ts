@@ -4,6 +4,7 @@ import { FolderModel } from '../../folders/entities/folder.entity';
 import { PrivateChecklistModel } from '../../folders/private-checklists/entities/private-checklist.entity';
 import { SharedChecklistModel } from '../../shared-checklists/entities/shared-checklist.entity';
 
+export type ProviderType = 'APPLE' | 'GOOGLE';
 @Entity()
 export class UserModel extends BaseModel {
   @Column({ unique: true })
@@ -13,8 +14,8 @@ export class UserModel extends BaseModel {
   @Generated('uuid') // 임시로 uuid를 생성해줌(원래는 provider의 고유 id를 받아와야함)
   providerId: string;
 
-  @Column({ default: 'APPLE' })
-  provider: string;
+  @Column()
+  provider: ProviderType;
 
   @Column()
   nickname: string;

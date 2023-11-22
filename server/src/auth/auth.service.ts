@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { loginUserDto } from './dto/login-user.dto';
+import { registerUserDto } from './dto/register-user.dto';
 
 type TokenType = 'access' | 'refresh';
 @Injectable()
@@ -79,9 +81,7 @@ export class AuthService {
    * @param user
    * @returns existUser
    */
-  async authenticateWithEmailAndProvider(
-    user: Pick<UserModel, 'email' | 'provider'>,
-  ) {
+  async authenticateWithEmailAndProvider(user: loginUserDto) {
     const existUser = await this.usersService.findUserByEmail(user.email);
     if (!existUser) {
       throw new UnauthorizedException('존재하지 않는 유저입니다.');
@@ -99,7 +99,7 @@ export class AuthService {
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */
-  async loginWithEmailAndProvider(user: Pick<UserModel, 'email' | 'provider'>) {
+  async loginWithEmailAndProvider(user: loginUserDto) {
     const existUser = await this.authenticateWithEmailAndProvider(user);
     return this.loginUser(existUser);
   }
@@ -118,5 +118,10 @@ export class AuthService {
     }
     // 매치된 그룹 중 첫 번째(토큰 부분)를 반환
     return match[1];
+  }
+
+  async registerUser(user: registerUserDto) {
+    const newUser = await this.usersService.createUser(user);
+    return this.loginUser(newUser);
   }
 }
