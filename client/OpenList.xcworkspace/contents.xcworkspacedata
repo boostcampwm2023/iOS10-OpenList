@@ -5,6 +5,9 @@
       location = "group:Projects"
       name = "Projects">
       <FileRef
+         location = "group:CRDT/CRDT.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:CustomNetwork/CustomNetwork.xcodeproj">
       </FileRef>
       <FileRef
