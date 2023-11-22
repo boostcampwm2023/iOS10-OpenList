@@ -19,6 +19,7 @@ struct Position<T: Codable & Equatable> {
 
 extension Position: CustomDebugStringConvertible {
 	var debugDescription: String {
+		let node = node?.debugDescription ?? "nil"
 		return "[\(node), \(offset)]"
 	}
 }

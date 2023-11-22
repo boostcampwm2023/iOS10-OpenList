@@ -49,7 +49,7 @@ extension RGASS3Vector: Hashable {
 }
 
 extension RGASS3Vector: Comparable {
-	static func <(lhs: RGASS3Vector, rhs: RGASS3Vector) -> Bool {
+	static func < (lhs: RGASS3Vector, rhs: RGASS3Vector) -> Bool {
 		if lhs.sum != rhs.sum {
 			return lhs.sum < rhs.sum
 		} else {

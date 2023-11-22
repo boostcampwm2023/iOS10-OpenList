@@ -9,10 +9,6 @@ import Foundation
 
 struct OperationBasedOneMessage {
 	var operation: any Operation
-	
-	init(operation: any Operation) {
-		self.operation = operation
-	}
 }
 
 // MARK: - Encodable

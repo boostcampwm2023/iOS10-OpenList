@@ -34,23 +34,28 @@ private extension OperationBasedViewController {
 			DispatchQueue.main.async { [weak self] in
 				self?.inputTextField.text = self?.rgaSDocument.view()
 			}
-			printDocument(doc: rgaSDocument)
+			printDocument(document: rgaSDocument)
 		}
 	}
 	
-	func apply<T>(rgadoc: RGASDocument<T>, so: SequenceOperation<String>, merge: RGASMerge<T>, shouldPrint: Bool) throws {
-		let message = try merge0.applyLocal(op: so)
+	func apply<T>(
+		rgaDocument: RGASDocument<T>,
+		sequenceOperation: SequenceOperation<String>,
+		merge: RGASMerge<T>,
+		shouldPrint: Bool
+	) throws {
+		let message = try merge0.applyLocal(to: sequenceOperation)
 		debugPrint(message)
 		if shouldPrint {
-			printDocument(doc: rgadoc)
+			printDocument(document: rgaDocument)
 		}
 	}
 	
-	func printDocument<T>(doc: RGASDocument<T>) {
-		print("ListedChain with sep: \(doc.viewWithSeparator())")
-		print("Size of doc: \(doc.viewLength())")
-		print("ListedChain view: \(doc.view())")
-		print(doc.treeViewWithSeparator(tree: doc.root, depth: 0))
+	func printDocument<T>(document: RGASDocument<T>) {
+		print("ListedChain with sep: \(document.viewWithSeparator())")
+		print("Size of doc: \(document.viewLength())")
+		print("ListedChain view: \(document.view())")
+		print(document.treeViewWithSeparator(tree: document.root, depth: 0))
 		print("\n\n")
 	}
 }
@@ -93,7 +98,7 @@ private extension OperationBasedViewController {
 		WebSocket.shared.delegate = self
 		try? WebSocket.shared.openWebSocket()
 		WebSocket.shared.send(message: deviceId)
-		WebSocket.shared.receive(onReceive: { [weak self] (jsonString, data) in
+		WebSocket.shared.receive(onReceive: { [weak self] (_, data) in
 			guard
 				let data,
 				let response = try? self?.decoder.decode(Node.self, from: data)
@@ -113,26 +118,41 @@ extension OperationBasedViewController: UITextFieldDelegate {
 		let stringArray = string.map { String($0) }
 		switch range.length {
 		case 0:
-			let so = SequenceOperation<String>(type: .insert, position: range.location, argument: 0, content: stringArray)
-			let message = try? merge0.applyLocal(op: so)
+			let sequenceOperation = SequenceOperation<String>(
+				type: .insert,
+				position: range.location,
+				argument: 0,
+				content: stringArray
+			)
+			let message = try? merge0.applyLocal(to: sequenceOperation)
 			let node = Node(id: deviceId, message: message!)
 			guard let data = try? encoder.encode(node) else {
 				break
 			}
-			printDocument(doc: rgaSDocument)
+			printDocument(document: rgaSDocument)
 			WebSocket.shared.send(data: data)
 		case 1:
-			let so = SequenceOperation<String>(type: .delete, position: range.location, argument: 1, content: stringArray)
-			let message = try? merge0.applyLocal(op: so)
+			let sequenceOperation = SequenceOperation<String>(
+				type: .delete,
+				position: range.location,
+				argument: 1,
+				content: stringArray
+			)
+			let message = try? merge0.applyLocal(to: sequenceOperation)
 			let node = Node(id: deviceId, message: message!)
 			guard let data = try? encoder.encode(node) else {
 				break
 			}
-			printDocument(doc: rgaSDocument)
+			printDocument(document: rgaSDocument)
 			WebSocket.shared.send(data: data)
 		default:
-			let so = SequenceOperation<String>(type: .delete, position: range.location, argument: range.length, content: stringArray)
-			let message = try? merge0.applyLocal(op: so)
+			let sequenceOperation = SequenceOperation<String>(
+				type: .delete,
+				position: range.location,
+				argument: range.length,
+				content: stringArray
+			)
+			let message = try? merge0.applyLocal(to: sequenceOperation)
 			let node = Node(id: deviceId, message: message!)
 			guard let data = try? encoder.encode(node) else {
 				break

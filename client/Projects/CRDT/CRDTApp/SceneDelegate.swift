@@ -19,7 +19,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		self.window = UIWindow(windowScene: windowScene)
 		self.window?.makeKeyAndVisible()
 		
-		//		let rootViewController = StateBasedViewContoller()
 		let rootViewController = OperationBasedViewController()
 		self.window?.rootViewController = rootViewController
 	}

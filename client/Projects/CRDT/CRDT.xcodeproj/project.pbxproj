@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D47868E2B0E3D3C00A16F22 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AD92B0E071A007EDD45 /* CRDT.framework */; };
+		4D47868F2B0E3D3C00A16F22 /* CRDT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AD92B0E071A007EDD45 /* CRDT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5F833ADD2B0E071A007EDD45 /* CRDT.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F833ADC2B0E071A007EDD45 /* CRDT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F833AEA2B0E0739007EDD45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833AE92B0E0739007EDD45 /* AppDelegate.swift */; };
 		5F833AEC2B0E0739007EDD45 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833AEB2B0E0739007EDD45 /* SceneDelegate.swift */; };
@@ -37,7 +39,6 @@
 		5F833B3B2B0E08C4007EDD45 /* RGASDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833B272B0E08C4007EDD45 /* RGASDocument.swift */; };
 		5F833B3C2B0E08C4007EDD45 /* RGASNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833B282B0E08C4007EDD45 /* RGASNode.swift */; };
 		5F833B3D2B0E08C4007EDD45 /* RGASTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833B292B0E08C4007EDD45 /* RGASTree.swift */; };
-		5F833B3F2B0E0A07007EDD45 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AD92B0E071A007EDD45 /* CRDT.framework */; };
 		5F833B432B0E0B7C007EDD45 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833B0A2B0E0848007EDD45 /* WebSocket.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,20 @@
 			remoteInfo = CRDT;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4D4786902B0E3D3C00A16F22 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4D47868F2B0E3D3C00A16F22 /* CRDT.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5F833AD92B0E071A007EDD45 /* CRDT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CRDT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,7 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F833B3F2B0E0A07007EDD45 /* CRDT.framework in Frameworks */,
+				4D47868E2B0E3D3C00A16F22 /* CRDT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +262,7 @@
 				5F833B442B0E0C52007EDD45 /* SwiftLint */,
 				5F833AE42B0E0739007EDD45 /* Frameworks */,
 				5F833AE52B0E0739007EDD45 /* Resources */,
+				4D4786902B0E3D3C00A16F22 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

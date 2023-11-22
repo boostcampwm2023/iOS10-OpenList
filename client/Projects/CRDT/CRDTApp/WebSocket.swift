@@ -15,7 +15,7 @@ final class WebSocket: NSObject {
 	static let shared = WebSocket()
 	
 	var url: URL?
-	var onReceiveClosure: ((String?, Data?) -> ())?
+	var onReceiveClosure: ((String?, Data?) -> Void)?
 	weak var delegate: URLSessionWebSocketDelegate?
 	
 	private var webSocketTask: URLSessionWebSocketTask? {
@@ -73,7 +73,7 @@ final class WebSocket: NSObject {
 		self.delegate = nil
 	}
 	
-	func receive(onReceive: @escaping (String?, Data?) -> ()) {
+	func receive(onReceive: @escaping (String?, Data?) -> Void) {
 		self.onReceiveClosure = onReceive
 		self.webSocketTask?.receive(completionHandler: { [weak self] result in
 			switch result {
