@@ -79,7 +79,7 @@ public final class RGASMerge<T: Codable & Equatable>: MergeAlgorithm<T> {
 			}
 			
 			let rgaop = RGASDeletion<T>(s3vpos: nodeKey, off1: offsetStart, off2: offsetEnd)
-			rgadoc.delete(node: node!, offset1: offsetStart, offset2: offsetEnd)
+			try rgadoc.delete(node: node!, offset1: offsetStart, offset2: offsetEnd)
 			lop.append(rgaop)
 			node = node?.getNextVisible()
 		}
@@ -90,7 +90,7 @@ public final class RGASMerge<T: Codable & Equatable>: MergeAlgorithm<T> {
 			}
 			
 			let rgaop = RGASDeletion<T>(s3vpos: targetKey, off1: 0, off2: offsetEnd)
-			rgadoc.delete(node: target, offset1: 0, offset2: offsetEnd)
+			try rgadoc.delete(node: target, offset1: 0, offset2: offsetEnd)
 			lop.append(rgaop)
 		}
 		

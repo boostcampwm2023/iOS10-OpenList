@@ -96,7 +96,7 @@ extension RGASTree {
 		self.leftChild = tree
 		
 		if leftChild != nil {
-			self.leftChild!.setparent(self)
+			self.leftChild?.setparent(self)
 		}
 	}
 	
@@ -108,7 +108,7 @@ extension RGASTree {
 		self.rightChild = tree
 		
 		if rightChild != nil {
-			self.rightChild!.setparent(self)
+			self.rightChild?.setparent(self)
 		}
 	}
 	

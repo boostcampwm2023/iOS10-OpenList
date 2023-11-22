@@ -126,31 +126,33 @@ extension RGASDocument {
 	
 	func findPosInLocalTree(position: Int) -> Position<T> {
 		guard
-			let tree = root,
+			var tree = root,
 			position > 0 else {
 			return Position(node: head, offset: 0)
 		}
-		
-		var currentTree = tree
 		var localPosition = position
 		
 		while
-			!(currentTree.getLeftSize() < localPosition &&
-			localPosition <= currentTree.getLeftSize() + currentTree.getRootSize())
+			!(tree.getLeftSize() < localPosition &&
+				localPosition <= tree.getLeftSize() + tree.getRootSize())
 		{
-			if localPosition <= currentTree.getLeftSize() {
-				guard let leftChild = currentTree.leftChild else { break }
-				currentTree = leftChild
+			if localPosition <= tree.getLeftSize() {
+				guard let leftChild = tree.leftChild else { break }
+				tree = leftChild
 			} else {
-				localPosition -= currentTree.getLeftSize() + currentTree.getRootSize()
-				guard let rightChild = currentTree.rightChild else { break }
-				currentTree = rightChild
+				localPosition -= tree.getLeftSize() + tree.getRootSize()
+				guard let rightChild = tree.rightChild else { break }
+				tree = rightChild
 			}
 		}
 		
+		guard let rootOffset = tree.root?.offset else {
+			return Position(node: head, offset: 0)
+		}
+		
 		return Position(
-			node: currentTree.root,
-			offset: localPosition + currentTree.root!.offset - currentTree.getLeftSize()
+			node: tree.root,
+			offset: localPosition + rootOffset - tree.getLeftSize()
 		)
 	}
 	
@@ -264,20 +266,34 @@ extension RGASDocument {
 		let tree = nodePos?.tree
 		let newTree = RGASTree(root: newnd, leftChild: nil, rightChild: nil)
 		
-		if root == nil {
+		guard let root else {
 			root = newTree
-		} else if nodePos == nil {
-			findMostRight(tree: root!, increment: 0).setrightChild(newTree)
-		} else if tree!.getleftChild() == nil {
-			tree!.setleftChild(newTree)
-		} else {
-			findMostRight(tree: tree!.getleftChild()!, increment: 0).setrightChild(newTree)
+			insertTree(to: newTree, size: newnd.size)
+			return
 		}
 		
-		var currentTree = newTree
+		guard nodePos != nil else {
+			findMostRight(tree: root, increment: 0).setrightChild(newTree)
+			insertTree(to: newTree, size: newnd.size)
+			return
+		}
+		
+		guard let treeLeftChild = tree?.getleftChild() else {
+			tree?.setleftChild(newTree)
+			insertTree(to: newTree, size: newnd.size)
+			return
+		}
+		
+		findMostRight(tree: treeLeftChild, increment: 0).setrightChild(newTree)
+		
+		insertTree(to: newTree, size: newnd.size)
+	}
+	
+	func insertTree(to tree: RGASTree<T>, size: Int) {
+		var currentTree = tree
 		while let parent = currentTree.getparent() {
 			currentTree = parent
-			currentTree.setSize(currentTree.size + newnd.size)
+			currentTree.setSize(currentTree.size + size)
 		}
 		nodeNumberInTree += 1
 	}
@@ -292,42 +308,61 @@ extension RGASDocument {
 				.init(debugDescription: "\(self) rgaOperation is not RGASDeletion")
 			)
 		}
-		remove(operation: deletionOperation)
+		try remove(operation: deletionOperation)
 	}
 	
-	func remove(operation: RGASDeletion<T>) {
-		var node = findGoodNode(s3vpos: operation.s3vpos, offset: operation.offset1)
-		
-		if operation.offset1 > node!.offset {
-			node = remoteSplit(node: node!, offsetAbs: operation.offset1)
+	func remove(operation: RGASDeletion<T>) throws {
+		guard var node = findGoodNode(s3vpos: operation.s3vpos, offset: operation.offset1) else {
+			throw CRDTError.typeIsNil(
+				from: operation,
+				.init(debugDescription: "\(self) find not node")
+			)
 		}
 		
-		while var node = node, node.offset + node.size < operation.offset2 {
+		if operation.offset1 > node.offset {
+			guard let spliteNode = remoteSplit(node: node, offsetAbs: operation.offset1) else {
+				throw CRDTError.typeIsNil(
+					from: node,
+					.init(debugDescription: "\(self) remote split it fail")
+				)
+			}
+			node = spliteNode
+		}
+		
+		while node.offset + node.size < operation.offset2 {
 			if node.isVisible {
 				size -= node.size
 				tombstoneNumber += 1
 				deleteInLocalTree(node: node)
 				node.makeTombstone()
 			}
-			if node.link == nil { return }
-			node = node.link!
+			guard let linkNode = node.link else {
+				throw CRDTError.typeIsNil(
+					from: node.link,
+					.init(debugDescription: "\(self) node link is nil")
+				)
+			}
+			node = linkNode
 		}
 		
-		if let node = node, operation.offset2 > node.offset {
-			remoteSplit(node: node, offsetAbs: operation.offset2)
-			if node.isVisible {
-				size -= node.size
-				deleteInLocalTree(node: node)
-				tombstoneNumber += 1
-				node.makeTombstone()
-			}
+		guard operation.offset2 > node.offset else {
+			return
 		}
+		remoteSplit(node: node, offsetAbs: operation.offset2)
+		guard node.isVisible else { return }
+		size -= node.size
+		deleteInLocalTree(node: node)
+		tombstoneNumber += 1
+		node.makeTombstone()
 	}
 	
-	func delete(node: RGASNode<T>, offset1: Int, offset2: Int) {
+	func delete(node: RGASNode<T>, offset1: Int, offset2: Int) throws {
 		var currentNode = node
-		if offset1 > currentNode.offset {
-			currentNode = remoteSplit(node: currentNode, offsetAbs: offset1)!
+		if
+			offset1 > currentNode.offset,
+			let splitNode = remoteSplit(node: currentNode, offsetAbs: offset1)
+		{
+			currentNode = splitNode
 		}
 		if offset2 > currentNode.offset {
 			remoteSplit(node: currentNode, offsetAbs: offset2)
@@ -426,7 +461,10 @@ extension RGASDocument {
 	func handleConcurrence(node: RGASNode<T>, s3v: RGASS3Vector) -> RGASNode<T> {
 		var currentNode = node
 		while let nextNode = currentNode.next {
-			if s3v > nextNode.key! {
+			if
+				let key = nextNode.key,
+				s3v > key
+			{
 				break
 			}
 			currentNode = nextNode
@@ -441,8 +479,8 @@ extension RGASDocument {
 		// TODO: 크기가 너무 커서 balancing 이 안일어남 테스트 결과 밸런스는 잘 되는 듯
 		if (
 			true
-//			nodeNumberInTree > 3000 &&
-//			nbIns > Int(Double(nodeNumberInTree) / (0.14 * log(Double(nodeNumberInTree)) / log(2)))
+			//			nodeNumberInTree > 3000 &&
+			//			nbIns > Int(Double(nodeNumberInTree) / (0.14 * log(Double(nodeNumberInTree)) / log(2)))
 		) {
 			nbIns = 0
 			let content = createNodeList(tree: root)
