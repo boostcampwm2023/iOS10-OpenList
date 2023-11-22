@@ -56,7 +56,8 @@ export class AuthService {
         'access토큰 재발급은 refresh 토큰으로만 가능합니다.',
       );
     }
-    return this.signToken({ ...payload }, 'access');
+    const accessToken = this.signToken({ ...payload }, 'access');
+    return { accessToken };
   }
 
   /**
