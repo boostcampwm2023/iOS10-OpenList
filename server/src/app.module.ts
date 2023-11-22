@@ -11,6 +11,7 @@ import { ChecklistsModule } from './folders/private-checklists/private-checklist
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     FoldersModule,
     ChecklistsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
