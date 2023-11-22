@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -29,6 +29,34 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
       expiresIn: tokenType === 'access' ? 300 : 3600,
     });
+  }
+
+  /**
+   * 토근을 검증한다. 검증에 실패하면 UnauthorizedException을 발생시킨다.
+   * @param token
+   * @returns 토근에 담긴 정보
+   */
+  verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch (error) {
+      throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다.');
+    }
+  }
+
+  /**
+   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * @param refreshToken
+   * @returns 새로 발급된 access 토큰
+   */
+  refreshAccessToken(refreshToken: string) {
+    const payload = this.verifyToken(refreshToken);
+    if (payload.tokenType !== 'refresh') {
+      throw new Error('access토큰 재발급은 refresh 토큰으로만 가능합니다.');
+    }
+    return this.signToken({ ...payload }, 'access');
   }
 
   create(createAuthDto: CreateAuthDto) {
