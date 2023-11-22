@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginUserDto } from './dto/login-user.dto';
 
@@ -14,5 +14,16 @@ export class AuthController {
   @Post('login')
   async postLogin(@Body() user: loginUserDto) {
     return await this.authService.loginWithEmailAndProvider(user);
+  }
+
+  /**
+   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * @param rawToken
+   * @returns {accessToken}
+   */
+  @Post('token/access')
+  postAccessToken(@Headers('authorization') rawToken: string) {
+    const token = this.authService.extractTokenFromHeader(rawToken);
+    return this.authService.refreshAccessToken(token);
   }
 }

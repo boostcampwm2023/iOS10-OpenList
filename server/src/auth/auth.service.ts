@@ -102,4 +102,20 @@ export class AuthService {
     const existUser = await this.authenticateWithEmailAndProvider(user);
     return this.loginUser(existUser);
   }
+
+  /**
+   * 헤더에서 토큰을 추출한다.
+   * @param header
+   * @returns 토큰
+   */
+  extractTokenFromHeader(header: string) {
+    // 정규식을 사용하여 'Bearer' 토큰 추출
+    const bearerRegex = /^Bearer (.+)$/i;
+    const match = header.match(bearerRegex);
+    if (!match) {
+      throw new UnauthorizedException('토큰이 올바르지 않습니다.');
+    }
+    // 매치된 그룹 중 첫 번째(토큰 부분)를 반환
+    return match[1];
+  }
 }
