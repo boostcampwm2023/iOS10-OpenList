@@ -1,8 +1,8 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, Generated, ManyToMany, OneToMany } from 'typeorm';
-import { PrivateChecklistModel } from '../../checklists/entities/private-checklist.entity';
-import { SharedChecklistModel } from '../../checklists/entities/shared-checklist.entity';
 import { FolderModel } from '../../folders/entities/folder.entity';
+import { PrivateChecklistModel } from '../../folders/private-checklists/entities/private-checklist.entity';
+import { SharedChecklistModel } from '../../shared-checklists/entities/shared-checklist.entity';
 
 @Entity()
 export class UserModel extends BaseModel {

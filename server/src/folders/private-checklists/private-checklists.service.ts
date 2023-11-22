@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UsersService } from '../../users/users.service';
+import { FoldersService } from '../folders.service';
 import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
 import { UpdatePrivateChecklistDto } from './dto/update-private-checklist.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PrivateChecklistModel } from './entities/private-checklist.entity';
-import { Repository } from 'typeorm';
-import { FoldersService } from '../folders/folders.service';
-import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PrivateChecklistsService {
