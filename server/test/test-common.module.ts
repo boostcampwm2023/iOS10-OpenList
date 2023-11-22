@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModel } from 'src/users/entities/user.entity';
 import { FolderModel } from '../src/folders/entities/folder.entity';
-import { PrivateChecklistModel } from '../src/checklists/entities/private-checklist.entity';
-import { SharedChecklistModel } from '../src/checklists/entities/shared-checklist.entity';
+import { PrivateChecklistModel } from '../src/private-checklists/entities/private-checklist.entity';
+import { SharedChecklistModel } from '../src/shared-checklists/entities/shared-checklist.entity';
 import { UsersModule } from '../src/users/users.module';
 import { FoldersModule } from '../src/folders/folders.module';
 

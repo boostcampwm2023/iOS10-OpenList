@@ -8,9 +8,9 @@ import { UsersModule } from './users/users.module';
 import { UserModel } from './users/entities/user.entity';
 import { FoldersModule } from './folders/folders.module';
 import { FolderModel } from './folders/entities/folder.entity';
-import { ChecklistsModule } from './checklists/checklists.module';
-import { PrivateChecklistModel } from './checklists/entities/private-checklist.entity';
-import { SharedChecklistModel } from './checklists/entities/shared-checklist.entity';
+import { ChecklistsModule } from './private-checklists/private-checklists.module';
+import { PrivateChecklistModel } from './private-checklists/entities/private-checklist.entity';
+import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 
 @Module({
   imports: [
