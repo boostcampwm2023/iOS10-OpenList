@@ -1,4 +1,4 @@
-import { utilities, WinstonModule } from 'nest-winston';
+import { utilities } from 'nest-winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 
@@ -18,7 +18,7 @@ const dailyOptions = (level: string) => {
 
 // rfc5424를 따르는 winston만의 log level
 // error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
-export const winstonLogger = WinstonModule.createLogger({
+export const winstonConfig = {
   transports: [
     new winston.transports.Console({
       level: env === 'production' ? 'http' : 'silly',
@@ -28,8 +28,9 @@ export const winstonLogger = WinstonModule.createLogger({
           ? // production 환경은 자원을 아끼기 위해 simple 포맷 사용
             winston.format.simple()
           : winston.format.combine(
+              winston.format.colorize(),
               winston.format.timestamp(),
-              utilities.format.nestLike('프로젝트이름', {
+              utilities.format.nestLike('OpenList', {
                 prettyPrint: true, // nest에서 제공하는 옵션. 로그 가독성을 높여줌
               }),
             ),
@@ -40,4 +41,4 @@ export const winstonLogger = WinstonModule.createLogger({
     new winstonDaily(dailyOptions('warn')),
     new winstonDaily(dailyOptions('error')),
   ],
-});
+};

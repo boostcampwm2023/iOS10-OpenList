@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -11,6 +16,9 @@ import { ChecklistsModule } from './folders/private-checklists/private-checklist
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { winstonConfig } from './utils/winston.config';
+import { WinstonModule } from 'nest-winston';
 
 @Module({
   imports: [
@@ -33,6 +41,7 @@ import { UsersModule } from './users/users.module';
       ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
+    WinstonModule.forRoot(winstonConfig),
     CommonModule,
     UsersModule,
     FoldersModule,
@@ -41,4 +50,10 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
