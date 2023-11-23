@@ -9,6 +9,7 @@ import Combine
 
 struct WithDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
+	let socketConnet: PassthroughSubject<Void, Never>
 	let insert: PassthroughSubject<Range<String.Index>, Never>
 	let delete: PassthroughSubject<Range<String.Index>, Never>
 }
@@ -16,4 +17,5 @@ struct WithDetailCheckListInput {
 enum WithDetailCheckListState {
 	case title(String?)
 	case update(String)
+	case socketConnet(Bool)
 }
