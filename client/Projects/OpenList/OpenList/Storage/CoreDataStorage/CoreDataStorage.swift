@@ -13,6 +13,7 @@ enum CoreDataStorageError: Error {
 	case deleteError(Error)
 	case selfCapturingError
 	case noData
+	case unwrapError
 }
 
 final class CoreDataStorage {

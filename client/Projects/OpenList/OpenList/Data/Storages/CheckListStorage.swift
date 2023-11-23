@@ -9,8 +9,6 @@ import CoreData
 import Foundation
 
 protocol CheckListStorage {
-	@discardableResult
-	func saveCheckList(id: UUID, title: String) async throws -> LocalStorageCheckListResponseDTO
-	func fetchCheckList(id: NSManagedObjectID) async throws -> LocalStorageCheckListResponseDTO
+	func saveCheckList(id: UUID, title: String) async throws
 	func fetchAllCheckList() async throws -> [LocalStorageCheckListResponseDTO]
 }

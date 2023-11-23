@@ -29,9 +29,9 @@ extension DefaultCheckListRepository: CheckListRepository {
 		let result = try await checkListStorage.fetchAllCheckList()
 		return result.map {
 			CheckListTableItem(
-				id: $0.id,
+				id: $0.checklistId,
 				title: $0.title,
-				achievementRate: 0.0
+				achievementRate: Double($0.progress)
 			)
 		}
 	}

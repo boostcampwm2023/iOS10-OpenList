@@ -8,7 +8,17 @@
 import CoreData
 
 struct LocalStorageCheckListResponseDTO {
-	let coreDataID: NSManagedObjectID
-	let id: UUID
+	let checklistId: UUID
+	let createdAt: Date
+	let updatedAt: Date
 	let title: String
+	let progress: Int
+	var items: [LocalStorageCheckListItemResponseDTO]
+}
+
+struct LocalStorageCheckListItemResponseDTO {
+	let itemId: UUID
+	let content: String
+	let createdAt: Date
+	let isChecked: Bool
 }

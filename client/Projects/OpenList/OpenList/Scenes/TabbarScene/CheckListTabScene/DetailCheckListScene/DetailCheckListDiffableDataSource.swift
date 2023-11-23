@@ -9,7 +9,8 @@ import UIKit
 
 // 도메인 모델이 나오면 변경 예정
 struct CheckListItem: Hashable, Identifiable {
-	let id = UUID()
+	var id: UUID { itemId	}
+	let itemId = UUID()
 	var title: String
 	var isChecked: Bool
 }
