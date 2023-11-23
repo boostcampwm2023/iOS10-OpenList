@@ -5,15 +5,22 @@
 //  Created by 김영균 on 11/9/23.
 //
 
+import Combine
 import Foundation
 
-protocol TabBarDependency: Dependency { }
+protocol TabBarDependency: Dependency {
+	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
+}
 
 final class TabBarComponent:
 	Component<TabBarDependency>,
 	CheckListTableDependency,
 	AddTabDependency,
 	RecommendTabDependency {
+	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
+		return parent.deepLinkSubject
+	}
+	
 	var validCheckUseCase: ValidCheckUseCase {
 		return DefaultValidCheckUseCase()
 	}
