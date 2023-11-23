@@ -6,21 +6,21 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { FolderModel } from './folders/entities/folder.entity';
 import { FoldersModule } from './folders/folders.module';
 import { PrivateChecklistModel } from './folders/private-checklists/entities/private-checklist.entity';
 import { ChecklistsModule } from './folders/private-checklists/private-checklists.module';
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
+import { SharedChecklistsModule } from './shared-checklists/shared-checklists.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { winstonConfig } from './utils/winston.config';
-import { WinstonModule } from 'nest-winston';
-import { ShareChecklistSocketModule } from './share-checklist-socket/share-checklist-socket.module';
 
 @Module({
   imports: [
@@ -49,7 +49,7 @@ import { ShareChecklistSocketModule } from './share-checklist-socket/share-check
     FoldersModule,
     ChecklistsModule,
     AuthModule,
-    ShareChecklistSocketModule,
+    SharedChecklistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

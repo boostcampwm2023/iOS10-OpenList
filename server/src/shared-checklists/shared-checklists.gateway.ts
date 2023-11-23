@@ -14,7 +14,7 @@ import * as WebSocket from 'ws';
  * 웹소켓 통신을 통해 클라이언트들의 체크리스트 공유를 관리하는 게이트웨이.
  */
 @WebSocketGateway({ path: '/share-checklist' })
-export class ShareChecklistSocketGateway
+export class SharedChecklistsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: WebSocket.Server;

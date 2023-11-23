@@ -4,6 +4,7 @@ import { FoldersModule } from '../folders/folders.module';
 import { UsersModule } from '../users/users.module';
 import { SharedChecklistModel } from './entities/shared-checklist.entity';
 import { SharedChecklistsController } from './shared-checklists.controller';
+import { SharedChecklistsGateway } from './shared-checklists.gateway';
 import { SharedChecklistsService } from './shared-checklists.service';
 
 @Module({
@@ -13,6 +14,6 @@ import { SharedChecklistsService } from './shared-checklists.service';
     UsersModule,
   ],
   controllers: [SharedChecklistsController],
-  providers: [SharedChecklistsService],
+  providers: [SharedChecklistsService, SharedChecklistsGateway],
 })
-export class ChecklistsModule {}
+export class SharedChecklistsModule {}
