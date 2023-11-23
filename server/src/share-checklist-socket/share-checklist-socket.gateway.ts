@@ -1,77 +1,109 @@
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { parse } from 'url';
 import * as WebSocket from 'ws';
 
-import { CreateShareChecklistSocketDto } from './dto/create-share-checklist-socket.dto';
-
 /**
- * 클라이언트 연결, 연결 해제, 메시지 송수신을 처리하는 웹소켓 게이트웨이.
+ * 웹소켓 통신을 통해 클라이언트들의 체크리스트 공유를 관리하는 게이트웨이.
  */
-@WebSocketGateway()
+@WebSocketGateway({ path: '/share-checklist' })
 export class ShareChecklistSocketGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: WebSocket.Server;
 
-  private clients: Set<WebSocket> = new Set(); // 현재 연결된 모든 클라이언트를 추적하는 집합
-
-  constructor() {}
+  // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
+  private clients: Map<string, Set<WebSocket>> = new Map();
 
   /**
-   * 새로운 클라이언트가 연결될 때 실행되는 메서드.
-   * 클라이언트의 IP 주소를 로깅하고 클라이언트 집합에 추가한다.
+   * 클라이언트가 연결을 시도할 때 호출되는 메서드.
+   * 연결된 클라이언트에 sharedChecklistId를 할당하고 관리한다.
    * @param client 연결된 클라이언트의 웹소켓 객체
    */
-  handleConnection(client: WebSocket, ...args: any[]) {
-    const clientIp = client['_socket'].remoteAddress;
-    console.log(`Client connected: ${clientIp}`);
-    this.clients.add(client);
+  handleConnection(@ConnectedSocket() client: WebSocket, ...args: any[]) {
+    const request = args[0];
+    const { query } = parse(request.url, true);
+    const sharedChecklistId = query.cid as string;
+
+    // 클라이언트에 할당된 sharedChecklistId를 바탕으로 클라이언트 관리
+    if (sharedChecklistId) {
+      client['sharedChecklistId'] = sharedChecklistId;
+      if (!this.clients.has(sharedChecklistId)) {
+        this.clients.set(sharedChecklistId, new Set());
+      }
+      this.clients.get(sharedChecklistId)?.add(client);
+    }
   }
 
   /**
-   * 클라이언트 연결이 해제될 때 실행되는 메서드.
-   * 클라이언트의 IP 주소를 로깅하고 클라이언트 집합에서 제거한다.
-   * @param client 연결이 해제된 클라이언트의 웹소켓 객체
+   * 클라이언트 연결이 해제될 때 호출되는 메서드.
+   * 해당 클라이언트를 관리 목록에서 제거한다.
+   * @param client 연결 해제된 클라이언트의 웹소켓 객체
    */
-  handleDisconnect(client: WebSocket) {
-    const clientIp = client['_socket'].remoteAddress;
-    console.log(`Client disconnected: ${clientIp}`);
-    this.clients.delete(client);
-  }
-
-  /**
-   * 지정된 이벤트로 모든 클라이언트에게 데이터를 브로드캐스트한다.
-   * 메시지를 보낸 클라이언트는 제외된다.
-   * @param event 브로드캐스트할 이벤트 이름
-   * @param data 전송할 데이터
-   * @param excludeClient 브로드캐스트에서 제외할 클라이언트
-   */
-  private broadcast(event: string, data: any, excludeClient: WebSocket) {
-    for (const client of this.clients) {
-      if (client !== excludeClient && client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ event, data }));
+  handleDisconnect(@ConnectedSocket() client: WebSocket) {
+    const sharedChecklistId = client['sharedChecklistId'];
+    if (sharedChecklistId && this.clients.has(sharedChecklistId)) {
+      const clientsSet = this.clients.get(sharedChecklistId);
+      clientsSet?.delete(client);
+      // 더 이상 해당 sharedChecklistId에 연결된 클라이언트가 없으면 맵에서 제거
+      if (clientsSet?.size === 0) {
+        this.clients.delete(sharedChecklistId);
       }
     }
   }
 
   /**
-   * 'sendChecklist' 이벤트를 처리하여, 본인을 제외한 다른 클라이언트에게
-   * 'listenChecklist' 이벤트로 데이터를 브로드캐스트한다.
+   * 특정 sharedChecklistId를 가진 클라이언트들에게 이벤트와 데이터를 브로드캐스트한다.
+   * 메시지를 보낸 클라이언트는 브로드캐스트에서 제외한다.
+   * @param sharedChecklistId 브로드캐스트 대상의 checklist ID
+   * @param event 브로드캐스트할 이벤트 이름
+   * @param data 전송할 데이터
+   * @param excludeClient 브로드캐스트에서 제외할 클라이언트
+   */
+  private broadcastToChecklist(
+    sharedChecklistId: string,
+    event: string,
+    data: any,
+    excludeClient: WebSocket,
+  ) {
+    const clients = this.clients.get(sharedChecklistId);
+    if (clients) {
+      clients.forEach((client) => {
+        if (client !== excludeClient && client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({ event, data }));
+        }
+      });
+    }
+  }
+
+  /**
+   * 'sendChecklist' 이벤트를 처리하고, 해당 sharedChecklistId를 가진 다른 클라이언트들에게
+   * 'listenChecklist' 이벤트를 브로드캐스트한다.
    * @param client 메시지를 보낸 클라이언트의 웹소켓 객체
    * @param data 클라이언트로부터 받은 데이터
-   * @returns 처리 결과를 나타내는 객체
+   * @returns 이벤트 처리 결과를 나타내는 객체
    */
   @SubscribeMessage('sendChecklist')
   async handleSendChecklist(
-    client: WebSocket,
-    data: CreateShareChecklistSocketDto,
+    @ConnectedSocket() client: WebSocket,
+    @MessageBody() data: string,
   ) {
-    this.broadcast('listenChecklist', data, client);
+    const sharedChecklistId = client['sharedChecklistId'];
+    if (sharedChecklistId) {
+      this.broadcastToChecklist(
+        sharedChecklistId,
+        'listenChecklist',
+        data,
+        client,
+      );
+    }
     return { event: 'sendChecklist', data: data };
   }
 }
