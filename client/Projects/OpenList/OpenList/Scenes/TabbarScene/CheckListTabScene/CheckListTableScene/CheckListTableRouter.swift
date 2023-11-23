@@ -10,10 +10,10 @@ import Foundation
 final class CheckListTableRouter {
 	weak var viewController: ViewControllable?
 	
-	private var detailCheckListViewFactory: DetailCheckListFactoryable
+	private var detailCheckListViewFactory: WithDetailCheckListFactoryable
 	weak var detailCheckListViewControllable: ViewControllable?
 	
-	init(detailCheckListViewFactory: DetailCheckListFactoryable) {
+	init(detailCheckListViewFactory: WithDetailCheckListFactoryable) {
 		self.detailCheckListViewFactory = detailCheckListViewFactory
 	}
 }

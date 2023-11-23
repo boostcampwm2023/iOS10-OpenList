@@ -13,13 +13,13 @@ protocol CheckListTableDependency: Dependency {
 
 final class CheckListTableComponent:
 	Component<CheckListTableDependency>,
-	DetailCheckListDependency {
+	WithDetailCheckListDependency {
 	fileprivate var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
 	}
 	
-	fileprivate var detailCheckListFactoryable: DetailCheckListFactoryable {
-		return DetailCheckListViewFactory(parent: self)
+	fileprivate var detailCheckListFactoryable: WithDetailCheckListFactoryable {
+		return WithDetailCheckListViewFactory(parent: self)
 	}
 }
 

@@ -7,20 +7,18 @@
 
 import UIKit
 
-// 도메인 모델이 나오면 변경 예정
-struct CheckListItem: Hashable, Identifiable {
-	var id: UUID { itemId	}
-	let itemId = UUID()
-	var title: String
-	var isChecked: Bool
-}
+struct PrivateCheckListPlaceholderItem: Hashable {}
 
-struct CheckListPlaceholderItem: Hashable {}
+typealias PrivateCheckListDataSource = UITableViewDiffableDataSource<
+	PrivateDetailCheckListDiffableDataSource.Section,
+	AnyHashable
+>
+typealias PrivateCheckListSnapshot = NSDiffableDataSourceSnapshot<
+	PrivateDetailCheckListDiffableDataSource.Section,
+	AnyHashable
+>
 
-typealias CheckListDataSource = UITableViewDiffableDataSource<DetailCheckListDiffableDataSource.Section, AnyHashable>
-typealias CheckListSnapshot = NSDiffableDataSourceSnapshot<DetailCheckListDiffableDataSource.Section, AnyHashable>
-
-final class DetailCheckListDiffableDataSource: CheckListDataSource {
+final class PrivateDetailCheckListDiffableDataSource: PrivateCheckListDataSource {
 	enum Section: CaseIterable {
 		case checkList
 		case placeholder
@@ -35,7 +33,7 @@ final class DetailCheckListDiffableDataSource: CheckListDataSource {
 	}
 }
 
-extension DetailCheckListDiffableDataSource {
+extension PrivateDetailCheckListDiffableDataSource {
 	func appendCheckListItem(_ checkListItem: CheckListItem) {
 		var snapshot = snapshot()
 		snapshot.appendItems([checkListItem], toSection: .checkList)
@@ -63,15 +61,15 @@ extension DetailCheckListDiffableDataSource {
 	}
 	
 	func updatePlaceholder() {
-		updateSection(with: [CheckListPlaceholderItem()], to: .placeholder)
+		updateSection(with: [PrivateCheckListPlaceholderItem()], to: .placeholder)
 	}
 }
 
-private extension DetailCheckListDiffableDataSource {
+private extension PrivateDetailCheckListDiffableDataSource {
 	func makeSections() {
-		var snapshot = CheckListSnapshot()
+		var snapshot = PrivateCheckListSnapshot()
 		snapshot.appendSections([.checkList, .placeholder])
-		snapshot.appendItems([CheckListPlaceholderItem()], toSection: .placeholder)
+		snapshot.appendItems([PrivateCheckListPlaceholderItem()], toSection: .placeholder)
 		apply(snapshot, animatingDifferences: false)
 	}
 	
