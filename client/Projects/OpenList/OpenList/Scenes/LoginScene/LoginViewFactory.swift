@@ -9,19 +9,26 @@ import Foundation
 
 protocol LoginDependency: Dependency { }
 
-final class LoginComponent: Component<LoginDependency> { }
+final class LoginComponent:
+	Component<LoginDependency>, TabBarDependency {
+	var tabBarFactoryable: TabBarFactoryable {
+		return TabBarViewFactory(parent: self)
+	}
+}
 
 protocol LoginFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with parentRouter: AppRouterProtocol) -> ViewControllable
 }
 
 final class LoginViewFactory: Factory<LoginDependency>, LoginFactoryable {
+	
 	override init(parent: LoginDependency) {
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
-		let router = LoginRouter()
+	func make(with parentRouter: AppRouterProtocol) -> ViewControllable {
+		let component = LoginComponent(parent: parent)
+		let router = LoginRouter(parentRouter: parentRouter)
 		let viewModel = LoginViewModel()
 		let viewController = LoginViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

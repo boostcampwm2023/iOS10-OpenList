@@ -9,14 +9,15 @@ import AuthenticationServices
 import Combine
 import UIKit
 
-protocol LoginRoutingLogic: AnyObject { }
+protocol LoginRoutingLogic: AnyObject {
+	func routeToTabBarScene()
+}
 
 final class LoginViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
 	private let authorizationButton = ASAuthorizationAppleIDButton()
 	
 	// MARK: - Properties
-	private let loginButtonTap: PassthroughSubject<Void, Never> = .init()
 	private let router: LoginRoutingLogic
 	private let viewModel: any LoginViewModelable
 	private var cancellables: Set<AnyCancellable> = []
@@ -53,16 +54,6 @@ extension LoginViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = LoginInput(
-			loginButtonTap: loginButtonTap.eraseToAnyPublisher()
-		)
-		let output = viewModel.transform(input)
-		
-		output
-			.receive(on: DispatchQueue.main)
-			.withUnretained(self)
-			.sink { (owner, state) in owner.render(state) }
-			.store(in: &cancellables)
 	}
 	
 	func render(_ state: State) {
@@ -96,15 +87,18 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 	) {
 		switch authorization.credential {
 		case let appleIDCredential as ASAuthorizationAppleIDCredential:
-			let userIdentifier = appleIDCredential.user
-			let fullName = appleIDCredential.fullName
-			let email = appleIDCredential.email
-				// viewModel에 요청
-			
+				let userIdentifier = appleIDCredential.user
+				let fullName = appleIDCredential.fullName
+				let email = appleIDCredential.email
+				// viewModel 로직 -> 
+				// keyChain 로직 ->
+				router.routeToTabBarScene()
 		case let passwordCredential as ASPasswordCredential:
-			let username = passwordCredential.user
-			let password = passwordCredential.password
-
+				let username = passwordCredential.user
+				let password = passwordCredential.password
+				// viewModel 로직
+				// keyChain 로직
+				router.routeToTabBarScene()
 		default:
 			break
 		}

@@ -12,7 +12,9 @@ where Input == LoginInput,
 	State == LoginState,
 	Output == AnyPublisher<State, Never> { }
 
-final class LoginViewModel { }
+final class LoginViewModel { 
+	
+}
 
 extension LoginViewModel: LoginViewModelable {
 	func transform(_ input: Input) -> Output {

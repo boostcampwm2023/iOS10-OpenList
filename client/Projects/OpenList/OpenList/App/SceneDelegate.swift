@@ -5,6 +5,7 @@
 //  Created by 김영균 on 11/9/23.
 //
 
+import AuthenticationServices
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {

@@ -7,15 +7,20 @@
 
 import UIKit
 
-final class AppRouter {
+protocol AppRouterProtocol {
+	func showTapFlow()
+	func showLoginFlow()
+}
+
+final class AppRouter: AppRouterProtocol {
 	var window: UIWindow?
 	var tabBarFactoryable: TabBarFactoryable
-	var loginFactoryable: LoginFactoryable
+	var loginFactoryable: LoginFactoryable?
 	
 	init(
 		window: UIWindow?,
 		tabBarFactoryable: TabBarFactoryable,
-		loginFactoryable: LoginFactoryable
+		loginFactoryable: LoginFactoryable?
 	) {
 		self.window = window
 		self.tabBarFactoryable = tabBarFactoryable
@@ -28,7 +33,7 @@ final class AppRouter {
 	}
 	
 	func showLoginFlow() {
-		let loginViewController = loginFactoryable.make()
-		self.window?.rootViewController = loginViewController.uiviewController
+		let loginViewController = loginFactoryable?.make(with: self)
+		self.window?.rootViewController = loginViewController?.uiviewController
 	}
 }
