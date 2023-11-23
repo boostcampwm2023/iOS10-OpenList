@@ -31,6 +31,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private var socketConnet: PassthroughSubject<Void, Never> = .init()
 	private var insert: PassthroughSubject<Range<String.Index>, Never> = .init()
 	private var delete: PassthroughSubject<Range<String.Index>, Never> = .init()
 	
@@ -62,6 +63,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 		setViewHierarchies()
 		setViewConstraints()
 		bind()
+		socketConnet.send()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -78,6 +80,7 @@ extension WithDetailCheckListViewController: ViewBindable {
 	func bind() {
 		let input = WithDetailCheckListInput(
 			viewWillAppear: viewWillAppear,
+			socketConnet: socketConnet,
 			insert: insert,
 			delete: delete
 		)
@@ -96,6 +99,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			headerView.configure(title: title!, isLocked: true)
 		case let .update(content):
 			print(content)
+		case let .socketConnet(isConnect):
+			print(isConnect)
 		}
 	}
 	
