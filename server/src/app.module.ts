@@ -6,20 +6,21 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { FolderModel } from './folders/entities/folder.entity';
 import { FoldersModule } from './folders/folders.module';
 import { PrivateChecklistModel } from './folders/private-checklists/entities/private-checklist.entity';
 import { ChecklistsModule } from './folders/private-checklists/private-checklists.module';
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
+import { SharedChecklistsModule } from './shared-checklists/shared-checklists.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { winstonConfig } from './utils/winston.config';
-import { WinstonModule } from 'nest-winston';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { WinstonModule } from 'nest-winston';
     FoldersModule,
     ChecklistsModule,
     AuthModule,
+    SharedChecklistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
