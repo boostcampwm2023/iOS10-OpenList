@@ -9,16 +9,18 @@ import Combine
 
 protocol LoginViewModelable: ViewModelable
 where Input == LoginInput,
-			State == LoginState,
-			Output == AnyPublisher<State, Never> { }
+	State == LoginState,
+	Output == AnyPublisher<State, Never> { }
 
 final class LoginViewModel { }
 
 extension LoginViewModel: LoginViewModelable {
 	func transform(_ input: Input) -> Output {
-		return Publishers.MergeMany([
-			loginButtonDidTap(input)
-		]).eraseToAnyPublisher()
+		let loginButtonDidTap = loginButtonDidTap(input)
+		return Publishers.MergeMany(
+			loginButtonDidTap
+		)
+		.eraseToAnyPublisher()
 	}
 }
 
@@ -26,7 +28,9 @@ private extension LoginViewModel {
 	func loginButtonDidTap(_ input: Input) -> Output {
 		return input.loginButtonTap
 			.withUnretained(self)
-			.map { (_, _) in return }
+			.map { (_, _) in
+				return .success
+			}
 			.eraseToAnyPublisher()
 	}
 }

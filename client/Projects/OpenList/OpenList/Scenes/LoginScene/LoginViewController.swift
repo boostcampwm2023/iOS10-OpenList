@@ -5,16 +5,11 @@
 //  Created by Hoon on 11/23/23.
 //
 
-import UIKit
-import Combine
-
 import AuthenticationServices
-import UIKit
 import Combine
+import UIKit
 
-protocol LoginRoutingLogic: AnyObject {
-	// TODO: 뷰 컨트롤러의 화면 이동 로직을 라우터에게 위임할 메소드를 작성합니다.
-}
+protocol LoginRoutingLogic: AnyObject { }
 
 final class LoginViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
@@ -45,6 +40,9 @@ final class LoginViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.view.backgroundColor = .systemBackground
+		setViewAttributes()
+		setViewHierachies()
+		setViewConstraints()
 		self.bind()
 	}
 }
@@ -69,13 +67,11 @@ extension LoginViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
-				// TODO: 변화된 모델의 상태를 뷰에 반영합니다.
-			default: break
+		default: break
 		}
 	}
 	
 	func handleError(_ error: OutputError) {
-		// TODO: 에러 핸들링을 합니다.
 	}
 }
 
@@ -94,31 +90,26 @@ private extension LoginViewController {
 }
 
 extension LoginViewController: ASAuthorizationControllerDelegate {
-	func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+	func authorizationController(
+		controller: ASAuthorizationController,
+		didCompleteWithAuthorization authorization: ASAuthorization
+	) {
 		switch authorization.credential {
-				// 비밀번호 or FaceID 입력
-			case let appleIDCredential as ASAuthorizationAppleIDCredential:
-				let userIdentifier = appleIDCredential.user
-				let fullName = appleIDCredential.fullName
-				let email = appleIDCredential.email
-				
-				print(appleIDCredential.authorizationCode)
-				print(appleIDCredential.identityToken)
-				print(userIdentifier)
-				print(fullName)
-				print(email)
-				// iCloud 연결
-			case let passwordCredential as ASPasswordCredential:
-				let username = passwordCredential.user
-				let password = passwordCredential.password
-				
-				print(username)
-				print(password)
-			default:
-				break
+		case let appleIDCredential as ASAuthorizationAppleIDCredential:
+			let userIdentifier = appleIDCredential.user
+			let fullName = appleIDCredential.fullName
+			let email = appleIDCredential.email
+				// viewModel에 요청
+			
+		case let passwordCredential as ASPasswordCredential:
+			let username = passwordCredential.user
+			let password = passwordCredential.password
+
+		default:
+			break
 		}
 	}
-	
+
 	func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
 		print("Login Failed")
 	}

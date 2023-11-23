@@ -22,7 +22,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let navigationControllable = NavigationControllable(navigationController: UINavigationController())
 		let component = AppComponent(navigationControllable: navigationControllable)
 		let tabBarViewFactory = TabBarViewFactory(parent: component)
-		let appRootRouter = AppRouter(window: window, tabBarFactoryable: tabBarViewFactory)
-		appRootRouter.showTapFlow()
+		let loginViewFactory = LoginViewFactory(parent: AppLoginComponent(navigationControllable: navigationControllable))
+		let appRootRouter = AppRouter(
+			window: window,
+			tabBarFactoryable: tabBarViewFactory,
+			loginFactoryable: loginViewFactory
+		)
+		//		appRootRouter.showTapFlow()
+		appRootRouter.showLoginFlow()
 	}
 }

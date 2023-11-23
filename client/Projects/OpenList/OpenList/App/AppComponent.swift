@@ -17,3 +17,11 @@ final class AppComponent: EmptyComponent, TabBarDependency {
 		self.navigationControllable = navigationControllable
 	}
 }
+
+final class AppLoginComponent: EmptyComponent, LoginDependency {
+	var navigationControllable: NavigationControllable
+	
+	init(navigationControllable: NavigationControllable) {
+		self.navigationControllable = navigationControllable
+	}
+}

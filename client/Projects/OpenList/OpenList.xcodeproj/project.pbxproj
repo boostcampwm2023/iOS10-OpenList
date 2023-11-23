@@ -41,7 +41,6 @@
 		5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C8452B05DC5100826B5D /* CheckListHeaderView.swift */; };
 		5F70C84B2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84A2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift */; };
 		5F70C84F2B0600B800826B5D /* DefaultCheckListStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84E2B0600B800826B5D /* DefaultCheckListStorage.swift */; };
-		5F833AFC2B0E075C007EDD45 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; };
 		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
 		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
 		5FA1F88E2AFF7DA400869079 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88D2AFF7DA400869079 /* Assets.xcassets */; };
@@ -66,6 +65,8 @@
 		78A4C71C2B0F2ED900E07492 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7172B0F2ED900E07492 /* LoginViewController.swift */; };
 		78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7182B0F2ED900E07492 /* LoginViewFactory.swift */; };
 		78A4C71E2B0F2ED900E07492 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7192B0F2ED900E07492 /* LoginViewModel.swift */; };
+		78A4C71F2B0F365A00E07492 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; };
+		78A4C7202B0F365A00E07492 /* CRDT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		78C2EFFF2B03D58700E4EC4E /* AddTabAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */; };
 		78C2F0002B03D58700E4EC4E /* AddTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFB2B03D58700E4EC4E /* AddTabRouter.swift */; };
 		78C2F0012B03D58700E4EC4E /* AddTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFC2B03D58700E4EC4E /* AddTabViewController.swift */; };
@@ -93,6 +94,20 @@
 			remoteInfo = OpenList;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		78A4C7212B0F365A00E07492 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				78A4C7202B0F365A00E07492 /* CRDT.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4D3397FB2B02399300963664 /* Publisher+Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operator.swift"; sourceTree = "<group>"; };
@@ -155,6 +170,8 @@
 		78A4C7172B0F2ED900E07492 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		78A4C7182B0F2ED900E07492 /* LoginViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewFactory.swift; sourceTree = "<group>"; };
 		78A4C7192B0F2ED900E07492 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		78A4C7222B0F375600E07492 /* OpenListRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenListRelease.entitlements; sourceTree = "<group>"; };
+		78A4C7232B0F386900E07492 /* OpenListDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenListDebug.entitlements; sourceTree = "<group>"; };
 		78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabAction.swift; sourceTree = "<group>"; };
 		78C2EFFB2B03D58700E4EC4E /* AddTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabRouter.swift; sourceTree = "<group>"; };
 		78C2EFFC2B03D58700E4EC4E /* AddTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabViewController.swift; sourceTree = "<group>"; };
@@ -188,7 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA1F8DF2AFF809C00869079 /* libCustomNetwork.a in Frameworks */,
-				5F833AFC2B0E075C007EDD45 /* CRDT.framework in Frameworks */,
+				78A4C71F2B0F365A00E07492 /* CRDT.framework in Frameworks */,
 				5FA1F8E02AFF809C00869079 /* libCustomSocket.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -515,6 +532,8 @@
 		5FA1F8E12AFF80AA00869079 /* OpenList */ = {
 			isa = PBXGroup;
 			children = (
+				78A4C7232B0F386900E07492 /* OpenListDebug.entitlements */,
+				78A4C7222B0F375600E07492 /* OpenListRelease.entitlements */,
 				4D967CD72B05147D0032E0D7 /* Fonts */,
 				78C2F0042B04653B00E4EC4E /* DesignSystem */,
 				5FA1F8832AFF7DA200869079 /* App */,
@@ -605,6 +624,7 @@
 				5FA1F87D2AFF7DA200869079 /* Sources */,
 				5FA1F87E2AFF7DA200869079 /* Frameworks */,
 				5FA1F87F2AFF7DA200869079 /* Resources */,
+				78A4C7212B0F365A00E07492 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -975,6 +995,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OpenList/OpenListDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;
@@ -1008,6 +1029,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OpenList/OpenListRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;

@@ -9,10 +9,7 @@ import Foundation
 
 protocol LoginDependency: Dependency { }
 
-final class LoginComponent: Component<LoginDependency> {
-	// TODO: 부모에게 넘겨받은 의존성을 가지고  Login 뷰를 만드는데 필요한 의존성을 만듭니다.
-	// 또한 자식 뷰에게 넘겨줄 의존성도 정의할 수 있습니다.
-}
+final class LoginComponent: Component<LoginDependency> { }
 
 protocol LoginFactoryable: Factoryable {
 	func make() -> ViewControllable
