@@ -20,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { winstonConfig } from './utils/winston.config';
 import { WinstonModule } from 'nest-winston';
+import { ShareChecklistSocketModule } from './share-checklist-socket/share-checklist-socket.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { WinstonModule } from 'nest-winston';
     FoldersModule,
     ChecklistsModule,
     AuthModule,
+    ShareChecklistSocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
