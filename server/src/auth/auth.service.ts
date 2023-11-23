@@ -88,7 +88,7 @@ export class AuthService {
     }
     if (existUser.provider !== user.provider) {
       throw new UnauthorizedException(
-        `해당 이메일은 ${user.provider}로 가입된 유저입니다.`,
+        `해당 이메일은 ${existUser.provider}로 가입된 유저입니다.`,
       );
     }
     return existUser;
