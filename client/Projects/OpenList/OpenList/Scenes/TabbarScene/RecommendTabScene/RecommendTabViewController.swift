@@ -28,6 +28,6 @@ final class RecommendTabViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.view.backgroundColor = .systemBackground
-		self.title = "추천 피드"
+		self.title = "추천"
 	}
 }

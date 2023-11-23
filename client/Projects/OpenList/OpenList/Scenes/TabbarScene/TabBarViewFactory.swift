@@ -7,9 +7,7 @@
 
 import Foundation
 
-protocol TabBarDependency: Dependency {
-	var persistenceRepository: PersistenceRepository { get }
-}
+protocol TabBarDependency: Dependency { }
 
 final class TabBarComponent:
 	Component<TabBarDependency>,
@@ -21,11 +19,15 @@ final class TabBarComponent:
 	}
 	
 	var persistenceUseCase: PersistenceUseCase {
-		return DefaultPersistenceUseCase(persistenceRepository: parent.persistenceRepository)
+		return DefaultPersistenceUseCase(checkListRepository: checkListRepository)
 	}
 	
-	var sampleRepository: SampleRepository {
-		return DefaultSampleRepository()
+	var checkListRepository: CheckListRepository {
+		return DefaultCheckListRepository(checkListStorage: checkListStorage)
+	}
+	
+	var checkListStorage: CheckListStorage {
+		return DefaultCheckListStorage()
 	}
 	
 	fileprivate var addTabFactoryable: AddTabFactoryable {

@@ -8,7 +8,7 @@
 import Combine
 
 struct CheckListTableInput {
-	let viewLoad: PassthroughSubject<Void, Never>
+	let viewAppear: PassthroughSubject<Void, Never>
 }
 
 enum CheckListTableState {

@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol CheckListTableRoutingLogic: AnyObject { }
+protocol CheckListTableRoutingLogic: AnyObject {
+	func routeToDetailScene(with title: String)
+}
 
 final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - CollectionView Type
@@ -21,7 +23,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
 	private let router: CheckListTableRoutingLogic
 	private let viewModel: any CheckListTableViewModelable
-	private let viewLoad: PassthroughSubject<Void, Never> = .init()
+	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var cancellables: Set<AnyCancellable> = []
@@ -50,7 +52,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewHierarchies()
 		setConstraints()
 		bind()
-		viewLoad.send()
+		viewAppear.send()
 	}
 }
 
@@ -60,7 +62,7 @@ extension CheckListTableViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = CheckListTableInput(viewLoad: viewLoad)
+		let input = CheckListTableInput(viewAppear: viewAppear)
 		
 		let output = viewModel.transform(input)
 		
@@ -101,10 +103,13 @@ private extension CheckListTableViewController {
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
+		
+		collectionView.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		view.addSubview(collectionView)
+		collectionView.delegate = self
 	}
 	
 	func setConstraints() {
@@ -185,5 +190,12 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		actionSheet.addAction(cancelAction)
 		
 		self.present(actionSheet, animated: true, completion: nil)
+	}
+}
+
+extension CheckListTableViewController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
+		router.routeToDetailScene(with: item.title)
 	}
 }
