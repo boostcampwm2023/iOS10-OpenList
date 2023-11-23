@@ -5,4 +5,8 @@
 //  Created by wi_seong on 11/23/23.
 //
 
-import Foundation
+import UIKit
+
+enum Device {
+	static let id = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+}
