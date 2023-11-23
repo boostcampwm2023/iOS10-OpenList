@@ -8,9 +8,9 @@
 import Combine
 import UIKit
 
-protocol DetailCheckListRoutingLogic: AnyObject {}
+protocol PrivateDetailCheckListRoutingLogic: AnyObject {}
 
-final class DetailCheckListViewController: UIViewController, ViewControllable {
+final class PrivateDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
 		static let checkListItemHeight: CGFloat = 44
 		static let headerHeight: CGFloat = 24
@@ -20,10 +20,10 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	}
 	
 	// MARK: - Properties
-	private let router: DetailCheckListRoutingLogic
-	private let viewModel: any DetailCheckListViewModelable
+	private let router: PrivateDetailCheckListRoutingLogic
+	private let viewModel: any PrivateDetailCheckListViewModelable
 	private var cancellables: Set<AnyCancellable> = []
-	private var dataSource: DetailCheckListDiffableDataSource?
+	private var dataSource: PrivateDetailCheckListDiffableDataSource?
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -34,8 +34,8 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	
 	// MARK: - Initializers
 	init(
-		router: DetailCheckListRoutingLogic,
-		viewModel: some DetailCheckListViewModelable
+		router: PrivateDetailCheckListRoutingLogic,
+		viewModel: some PrivateDetailCheckListViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -69,12 +69,12 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 }
 
 // MARK: - Bind Methods
-extension DetailCheckListViewController: ViewBindable {
-	typealias State = DetailCheckListState
+extension PrivateDetailCheckListViewController: ViewBindable {
+	typealias State = PrivateDetailCheckListState
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = DetailCheckListInput(viewWillAppear: viewWillAppear)
+		let input = PrivateDetailCheckListInput(viewWillAppear: viewWillAppear)
 		let output = viewModel.transform(input)
 		
 		output
@@ -95,7 +95,7 @@ extension DetailCheckListViewController: ViewBindable {
 }
 
 // MARK: - View Methods
-private extension DetailCheckListViewController {
+private extension PrivateDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
 		setCheckListViewAttributes()
@@ -154,7 +154,7 @@ private extension DetailCheckListViewController {
 	}
 	
 	func makeDataSource() {
-		dataSource = DetailCheckListDiffableDataSource(
+		dataSource = PrivateDetailCheckListDiffableDataSource(
 			tableView: checkListView,
 			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
@@ -165,7 +165,7 @@ private extension DetailCheckListViewController {
 					cell.delegate = self
 					return cell
 					
-				case is CheckListPlaceholderItem:
+				case is PrivateCheckListPlaceholderItem:
 					let cell = tableView.dequeueCell(CheckListItemPlaceholder.self, for: indexPath)
 					cell.configure(indexPath: indexPath)
 					cell.delegate = self
@@ -180,7 +180,7 @@ private extension DetailCheckListViewController {
 }
 
 // MARK: - UITableViewDelegate
-extension DetailCheckListViewController: UITableViewDelegate {
+extension PrivateDetailCheckListViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return LayoutConstant.checkListItemHeight
 	}
@@ -212,7 +212,7 @@ extension DetailCheckListViewController: UITableViewDelegate {
 }
 
 // MARK: - LocalCheckListItemDelegate
-extension DetailCheckListViewController: LocalCheckListItemDelegate {
+extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
 		cell: LocalCheckListItem,
@@ -234,12 +234,13 @@ extension DetailCheckListViewController: LocalCheckListItemDelegate {
 		guard let text = textField.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
+		
 		return updatedText.count <= 30
 	}
 }
 
 // MARK: - CheckListItemPlaceholderDelegate
-extension DetailCheckListViewController: CheckListItemPlaceholderDelegate {
+extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }

@@ -7,10 +7,10 @@
 
 import Combine
 
-struct DetailCheckListInput {
+struct PrivateDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 }
 
-enum DetailCheckListState {
+enum PrivateDetailCheckListState {
 	case title(String?)
 }
