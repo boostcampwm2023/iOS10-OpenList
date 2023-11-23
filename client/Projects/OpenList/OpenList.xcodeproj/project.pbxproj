@@ -41,8 +41,6 @@
 		5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C8452B05DC5100826B5D /* CheckListHeaderView.swift */; };
 		5F70C84B2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84A2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift */; };
 		5F70C84F2B0600B800826B5D /* DefaultCheckListStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84E2B0600B800826B5D /* DefaultCheckListStorage.swift */; };
-		5F833ACC2B0E06BB007EDD45 /* CRDT.app in Resources */ = {isa = PBXBuildFile; fileRef = 5F833ACB2B0E06BB007EDD45 /* CRDT.app */; };
-		5F833ACE2B0E06C1007EDD45 /* CRDT.app in Resources */ = {isa = PBXBuildFile; fileRef = 5F833ACD2B0E06C1007EDD45 /* CRDT.app */; };
 		5F833AFC2B0E075C007EDD45 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; };
 		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
 		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
@@ -125,8 +123,6 @@
 		5F70C8452B05DC5100826B5D /* CheckListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListHeaderView.swift; sourceTree = "<group>"; };
 		5F70C84A2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageCheckListResponseDTO.swift; sourceTree = "<group>"; };
 		5F70C84E2B0600B800826B5D /* DefaultCheckListStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCheckListStorage.swift; sourceTree = "<group>"; };
-		5F833ACB2B0E06BB007EDD45 /* CRDT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CRDT.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F833ACD2B0E06C1007EDD45 /* CRDT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CRDT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F833AFB2B0E075C007EDD45 /* CRDT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CRDT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8615DF2B02249C00CF2686 /* ViewModelable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelable.swift; sourceTree = "<group>"; };
 		5F8615E12B0224E100CF2686 /* ViewBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBindable.swift; sourceTree = "<group>"; };
@@ -499,8 +495,6 @@
 			isa = PBXGroup;
 			children = (
 				5F833AFB2B0E075C007EDD45 /* CRDT.framework */,
-				5F833ACD2B0E06C1007EDD45 /* CRDT.app */,
-				5F833ACB2B0E06BB007EDD45 /* CRDT.app */,
 				5FA1F8DD2AFF809C00869079 /* libCustomNetwork.a */,
 				5FA1F8DE2AFF809C00869079 /* libCustomSocket.a */,
 			);
@@ -652,9 +646,7 @@
 			files = (
 				5FA1F8912AFF7DA400869079 /* LaunchScreen.storyboard in Resources */,
 				4D967CDB2B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf in Resources */,
-				5F833ACE2B0E06C1007EDD45 /* CRDT.app in Resources */,
 				5FA1F88E2AFF7DA400869079 /* Assets.xcassets in Resources */,
-				5F833ACC2B0E06BB007EDD45 /* CRDT.app in Resources */,
 				4D967CDA2B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
