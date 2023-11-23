@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +32,14 @@ export class UsersService {
 
   async findUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+    return user;
+  }
+
+  async findUserByEmail(email: string) {
+    const user = await this.usersRepository.findOne({ where: { email } });
     if (!user) {
       throw new BadRequestException('존재하지 않는 유저입니다.');
     }

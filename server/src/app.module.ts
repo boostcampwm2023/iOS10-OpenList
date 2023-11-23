@@ -16,6 +16,7 @@ import { ChecklistsModule } from './folders/private-checklists/private-checklist
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { winstonConfig } from './utils/winston.config';
 import { WinstonModule } from 'nest-winston';
@@ -46,6 +47,7 @@ import { WinstonModule } from 'nest-winston';
     UsersModule,
     FoldersModule,
     ChecklistsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

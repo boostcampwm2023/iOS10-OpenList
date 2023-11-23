@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserModel } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserModel } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
@@ -40,6 +40,7 @@ describe('UsersService', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
       nickname: 'TestUser',
+      provider: 'APPLE',
     };
     mockUsersRepository.exist.mockResolvedValue(false);
     mockUsersRepository.create.mockReturnValue(createUserDto);
@@ -59,6 +60,7 @@ describe('UsersService', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
       nickname: 'TestUser',
+      provider: 'APPLE',
     };
     mockUsersRepository.exist.mockResolvedValue(true);
 
