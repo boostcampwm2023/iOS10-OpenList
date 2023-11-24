@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CustomSocket
 import UIKit
 
 protocol WithDetailCheckListRoutingLogic: AnyObject {}
@@ -24,6 +25,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let viewModel: any WithDetailCheckListViewModelable
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: WithDetailCheckListDiffableDataSource?
+	private var isOpenSocket: Bool = false
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -32,8 +34,9 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	private var socketConnet: PassthroughSubject<Void, Never> = .init()
-	private var insert: PassthroughSubject<Range<String.Index>, Never> = .init()
-	private var delete: PassthroughSubject<Range<String.Index>, Never> = .init()
+	private var insert: PassthroughSubject<EditText, Never> = .init()
+	private var delete: PassthroughSubject<EditText, Never> = .init()
+	private var receive: PassthroughSubject<Data, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -62,6 +65,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
+		setWebSocket()
 		bind()
 		socketConnet.send()
 	}
@@ -82,7 +86,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			viewWillAppear: viewWillAppear,
 			socketConnet: socketConnet,
 			insert: insert,
-			delete: delete
+			delete: delete,
+			receive: receive
 		)
 		let output = viewModel.transform(input)
 		
@@ -95,16 +100,25 @@ extension WithDetailCheckListViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
+		case .none:
+			break
 		case let .title(title):
 			headerView.configure(title: title!, isLocked: true)
 		case let .update(content):
-			print(content)
+			updateTextField(to: content)
 		case let .socketConnet(isConnect):
 			print(isConnect)
 		}
 	}
 	
 	func handleError(_ error: OutputError) {}
+}
+
+// MARK: - Helper
+private extension WithDetailCheckListViewController {
+	func updateTextField(to text: String) {
+		dataSource?.receiveCheckListItem(with: text)
+	}
 }
 
 // MARK: - View Methods
@@ -160,6 +174,31 @@ private extension WithDetailCheckListViewController {
 			checkListView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
 			checkListView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
 		])
+	}
+	
+	func setWebSocket() {
+		do {
+			WebSocket.shared.delegate = self
+			WebSocket.shared.url = URL(string: "ws://localhost:1337/")
+			try WebSocket.shared.openWebSocket()
+			WebSocket.shared.send(message: Device.id)
+		} catch {
+			print(error)
+		}
+	}
+	
+	func webSocketReceive() {
+		if !isOpenSocket {
+			return
+		}
+		
+		DispatchQueue.global().async {
+			WebSocket.shared.receive { [weak self] _, data in
+				guard let data else { return }
+				self?.receive.send(data)
+				self?.webSocketReceive()
+			}
+		}
 	}
 	
 	@objc func hideKeyboard() {
@@ -251,14 +290,34 @@ extension WithDetailCheckListViewController: LocalCheckListItemDelegate {
 		
 		switch range.length {
 		case 0:
-			insert.send(stringRange)
+			insert.send(.init(content: string, range: range))
 		case 1:
-			delete.send(stringRange)
+			delete.send(.init(content: string, range: range))
 		default:
 			return false
 		}
 		
 		return true
+	}
+}
+
+extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
+	func urlSession(
+		_ session: URLSession,
+		webSocketTask: URLSessionWebSocketTask,
+		didOpenWithProtocol protocol: String?
+	) {
+		isOpenSocket = true
+		webSocketReceive()
+	}
+	
+	func urlSession(
+		_ session: URLSession,
+		webSocketTask: URLSessionWebSocketTask,
+		didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+		reason: Data?
+	) {
+		isOpenSocket = false
 	}
 }
 

@@ -6,15 +6,18 @@
 //
 
 import Combine
+import Foundation
 
 struct WithDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 	let socketConnet: PassthroughSubject<Void, Never>
-	let insert: PassthroughSubject<Range<String.Index>, Never>
-	let delete: PassthroughSubject<Range<String.Index>, Never>
+	let insert: PassthroughSubject<EditText, Never>
+	let delete: PassthroughSubject<EditText, Never>
+	let receive: PassthroughSubject<Data, Never>
 }
 
 enum WithDetailCheckListState {
+	case none
 	case title(String?)
 	case update(String)
 	case socketConnet(Bool)
