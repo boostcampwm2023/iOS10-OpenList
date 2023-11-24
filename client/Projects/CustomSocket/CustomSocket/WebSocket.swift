@@ -5,9 +5,12 @@
 //  Created by 김영균 on 11/11/23.
 //
 
+import CRDT
 import Foundation
 
 public final class WebSocket: NSObject {
+	public static let shared = WebSocket()
+	
 	public var url: URL?
 	public var onReceiveClosure: ((String?, Data?) -> Void)?
 	public weak var delegate: URLSessionWebSocketDelegate?
@@ -68,8 +71,7 @@ public final class WebSocket: NSObject {
 	}
 
 	public func receive(onReceive: @escaping (String?, Data?) -> Void) {
-		self.onReceiveClosure = onReceive
-		self.webSocketTask?.receive(completionHandler: { [weak self] result in
+		self.webSocketTask?.receive(completionHandler: { result in
 			switch result {
 			case let .success(message):
 				switch message {
@@ -83,7 +85,6 @@ public final class WebSocket: NSObject {
 			case let .failure(error):
 				print("Received error \(error)")
 			}
-			self?.receive(onReceive: onReceive)
 		})
 	}
 
@@ -95,6 +96,7 @@ public final class WebSocket: NSObject {
 			block: { [weak self] _ in self?.ping() }
 		)
 	}
+	
 	private func ping() {
 		self.webSocketTask?.sendPing(pongReceiveHandler: { [weak self] error in
 			guard let error = error else { return }
