@@ -478,9 +478,9 @@ extension RGASDocument {
 	func balanceTree() {
 		// TODO: 크기가 너무 커서 balancing 이 안일어남 테스트 결과 밸런스는 잘 되는 듯
 		if (
-			true
-			//			nodeNumberInTree > 3000 &&
-			//			nbIns > Int(Double(nodeNumberInTree) / (0.14 * log(Double(nodeNumberInTree)) / log(2)))
+//			true
+			nodeNumberInTree > 3000 &&
+			nbIns > Int(Double(nodeNumberInTree) / (0.14 * log(Double(nodeNumberInTree)) / log(2)))
 		) {
 			nbIns = 0
 			let content = createNodeList(tree: root)
