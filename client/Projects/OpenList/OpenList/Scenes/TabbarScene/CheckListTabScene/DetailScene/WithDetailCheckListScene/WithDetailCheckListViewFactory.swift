@@ -21,18 +21,6 @@ final class WithDetailCheckListComponent: Component<WithDetailCheckListDependenc
 	fileprivate var crdtStorage: CRDTStorage {
 		return DefaultCRDTStorage()
 	}
-	
-	fileprivate var webSocketUseCase: WebSocketUseCase {
-		return DefaultWebSocketUseCase(webSocketRepository: webSocketRepository)
-	}
-	
-	fileprivate var webSocketRepository: WebSocketRepository {
-		return DefaultWebSocketRepository(url: webSocketURL)
-	}
-	
-	fileprivate var webSocketURL: URL {
-		return URL(string: "ws://localhost:1337/")!
-	}
 }
 
 protocol WithDetailCheckListFactoryable: Factoryable {
@@ -49,8 +37,7 @@ final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependenc
 		let router = WithDetailCheckListRouter()
 		let viewModel = WithDetailCheckListViewModel(
 			title: title,
-			crdtUseCase: component.crdtUseCase,
-			webSocketUseCase: component.webSocketUseCase
+			crdtUseCase: component.crdtUseCase
 		)
 		let viewController = WithDetailCheckListViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

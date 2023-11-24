@@ -16,16 +16,13 @@ where Input == WithDetailCheckListInput,
 final class WithDetailCheckListViewModel {
 	private var title: String
 	private var crdtUseCase: CRDTUseCase
-	private var webSocketUseCase: WebSocketUseCase
 	
 	init(
 		title: String,
-		crdtUseCase: CRDTUseCase,
-		webSocketUseCase: WebSocketUseCase
+		crdtUseCase: CRDTUseCase
 	) {
 		self.title = title
 		self.crdtUseCase = crdtUseCase
-		self.webSocketUseCase = webSocketUseCase
 	}
 }
 
@@ -33,10 +30,9 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 	func transform(_ input: Input) -> Output {
 		return Publishers.MergeMany<Output>(
 			updateTitle(input),
-			socketConnetion(input),
-			receive(input),
 			insert(input),
-			delete(input)
+			delete(input),
+			receive(input)
 		).eraseToAnyPublisher()
 	}
 }
@@ -54,29 +50,17 @@ private extension WithDetailCheckListViewModel {
 			.eraseToAnyPublisher()
 	}
 	
-	func socketConnetion(_ input: Input) -> Output {
-		return input.socketConnet
-			.withUnretained(self)
-			.map { (owner, _) in
-				let result = owner.webSocketUseCase.connect()
-				return .socketConnet(result)
-			}
-			.eraseToAnyPublisher()
-	}
-	
 	func insert(_ input: Input) -> Output {
 		return input.insert
 			.withUnretained(self)
-			.flatMap { (owner, range) -> AnyPublisher<CRDTMessage, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<CRDTMessage, Never>  in
 				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.insert(range: range)
+					try await owner.crdtUseCase.insert(at: editText)
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.withUnretained(self)
-			.map { (owner, message) in
-				owner.webSocketUseCase.send(message: message)
-				return .update("Insert")
+			.map { _ in
+				return .none
 			}
 			.eraseToAnyPublisher()
 	}
@@ -84,32 +68,29 @@ private extension WithDetailCheckListViewModel {
 	func delete(_ input: Input) -> Output {
 		return input.delete
 			.withUnretained(self)
-			.flatMap { (owner, range) -> AnyPublisher<CRDTMessage, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<CRDTMessage, Never>  in
 				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.delete(range: range)
+					try await owner.crdtUseCase.delete(at: editText)
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.withUnretained(self)
-			.map { (owner, message) in
-				owner.webSocketUseCase.send(message: message)
-				return .update("Delete")
+			.map { _ in
+				return .none
 			}
 			.eraseToAnyPublisher()
 	}
 	
 	func receive(_ input: Input) -> Output {
-		return input.socketConnet
+		return input.receive
 			.withUnretained(self)
-			.flatMap { (owner, range) -> AnyPublisher<Node, Never>  in
+			.flatMap { (owner, data) -> AnyPublisher<String, Never>  in
 				let future = Future(asyncFunc: {
-					try await owner.webSocketUseCase.receive()
+					try await owner.crdtUseCase.receive(data: data)
 				})
 				return future.eraseToAnyPublisher()
 			}
 			.map { text in
-				print(text)
-				return .update("Receive")
+				return .update(text)
 			}
 			.eraseToAnyPublisher()
 	}
