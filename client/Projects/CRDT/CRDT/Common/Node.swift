@@ -8,12 +8,12 @@
 import Foundation
 
 public struct Node: Codable {
-	public let id: String
-	public let message: CRDTMessage
+	public let event: String
+	public let data: CRDTMessage
 	
-	public init(id: String, message: CRDTMessage) {
-		self.id = id
-		self.message = message
+	public init(event: String, data: CRDTMessage) {
+		self.event = event
+		self.data = data
 	}
 	
 	enum CodingKeys: CodingKey {
@@ -22,11 +22,11 @@ public struct Node: Codable {
 	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		self.id = try container.decode(String.self, forKey: .id)
+		self.event = try container.decode(String.self, forKey: .id)
 		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
-			self.message = message
+			self.data = message
 		} else if let messages = try? container.decode(OperationBasedMessagesBag.self, forKey: .message) {
-			self.message = messages
+			self.data = messages
 		} else {
 			throw DecodingError.valueNotFound(
 				CRDTMessage.self,
@@ -40,14 +40,14 @@ public struct Node: Codable {
 	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encode(id, forKey: .id)
-		if let myMessage = message as? OperationBasedOneMessage {
+		try container.encode(event, forKey: .id)
+		if let myMessage = data as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)
-		} else if let myMessages = message as? OperationBasedMessagesBag {
+		} else if let myMessages = data as? OperationBasedMessagesBag {
 			try container.encode(myMessages, forKey: .message)
 		} else {
 			throw EncodingError.invalidValue(
-				message,
+				data,
 				EncodingError.Context(
 					codingPath: [CodingKeys.message],
 					debugDescription: "Unknown CRDTMessage type")
