@@ -15,12 +15,14 @@ protocol LoginRoutingLogic: AnyObject {
 
 final class LoginViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
-	private let authorizationButton = ASAuthorizationAppleIDButton()
+	private let welcomeLabel: UILabel = .init()
+	private let loginButton: UIButton = .init()
 	
 	// MARK: - Properties
 	private let router: LoginRoutingLogic
 	private let viewModel: any LoginViewModelable
 	private var cancellables: Set<AnyCancellable> = []
+	private let loginButtonTap: PassthroughSubject<String, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -40,11 +42,10 @@ final class LoginViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.view.backgroundColor = .systemBackground
 		setViewAttributes()
 		setViewHierachies()
 		setViewConstraints()
-		self.bind()
+		bind()
 	}
 }
 
@@ -54,11 +55,25 @@ extension LoginViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
+		let input = LoginInput(
+			loginButtonTap: loginButtonTap
+		)
+		
+		let output = viewModel.transform(input)
+		
+		output
+			.receive(on: DispatchQueue.main)
+			.withUnretained(self)
+			.sink { (owner, output) in owner.render(output) }
+			.store(in: &cancellables)
 	}
 	
 	func render(_ state: State) {
 		switch state {
-		default: break
+		case .error(let error):
+			handleError(error)
+		case .success:
+			router.routeToTabBarScene()
 		}
 	}
 	
@@ -80,6 +95,7 @@ private extension LoginViewController {
 	}
 }
 
+// MARK: - Auth Delegate
 extension LoginViewController: ASAuthorizationControllerDelegate {
 	func authorizationController(
 		controller: ASAuthorizationController,
@@ -87,18 +103,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 	) {
 		switch authorization.credential {
 		case let appleIDCredential as ASAuthorizationAppleIDCredential:
-				let userIdentifier = appleIDCredential.user
-				let fullName = appleIDCredential.fullName
-				let email = appleIDCredential.email
-				// viewModel 로직 -> 
-				// keyChain 로직 ->
-				router.routeToTabBarScene()
+			let identityToken = appleIDCredential.identityToken
+			guard let identityTokenString = String(data: identityToken!, encoding: .utf8) else { return }
+			loginButtonTap.send(identityTokenString)
 		case let passwordCredential as ASPasswordCredential:
-				let username = passwordCredential.user
-				let password = passwordCredential.password
-				// viewModel 로직
-				// keyChain 로직
-				router.routeToTabBarScene()
+			let username = passwordCredential.user
+			let password = passwordCredential.password
+			router.routeToTabBarScene()
 		default:
 			break
 		}
@@ -118,12 +129,35 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
 // MARK: - UI Configure
 private extension LoginViewController {
 	func setViewAttributes() {
-		authorizationButton.addTarget(self, action: #selector(authorizationButtonTapped), for: .touchUpInside)
+		view.backgroundColor = .systemBackground
+		setWelcomeLabel()
+		setLoginButton()
+	}
+	
+	func setWelcomeLabel() {
+		welcomeLabel.numberOfLines = 0
+		welcomeLabel.textAlignment = .center
+		welcomeLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .extra)
+		welcomeLabel.text = "오리가 되신 걸 환영합니다"
+		welcomeLabel.textColor = .label
+	}
+	
+	func setLoginButton() {
+		loginButton.layer.cornerRadius = 25
+		loginButton.backgroundColor = .label
+		loginButton.setImage(UIImage(systemName: "applelogo"), for: .normal)
+		loginButton.setTitle("  Sign in with Apple", for: .normal)
+		loginButton.setTitleColor(.background, for: .normal)
+		loginButton.titleLabel?.font = UIFont.notoSansCJKkr(type: .regular, size: .medium)
+		loginButton.imageView?.tintColor = .background
+		loginButton.layer.borderWidth = 0.5
+		loginButton.addTarget(self, action: #selector(authorizationButtonTapped), for: .touchUpInside)
 	}
 	
 	func setViewHierachies() {
 		[
-			authorizationButton
+			welcomeLabel,
+			loginButton
 		].forEach {
 			$0.translatesAutoresizingMaskIntoConstraints = false
 			view.addSubview($0)
@@ -133,8 +167,13 @@ private extension LoginViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			authorizationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			authorizationButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+			welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			welcomeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			
+			loginButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+			loginButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 40),
+			loginButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -40),
+			loginButton.heightAnchor.constraint(equalToConstant: 50)
 		])
 	}
 }

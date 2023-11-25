@@ -8,7 +8,7 @@
 import Combine
 
 struct LoginInput {
-	let loginButtonTap: AnyPublisher<Void, Never>
+	let loginButtonTap: PassthroughSubject<String, Never>
 }
 
 enum LoginState {

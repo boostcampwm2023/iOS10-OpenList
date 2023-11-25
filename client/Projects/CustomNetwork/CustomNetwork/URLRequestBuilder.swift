@@ -30,12 +30,12 @@ public struct URLRequestBuilder {
 		return self
 	}
 	
-	mutating func addHeader(field: String, value: String) -> URLRequestBuilder {
+	mutating public func addHeader(field: String, value: String) -> URLRequestBuilder {
 		headers[field] = value
 		return self
 	}
 	
-	mutating func setBody(_ body: Data) -> URLRequestBuilder {
+	mutating public func setBody(_ body: Data) -> URLRequestBuilder {
 		self.body = body
 		return self
 	}

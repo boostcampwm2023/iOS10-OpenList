@@ -21,6 +21,14 @@ final class AppComponent: EmptyComponent, TabBarDependency {
 final class AppLoginComponent: EmptyComponent, LoginDependency {
 	var navigationControllable: NavigationControllable
 	
+	var loginUseCase: LoginUseCase {
+		return DefaultLoginUseCase(defaultAuthRepository: defaultAuthRepository)
+	}
+	
+	var defaultAuthRepository: AuthRepository {
+		return DefaultAuthRepository()
+	}
+	
 	init(navigationControllable: NavigationControllable) {
 		self.navigationControllable = navigationControllable
 	}

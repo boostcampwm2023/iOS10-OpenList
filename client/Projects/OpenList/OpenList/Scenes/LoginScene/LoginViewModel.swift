@@ -6,33 +6,40 @@
 //
 
 import Combine
+import Foundation
 
 protocol LoginViewModelable: ViewModelable
 where Input == LoginInput,
 	State == LoginState,
 	Output == AnyPublisher<State, Never> { }
 
-final class LoginViewModel { 
+final class LoginViewModel {
+	private let loginUseCase: LoginUseCase
 	
-}
-
-extension LoginViewModel: LoginViewModelable {
-	func transform(_ input: Input) -> Output {
-		let loginButtonDidTap = loginButtonDidTap(input)
-		return Publishers.MergeMany(
-			loginButtonDidTap
-		)
-		.eraseToAnyPublisher()
+	init(loginUseCase: LoginUseCase) {
+		self.loginUseCase = loginUseCase
 	}
 }
 
-private extension LoginViewModel {
-	func loginButtonDidTap(_ input: Input) -> Output {
+extension LoginViewModel: LoginViewModelable {
+	func transform(_ input: LoginInput) -> AnyPublisher<LoginState, Never> {
+		let loginDidRequest = loginDidRequest(input)
+		return Publishers.MergeMany([
+			loginDidRequest
+		]).eraseToAnyPublisher()
+	}
+}
+
+extension LoginViewModel {
+	func loginDidRequest(_ input: Input) -> Output {
 		return input.loginButtonTap
 			.withUnretained(self)
-			.map { (_, _) in
-				return .success
-			}
-			.eraseToAnyPublisher()
+			.map { (owner, identityToken) in
+				Task {
+					let result = await owner.loginUseCase.postLoginInfo(identityToken: identityToken, provider: "APPLE")
+					print(result)
+				}
+				return LoginState.success
+			}.eraseToAnyPublisher()
 	}
 }
