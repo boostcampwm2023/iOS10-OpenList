@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SharedChecklistModel } from './entities/shared-checklist.entity';
-import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UsersService } from '../users/users.service';
+import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
+import { SharedChecklistModel } from './entities/shared-checklist.entity';
 
 @Injectable()
 export class SharedChecklistsService {
@@ -45,9 +45,9 @@ export class SharedChecklistsService {
     return checklists;
   }
 
-  async findSharedChecklistById(id: number) {
+  async findSharedChecklistById(sharedChecklistId: number) {
     const checklist = await this.repository.findOne({
-      where: { id },
+      where: { sharedChecklistId },
     });
     if (!checklist) {
       throw new BadRequestException('존재하지 않는 체크리스트입니다.');

@@ -1,13 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { FoldersService } from './folders.service';
-import { FolderModel } from './entities/folder.entity';
-import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserModel } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
-import { UsersService } from '../users/users.service';
-import { UserModel } from '../users/entities/user.entity';
+import { FolderModel } from './entities/folder.entity';
+import { FoldersService } from './folders.service';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
@@ -63,7 +63,7 @@ describe('FoldersService', () => {
     };
     mockFoldersRepository.create.mockReturnValue(expectedFolderObject);
     mockFoldersRepository.save.mockResolvedValue({
-      id: 1,
+      folderId: 1,
       ...expectedFolderObject,
     });
 
@@ -78,7 +78,7 @@ describe('FoldersService', () => {
     expect(mockFoldersRepository.save).toHaveBeenCalledWith(
       expectedFolderObject,
     ); // 수정된 부분
-    expect(result).toEqual({ id: 1, ...expectedFolderObject });
+    expect(result).toEqual({ folderId: 1, ...expectedFolderObject });
   });
 
   it('service.createFolder(createFolderDto) : 이미 존재하는 폴더명일 경우 BadRequestException을 던진다.', async () => {
@@ -106,8 +106,8 @@ describe('FoldersService', () => {
 
   it('service.findAllFolders() : 모든 폴더를 찾는다.', async () => {
     const mockFolders = [
-      { id: 1, email: 'test@example.com', nickname: 'TestFolder' },
-      { id: 2, email: 'test2@example.com', nickname: 'TestFolder2' },
+      { folderId: 1, email: 'test@example.com', nickname: 'TestFolder' },
+      { folderId: 2, email: 'test2@example.com', nickname: 'TestFolder2' },
     ];
     mockFoldersRepository.find.mockResolvedValue(mockFolders);
 
@@ -117,20 +117,20 @@ describe('FoldersService', () => {
     expect(result).toEqual(mockFolders);
   });
 
-  it('service.findFolderById(id) : id에 해당하는 폴더를 찾는다.', async () => {
-    const folder = { id: 1, title: 'blackpink in your area' };
+  it('service.findFolderById(id) : folderId에 해당하는 폴더를 찾는다.', async () => {
+    const folder = { folderId: 1, title: 'blackpink in your area' };
     mockFoldersRepository.findOne.mockResolvedValue(folder);
 
     const result = await service.findFolderById(1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { folderId: 1 },
       relations: ['owner'],
     });
     expect(result).toEqual(folder);
   });
 
-  it('service.findFolderById(id) : 존재하지 않는 폴더명일 경우 BadRequestException을 던진다.', async () => {
+  it('service.findFolderById(folderId) : 존재하지 않는 폴더명일 경우 BadRequestException을 던진다.', async () => {
     mockFoldersRepository.findOne.mockResolvedValue(null);
 
     await expect(service.findFolderById(1)).rejects.toThrow(
@@ -138,12 +138,12 @@ describe('FoldersService', () => {
     );
   });
 
-  it('service.updateFolder(id, updateFolderDto) : id에 해당하는 폴더를 업데이트한다.', async () => {
+  it('service.updateFolder(folderId, updateFolderDto) : folderId에 해당하는 폴더를 업데이트한다.', async () => {
     const updateFolderDto: UpdateFolderDto = {
       title: 'newJeans in your area',
     };
     const existingFolder = {
-      id: 1,
+      folderId: 1,
       title: 'blackpink in your area',
     };
     mockFoldersRepository.findOne.mockResolvedValue(existingFolder);
@@ -155,7 +155,7 @@ describe('FoldersService', () => {
     const result = await service.updateFolder(1, updateFolderDto);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { folderId: 1 },
       relations: ['owner'],
     });
     expect(mockFoldersRepository.save).toHaveBeenCalledWith({
@@ -165,7 +165,7 @@ describe('FoldersService', () => {
     expect(result.title).toEqual('newJeans in your area');
   });
 
-  it('service.updateFolder(id, updateFolderDto) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
+  it('service.updateFolder(folderId, updateFolderDto) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
     const updateFolderDto: UpdateFolderDto = { title: 'UpdatedFolder' };
     mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
 
@@ -174,22 +174,22 @@ describe('FoldersService', () => {
     );
   });
 
-  it('service.removeFolder(id) : id에 해당하는 폴더를 삭제한다.', async () => {
-    const folder = { id: 1, title: 'blackpink in your area' };
+  it('service.removeFolder(folderId) : folderId에 해당하는 폴더를 삭제한다.', async () => {
+    const folder = { folderId: 1, title: 'blackpink in your area' };
     mockFoldersRepository.findOne.mockResolvedValue(folder);
     mockFoldersRepository.remove.mockResolvedValue(folder);
 
     const result = await service.removeFolder(1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { folderId: 1 },
       relations: ['owner'],
     });
     expect(mockFoldersRepository.remove).toHaveBeenCalledWith(folder);
     expect(result).toEqual({ message: '삭제되었습니다.' });
   });
 
-  it('service.removeFolder(id) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
+  it('service.removeFolder(folderId) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
     mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
 
     await expect(service.removeFolder(9999)).rejects.toThrow(

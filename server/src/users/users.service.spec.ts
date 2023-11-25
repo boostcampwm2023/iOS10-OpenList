@@ -44,7 +44,7 @@ describe('UsersService', () => {
     };
     mockUsersRepository.exist.mockResolvedValue(false);
     mockUsersRepository.create.mockReturnValue(createUserDto);
-    mockUsersRepository.save.mockResolvedValue({ id: 1, ...createUserDto });
+    mockUsersRepository.save.mockResolvedValue({ userId: 1, ...createUserDto });
 
     const result = await service.createUser(createUserDto);
 
@@ -53,7 +53,7 @@ describe('UsersService', () => {
     });
     expect(mockUsersRepository.create).toHaveBeenCalledWith(createUserDto);
     expect(mockUsersRepository.save).toHaveBeenCalledWith(createUserDto);
-    expect(result).toEqual({ id: 1, ...createUserDto });
+    expect(result).toEqual({ userId: 1, ...createUserDto });
   });
 
   it('service.createUser(createUserDto) : 이미 존재하는 이메일일 경우 BadRequestException을 던진다.', async () => {
@@ -71,8 +71,8 @@ describe('UsersService', () => {
 
   it('service.findAllUsers() : 모든 유저를 찾는다.', async () => {
     const mockUsers = [
-      { id: 1, email: 'test@example.com', nickname: 'TestUser' },
-      { id: 2, email: 'test2@example.com', nickname: 'TestUser2' },
+      { userId: 1, email: 'test@example.com', nickname: 'TestUser' },
+      { userId: 2, email: 'test2@example.com', nickname: 'TestUser2' },
     ];
     mockUsersRepository.find.mockResolvedValue(mockUsers);
 
@@ -82,28 +82,28 @@ describe('UsersService', () => {
     expect(result).toEqual(mockUsers);
   });
 
-  it('service.findUserById(id) : id에 해당하는 유저를 찾는다.', async () => {
-    const user = { id: 1, email: 'test@example.com', nickname: 'TestUser' };
+  it('service.findUserById(userId) : userId에 해당하는 유저를 찾는다.', async () => {
+    const user = { userId: 1, email: 'test@example.com', nickname: 'TestUser' };
     mockUsersRepository.findOne.mockResolvedValue(user);
 
     const result = await service.findUserById(1);
 
     expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { userId: 1 },
     });
     expect(result).toEqual(user);
   });
 
-  it('service.findUserById(id) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
+  it('service.findUserById(userId) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
     mockUsersRepository.findOne.mockResolvedValue(null);
 
     await expect(service.findUserById(1)).rejects.toThrow(BadRequestException);
   });
 
-  it('service.updateUser(id, updateUserDto) : id에 해당하는 유저를 업데이트한다.', async () => {
+  it('service.updateUser(userId, updateUserDto) : userId에 해당하는 유저를 업데이트한다.', async () => {
     const updateUserDto: UpdateUserDto = { nickname: 'UpdatedUser' };
     const existingUser = {
-      id: 1,
+      userId: 1,
       email: 'test@example.com',
       nickname: 'TestUser',
     };
@@ -116,7 +116,7 @@ describe('UsersService', () => {
     const result = await service.updateUser(1, updateUserDto);
 
     expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { userId: 1 },
     });
     expect(mockUsersRepository.save).toHaveBeenCalledWith({
       ...existingUser,
@@ -125,7 +125,7 @@ describe('UsersService', () => {
     expect(result.nickname).toEqual('UpdatedUser');
   });
 
-  it('service.updateUser(id, updateUserDto) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
+  it('service.updateUser(userId, updateUserDto) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
     const updateUserDto: UpdateUserDto = { nickname: 'UpdatedUser' };
     mockUsersRepository.findOne.mockResolvedValue(null);
 
@@ -134,21 +134,21 @@ describe('UsersService', () => {
     );
   });
 
-  it('service.removeUser(id) : id에 해당하는 유저를 삭제한다.', async () => {
-    const user = { id: 1, email: 'test@example.com', nickname: 'TestUser' };
+  it('service.removeUser(userId) : userId에 해당하는 유저를 삭제한다.', async () => {
+    const user = { userId: 1, email: 'test@example.com', nickname: 'TestUser' };
     mockUsersRepository.findOne.mockResolvedValue(user);
     mockUsersRepository.remove.mockResolvedValue(user);
 
     const result = await service.removeUser(1);
 
     expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { userId: 1 },
     });
     expect(mockUsersRepository.remove).toHaveBeenCalledWith(user);
     expect(result).toEqual({ message: '삭제되었습니다.' });
   });
 
-  it('service.removeUser(id) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
+  it('service.removeUser(userId) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
     mockUsersRepository.findOne.mockResolvedValue(null);
     await expect(service.removeUser(1)).rejects.toThrow(BadRequestException);
   });
