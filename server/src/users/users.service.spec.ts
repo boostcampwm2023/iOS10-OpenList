@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserModel } from './entities/user.entity';
+import { ProviderType, UserModel } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -40,7 +40,7 @@ describe('UsersService', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
       nickname: 'TestUser',
-      provider: 'APPLE',
+      provider: ProviderType.APPLE, // Enum 멤버 사용
     };
     mockUsersRepository.exist.mockResolvedValue(false);
     mockUsersRepository.create.mockReturnValue(createUserDto);
@@ -60,7 +60,7 @@ describe('UsersService', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
       nickname: 'TestUser',
-      provider: 'APPLE',
+      provider: ProviderType.APPLE, // Enum 멤버 사용
     };
     mockUsersRepository.exist.mockResolvedValue(true);
 

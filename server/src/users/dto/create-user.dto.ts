@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ProviderType } from '../entities/user.entity';
 
 export class CreateUserDto {
@@ -6,7 +6,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   providerId: string;
 
-  @IsString()
+  @IsEnum(ProviderType)
   @IsNotEmpty()
   provider: ProviderType;
 

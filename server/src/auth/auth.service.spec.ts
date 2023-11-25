@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserModel } from 'src/users/entities/user.entity';
+import { ProviderType, UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { loginUserDto } from './dto/login-user.dto';
@@ -143,7 +143,7 @@ describe('AuthService', () => {
     it('유효한 이메일과 provider로 유저를 인증한다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
       const existUser = { ...user, userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
@@ -157,7 +157,7 @@ describe('AuthService', () => {
     it('존재하지 않는 이메일이면 UnauthorizedException을 발생시킨다.', async () => {
       const user: loginUserDto = {
         email: 'nonexistent@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(null);
 
@@ -169,7 +169,7 @@ describe('AuthService', () => {
     it('provider가 다르면 UnauthorizedException을 발생시킨다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'GOOGLE',
+        provider: ProviderType.GOOGLE,
       };
       const existUser = { ...user, provider: 'APPLE', userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
@@ -184,7 +184,7 @@ describe('AuthService', () => {
     it('유효한 이메일과 provider로 로그인하고 토큰을 발급한다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
       const existUser = { email: user.email, userId: 1 } as UserModel;
       jest
@@ -230,7 +230,7 @@ describe('AuthService', () => {
     it('유저를 등록하고 토큰을 발급한다.', async () => {
       const user: registerUserDto = {
         email: 'newuser@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
         nickname: 'NewUser',
       };
       const newUser = { ...user, userId: 3 } as UserModel;
