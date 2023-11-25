@@ -39,7 +39,7 @@ describe('AuthService', () => {
   });
   describe('signToken', () => {
     it('유저 정보로 access 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 };
       const token = 'access_token';
       jest.spyOn(jwtService, 'sign').mockReturnValue(token);
 
@@ -53,7 +53,7 @@ describe('AuthService', () => {
     });
 
     it('유저 정보로 refresh 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 };
       const token = 'refresh_token';
       jest.spyOn(jwtService, 'sign').mockReturnValue(token);
 
@@ -123,7 +123,7 @@ describe('AuthService', () => {
 
   describe('loginUser', () => {
     it('유저 정보로 access 토큰과 refresh 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 };
       const accessToken = 'access_token';
       const refreshToken = 'refresh_token';
       jest
@@ -145,7 +145,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         provider: 'APPLE',
       };
-      const existUser = { ...user, id: 1 } as UserModel;
+      const existUser = { ...user, userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
 
       const result = await authService.authenticateWithEmailAndProvider(user);
@@ -171,7 +171,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         provider: 'GOOGLE',
       };
-      const existUser = { ...user, provider: 'APPLE', id: 1 } as UserModel;
+      const existUser = { ...user, provider: 'APPLE', userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
 
       await expect(
@@ -186,7 +186,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         provider: 'APPLE',
       };
-      const existUser = { email: user.email, id: 1 } as UserModel;
+      const existUser = { email: user.email, userId: 1 } as UserModel;
       jest
         .spyOn(authService, 'authenticateWithEmailAndProvider')
         .mockResolvedValue(existUser);
@@ -233,7 +233,7 @@ describe('AuthService', () => {
         provider: 'APPLE',
         nickname: 'NewUser',
       };
-      const newUser = { ...user, id: 3 } as UserModel;
+      const newUser = { ...user, userId: 3 } as UserModel;
       jest.spyOn(usersService, 'createUser').mockResolvedValue(newUser);
       jest.spyOn(authService, 'loginUser').mockReturnValue({
         accessToken: 'access_token',

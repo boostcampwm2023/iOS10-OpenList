@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ProviderType, UserModel } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
-import * as querystring from 'querystring';
+import axios from 'axios';
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
-import axios from 'axios';
+import * as querystring from 'querystring';
+import { ProviderType, UserModel } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { loginUserDto } from './dto/login-user.dto';
 import { registerUserDto } from './dto/register-user.dto';
@@ -171,8 +171,12 @@ export class AuthService {
    * @param tokenType 토큰 타입 (access/refresh)
    * @returns 토큰
    */
-  signToken(user: Pick<UserModel, 'email' | 'userId'>, tokenType: TokenType) {
-    const payload = { email: user.email, sub: user.userId };
+  signToken(user: Pick<UserModel, 'email' | 'id'>, tokenType: TokenType) {
+    const payload = {
+      email: user.email,
+      userID: user.id,
+      tokenType: tokenType,
+    };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: tokenType === 'access' ? 300 : 3600,
@@ -210,17 +214,17 @@ export class AuthService {
     return { accessToken };
   }
 
-  // /**
-  //  * user 정보를 통해 access,refresh 토큰을 발급 후 반환한다.
-  //  * @param user
-  //  * @returns { accessToken: string, refreshToken: string}
-  //  */
-  // loginUser(user: Pick<UserModel, 'email' | 'id'>) {
-  //   return {
-  //     accessToken: this.signToken(user, 'access'),
-  //     refreshToken: this.signToken(user, 'refresh'),
-  //   };
-  // }
+  /**
+   * user 정보를 통해 access,refresh 토큰을 발급 후 반환한다.
+   * @param user
+   * @returns { accessToken: string, refreshToken: string}
+   */
+  loginUser(user: Pick<UserModel, 'email' | 'userId'>) {
+    return {
+      accessToken: this.signToken(user, 'access'),
+      refreshToken: this.signToken(user, 'refresh'),
+    };
+  }
 
   /**
    * 이메일과 provider를 통해 유저를 인증한다.
