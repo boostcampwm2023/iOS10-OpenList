@@ -1,16 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
 } from '@nestjs/common';
-import { PrivateChecklistsService } from './private-checklists.service';
 import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
 import { UpdatePrivateChecklistDto } from './dto/update-private-checklist.dto';
+import { PrivateChecklistsService } from './private-checklists.service';
 
 @Controller('folders/:folderId/checklists')
 export class PrivateChecklistsController {
@@ -18,60 +17,65 @@ export class PrivateChecklistsController {
 
   /**
    * @description userId와 folderId와 title을 통해 해당 folder에 새로운 checklist를 생성합니다.
-   * @param {number} fid
+   * @param {number} folderId
    * @param {CreatePrivateChecklistDto} dto
    * @returns {Promise<PrivateChecklistModel>}
    */
   @Post()
   postPrivateChecklist(
-    @Param('folderId') fid: number,
+    @Param('folderId') folderId: number,
     @Body() dto: CreatePrivateChecklistDto,
   ) {
-    const uId = 1;
-    return this.checklistsService.createPrivateChecklist(uId, fid, dto);
+    const userId: number = 1;
+    return this.checklistsService.createPrivateChecklist(userId, folderId, dto);
   }
 
   /**
    * @description folderId를 통해 해당 folder의 모든 checklist를 조회합니다.
-   * @param {number} fid
+   * @param {number} folderId
    * @returns {Promise<PrivateChecklistModel[]>}
    */
   @Get()
-  getAllPrivateChecklists(@Param('folderId') fid: number) {
-    return this.checklistsService.findAllPrivateChecklists(fid);
+  getAllPrivateChecklists(@Param('folderId') folderId: number) {
+    return this.checklistsService.findAllPrivateChecklists(folderId);
   }
 
   /**
    * @description checklistId를 통해 해당 checklist를 조회합니다.
-   * @param {number} cid
+   * @param {number} privateChecklistId
    * @returns {Promise<PrivateChecklistModel>}
    */
-  @Get(':checklistId')
-  getPrivateChecklist(@Param('checklistId') cid: number) {
-    return this.checklistsService.findPrivateChecklistById(cid);
+  @Get(':privateChecklistId')
+  getPrivateChecklist(@Param('privateChecklistId') privateChecklistId: number) {
+    return this.checklistsService.findPrivateChecklistById(privateChecklistId);
   }
 
   /**
    * @description checklistId를 통해 해당 checklist의 title을 수정합니다.
-   * @param {number} cid
+   * @param {number} privateChecklistId
    * @param {UpdatePrivateChecklistDto} dto
    * @returns {Promise<PrivateChecklistModel>}
    */
-  @Put(':checklistId')
+  @Put(':privateChecklistId')
   putPrivateChecklist(
-    @Param('checklistId') cid: number,
+    @Param('privateChecklistId') privateChecklistId: number,
     @Body() dto: UpdatePrivateChecklistDto,
   ) {
-    return this.checklistsService.updatePrivateChecklist(cid, dto);
+    return this.checklistsService.updatePrivateChecklist(
+      privateChecklistId,
+      dto,
+    );
   }
 
   /**
    * @description checklistId를 통해 해당 checklist를 삭제합니다.
-   * @param {number} cid
+   * @param {number} privateChecklistId
    * @returns {Promise<message:string>}
    */
-  @Delete(':checklistId')
-  deletePrivateChecklist(@Param('checklistId') cid: number) {
-    return this.checklistsService.removePrivateChecklist(cid);
+  @Delete(':privateChecklistId')
+  deletePrivateChecklist(
+    @Param('privateChecklistId') privateChecklistId: number,
+  ) {
+    return this.checklistsService.removePrivateChecklist(privateChecklistId);
   }
 }
