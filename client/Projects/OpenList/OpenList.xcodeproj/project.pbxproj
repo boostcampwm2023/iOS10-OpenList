@@ -87,6 +87,7 @@
 		78C2F0242B049AF100E4EC4E /* CheckListRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0232B049AF100E4EC4E /* CheckListRepository.swift */; };
 		78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */; };
 		78C2F0492B05C00800E4EC4E /* DefaultCheckListRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */; };
+		78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F7476D2B126EC3003ED6DA /* KeyChain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -198,6 +199,7 @@
 		78C2F0282B049B5E00E4EC4E /* CoreDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorage.swift; sourceTree = "<group>"; };
 		78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListTextField.swift; sourceTree = "<group>"; };
 		78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCheckListRepository.swift; sourceTree = "<group>"; };
+		78F7476D2B126EC3003ED6DA /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -440,6 +442,7 @@
 		5FA1F89B2AFF7E1D00869079 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
 			);
 			path = Utils;
@@ -605,6 +608,14 @@
 				78C2F0282B049B5E00E4EC4E /* CoreDataStorage.swift */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		78F7476C2B126EB7003ED6DA /* KeyChain */ = {
+			isa = PBXGroup;
+			children = (
+				78F7476D2B126EC3003ED6DA /* KeyChain.swift */,
+			);
+			path = KeyChain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -783,6 +794,7 @@
 				5F70C83D2B04C39F00826B5D /* CheckListItemTextField.swift in Sources */,
 				4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */,
 				4D967D172B0617260032E0D7 /* Future+.swift in Sources */,
+				78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */,
 				78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */,
 				4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
