@@ -8,7 +8,7 @@
 import Foundation
 
 protocol LoginUseCase {
-	func postLoginInfo(identityToken: String, provider: String) async -> Bool
+	func postLoginInfo(identityToken: String, provider: String) async -> LoginResponseDTO?
 }
 
 final class DefaultLoginUseCase {
@@ -20,7 +20,7 @@ final class DefaultLoginUseCase {
 }
 
 extension DefaultLoginUseCase: LoginUseCase {
-	func postLoginInfo(identityToken: String, provider: String) async -> Bool {
+	func postLoginInfo(identityToken: String, provider: String) async -> LoginResponseDTO? {
 		let result = await defaultAuthRepository.postLoginInfo(identityToken: identityToken, provider: provider)
 		return result
 	}

@@ -27,7 +27,7 @@ final class DefaultAuthRepository {
 }
 
 extension DefaultAuthRepository: AuthRepository {
-	func postLoginInfo(identityToken: String, provider: String) async -> Bool {
+	func postLoginInfo(identityToken: String, provider: String) async -> LoginResponseDTO? {
 		let loginInfoDTO = LoginRequestDTO(
 			identityToken: identityToken,
 			provider: provider
@@ -41,12 +41,13 @@ extension DefaultAuthRepository: AuthRepository {
 				customSession: session,
 				urlRequestBuilder: loginUrlRequestBuilder
 			)
-			let result = try await service.postData()
-			print("Login Success: \(result)")
-			return true
+			let data = try await service.postData()
+			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
+			print("Login Success: \(loginResponseDTO.accessToken)")
+			return loginResponseDTO
 		} catch {
 			print(error.localizedDescription)
-			return false
+			return nil
 		}
 	}
 }

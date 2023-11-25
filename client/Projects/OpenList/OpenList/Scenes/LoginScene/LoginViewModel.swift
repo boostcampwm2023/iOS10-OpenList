@@ -37,7 +37,10 @@ extension LoginViewModel {
 			.map { (owner, identityToken) in
 				Task {
 					let result = await owner.loginUseCase.postLoginInfo(identityToken: identityToken, provider: "APPLE")
-					print(result)
+					// DTO 돌아온 경우에 키체인에 저장 요청
+					if let result {
+						
+					}
 				}
 				return LoginState.success
 			}.eraseToAnyPublisher()
