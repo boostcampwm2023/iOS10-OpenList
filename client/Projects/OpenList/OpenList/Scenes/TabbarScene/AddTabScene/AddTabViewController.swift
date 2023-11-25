@@ -14,7 +14,6 @@ final class AddTabViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
   private let router: AddTabRoutingLogic
   private let viewModel: any AddTabViewModelable
-	private let viewLoad: PassthroughSubject<Void, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
 
 	// MARK: - UI Components
@@ -42,7 +41,6 @@ final class AddTabViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemBackground
 		setViewAttributes()
 		setViewHierachies()
 		setViewConstraints()
@@ -62,7 +60,6 @@ extension AddTabViewController: ViewBindable {
 			textFieldDidChange: titleTextField.valuePublisher,
 			nextButtonDidTap: nextButton.tapPublisher
 		)
-
 		let output = viewModel.transform(input)
 
 		output
@@ -109,6 +106,7 @@ private extension AddTabViewController {
 	}
 	
 	func setViewAttributes() {
+		view.backgroundColor = .systemBackground
 		setTitleLabel()
 		setTextField()
 		setNextButton()
@@ -145,18 +143,42 @@ private extension AddTabViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		titleTextFieldCenterYConstraint = titleTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-		nextButtonBottomConstraints = nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20)
+		nextButtonBottomConstraints = nextButton.bottomAnchor.constraint(
+			equalTo: safeArea.bottomAnchor,
+			constant: -Constraint.defaultSpace
+		)
 		NSLayoutConstraint.activate([
 			titleTextFieldCenterYConstraint,
-			titleTextField.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Constraint.defaultSpace),
-			titleTextField.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Constraint.defaultSpace),
+			titleTextField.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: Constraint.defaultSpace
+			),
+			titleTextField.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -Constraint.defaultSpace
+			),
 			
-			titleLabel.bottomAnchor.constraint(equalTo: titleTextField.topAnchor, constant: -Constraint.defaultSpace),
-			titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Constraint.defaultSpace),
-			titleLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -Constraint.defaultSpace),
+			titleLabel.bottomAnchor.constraint(
+				equalTo: titleTextField.topAnchor,
+				constant: -Constraint.defaultSpace
+			),
+			titleLabel.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: Constraint.defaultSpace
+			),
+			titleLabel.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -Constraint.defaultSpace
+			),
 			
-			nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constraint.defaultSpace),
-			nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constraint.defaultSpace),
+			nextButton.leadingAnchor.constraint(
+				equalTo: view.leadingAnchor,
+				constant: Constraint.defaultSpace
+			),
+			nextButton.trailingAnchor.constraint(
+				equalTo: view.trailingAnchor,
+				constant: -Constraint.defaultSpace
+			),
 			nextButton.heightAnchor.constraint(equalToConstant: Constraint.buttonHeight),
 			nextButtonBottomConstraints
 		])
@@ -211,6 +233,7 @@ extension AddTabViewController: UITextFieldDelegate {
 private extension UIViewController {
 	func setupKeyboardTapAction() {
 		let tap = UITapGestureRecognizer(target: self, action: #selector(Self.dismissKeyboard))
+		tap.cancelsTouchesInView = true
 		view.addGestureRecognizer(tap)
 	}
 	
