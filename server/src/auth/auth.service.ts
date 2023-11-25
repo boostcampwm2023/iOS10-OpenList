@@ -174,8 +174,8 @@ export class AuthService {
   signToken(user: Pick<UserModel, 'email' | 'id'>, tokenType: TokenType) {
     const payload = {
       email: user.email,
-      userID: user.id,
-      tokenType: tokenType,
+      userId: user.userId,
+      tokenType,
     };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
