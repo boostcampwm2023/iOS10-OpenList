@@ -46,8 +46,8 @@ export class UsersService {
     return users;
   }
 
-  async findUserById(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+  async findUserById(userId: number) {
+    const user = await this.usersRepository.findOne({ where: { userId } });
     if (!user) {
       throw new BadRequestException('존재하지 않는 유저입니다.');
     }
@@ -76,8 +76,22 @@ export class UsersService {
     return newUser;
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findUserById(id);
+  async createUser(createUserDto: CreateUserDto) {
+    const userObject = this.usersRepository.create(createUserDto);
+    const emailExists = await this.usersRepository.exist({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+    if (emailExists) {
+      throw new BadRequestException('이미 존재하는 이메일입니다.');
+    }
+    const newUser = await this.usersRepository.save(userObject);
+    return newUser;
+  }
+
+  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findUserById(userId);
     const updatedUser = await this.usersRepository.save({
       ...user,
       ...updateUserDto,
@@ -85,8 +99,8 @@ export class UsersService {
     return updatedUser;
   }
 
-  async removeUser(id: number) {
-    const user = await this.findUserById(id);
+  async removeUser(userId: number) {
+    const user = await this.findUserById(userId);
     await this.usersRepository.remove(user);
     return { message: '삭제되었습니다.' };
   }
