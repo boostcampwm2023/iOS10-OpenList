@@ -22,9 +22,7 @@ export class AuthService {
    * @param authorizeCode 클라이언트로부터 받은 애플 인증 코드
    * @returns 애플로부터 받은 토큰들
    */
-  async getAppleTokens(
-    authorizeCode: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async getAppleTokens(authorizeCode: string) {
     try {
       // 클라이언트 시크릿 생성
       const clientSecret = this.generateClientSecret();
@@ -47,10 +45,30 @@ export class AuthService {
       return {
         accessToken: response.data.access_token,
         refreshToken: response.data.refresh_token,
+        idToken: response.data.id_token,
       };
     } catch (error) {
       throw new UnauthorizedException(
         '애플 인증 과정에서 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async getApplePublicKey(kid: string): Promise<string> {
+    try {
+      const response = await axios.get('https://appleid.apple.com/auth/keys');
+      const keys = response.data.keys;
+      const matchingKey = keys.find((key) => key.kid === kid);
+
+      if (!matchingKey) {
+        throw new Error('Matching key not found.');
+      }
+
+      return matchingKey;
+    } catch (error) {
+      console.error('Apple public key 가져오기 실패:', error);
+      throw new UnauthorizedException(
+        'Apple public key를 가져오는데 실패했습니다.',
       );
     }
   }
@@ -83,8 +101,31 @@ export class AuthService {
   async registerOrLoginWithApple(
     authUserDto: AuthUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const { authorizationCode, idToken, user: userDto } = authUserDto;
-    const decodedIdToken = jwt.verify(idToken, process.env.APPLE_PUBLIC_KEY);
+    const { authorizationCode, user: userDto } = authUserDto;
+
+    // 애플 서버로부터 액세스 토큰과 리프레시 토큰을 받아오기
+    const appleTokens = await this.getAppleTokens(authorizationCode);
+
+    if (!appleTokens.idToken) {
+      throw new UnauthorizedException('ID 토큰이 없습니다.');
+    }
+
+    const decodedTokenHeader = jwt.decode(appleTokens.idToken, {
+      complete: true,
+    }).header;
+    // 애플 공개키를 가져오기
+    const applePublicKey = await this.getApplePublicKey(decodedTokenHeader.kid);
+
+    // 애플 액세스 토큰을 디코드
+    let decodedIdToken;
+    try {
+      decodedIdToken = jwt.verify(appleTokens.accessToken, applePublicKey, {
+        algorithms: ['RS256'],
+      });
+    } catch (error) {
+      throw new UnauthorizedException('애플 토큰 디코드 오류');
+    }
+
     if (!decodedIdToken || typeof decodedIdToken === 'string') {
       throw new UnauthorizedException('애플 토큰 디코드 오류');
     }
