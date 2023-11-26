@@ -34,16 +34,16 @@ final class WithDetailCheckListDiffableDataSource: WithCheckListDataSource {
 }
 
 extension WithDetailCheckListDiffableDataSource {
-	func receiveCheckListItem(with text: String) {
+	func receiveCheckListItem(with item: CheckListItem) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = snapshot()
 			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
-			if items.isEmpty {
-				items.append(.init(title: text, isChecked: false))
+			snapshot.deleteItems(items)
+			if let index = items.firstIndex(where: { $0.id == item.id }) {
+				items[index].title = item.title
 			} else {
-				snapshot.deleteItems(items)
-				items[0].title = text
+				items.append(item)
 			}
 			snapshot.appendItems(items, toSection: .checkList)
 			apply(snapshot, animatingDifferences: false)
