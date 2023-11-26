@@ -245,7 +245,7 @@ extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		dataSource?.appendCheckListItem(CheckListItem(title: text, isChecked: false))
+		dataSource?.appendCheckListItem(CheckListItem(itemId: UUID(), title: text, isChecked: false))
 		dataSource?.updatePlaceholder()
 	}
 }
