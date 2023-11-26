@@ -40,6 +40,7 @@ describe('UsersService', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
       fullName: 'TestUser',
+      nickname: 'TestUser',
       providerId: '1234567890',
       provider: ProviderType.APPLE, // Enum 멤버 사용
     };
@@ -108,6 +109,7 @@ describe('UsersService', () => {
       userId: 1,
       email: 'test@example.com',
       fullName: 'TestUser',
+      nickname: 'TestUser',
     };
     mockUsersRepository.findOne.mockResolvedValue(existingUser);
     mockUsersRepository.save.mockResolvedValue({
