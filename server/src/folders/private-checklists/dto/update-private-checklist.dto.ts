@@ -29,5 +29,5 @@ export class UpdatePrivateChecklistDto extends PartialType(
   @ValidateNested({ each: true })
   @Type(() => ChecklistItem)
   @IsOptional()
-  items: ChecklistItem[];
+  items?: ChecklistItem[];
 }

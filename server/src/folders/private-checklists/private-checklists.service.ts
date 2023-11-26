@@ -58,7 +58,7 @@ export class PrivateChecklistsService {
     privateChecklistId: number,
     dto: UpdatePrivateChecklistDto,
   ) {
-    const { title, folderId } = dto;
+    const { title, folderId, items } = dto;
     const checklist = await this.findPrivateChecklistById(privateChecklistId);
     if (!checklist) {
       throw new BadRequestException('존재하지 않는 체크리스트입니다.');
@@ -71,6 +71,10 @@ export class PrivateChecklistsService {
     if (folderId) {
       const folder = await this.foldersService.findFolderById(folderId);
       checklist.folder = folder;
+    }
+
+    if (items) {
+      checklist.items = items;
     }
 
     const newChecklist = await this.repository.save(checklist);
