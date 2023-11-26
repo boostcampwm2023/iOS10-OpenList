@@ -26,7 +26,7 @@ export class PrivateChecklistsController {
     @Param('folderId') folderId: number,
     @Body() dto: CreatePrivateChecklistDto,
   ) {
-    const userId: number = 1;
+    const userId: number = 2;
     return this.checklistsService.createPrivateChecklist(userId, folderId, dto);
   }
 

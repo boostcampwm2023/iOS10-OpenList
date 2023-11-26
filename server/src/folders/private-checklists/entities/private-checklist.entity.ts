@@ -1,15 +1,15 @@
+import { IsBoolean, IsString } from 'class-validator';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ChecklistModel } from '../../../common/entity/checklist.entity';
 import { UserModel } from '../../../users/entities/user.entity';
 import { FolderModel } from '../../entities/folder.entity';
 
-export interface ChecklistItem {
+export class ChecklistItem {
+  @IsBoolean()
   isChecked: boolean;
-  value: string;
-}
 
-export interface ChecklistContent {
-  [key: number]: ChecklistItem;
+  @IsString()
+  value: string;
 }
 
 @Entity()
@@ -28,5 +28,5 @@ export class PrivateChecklistModel extends ChecklistModel {
   folder: FolderModel;
 
   @Column({ type: 'json' })
-  content: ChecklistContent;
+  items: ChecklistItem[];
 }

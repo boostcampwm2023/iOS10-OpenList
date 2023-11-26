@@ -17,13 +17,13 @@ export class FoldersController {
 
   @Post()
   postFolder(@Body() createFolderDto: CreateFolderDto) {
-    const userId: number = 1;
+    const userId: number = 2;
     return this.foldersService.createFolder(userId, createFolderDto);
   }
 
   @Get()
   getFolders() {
-    const userId: number = 1;
+    const userId: number = 2;
     return this.foldersService.findAllFolders(userId);
   }
 
