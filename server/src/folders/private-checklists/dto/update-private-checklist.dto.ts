@@ -1,6 +1,15 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { PrivateChecklistModel } from '../entities/private-checklist.entity';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import {
+  ChecklistContent,
+  PrivateChecklistModel,
+} from '../entities/private-checklist.entity';
 
 export class UpdatePrivateChecklistDto extends PartialType(
   PrivateChecklistModel,
@@ -13,4 +22,8 @@ export class UpdatePrivateChecklistDto extends PartialType(
   @IsNumber()
   @IsOptional()
   folderId?: number;
+
+  @IsObject()
+  @IsOptional()
+  content?: ChecklistContent;
 }
