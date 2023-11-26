@@ -144,8 +144,7 @@ private extension AddTabViewController {
 		let safeArea = view.safeAreaLayoutGuide
 		titleTextFieldCenterYConstraint = titleTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor)
 		nextButtonBottomConstraints = nextButton.bottomAnchor.constraint(
-			equalTo: safeArea.bottomAnchor,
-			constant: -Constraint.defaultSpace
+			equalTo: safeArea.bottomAnchor
 		)
 		NSLayoutConstraint.activate([
 			titleTextFieldCenterYConstraint,
@@ -207,8 +206,8 @@ private extension AddTabViewController {
 		let keyboardHeight = keyboardFrame.cgRectValue.height
 		
 		UIView.animate(withDuration: 0.3) {
-			self.titleTextFieldCenterYConstraint.constant -= (keyboardHeight / 2)
-			self.nextButtonBottomConstraints.constant -= keyboardHeight
+			self.titleTextFieldCenterYConstraint.constant = -(keyboardHeight / 2)
+			self.nextButtonBottomConstraints.constant = -keyboardHeight
 			self.view.layoutIfNeeded()
 		}
 	}
