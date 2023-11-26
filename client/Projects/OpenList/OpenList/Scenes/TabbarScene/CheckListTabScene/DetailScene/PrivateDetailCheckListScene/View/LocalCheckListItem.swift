@@ -109,6 +109,10 @@ extension LocalCheckListItem: UITextFieldDelegate {
 		replacementString string: String
 	) -> Bool {
 		guard let delegate else { return true }
-		return delegate.textField(self.textField, shouldChangeCharactersIn: range, replacementString: string)
+		return delegate.textField(
+			self.textField,
+			shouldChangeCharactersIn: range,
+			replacementString: string
+		)
 	}
 }
