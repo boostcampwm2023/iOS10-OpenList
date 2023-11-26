@@ -4,11 +4,11 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 import * as querystring from 'querystring';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ProviderType, UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { loginUserDto } from './dto/login-user.dto';
-import { registerUserDto } from './dto/register-user.dto';
 
 type TokenType = 'access' | 'refresh';
 @Injectable()
@@ -171,7 +171,7 @@ export class AuthService {
    * @param tokenType 토큰 타입 (access/refresh)
    * @returns 토큰
    */
-  signToken(user: Pick<UserModel, 'email' | 'id'>, tokenType: TokenType) {
+  signToken(user: UserModel, tokenType: TokenType) {
     const payload = {
       email: user.email,
       userId: user.userId,
@@ -212,18 +212,6 @@ export class AuthService {
     }
     const accessToken = this.signToken({ ...payload }, 'access');
     return { accessToken };
-  }
-
-  /**
-   * user 정보를 통해 access,refresh 토큰을 발급 후 반환한다.
-   * @param user
-   * @returns { accessToken: string, refreshToken: string}
-   */
-  loginUser(user: Pick<UserModel, 'email' | 'userId'>) {
-    return {
-      accessToken: this.signToken(user, 'access'),
-      refreshToken: this.signToken(user, 'refresh'),
-    };
   }
 
   /**
@@ -277,11 +265,8 @@ export class AuthService {
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */
-  async registerUser(user: registerUserDto) {
-    const newUser = await this.usersService.createUser({
-      ...user,
-      providerId: 'USER_FOR_TEST',
-    });
+  async registerUser(user: CreateUserDto) {
+    const newUser = await this.usersService.createUser(user);
     return this.loginUser(newUser);
   }
 }
