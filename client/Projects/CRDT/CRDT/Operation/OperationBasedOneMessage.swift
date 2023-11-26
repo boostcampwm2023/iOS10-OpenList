@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct OperationBasedOneMessage {
+public struct OperationBasedOneMessage {
 	var operation: any Operation
 }
 
@@ -17,7 +17,7 @@ extension OperationBasedOneMessage: Encodable {
 		case operation
 	}
 	
-	func encode(to encoder: Encoder) throws {
+	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		if let operation = operation as? RGASInsertion<String> {
 			try container.encode(operation, forKey: .operation)
@@ -37,7 +37,7 @@ extension OperationBasedOneMessage: Encodable {
 
 // MARK: - OperationBasedMessage
 extension OperationBasedOneMessage: Decodable {
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		if let operation = try? container.decode(RGASInsertion<String>.self, forKey: .operation) {
 			self.operation = operation
@@ -55,7 +55,7 @@ extension OperationBasedOneMessage: Decodable {
 
 // MARK: - OperationBasedMessage
 extension OperationBasedOneMessage: OperationBasedMessage {
-	func concat(with message: CRDTMessage) throws -> CRDTMessage {
+	public func concat(with message: CRDTMessage) throws -> CRDTMessage {
 		guard let message = message as? OperationBasedMessage else {
 			throw CRDTError.inCompatibleType(
 				message,
@@ -65,22 +65,22 @@ extension OperationBasedOneMessage: OperationBasedMessage {
 		return try OperationBasedMessagesBag(self, message)
 	}
 	
-	func clone() -> CRDTMessage {
+	public func clone() -> CRDTMessage {
 		return OperationBasedOneMessage(operation: operation.clone())
 	}
 	
-	func size() -> Int {
+	public func size() -> Int {
 		return 1
 	}
 	
-	func execute<T>(on crdt: CRDT<T>) throws {
+	public func execute<T>(on crdt: CRDT<T>) throws {
 		try crdt.applyOneRemote(self)
 	}
 }
 
 // MARK: - CustomDebugStringConvertible
 extension OperationBasedOneMessage: CustomDebugStringConvertible {
-	var debugDescription: String {
+	public var debugDescription: String {
 		return "OperationBasedOneMessage{operation=\(operation)}"
 	}
 }
