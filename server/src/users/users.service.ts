@@ -63,6 +63,9 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
+    if (!createUserDto.nickname) {
+      createUserDto.nickname = createUserDto.fullName;
+    }
     const userObject = this.usersRepository.create(createUserDto);
     const emailExists = await this.usersRepository.exist({
       where: {
