@@ -13,4 +13,8 @@ export class registerUserDto {
   @IsString()
   @IsNotEmpty()
   fullName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  providerId: string;
 }

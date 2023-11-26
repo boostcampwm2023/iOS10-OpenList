@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
-import { FolderModel } from './entities/folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
+import { CreateFolderDto } from './dto/create-folder.dto';
+import { UpdateFolderDto } from './dto/update-folder.dto';
+import { FolderModel } from './entities/folder.entity';
 
 @Injectable()
 export class FoldersService {
@@ -13,8 +13,8 @@ export class FoldersService {
     private readonly folderRepository: Repository<FolderModel>,
     private readonly usersService: UsersService,
   ) {}
-  async createFolder(uId, dto: CreateFolderDto) {
-    const owner = await this.usersService.findUserById(uId);
+  async createFolder(userId: number, dto: CreateFolderDto) {
+    const owner = await this.usersService.findUserById(userId);
     const folderObject = this.folderRepository.create({
       ...dto,
       owner,
@@ -31,17 +31,17 @@ export class FoldersService {
     return newFolder;
   }
 
-  async findAllFolders(uId) {
+  async findAllFolders(userId: number) {
     const folders = await this.folderRepository.find({
-      where: { owner: { id: uId } },
+      where: { owner: { userId: userId } },
       relations: ['owner'],
     });
     return folders;
   }
 
-  async findFolderById(id: number) {
+  async findFolderById(folderId: number) {
     const folder = await this.folderRepository.findOne({
-      where: { id },
+      where: { folderId },
       relations: ['owner'],
     });
     if (!folder) {
@@ -50,8 +50,8 @@ export class FoldersService {
     return folder;
   }
 
-  async updateFolder(id: number, dto: UpdateFolderDto) {
-    const folder = await this.findFolderById(id);
+  async updateFolder(folderId: number, dto: UpdateFolderDto) {
+    const folder = await this.findFolderById(folderId);
     const updatedFolder = await this.folderRepository.save({
       ...folder,
       ...dto,
@@ -59,8 +59,8 @@ export class FoldersService {
     return updatedFolder;
   }
 
-  async removeFolder(id: number) {
-    const folder = await this.findFolderById(id);
+  async removeFolder(folderId: number) {
+    const folder = await this.findFolderById(folderId);
     await this.folderRepository.remove(folder);
     return { message: '삭제되었습니다.' };
   }

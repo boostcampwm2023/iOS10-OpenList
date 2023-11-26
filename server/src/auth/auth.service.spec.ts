@@ -1,11 +1,11 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserModel } from 'src/users/entities/user.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ProviderType, UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { loginUserDto } from './dto/login-user.dto';
-import { registerUserDto } from './dto/register-user.dto';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -39,7 +39,7 @@ describe('AuthService', () => {
   });
   describe('signToken', () => {
     it('유저 정보로 access 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 } as UserModel;
       const token = 'access_token';
       jest.spyOn(jwtService, 'sign').mockReturnValue(token);
 
@@ -53,7 +53,7 @@ describe('AuthService', () => {
     });
 
     it('유저 정보로 refresh 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 } as UserModel;
       const token = 'refresh_token';
       jest.spyOn(jwtService, 'sign').mockReturnValue(token);
 
@@ -123,7 +123,7 @@ describe('AuthService', () => {
 
   describe('loginUser', () => {
     it('유저 정보로 access 토큰과 refresh 토큰을 발급한다.', () => {
-      const user = { email: 'test@example.com', id: 1 };
+      const user = { email: 'test@example.com', userId: 1 } as UserModel;
       const accessToken = 'access_token';
       const refreshToken = 'refresh_token';
       jest
@@ -143,9 +143,9 @@ describe('AuthService', () => {
     it('유효한 이메일과 provider로 유저를 인증한다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
-      const existUser = { ...user, id: 1 } as UserModel;
+      const existUser = { ...user, userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
 
       const result = await authService.authenticateWithEmailAndProvider(user);
@@ -157,7 +157,7 @@ describe('AuthService', () => {
     it('존재하지 않는 이메일이면 UnauthorizedException을 발생시킨다.', async () => {
       const user: loginUserDto = {
         email: 'nonexistent@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(null);
 
@@ -169,9 +169,9 @@ describe('AuthService', () => {
     it('provider가 다르면 UnauthorizedException을 발생시킨다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'GOOGLE',
+        provider: ProviderType.GOOGLE,
       };
-      const existUser = { ...user, provider: 'APPLE', id: 1 } as UserModel;
+      const existUser = { ...user, provider: 'APPLE', userId: 1 } as UserModel;
       jest.spyOn(usersService, 'findUserByEmail').mockResolvedValue(existUser);
 
       await expect(
@@ -184,9 +184,9 @@ describe('AuthService', () => {
     it('유효한 이메일과 provider로 로그인하고 토큰을 발급한다.', async () => {
       const user: loginUserDto = {
         email: 'test@example.com',
-        provider: 'APPLE',
+        provider: ProviderType.APPLE,
       };
-      const existUser = { email: user.email, id: 1 } as UserModel;
+      const existUser = { email: user.email, userId: 1 } as UserModel;
       jest
         .spyOn(authService, 'authenticateWithEmailAndProvider')
         .mockResolvedValue(existUser);
@@ -228,12 +228,13 @@ describe('AuthService', () => {
 
   describe('registerUser', () => {
     it('유저를 등록하고 토큰을 발급한다.', async () => {
-      const user: registerUserDto = {
+      const user: CreateUserDto = {
         email: 'newuser@example.com',
-        provider: 'APPLE',
-        nickname: 'NewUser',
+        provider: ProviderType.APPLE,
+        fullName: 'NewUser',
+        providerId: '1234567890',
       };
-      const newUser = { ...user, id: 3 } as UserModel;
+      const newUser = { ...user, userId: 3 } as UserModel;
       jest.spyOn(usersService, 'createUser').mockResolvedValue(newUser);
       jest.spyOn(authService, 'loginUser').mockReturnValue({
         accessToken: 'access_token',

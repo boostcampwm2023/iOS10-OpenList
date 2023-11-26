@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
 } from '@nestjs/common';
-import { FoldersService } from './folders.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
+import { FoldersService } from './folders.service';
 
 @Controller('folders')
 export class FoldersController {
@@ -17,28 +17,31 @@ export class FoldersController {
 
   @Post()
   postFolder(@Body() createFolderDto: CreateFolderDto) {
-    const uId = 1;
-    return this.foldersService.createFolder(uId, createFolderDto);
+    const userId: number = 1;
+    return this.foldersService.createFolder(userId, createFolderDto);
   }
 
   @Get()
   getFolders() {
-    const uId = 1;
-    return this.foldersService.findAllFolders(uId);
+    const userId: number = 1;
+    return this.foldersService.findAllFolders(userId);
   }
 
-  @Get(':id')
-  getFolder(@Param('id') id: number) {
-    return this.foldersService.findFolderById(id);
+  @Get(':forderId')
+  getFolder(@Param('forderId') forderId: number) {
+    return this.foldersService.findFolderById(forderId);
   }
 
-  @Put(':id')
-  putFolder(@Param('id') id: number, @Body() updateFolderDto: UpdateFolderDto) {
-    return this.foldersService.updateFolder(id, updateFolderDto);
+  @Put(':forderId')
+  putFolder(
+    @Param('forderId') forderId: number,
+    @Body() updateFolderDto: UpdateFolderDto,
+  ) {
+    return this.foldersService.updateFolder(forderId, updateFolderDto);
   }
 
-  @Delete(':id')
-  deleteFolder(@Param('id') id: number) {
-    return this.foldersService.removeFolder(id);
+  @Delete(':forderId')
+  deleteFolder(@Param('forderId') forderId: number) {
+    return this.foldersService.removeFolder(forderId);
   }
 }
