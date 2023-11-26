@@ -30,7 +30,7 @@ export class UsersController {
     return this.usersService.findUserById(userId);
   }
 
-  @Put(':id')
+  @Put(':userId')
   putUser(
     @Param('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -38,7 +38,7 @@ export class UsersController {
     return this.usersService.updateUser(userId, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete(':userId')
   deleteUser(@Param('userId') userId: number) {
     return this.usersService.removeUser(userId);
   }

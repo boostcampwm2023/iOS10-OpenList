@@ -39,7 +39,8 @@ describe('UsersService', () => {
   it('service.createUser(createUserDto) : 새로운 유저를 생성한다.', async () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
-      nickname: 'TestUser',
+      fullName: 'TestUser',
+      providerId: '1234567890',
       provider: ProviderType.APPLE, // Enum 멤버 사용
     };
     mockUsersRepository.exist.mockResolvedValue(false);
@@ -59,7 +60,8 @@ describe('UsersService', () => {
   it('service.createUser(createUserDto) : 이미 존재하는 이메일일 경우 BadRequestException을 던진다.', async () => {
     const createUserDto: CreateUserDto = {
       email: 'test@example.com',
-      nickname: 'TestUser',
+      fullName: 'TestUser',
+      providerId: '1234567890',
       provider: ProviderType.APPLE, // Enum 멤버 사용
     };
     mockUsersRepository.exist.mockResolvedValue(true);
@@ -101,11 +103,11 @@ describe('UsersService', () => {
   });
 
   it('service.updateUser(userId, updateUserDto) : userId에 해당하는 유저를 업데이트한다.', async () => {
-    const updateUserDto: UpdateUserDto = { nickname: 'UpdatedUser' };
+    const updateUserDto: UpdateUserDto = { fullName: 'UpdatedUser' };
     const existingUser = {
       userId: 1,
       email: 'test@example.com',
-      nickname: 'TestUser',
+      fullName: 'TestUser',
     };
     mockUsersRepository.findOne.mockResolvedValue(existingUser);
     mockUsersRepository.save.mockResolvedValue({
@@ -122,11 +124,11 @@ describe('UsersService', () => {
       ...existingUser,
       ...updateUserDto,
     });
-    expect(result.nickname).toEqual('UpdatedUser');
+    expect(result.fullName).toEqual('UpdatedUser');
   });
 
   it('service.updateUser(userId, updateUserDto) : 존재하지 않는 유저일 경우 BadRequestException을 던진다.', async () => {
-    const updateUserDto: UpdateUserDto = { nickname: 'UpdatedUser' };
+    const updateUserDto: UpdateUserDto = { fullName: 'UpdatedUser' };
     mockUsersRepository.findOne.mockResolvedValue(null);
 
     await expect(service.updateUser(1, updateUserDto)).rejects.toThrow(

@@ -32,8 +32,8 @@ export class UsersService {
     return newUser;
   }
 
-  async updateAppleUser(id: number, dto: UpdateUserDto) {
-    const user = await this.findUserById(id);
+  async updateAppleUser(userId: number, dto: UpdateUserDto) {
+    const user = await this.findUserById(userId);
     const updatedUser = await this.usersRepository.save({
       ...user,
       ...dto,
@@ -60,20 +60,6 @@ export class UsersService {
       throw new BadRequestException('존재하지 않는 유저입니다.');
     }
     return user;
-  }
-
-  async createUser(createUserDto: CreateUserDto) {
-    const userObject = this.usersRepository.create(createUserDto);
-    const emailExists = await this.usersRepository.exist({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-    if (emailExists) {
-      throw new BadRequestException('이미 존재하는 이메일입니다.');
-    }
-    const newUser = await this.usersRepository.save(userObject);
-    return newUser;
   }
 
   async createUser(createUserDto: CreateUserDto) {
