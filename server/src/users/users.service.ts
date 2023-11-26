@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserModel } from './entities/user.entity';
+import { ProviderType, UserModel } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -11,18 +11,34 @@ export class UsersService {
     @InjectRepository(UserModel)
     private readonly usersRepository: Repository<UserModel>,
   ) {}
-  async createUser(createUserDto: CreateUserDto) {
-    const userObject = this.usersRepository.create(createUserDto);
+
+  async findUserByAppleId(appleId: string): Promise<UserModel | undefined> {
+    return await this.usersRepository.findOne({
+      where: { providerId: appleId, provider: ProviderType.APPLE },
+    });
+  }
+
+  async createAppleUser(dto: CreateUserDto): Promise<UserModel> {
+    const userObj = this.usersRepository.create(dto);
     const emailExists = await this.usersRepository.exist({
       where: {
-        email: createUserDto.email,
+        email: dto.email,
       },
     });
     if (emailExists) {
       throw new BadRequestException('이미 존재하는 이메일입니다.');
     }
-    const newUser = await this.usersRepository.save(userObject);
+    const newUser = await this.usersRepository.save(userObj);
     return newUser;
+  }
+
+  async updateAppleUser(id: number, dto: UpdateUserDto) {
+    const user = await this.findUserById(id);
+    const updatedUser = await this.usersRepository.save({
+      ...user,
+      ...dto,
+    });
+    return updatedUser;
   }
 
   async findAllUsers() {
@@ -44,6 +60,20 @@ export class UsersService {
       throw new BadRequestException('존재하지 않는 유저입니다.');
     }
     return user;
+  }
+
+  async createUser(createUserDto: CreateUserDto) {
+    const userObject = this.usersRepository.create(createUserDto);
+    const emailExists = await this.usersRepository.exist({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+    if (emailExists) {
+      throw new BadRequestException('이미 존재하는 이메일입니다.');
+    }
+    const newUser = await this.usersRepository.save(userObject);
+    return newUser;
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto) {
