@@ -15,12 +15,12 @@ protocol AppRouterProtocol {
 final class AppRouter: AppRouterProtocol {
 	var window: UIWindow?
 	var tabBarFactoryable: TabBarFactoryable
-	var loginFactoryable: LoginFactoryable?
+	var loginFactoryable: LoginFactoryable
 	
 	init(
 		window: UIWindow?,
 		tabBarFactoryable: TabBarFactoryable,
-		loginFactoryable: LoginFactoryable?
+		loginFactoryable: LoginFactoryable
 	) {
 		self.window = window
 		self.tabBarFactoryable = tabBarFactoryable
@@ -33,7 +33,7 @@ final class AppRouter: AppRouterProtocol {
 	}
 	
 	func showLoginFlow() {
-		let loginViewController = loginFactoryable?.make(with: self)
-		self.window?.rootViewController = loginViewController?.uiviewController
+		let loginViewController = loginFactoryable.make(with: self)
+		self.window?.rootViewController = loginViewController.uiviewController
 	}
 }
