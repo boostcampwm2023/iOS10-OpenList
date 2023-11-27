@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { createPublicKey } from 'crypto';
+import { JWK } from '@panva/jose';
 import axios from 'axios';
-import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
-import * as querystring from 'querystring';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ProviderType, UserModel } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -11,52 +11,64 @@ import { AuthUserDto } from './dto/auth-user.dto';
 import { loginUserDto } from './dto/login-user.dto';
 
 type TokenType = 'access' | 'refresh';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
+
   /**
-   * 애플 서버로부터 액세스 토큰과 리프레시 토큰을 받아옵니다.
-   * @param authorizeCode 클라이언트로부터 받은 애플 인증 코드
-   * @returns 애플로부터 받은 토큰들
+   * Apple ID 토큰을 검증합니다.
+   * @param idToken Apple ID 토큰
+   // * @param expectedNonce 클라이언트에서 전달된 nonce 값
+   * @returns {Promise<jwt.JwtPayload>}
    */
-  async getAppleTokens(authorizeCode: string) {
-    try {
-      // 클라이언트 시크릿 생성
-      const clientSecret = this.generateClientSecret();
+  async verifyAppleIdToken(idToken: string): Promise<jwt.JwtPayload> {
+    const decodedTokenHeader = jwt.decode(idToken, { complete: true }).header;
 
-      // 애플 서버에 토큰 요청
-      const response = await axios.post(
-        'https://appleid.apple.com/auth/token',
-        querystring.stringify({
-          grant_type: 'authorization_code',
-          code: authorizeCode,
-          client_secret: clientSecret,
-          client_id: process.env.SUB,
-        }),
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      );
+    // Apple 공개키 가져오기
+    const applePublicKey = await this.getApplePublicKey(decodedTokenHeader.kid);
 
-      // 애플이 발급해준 access_token과 refresh_token 반환
-      return {
-        accessToken: response.data.access_token,
-        refreshToken: response.data.refresh_token,
-        idToken: response.data.id_token,
-      };
-    } catch (error) {
-      throw new UnauthorizedException(
-        '애플 인증 과정에서 오류가 발생했습니다.',
-      );
+    // Apple ID 토큰 검증
+    const decodedIdToken = jwt.verify(idToken, applePublicKey, {
+      algorithms: ['RS256'],
+    }) as jwt.JwtPayload;
+
+    if (!decodedIdToken) {
+      throw new UnauthorizedException('ID 토큰 디코드 오류');
     }
+
+    // 'iss' 필드 검증
+    if (decodedIdToken.iss !== 'https://appleid.apple.com') {
+      throw new UnauthorizedException('잘못된 issuer');
+    }
+
+    // 'aud' 필드 검증
+    if (decodedIdToken.aud !== process.env['SUB']) {
+      throw new UnauthorizedException('잘못된 audience');
+    }
+
+    // // nonce 검증
+    // if (decodedIdToken.nonce !== expectedNonce) {
+    //   throw new UnauthorizedException('Nonce 값이 일치하지 않습니다.');
+    // }
+
+    return decodedIdToken;
   }
 
-  async getApplePublicKey(kid: string): Promise<string> {
+  /**
+   * Apple 공개 키를 가져옵니다.
+   * @param {string} kid
+   * @returns {Promise<string | Buffer>}
+   */
+  async getApplePublicKey(kid: string) {
     try {
+      // Apple 의 공개 키를 JWK 형식으로 가져오기
       const response = await axios.get('https://appleid.apple.com/auth/keys');
+
+      // 일치하는 kid 를 가진 키를 찾기
       const keys = response.data.keys;
       const matchingKey = keys.find((key) => key.kid === kid);
 
@@ -64,7 +76,16 @@ export class AuthService {
         throw new Error('Matching key not found.');
       }
 
-      return matchingKey;
+      //@panva/jose 라이브러리의 JWK.asKey 메소드를 사용하여 JWK 객체를 생성하기
+      const jwk = JWK.asKey(matchingKey);
+
+      // Node.js의 crypto 모듈의 createPublicKey 함수를 사용하여 JWK를 PEM 형식으로 변환하기
+      const pem = createPublicKey(jwk.toPEM()).export({
+        type: 'pkcs1',
+        format: 'pem',
+      });
+
+      return pem;
     } catch (error) {
       console.error('Apple public key 가져오기 실패:', error);
       throw new UnauthorizedException(
@@ -74,77 +95,28 @@ export class AuthService {
   }
 
   /**
-   * 클라이언트 시크릿을 생성합니다.
-   * @returns 생성된 클라이언트 시크릿
+   * Apple 로그인/등록을 한번에 처리한다.
+   * @param {AuthUserDto} authUserDto
+   * @returns {Promise<{accessToken: string, refreshToken: string}>}
    */
-  private generateClientSecret(): string {
-    const algorithm = process.env.ALG as jwt.Algorithm; // 타입 캐스팅
-    const keyid = process.env.KID;
-    const issuer = process.env.ISS;
-    const expiresIn = 15777000; // 6개월 (초 단위)
-    const audience = 'https://appleid.apple.com';
-    const subject = process.env.SUB;
-    const authKey = fs.readFileSync(process.env.AUTHKEY, 'utf8');
-
-    const signOptions: jwt.SignOptions = {
-      algorithm: algorithm,
-      keyid: keyid,
-      issuer: issuer,
-      audience: audience,
-      subject: subject,
-      expiresIn: expiresIn,
-    };
-
-    return jwt.sign({}, authKey, signOptions);
-  }
-
   async registerOrLoginWithApple(
     authUserDto: AuthUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const { authorizationCode, user: userDto } = authUserDto;
+    const { identityToken, fullName } = authUserDto;
 
-    // 애플 서버로부터 액세스 토큰과 리프레시 토큰을 받아오기
-    const appleTokens = await this.getAppleTokens(authorizationCode);
+    // Apple ID 토큰 검증
+    const decodedIdToken = await this.verifyAppleIdToken(identityToken);
 
-    if (!appleTokens.idToken) {
-      throw new UnauthorizedException('ID 토큰이 없습니다.');
-    }
-
-    const decodedTokenHeader = jwt.decode(appleTokens.idToken, {
-      complete: true,
-    }).header;
-    // 애플 공개키를 가져오기
-    const applePublicKey = await this.getApplePublicKey(decodedTokenHeader.kid);
-
-    // 애플 액세스 토큰을 디코드
-    let decodedIdToken;
-    try {
-      decodedIdToken = jwt.verify(appleTokens.accessToken, applePublicKey, {
-        algorithms: ['RS256'],
-      });
-    } catch (error) {
-      throw new UnauthorizedException('애플 토큰 디코드 오류');
-    }
-
-    if (!decodedIdToken || typeof decodedIdToken === 'string') {
-      throw new UnauthorizedException('애플 토큰 디코드 오류');
-    }
-
-    const fullName = `${userDto.name.firstName} ${userDto.name.lastName}`;
     let user = await this.usersService.findUserByAppleId(decodedIdToken.sub);
 
     if (!user) {
+      // 사용자가 존재하지 않으면 새로 생성
       user = await this.usersService.createAppleUser({
         providerId: decodedIdToken.sub,
         provider: ProviderType.APPLE,
-        email: userDto.email,
-        fullName,
-      });
-    } else if (userDto) {
-      // entity가 존재하는데, user정보가 왔다면 업데이트
-      user = await this.usersService.updateAppleUser(user.userId, {
-        email: userDto.email,
-        fullName,
+        email: decodedIdToken.email, // 이메일은 decodedIdToken에서 추출
+        fullName: fullName || '',
+        nickname: fullName || '',
       });
     }
 
@@ -178,20 +150,20 @@ export class AuthService {
       tokenType,
     };
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
+      secret: process.env['JWT_SECRET'],
       expiresIn: tokenType === 'access' ? 300 : 3600,
     });
   }
 
   /**
-   * 토근을 검증한다. 검증에 실패하면 UnauthorizedException을 발생시킨다.
+   * 토근을 검증한다. 검증에 실패하면 UnauthorizedException 을 발생시킨다.
    * @param token
-   * @returns 토근에 담긴 정보
+   * @returns payload
    */
   verifyToken(token: string) {
     try {
       return this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env['JWT_SECRET'],
       });
     } catch (error) {
       throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다.');
@@ -199,25 +171,28 @@ export class AuthService {
   }
 
   /**
-   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * refresh 토큰을 통해 access 토큰과 refresh 토큰을 재발급한다.
    * @param refreshToken
-   * @returns 새로 발급된 access 토큰
+   * @returns { accessToken: string, refreshToken: string}
    */
-  refreshAccessToken(refreshToken: string) {
-    const payload = this.verifyToken(refreshToken);
+  async refreshAccessToken(refreshToken: string) {
+    const payload = await this.verifyToken(refreshToken);
+
     if (payload.tokenType !== 'refresh') {
       throw new UnauthorizedException(
         'access토큰 재발급은 refresh 토큰으로만 가능합니다.',
       );
     }
-    const accessToken = this.signToken({ ...payload }, 'access');
-    return { accessToken };
+    const newAccessToken = this.signToken({ ...payload }, 'access');
+    const newRefreshToken = this.signToken({ ...payload }, 'refresh');
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 인증한다.
-   * 없는 이메일이면 UnauthorizedException을 발생시킨다.
-   * provider가 다르면 UnauthorizedException을 발생시키고 어떤 provider로 가입되어 있는지 알려준다.
+   * 이메일과 provider 를 통해 유저를 인증한다.
+   * 없는 이메일이면 UnauthorizedException 을 발생시킨다.
+   * provider 가 다르면 UnauthorizedException 을 발생시키고 어떤 provider 로 가입되어 있는지 알려준다.
    * @param user
    * @returns existUser
    */
@@ -235,11 +210,13 @@ export class AuthService {
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 인증하고 토큰을 발급한다.
+   * 이메일과 provider 를 통해 유저를 인증하고 토큰을 발급한다.
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */
-  async loginWithEmailAndProvider(user: loginUserDto) {
+  async loginWithEmailAndProvider(
+    user: loginUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const existUser = await this.authenticateWithEmailAndProvider(user);
     return this.loginUser(existUser);
   }
@@ -247,7 +224,7 @@ export class AuthService {
   /**
    * 헤더에서 토큰을 추출한다.
    * @param header
-   * @returns 토큰
+   * @returns token
    */
   extractTokenFromHeader(header: string) {
     // 정규식을 사용하여 'Bearer' 토큰 추출
@@ -261,11 +238,13 @@ export class AuthService {
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 등록하고 토큰을 발급한다.
+   * 이메일과 provider 를 통해 유저를 등록하고 토큰을 발급한다.
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */
-  async registerUser(user: CreateUserDto) {
+  async registerUser(
+    user: CreateUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const newUser = await this.usersService.createUser(user);
     return this.loginUser(newUser);
   }

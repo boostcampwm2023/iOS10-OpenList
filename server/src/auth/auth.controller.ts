@@ -14,14 +14,16 @@ export class AuthController {
    * @returns {accessToken, refreshToken}
    */
   @Post('apple/login')
-  async postAppleLogin(@Body() dto: AuthUserDto) {
+  async postAppleLogin(
+    @Body() dto: AuthUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return await this.authService.registerOrLoginWithApple(dto);
   }
 
   /**
    * 이메일과 프로바이더를 통해 로그인한다. (개발자용)
    * @param user {loginUserDto}
-   * @returns {accessToken,refreshAccessToken}
+   * @returns {accessToken,refreshToken}
    */
   @Post('login')
   async postLogin(@Body() user: loginUserDto) {
@@ -29,12 +31,14 @@ export class AuthController {
   }
 
   /**
-   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * refresh 토큰을 통해 access 토큰과 refresh 토큰을 재발급한다
    * @param rawToken
-   * @returns {accessToken,refreshAccessToken}
+   * @returns {accessToken, refreshToken}
    */
   @Post('token/access')
-  postAccessToken(@Headers('authorization') rawToken: string) {
+  postAccessToken(
+    @Headers('authorization') rawToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const token = this.authService.extractTokenFromHeader(rawToken);
     return this.authService.refreshAccessToken(token);
   }
@@ -42,7 +46,7 @@ export class AuthController {
   /**
    * 이메일과 프로바이더를 통해 회원가입한다. (개발자용)
    * @param user {registerUserDto}
-   * @returns {accessToken,refreshAccessToken}
+   * @returns {accessToken,refreshToken}
    */
   @Post('register')
   postRegister(@Body() user: registerUserDto) {
