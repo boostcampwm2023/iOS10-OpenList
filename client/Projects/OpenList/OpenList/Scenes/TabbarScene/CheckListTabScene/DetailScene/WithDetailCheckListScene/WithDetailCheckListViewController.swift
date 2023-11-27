@@ -36,6 +36,8 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private var socketConnet: PassthroughSubject<Void, Never> = .init()
 	private var insert: PassthroughSubject<EditText, Never> = .init()
 	private var delete: PassthroughSubject<EditText, Never> = .init()
+	private var appendDocument: PassthroughSubject<EditText, Never> = .init()
+	private var removeDocument: PassthroughSubject<EditText, Never> = .init()
 	private var receive: PassthroughSubject<Data, Never> = .init()
 	
 	// MARK: - Initializers
@@ -74,6 +76,10 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 		super.viewWillAppear(animated)
 		viewWillAppear.send(())
 	}
+	
+	deinit {
+		WebSocket.shared.closeWebSocket()
+	}
 }
 
 // MARK: - Bind Methods
@@ -87,6 +93,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			socketConnet: socketConnet,
 			insert: insert,
 			delete: delete,
+			appendDocument: appendDocument,
+			removeDocument: removeDocument,
 			receive: receive
 		)
 		let output = viewModel.transform(input)
@@ -104,8 +112,12 @@ extension WithDetailCheckListViewController: ViewBindable {
 			break
 		case let .title(title):
 			headerView.configure(title: title!, isLocked: true)
-		case let .update(content):
-			updateTextField(to: content)
+		case let .updateItem(item):
+			updateTextField(to: item)
+		case let .appendItem(item):
+			appendItem(item)
+		case let .removeItem(content):
+			print(content)
 		case let .socketConnet(isConnect):
 			print(isConnect)
 		}
@@ -116,8 +128,13 @@ extension WithDetailCheckListViewController: ViewBindable {
 
 // MARK: - Helper
 private extension WithDetailCheckListViewController {
-	func updateTextField(to text: String) {
-		dataSource?.receiveCheckListItem(with: text)
+	func updateTextField(to item: CheckListItem) {
+		dataSource?.receiveCheckListItem(with: item)
+	}
+	
+	func appendItem(_ item: CheckListItem) {
+		dataSource?.appendCheckListItem(item)
+		dataSource?.updatePlaceholder()
 	}
 }
 
@@ -132,7 +149,7 @@ private extension WithDetailCheckListViewController {
 	func setCheckListViewAttributes() {
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
-		checkListView.registerCell(LocalCheckListItem.self)
+		checkListView.registerCell(WithCheckListItem.self)
 		checkListView.registerCell(CheckListItemPlaceholder.self)
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
@@ -211,7 +228,7 @@ private extension WithDetailCheckListViewController {
 			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
 				case is CheckListItem:
-					let cell = tableView.dequeueCell(LocalCheckListItem.self, for: indexPath)
+					let cell = tableView.dequeueCell(WithCheckListItem.self, for: indexPath)
 					guard let item = itemIdentifier as? CheckListItem else { return cell }
 					cell.configure(with: item, indexPath: indexPath)
 					cell.delegate = self
@@ -263,11 +280,11 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	}
 }
 
-// MARK: - LocalCheckListItemDelegate
-extension WithDetailCheckListViewController: LocalCheckListItemDelegate {
+// MARK: - WithCheckListItemDelegate
+extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
-		cell: LocalCheckListItem,
+		cell: WithCheckListItem,
 		indexPath: IndexPath
 	) {
 		if let text = textField.text, !text.isEmpty {
@@ -281,7 +298,8 @@ extension WithDetailCheckListViewController: LocalCheckListItemDelegate {
 	func textField(
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+		replacementString string: String,
+		cellId: UUID
 	) -> Bool {
 		guard let text = textField.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
@@ -290,9 +308,9 @@ extension WithDetailCheckListViewController: LocalCheckListItemDelegate {
 		
 		switch range.length {
 		case 0:
-			insert.send(.init(content: string, range: range))
+			insert.send(.init(id: cellId, content: string, range: range))
 		case 1:
-			delete.send(.init(content: string, range: range))
+			delete.send(.init(id: cellId, content: string, range: range))
 		default:
 			return false
 		}
@@ -323,11 +341,21 @@ extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
 
 // MARK: - WithCheckListItemPlaceholderDelegate
 extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
+	func textField(
+		_ textField: CheckListItemTextField,
+		shouldChangeCharactersIn range: NSRange,
+		replacementString string: String
+	) -> Bool {
+		guard let text = textField.text else { return true }
+		guard let stringRange = Range(range, in: text) else { return false }
+		let updatedText = text.replacingCharacters(in: stringRange, with: string)
+		return updatedText.count <= 30
+	}
+	
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		dataSource?.appendCheckListItem(CheckListItem(title: text, isChecked: false))
-		dataSource?.updatePlaceholder()
+		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
 	}
 }
