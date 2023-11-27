@@ -147,8 +147,18 @@ private extension OpenListNavigationBar {
 	
 	// MARK: View Constratins
 	func setViewConstraints() {
+		setBackButtonConstraints()
 		setLeftViewConstraints()
 		setRightViewConstraints()
+	}
+	
+	func setBackButtonConstraints() {
+		guard let backButtonItem = backButtonItem,
+			let textWidth = backButtonItem.titleLabel?.intrinsicContentSize.width
+		else { return }
+		backButtonItem.translatesAutoresizingMaskIntoConstraints = false
+		backButtonItem.widthAnchor.constraint(equalToConstant: 24 + textWidth).isActive = true
+		backButtonItem.heightAnchor.constraint(equalToConstant: 24).isActive = true
 	}
 	
 	func setLeftViewConstraints() {
@@ -156,15 +166,10 @@ private extension OpenListNavigationBar {
 			leftView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constant.horizontalPadding),
 			leftView.centerYAnchor.constraint(equalTo: centerYAnchor)
 		])
-		
 		if let leftItems = leftItems {
 			leftItems.forEach {
 				$0.translatesAutoresizingMaskIntoConstraints = false
-				if let textWidth = $0.titleLabel?.intrinsicContentSize.width {
-					$0.widthAnchor.constraint(equalToConstant: 24 + textWidth).isActive = true
-				} else {
-					$0.widthAnchor.constraint(equalToConstant: 24).isActive = true
-				}
+				$0.widthAnchor.constraint(equalToConstant: 24).isActive = true
 				$0.heightAnchor.constraint(equalToConstant: 24).isActive = true
 			}
 		}
