@@ -21,7 +21,10 @@ final class DefaultLoginUseCase {
 
 extension DefaultLoginUseCase: LoginUseCase {
 	func postLoginInfo(identityToken: String, provider: String) async -> Bool {
-		guard let result = await defaultAuthRepository.postLoginInfo(identityToken: identityToken, provider: provider) else {
+		guard let result = await defaultAuthRepository.postLoginInfo(
+			identityToken: identityToken,
+			provider: provider
+		) else {
 			return false
 		}
 		KeyChain.create(key: "accessToken", token: result.accessToken)

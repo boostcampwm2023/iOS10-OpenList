@@ -5,15 +5,22 @@
 //  Created by Hoon on 11/23/23.
 //
 
+import CustomNetwork
 import Foundation
 
-protocol LoginDependency: Dependency {
-	var loginUseCase: LoginUseCase { get }
-}
+protocol LoginDependency: Dependency {}
 
 final class LoginComponent:
 	Component<LoginDependency>, TabBarDependency {
-	var tabBarFactoryable: TabBarFactoryable {
+	fileprivate var authRepository: AuthRepository {
+		return DefaultAuthRepository()
+	}
+	
+	fileprivate var loginUseCase: LoginUseCase {
+		return DefaultLoginUseCase(defaultAuthRepository: authRepository)
+	}
+	
+	fileprivate var tabBarFactoryable: TabBarFactoryable {
 		return TabBarViewFactory(parent: self)
 	}
 }
@@ -28,8 +35,9 @@ final class LoginViewFactory: Factory<LoginDependency>, LoginFactoryable {
 	}
 	
 	func make(with parentRouter: AppRouterProtocol) -> ViewControllable {
+		let component = LoginComponent(parent: parent)
 		let router = LoginRouter(parentRouter: parentRouter)
-		let viewModel = LoginViewModel(loginUseCase: parent.loginUseCase)
+		let viewModel = LoginViewModel(loginUseCase: component.loginUseCase)
 		let viewController = LoginViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

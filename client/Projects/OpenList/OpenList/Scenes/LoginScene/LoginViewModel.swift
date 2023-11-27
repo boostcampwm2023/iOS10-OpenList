@@ -34,15 +34,16 @@ extension LoginViewModel {
 	func loginDidRequest(_ input: Input) -> Output {
 		return input.loginButtonTap
 			.withUnretained(self)
-			.map { (owner, identityToken) in
-				Task {
-					let result = await owner.loginUseCase.postLoginInfo(identityToken: identityToken, provider: "APPLE")
-					// DTO 돌아온 경우에 키체인에 저장 요청
-					if let result {
-						
-					}
-				}
-				return LoginState.success
-			}.eraseToAnyPublisher()
+			.flatMap { (owner, identityToken) -> AnyPublisher<Bool, Never> in
+				let future = Future(asyncFunc: {
+					await owner.loginUseCase.postLoginInfo(
+						identityToken: identityToken,
+						provider: "APPLE"
+					)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { _ in return .success }
+			.eraseToAnyPublisher()
 	}
 }

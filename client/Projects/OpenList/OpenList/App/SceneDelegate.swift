@@ -29,7 +29,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			tabBarFactoryable: tabBarViewFactory,
 			loginFactoryable: loginViewFactory
 		)
-		//		appRootRouter.showTapFlow()
-		appRootRouter.showLoginFlow()
+
+//		if let accessToken = KeyChain.read(key: "accessToken") {
+//			appRootRouter.showTapFlow()
+//		}
+//		appRootRouter.showLoginFlow()
 	}
 }

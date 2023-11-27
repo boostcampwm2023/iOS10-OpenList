@@ -9,20 +9,10 @@ import CustomNetwork
 import Foundation
 
 final class DefaultAuthRepository {
-	private var service: NetworkService
-	private var urlRequestBuilder: URLRequestBuilder
 	private let session: CustomSession
-	
-	init() {
-		let configuration: URLSessionConfiguration = .default
-		configuration.protocolClasses = [URLProtocol.self]
-		self.session = CustomSession(configuration: configuration)
-		self.urlRequestBuilder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/login/")
-		let service = NetworkService(
-			customSession: session,
-			urlRequestBuilder: urlRequestBuilder
-		)
-		self.service = service
+
+	init(session: CustomSession = .init()) {
+		self.session = session
 	}
 }
 
@@ -33,20 +23,27 @@ extension DefaultAuthRepository: AuthRepository {
 			provider: provider
 		)
 		
+		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/login/")
+		builder.addHeader(
+			field: "Content-Type",
+			value: "application/json"
+		)
+		
 		do {
 			let body = try JSONEncoder().encode(loginInfoDTO)
-			var loginUrlRequestBuilder = urlRequestBuilder.setBody(body)
-			loginUrlRequestBuilder = loginUrlRequestBuilder.addHeader(field: "Content-Type", value: "application/json")
-			service = NetworkService(
+			builder.setBody(body)
+			
+			let service = NetworkService(
 				customSession: session,
-				urlRequestBuilder: loginUrlRequestBuilder
+				urlRequestBuilder: builder
 			)
+			
 			let data = try await service.postData()
 			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
 			print("Login Success: \(loginResponseDTO.accessToken)")
 			return loginResponseDTO
 		} catch {
-			print(error.localizedDescription)
+			print("Login Failed")
 			return nil
 		}
 	}
