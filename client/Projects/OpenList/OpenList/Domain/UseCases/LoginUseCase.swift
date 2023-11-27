@@ -21,8 +21,6 @@ final class DefaultLoginUseCase {
 
 extension DefaultLoginUseCase: LoginUseCase {
 	func postLoginInfo(loginInfo: LoginInfo) async -> Bool {
-		KeyChain.shared.create(key: "accessToken", token: "test")
-		KeyChain.shared.create(key: "refreshToken", token: "test")
 		guard let result = await defaultAuthRepository.postLoginInfo(loginInfo: loginInfo) else {
 			return false
 		}

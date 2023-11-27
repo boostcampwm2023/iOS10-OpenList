@@ -94,10 +94,10 @@ private extension LoginViewController {
 	}
 	
 	func checkName(nameContent: PersonNameComponents?) -> String {
-		guard let content = nameContent else { return "" }
+		guard let content = nameContent else { return TextConstant.emptyName }
 		
 		guard let familyName = content.familyName,
-			let givenName = content.givenName else { return "" }
+			let givenName = content.givenName else { return TextConstant.emptyName }
 		
 		return familyName + givenName
 	}
@@ -148,6 +148,20 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
 
 // MARK: - UI Configure
 private extension LoginViewController {
+	enum TextConstant {
+		static let welcomeText = "오리가 되신 걸 환영합니다"
+		static let signInButtonText = "  Sign in with Apple"
+		static let emptyName = ""
+	}
+	
+	enum LayoutConstant {
+		static let buttonCornerRadius = 25.0
+		static let buttonBorderWidth = 0.5
+		static let buttonDefaultPadding = 40.0
+		static let buttonBottomPadding = 100.0
+		static let buttonHeight = 50.0
+	}
+	
 	func setViewAttributes() {
 		view.backgroundColor = .systemBackground
 		setWelcomeLabel()
@@ -158,19 +172,19 @@ private extension LoginViewController {
 		welcomeLabel.numberOfLines = 0
 		welcomeLabel.textAlignment = .center
 		welcomeLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .extra)
-		welcomeLabel.text = "오리가 되신 걸 환영합니다"
+		welcomeLabel.text = TextConstant.welcomeText
 		welcomeLabel.textColor = .label
 	}
 	
 	func setLoginButton() {
-		loginButton.layer.cornerRadius = 25
+		loginButton.layer.cornerRadius = LayoutConstant.buttonCornerRadius
 		loginButton.backgroundColor = .label
 		loginButton.setImage(UIImage(systemName: "applelogo"), for: .normal)
-		loginButton.setTitle("  Sign in with Apple", for: .normal)
+		loginButton.setTitle(TextConstant.signInButtonText, for: .normal)
 		loginButton.setTitleColor(.background, for: .normal)
 		loginButton.titleLabel?.font = UIFont.notoSansCJKkr(type: .regular, size: .medium)
 		loginButton.imageView?.tintColor = .background
-		loginButton.layer.borderWidth = 0.5
+		loginButton.layer.borderWidth = LayoutConstant.buttonBorderWidth
 		loginButton.addTarget(self, action: #selector(authorizationButtonTapped), for: .touchUpInside)
 	}
 	
@@ -190,10 +204,19 @@ private extension LoginViewController {
 			welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			welcomeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 			
-			loginButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
-			loginButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 40),
-			loginButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -40),
-			loginButton.heightAnchor.constraint(equalToConstant: 50)
+			loginButton.bottomAnchor.constraint(
+				equalTo: view.bottomAnchor,
+				constant: -LayoutConstant.buttonBottomPadding
+			),
+			loginButton.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: LayoutConstant.buttonDefaultPadding
+			),
+			loginButton.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -LayoutConstant.buttonDefaultPadding
+			),
+			loginButton.heightAnchor.constraint(equalToConstant: LayoutConstant.buttonHeight)
 		])
 	}
 }
