@@ -32,6 +32,11 @@ jobs:
           DB_USERNAME=${{ secrets.DB_USERNAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           DB_DATABASE=${{ secrets.DB_DATABASE }}
+          SUB=${{ secrets.SUB }}
+          ALG=${{ secrets.ALG }}
+          KID=${{ secrets.KID }}
+          ISS=${{ secrets.ISS }}
+          AUTH_KEY=${{ secrets.AUTH_KEY }}
           EOF
           
       # docker build 수행  
