@@ -38,7 +38,12 @@ jobs:
           ISS=${{ secrets.ISS }}
           AUTH_KEY=${{ secrets.AUTH_KEY }}
           EOF
-          
+      # .p8 파일 생성
+      - name: Generate .p8 file
+        run: |
+          cat << EOF > ./server/.p8
+          ${{ secrets.P8 }}
+          EOF
       # docker build 수행  
       - name: Set up docker buildx
         id: buildx
