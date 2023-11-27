@@ -27,6 +27,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var cancellables: Set<AnyCancellable> = []
+	private let navigationBar = OpenListNavigationBar(rightItems: [.bell, .search, .more])
 	
 	// MARK: - Initializers
 	init(
@@ -108,17 +109,23 @@ private extension CheckListTableViewController {
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
-		
 		collectionView.delegate = self
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		navigationBar.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		view.addSubview(collectionView)
-		collectionView.delegate = self
+		view.addSubview(navigationBar)
 	}
 	
 	func setConstraints() {
-		collectionView.frame = view.bounds
+		NSLayoutConstraint.activate([
+			collectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+			collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+		])
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
 		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
@@ -202,5 +209,15 @@ extension CheckListTableViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
 		router.routeToDetailScene(with: item.id)
+	}
+}
+
+extension CheckListTableViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		debugPrint("didTapBarItem: \(item.type)")
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		debugPrint("didPressBackButton")
 	}
 }
