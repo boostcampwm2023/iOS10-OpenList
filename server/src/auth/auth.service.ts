@@ -17,6 +17,45 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
+
+  /**
+   * Apple ID 토큰을 검증합니다.
+   * @param idToken Apple ID 토큰
+   // * @param expectedNonce 클라이언트에서 전달된 nonce 값
+   */
+  async verifyAppleIdToken(idToken: string): Promise<jwt.JwtPayload> {
+    const decodedTokenHeader = jwt.decode(idToken, { complete: true }).header;
+
+    // Apple 공개키 가져오기
+    const applePublicKey = await this.getApplePublicKey(decodedTokenHeader.kid);
+
+    // Apple ID 토큰 검증
+    const decodedIdToken = jwt.verify(idToken, applePublicKey, {
+      algorithms: ['RS256'],
+    }) as jwt.JwtPayload;
+
+    if (!decodedIdToken) {
+      throw new UnauthorizedException('ID 토큰 디코드 오류');
+    }
+
+    // 'iss' 필드 검증
+    if (decodedIdToken.iss !== 'https://appleid.apple.com') {
+      throw new UnauthorizedException('잘못된 issuer');
+    }
+
+    // 'aud' 필드 검증
+    if (decodedIdToken.aud !== process.env['SUB']) {
+      throw new UnauthorizedException('잘못된 audience');
+    }
+
+    // // nonce 검증
+    // if (decodedIdToken.nonce !== expectedNonce) {
+    //   throw new UnauthorizedException('Nonce 값이 일치하지 않습니다.');
+    // }
+
+    return decodedIdToken;
+  }
+
   /**
    * 애플 서버로부터 액세스 토큰과 리프레시 토큰을 받아옵니다.
    * @param authorizeCode 클라이언트로부터 받은 애플 인증 코드
@@ -34,7 +73,7 @@ export class AuthService {
           grant_type: 'authorization_code',
           code: authorizeCode,
           client_secret: clientSecret,
-          client_id: process.env.SUB,
+          client_id: process.env['SUB'],
         }),
         {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -78,13 +117,13 @@ export class AuthService {
    * @returns 생성된 클라이언트 시크릿
    */
   private generateClientSecret(): string {
-    const algorithm = process.env.ALG as jwt.Algorithm; // 타입 캐스팅
-    const keyid = process.env.KID;
-    const issuer = process.env.ISS;
+    const algorithm = process.env['ALG'] as jwt.Algorithm; // 타입 캐스팅
+    const keyid = process.env['KID'];
+    const issuer = process.env['ISS'];
     const expiresIn = 15777000; // 6개월 (초 단위)
     const audience = 'https://appleid.apple.com';
-    const subject = process.env.SUB;
-    const authKey = fs.readFileSync(process.env.AUTHKEY, 'utf8');
+    const subject = process.env['SUB'];
+    const authKey = fs.readFileSync(process.env['AUTHKEY'], 'utf8');
 
     const signOptions: jwt.SignOptions = {
       algorithm: algorithm,
@@ -110,21 +149,8 @@ export class AuthService {
       throw new UnauthorizedException('ID 토큰이 없습니다.');
     }
 
-    const decodedTokenHeader = jwt.decode(appleTokens.idToken, {
-      complete: true,
-    }).header;
-    // 애플 공개키를 가져오기
-    const applePublicKey = await this.getApplePublicKey(decodedTokenHeader.kid);
-
-    // 애플 액세스 토큰을 디코드
-    let decodedIdToken;
-    try {
-      decodedIdToken = jwt.verify(appleTokens.accessToken, applePublicKey, {
-        algorithms: ['RS256'],
-      });
-    } catch (error) {
-      throw new UnauthorizedException('애플 토큰 디코드 오류');
-    }
+    // Apple ID 토큰 검증
+    const decodedIdToken = await this.verifyAppleIdToken(appleTokens.idToken);
 
     if (!decodedIdToken || typeof decodedIdToken === 'string') {
       throw new UnauthorizedException('애플 토큰 디코드 오류');
@@ -178,7 +204,7 @@ export class AuthService {
       tokenType,
     };
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
+      secret: process.env['JWT_SECRET'],
       expiresIn: tokenType === 'access' ? 300 : 3600,
     });
   }
@@ -191,7 +217,7 @@ export class AuthService {
   verifyToken(token: string) {
     try {
       return this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env['JWT_SECRET'],
       });
     } catch (error) {
       throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다.');
