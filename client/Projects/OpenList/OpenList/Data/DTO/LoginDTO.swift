@@ -7,11 +7,6 @@
 
 import Foundation
 
-struct LoginRequestDTO: Codable {
-	let identityToken: String
-	let provider: String
-}
-
 struct LoginResponseDTO: Codable {
 	let accessToken: String
 	let refreshToken: String

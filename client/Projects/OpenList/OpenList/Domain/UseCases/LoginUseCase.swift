@@ -8,7 +8,7 @@
 import Foundation
 
 protocol LoginUseCase {
-	func postLoginInfo(identityToken: String, provider: String) async -> Bool
+	func postLoginInfo(loginInfo: LoginInfo) async -> Bool
 }
 
 final class DefaultLoginUseCase {
@@ -20,15 +20,14 @@ final class DefaultLoginUseCase {
 }
 
 extension DefaultLoginUseCase: LoginUseCase {
-	func postLoginInfo(identityToken: String, provider: String) async -> Bool {
-		guard let result = await defaultAuthRepository.postLoginInfo(
-			identityToken: identityToken,
-			provider: provider
-		) else {
+	func postLoginInfo(loginInfo: LoginInfo) async -> Bool {
+		KeyChain.shared.create(key: "accessToken", token: "test")
+		KeyChain.shared.create(key: "refreshToken", token: "test")
+		guard let result = await defaultAuthRepository.postLoginInfo(loginInfo: loginInfo) else {
 			return false
 		}
-		KeyChain.create(key: "accessToken", token: result.accessToken)
-		KeyChain.create(key: "refreshToken", token: result.refreshToken)
+		KeyChain.shared.create(key: "accessToken", token: result.accessToken)
+		KeyChain.shared.create(key: "refreshToken", token: result.refreshToken)
 		
 		return true
 	}

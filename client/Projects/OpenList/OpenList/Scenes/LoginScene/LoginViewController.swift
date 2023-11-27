@@ -22,7 +22,7 @@ final class LoginViewController: UIViewController, ViewControllable {
 	private let router: LoginRoutingLogic
 	private let viewModel: any LoginViewModelable
 	private var cancellables: Set<AnyCancellable> = []
-	private let loginButtonTap: PassthroughSubject<String, Never> = .init()
+	private let loginButtonTap: PassthroughSubject<LoginInfo, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -70,15 +70,14 @@ extension LoginViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
-		case .error(let error):
-			handleError(error)
+		case .error:
+			handleError()
 		case .success:
 			router.routeToTabBarScene()
 		}
 	}
 	
-	func handleError(_ error: OutputError) {
-	}
+	func handleError() {}
 }
 
 // MARK: - Helper
@@ -93,6 +92,15 @@ private extension LoginViewController {
 		authorizationController.presentationContextProvider = self
 		authorizationController.performRequests()
 	}
+	
+	func checkName(nameContent: PersonNameComponents?) -> String {
+		guard let content = nameContent else { return "" }
+		
+		guard let familyName = content.familyName,
+			let givenName = content.givenName else { return "" }
+		
+		return familyName + givenName
+	}
 }
 
 // MARK: - Auth Delegate
@@ -103,19 +111,31 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 	) {
 		switch authorization.credential {
 		case let appleIDCredential as ASAuthorizationAppleIDCredential:
-			let identityToken = appleIDCredential.identityToken
-			guard let identityTokenString = String(data: identityToken!, encoding: .utf8) else { return }
-			loginButtonTap.send(identityTokenString)
+			guard
+				let identityToken = appleIDCredential.identityToken,
+				let authorizationCode = appleIDCredential.authorizationCode
+				else { return }
+			guard
+				let identityTokenString = String(data: identityToken, encoding: .utf8),
+				let authorizationCodeString = String(data: authorizationCode, encoding: .utf8)
+				else { return }
+			let fullName = checkName(nameContent: appleIDCredential.fullName)
+			let loginInfo = LoginInfo(
+				identityToken: identityTokenString,
+				authorizationCode: authorizationCodeString,
+				fullName: fullName
+			)
+			loginButtonTap.send(loginInfo)
 		case let passwordCredential as ASPasswordCredential:
-			let username = passwordCredential.user
-			let password = passwordCredential.password
-			router.routeToTabBarScene()
+			_ = passwordCredential.user
+			_ = passwordCredential.password
 		default:
 			break
 		}
 	}
 
 	func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+		// alert View
 		print("Login Failed")
 	}
 }

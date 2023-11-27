@@ -30,9 +30,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			loginFactoryable: loginViewFactory
 		)
 
-//		if let accessToken = KeyChain.read(key: "accessToken") {
-//			appRootRouter.showTapFlow()
-//		}
-//		appRootRouter.showLoginFlow()
+		if KeyChain.shared.read(key: "accessToken") != nil,
+		KeyChain.shared.read(key: "refreshToken") != nil {
+			appRootRouter.showTapFlow()
+		} else {
+			appRootRouter.showLoginFlow()
+		}
 	}
 }

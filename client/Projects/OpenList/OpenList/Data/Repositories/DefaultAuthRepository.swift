@@ -17,12 +17,7 @@ final class DefaultAuthRepository {
 }
 
 extension DefaultAuthRepository: AuthRepository {
-	func postLoginInfo(identityToken: String, provider: String) async -> LoginResponseDTO? {
-		let loginInfoDTO = LoginRequestDTO(
-			identityToken: identityToken,
-			provider: provider
-		)
-		
+	func postLoginInfo(loginInfo: LoginInfo) async -> LoginResponseDTO? {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/login/")
 		builder.addHeader(
 			field: "Content-Type",
@@ -30,7 +25,7 @@ extension DefaultAuthRepository: AuthRepository {
 		)
 		
 		do {
-			let body = try JSONEncoder().encode(loginInfoDTO)
+			let body = try JSONEncoder().encode(loginInfo)
 			builder.setBody(body)
 			
 			let service = NetworkService(
@@ -38,7 +33,7 @@ extension DefaultAuthRepository: AuthRepository {
 				urlRequestBuilder: builder
 			)
 			
-			let data = try await service.postData()
+			let data = try await service.patchData()
 			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
 			print("Login Success: \(loginResponseDTO.accessToken)")
 			return loginResponseDTO

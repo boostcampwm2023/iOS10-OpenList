@@ -88,6 +88,7 @@
 		78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */; };
 		78C2F0492B05C00800E4EC4E /* DefaultCheckListRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */; };
 		78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F7476D2B126EC3003ED6DA /* KeyChain.swift */; };
+		78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F747722B148C2E003ED6DA /* LoginInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -200,6 +201,7 @@
 		78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListTextField.swift; sourceTree = "<group>"; };
 		78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCheckListRepository.swift; sourceTree = "<group>"; };
 		78F7476D2B126EC3003ED6DA /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
+		78F747722B148C2E003ED6DA /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				4DD947042B044FF20054C104 /* CheckListTableItem.swift */,
+				78F747722B148C2E003ED6DA /* LoginInfo.swift */,
 			);
 			path = Entites;
 			sourceTree = "<group>";
@@ -826,6 +829,7 @@
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
 				5F70C8302B04A96E00826B5D /* DetailCheckListViewController.swift in Sources */,
 				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,
+				78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

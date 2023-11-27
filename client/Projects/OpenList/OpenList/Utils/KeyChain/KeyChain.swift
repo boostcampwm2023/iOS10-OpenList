@@ -8,11 +8,17 @@
 import Foundation
 import Security
 
-class KeyChain {
+final class KeyChain {
+	static let shared = KeyChain()
+	private let serviceID = "kr.codesquad.boostcamp8.OpenList.OpenList"
+	
+	private init() {}
+	
 	// Create
-	static func create(key: String, token: String) {
+	func create(key: String, token: String) {
 		let query: NSDictionary = [
 			kSecClass: kSecClassGenericPassword,
+			kSecAttrService: serviceID,
 			kSecAttrAccount: key,
 			kSecValueData: token.data(using: .utf8, allowLossyConversion: false) as Any
 		]
@@ -23,9 +29,10 @@ class KeyChain {
 	}
 	
 	// Read
-	static func read(key: String) -> String? {
+	func read(key: String) -> String? {
 		let query: NSDictionary = [
 			kSecClass: kSecClassGenericPassword,
+			kSecAttrService: serviceID,
 			kSecAttrAccount: key,
 			kSecReturnData: kCFBooleanTrue as Any,
 			kSecMatchLimit: kSecMatchLimitOne
@@ -46,9 +53,10 @@ class KeyChain {
 	}
 	
 	// Delete
-	static func delete(key: String) {
+	func delete(key: String) {
 		let query: NSDictionary = [
 			kSecClass: kSecClassGenericPassword,
+			kSecAttrService: serviceID,
 			kSecAttrAccount: key
 		]
 		let status = SecItemDelete(query)

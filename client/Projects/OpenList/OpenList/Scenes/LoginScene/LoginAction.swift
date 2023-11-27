@@ -8,10 +8,10 @@
 import Combine
 
 struct LoginInput {
-	let loginButtonTap: PassthroughSubject<String, Never>
+	let loginButtonTap: PassthroughSubject<LoginInfo, Never>
 }
 
 enum LoginState {
-	case error(_ error: Error)
+	case error
 	case success
 }
