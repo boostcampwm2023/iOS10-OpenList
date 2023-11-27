@@ -19,6 +19,9 @@ export class UsersService {
   }
 
   async createAppleUser(dto: CreateUserDto): Promise<UserModel> {
+    if (!dto.nickname) {
+      dto.nickname = dto.fullName;
+    }
     const userObj = this.usersRepository.create(dto);
     const emailExists = await this.usersRepository.exist({
       where: {
@@ -30,15 +33,6 @@ export class UsersService {
     }
     const newUser = await this.usersRepository.save(userObj);
     return newUser;
-  }
-
-  async updateAppleUser(userId: number, dto: UpdateUserDto) {
-    const user = await this.findUserById(userId);
-    const updatedUser = await this.usersRepository.save({
-      ...user,
-      ...dto,
-    });
-    return updatedUser;
   }
 
   async findAllUsers() {
@@ -62,14 +56,14 @@ export class UsersService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto) {
-    if (!createUserDto.nickname) {
-      createUserDto.nickname = createUserDto.fullName;
+  async createUser(dto: CreateUserDto) {
+    if (!dto.nickname) {
+      dto.nickname = dto.fullName;
     }
-    const userObject = this.usersRepository.create(createUserDto);
+    const userObject = this.usersRepository.create(dto);
     const emailExists = await this.usersRepository.exist({
       where: {
-        email: createUserDto.email,
+        email: dto.email,
       },
     });
     if (emailExists) {
@@ -79,11 +73,11 @@ export class UsersService {
     return newUser;
   }
 
-  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+  async updateUser(userId: number, dto: UpdateUserDto) {
     const user = await this.findUserById(userId);
     const updatedUser = await this.usersRepository.save({
       ...user,
-      ...updateUserDto,
+      ...dto,
     });
     return updatedUser;
   }
