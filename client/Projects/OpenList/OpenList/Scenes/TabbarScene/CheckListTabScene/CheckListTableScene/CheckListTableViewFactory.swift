@@ -5,10 +5,12 @@
 //  Created by wi_seong on 11/13/23.
 //
 
+import Combine
 import Foundation
 
 protocol CheckListTableDependency: Dependency {
 	var persistenceUseCase: PersistenceUseCase { get }
+	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
 }
 
 final class CheckListTableComponent:
@@ -20,6 +22,10 @@ final class CheckListTableComponent:
 	
 	fileprivate var detailCheckListFactoryable: DetailCheckListFactoryable {
 		return DetailCheckListViewFactory(parent: self)
+	}
+	
+	fileprivate var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
+		return parent.deepLinkSubject
 	}
 }
 
@@ -34,7 +40,10 @@ final class CheckListTableViewFactory: Factory<CheckListTableDependency>, CheckL
 	
 	func make() -> ViewControllable {
 		let component = CheckListTableComponent(parent: parent)
-		let router = CheckListTableRouter(detailCheckListViewFactory: component.detailCheckListFactoryable)
+		let router = CheckListTableRouter(
+			detailCheckListViewFactory: component.detailCheckListFactoryable,
+			deepLinkSubject: component.deepLinkSubject
+		)
 		let viewModel = CheckListTableViewModel(persistenceUseCase: component.persistenceUseCase)
 		let viewController = CheckListTableViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
