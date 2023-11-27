@@ -16,8 +16,8 @@ final class LoginComponent:
 		return DefaultAuthRepository()
 	}
 	
-	fileprivate var loginUseCase: LoginUseCase {
-		return DefaultLoginUseCase(defaultAuthRepository: authRepository)
+	fileprivate var loginUseCase: AuthUseCase {
+		return DefaultAuthUseCase(defaultAuthRepository: authRepository)
 	}
 	
 	fileprivate var tabBarFactoryable: TabBarFactoryable {

@@ -14,9 +14,9 @@ where Input == LoginInput,
 	Output == AnyPublisher<State, Never> { }
 
 final class LoginViewModel {
-	private let loginUseCase: LoginUseCase
+	private let loginUseCase: AuthUseCase
 	
-	init(loginUseCase: LoginUseCase) {
+	init(loginUseCase: AuthUseCase) {
 		self.loginUseCase = loginUseCase
 	}
 }

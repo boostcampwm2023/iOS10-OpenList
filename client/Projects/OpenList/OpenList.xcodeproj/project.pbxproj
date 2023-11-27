@@ -67,8 +67,8 @@
 		78A4C71E2B0F2ED900E07492 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7192B0F2ED900E07492 /* LoginViewModel.swift */; };
 		78A4C71F2B0F365A00E07492 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; };
 		78A4C7202B0F365A00E07492 /* CRDT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		78A4C7252B0F5C6900E07492 /* LoginUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7242B0F5C6900E07492 /* LoginUseCase.swift */; };
-		78A4C7272B0F5E4300E07492 /* LoginDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7262B0F5E4300E07492 /* LoginDTO.swift */; };
+		78A4C7252B0F5C6900E07492 /* AuthUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7242B0F5C6900E07492 /* AuthUseCase.swift */; };
+		78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7262B0F5E4300E07492 /* LoginResponseDTO.swift */; };
 		78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */; };
 		78A4C72B2B0F5FB100E07492 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */; };
 		78C2EFFF2B03D58700E4EC4E /* AddTabAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */; };
@@ -178,8 +178,8 @@
 		78A4C7192B0F2ED900E07492 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		78A4C7222B0F375600E07492 /* OpenListRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenListRelease.entitlements; sourceTree = "<group>"; };
 		78A4C7232B0F386900E07492 /* OpenListDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenListDebug.entitlements; sourceTree = "<group>"; };
-		78A4C7242B0F5C6900E07492 /* LoginUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginUseCase.swift; sourceTree = "<group>"; };
-		78A4C7262B0F5E4300E07492 /* LoginDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDTO.swift; sourceTree = "<group>"; };
+		78A4C7242B0F5C6900E07492 /* AuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUseCase.swift; sourceTree = "<group>"; };
+		78A4C7262B0F5E4300E07492 /* LoginResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponseDTO.swift; sourceTree = "<group>"; };
 		78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthRepository.swift; sourceTree = "<group>"; };
 		78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabAction.swift; sourceTree = "<group>"; };
@@ -386,7 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				5F70C84A2B05FE9100826B5D /* LocalStorageCheckListResponseDTO.swift */,
-				78A4C7262B0F5E4300E07492 /* LoginDTO.swift */,
+				78A4C7262B0F5E4300E07492 /* LoginResponseDTO.swift */,
 			);
 			path = DTO;
 			sourceTree = "<group>";
@@ -488,7 +488,7 @@
 			children = (
 				78C2F01B2B0490D300E4EC4E /* ValidCheckUseCase.swift */,
 				78C2F0212B049A8A00E4EC4E /* PersistenceUseCase.swift */,
-				78A4C7242B0F5C6900E07492 /* LoginUseCase.swift */,
+				78A4C7242B0F5C6900E07492 /* AuthUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -785,7 +785,7 @@
 				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */,
-				78A4C7252B0F5C6900E07492 /* LoginUseCase.swift in Sources */,
+				78A4C7252B0F5C6900E07492 /* AuthUseCase.swift in Sources */,
 				78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */,
 				5F70C83B2B04BF9A00826B5D /* CheckListItemButton.swift in Sources */,
 				5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */,
@@ -824,7 +824,7 @@
 				5F70C8312B04A96E00826B5D /* DetailCheckListViewFactory.swift in Sources */,
 				4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
-				78A4C7272B0F5E4300E07492 /* LoginDTO.swift in Sources */,
+				78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
 				5F70C8302B04A96E00826B5D /* DetailCheckListViewController.swift in Sources */,

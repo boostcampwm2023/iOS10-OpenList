@@ -136,7 +136,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 
 	func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
 		// alert View
-		print("Login Failed")
+		dump("Login Failed")
 	}
 }
 

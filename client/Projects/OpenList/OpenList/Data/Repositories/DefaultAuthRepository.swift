@@ -33,12 +33,12 @@ extension DefaultAuthRepository: AuthRepository {
 				urlRequestBuilder: builder
 			)
 			
-			let data = try await service.patchData()
+			let data = try await service.postData()
 			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
-			print("Login Success: \(loginResponseDTO.accessToken)")
+			dump("Login Success: \(loginResponseDTO.accessToken)")
 			return loginResponseDTO
 		} catch {
-			print("Login Failed")
+			dump("Login Failed")
 			return nil
 		}
 	}
