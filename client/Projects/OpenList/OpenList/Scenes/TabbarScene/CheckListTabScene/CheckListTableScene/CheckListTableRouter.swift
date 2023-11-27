@@ -17,7 +17,7 @@ final class CheckListTableRouter {
 	weak var detailCheckListViewControllable: ViewControllable?
 	
 	init(
-		detailCheckListViewFactory: DetailCheckListFactoryable,
+		detailCheckListViewFactory: WithDetailCheckListFactoryable,
 		deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	) {
 		self.detailCheckListViewFactory = detailCheckListViewFactory
