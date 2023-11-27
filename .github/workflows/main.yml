@@ -36,7 +36,7 @@ jobs:
           ALG=${{ secrets.ALG }}
           KID=${{ secrets.KID }}
           ISS=${{ secrets.ISS }}
-          AUTH_KEY=${{ secrets.AUTH_KEY }}
+          AUTHKEY=${{ secrets.AUTHKEY }}
           EOF
       # .p8 파일 생성
       - name: Generate .p8 file
