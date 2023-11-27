@@ -6,17 +6,33 @@
 //
 
 import Combine
+import Foundation
 
 protocol PrivateDetailCheckListViewModelable: ViewModelable
 where Input == PrivateDetailCheckListInput,
   State == PrivateDetailCheckListState,
   Output == AnyPublisher<State, Never> { }
 
+protocol PrivateDetailCheckListDataSource {
+	var checkListId: String { get }
+}
+
 final class PrivateDetailCheckListViewModel {
-	private var title: String
+	private var id: UUID
+	private var detailCheckListUseCase: DetailCheckListUseCase
 	
-	init(title: String) {
-		self.title = title
+	init(
+		id: UUID,
+		detailCheckListUseCase: DetailCheckListUseCase
+	) {
+		self.id = id
+		self.detailCheckListUseCase = detailCheckListUseCase
+	}
+}
+
+extension PrivateDetailCheckListViewModel: PrivateDetailCheckListDataSource {
+	var checkListId: String {
+		id.uuidString
 	}
 }
 
@@ -31,11 +47,18 @@ extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
 private extension PrivateDetailCheckListViewModel {
 	func viewWillAppear(_ input: Input) -> Output {
 		return input.viewWillAppear
-			.flatMap { [weak self] () -> AnyPublisher<String?, Never> in
-				return Just(self?.title).eraseToAnyPublisher()
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<CheckList?, Never>  in
+				let future = Future(asyncFunc: {
+					await owner.detailCheckListUseCase.fetchCheckList(id: owner.id)
+				})
+				return future.eraseToAnyPublisher()
 			}
-			.map { title in
-				return .title(title)
+			.map { checkList in
+				guard let checkList = checkList else {
+					return .title("fail")
+				}
+				return .title(checkList.title)
 			}
 			.eraseToAnyPublisher()
 	}

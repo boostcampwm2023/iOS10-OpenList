@@ -50,11 +50,15 @@ private extension SceneDelegate {
 	}
 	
 	func executeSharedCheckListDeepLink(_ url: URL) {
+		let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 		guard url.host() == SharedCheckListDeepLinkConstant.host else { return }
 		guard let scheme = url.scheme, scheme == SharedCheckListDeepLinkConstant.scheme else { return }
-		let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 		guard let queryItems = components?.queryItems else { return }
-		guard let id = queryItems.first(where: { $0.name == SharedCheckListDeepLinkConstant.query })?.value else { return }
+		guard let idString = queryItems.first(
+			where: { $0.name == SharedCheckListDeepLinkConstant.query }
+		)?.value
+		else { return }
+		guard let id = UUID(uuidString: idString) else { return }
 		deepLinkSubject.send(.routeToSharedCheckList(id: id))
 	}
 }

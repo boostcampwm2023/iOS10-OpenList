@@ -21,13 +21,14 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	
 	// MARK: - Properties
 	private let router: PrivateDetailCheckListRoutingLogic
-	private let viewModel: any PrivateDetailCheckListViewModelable
+	private let viewModel: any PrivateDetailCheckListViewModelable & PrivateDetailCheckListDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: PrivateDetailCheckListDiffableDataSource?
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
 	private let headerView: CheckListHeaderView = .init()
+	private let moreButton: UIButton = .init()
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
@@ -35,7 +36,7 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	// MARK: - Initializers
 	init(
 		router: PrivateDetailCheckListRoutingLogic,
-		viewModel: some PrivateDetailCheckListViewModelable
+		viewModel: some PrivateDetailCheckListViewModelable & PrivateDetailCheckListDataSource
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -94,12 +95,64 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 	func handleError(_ error: OutputError) {}
 }
 
+// MARK: - Helper
+private extension PrivateDetailCheckListViewController {
+	@IBAction func showMenu() {
+		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let inviteAction = UIAlertAction(title: "초대하기", style: .default) { [weak self] _ in
+			self?.invite()
+		}
+		
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+			print("didPress delete")
+		}
+		
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+			print("didPress cancel")
+		}
+		
+		actionSheet.addAction(inviteAction)
+		actionSheet.addAction(deleteAction)
+		actionSheet.addAction(cancelAction)
+		
+		self.present(actionSheet, animated: true, completion: nil)
+	}
+	
+	func invite() {
+		var objectsToShare = [String]()
+		let inviteLink = "openlist://shared-checklists?shared-checklistId=\(viewModel.checkListId)"
+		objectsToShare.append(inviteLink)
+		
+		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+		activityVC.popoverPresentationController?.sourceView = self.view
+		
+		self.present(activityVC, animated: true, completion: nil)
+	}
+}
+
 // MARK: - View Methods
 private extension PrivateDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
+		setNavigationAttributes()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
+	}
+	
+	func setNavigationAttributes() {
+		setMoreButton()
+		navigationItem.rightBarButtonItem = .init(customView: moreButton)
+	}
+	
+	func setMoreButton() {
+		let moreImage: UIImage = .more
+		let resizeMoreImage = moreImage
+			.resizeImage(size: .init(width: 24, height: 24))
+			.withRenderingMode(.alwaysTemplate)
+		moreButton.setImage(resizeMoreImage, for: .normal)
+		moreButton.tintColor = .primary1
+		moreButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
 	}
 	
 	func setCheckListViewAttributes() {
