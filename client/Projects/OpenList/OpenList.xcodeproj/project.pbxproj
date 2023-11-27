@@ -81,6 +81,9 @@
 		5FA1F8DF2AFF809C00869079 /* libCustomNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA1F8DD2AFF809C00869079 /* libCustomNetwork.a */; };
 		5FA1F8E02AFF809C00869079 /* libCustomSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA1F8DE2AFF809C00869079 /* libCustomSocket.a */; };
 		5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8E22AFF818E00869079 /* TabBarViewFactory.swift */; };
+		5FA8466B2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA8466A2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift */; };
+		5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */; };
+		5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */; };
 		78C2EFFF2B03D58700E4EC4E /* AddTabAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */; };
 		78C2F0002B03D58700E4EC4E /* AddTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFB2B03D58700E4EC4E /* AddTabRouter.swift */; };
 		78C2F0012B03D58700E4EC4E /* AddTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2EFFC2B03D58700E4EC4E /* AddTabViewController.swift */; };
@@ -198,6 +201,9 @@
 		5FA1F8DD2AFF809C00869079 /* libCustomNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F8DE2AFF809C00869079 /* libCustomSocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomSocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F8E22AFF818E00869079 /* TabBarViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewFactory.swift; sourceTree = "<group>"; };
+		5FA8466A2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+safeAreaHeight.swift"; sourceTree = "<group>"; };
+		5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListNavigationBar.swift; sourceTree = "<group>"; };
+		5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListNavigationItem.swift; sourceTree = "<group>"; };
 		78C2EFFA2B03D58700E4EC4E /* AddTabAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabAction.swift; sourceTree = "<group>"; };
 		78C2EFFB2B03D58700E4EC4E /* AddTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabRouter.swift; sourceTree = "<group>"; };
 		78C2EFFC2B03D58700E4EC4E /* AddTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTabViewController.swift; sourceTree = "<group>"; };
@@ -453,6 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				5F70C83F2B04C6F000826B5D /* UITableView+Extensions.swift */,
+				5FA8466A2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -650,6 +657,8 @@
 			children = (
 				78C2F0062B04657600E4EC4E /* ConfirmButton.swift */,
 				78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */,
+				5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */,
+				5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -861,7 +870,9 @@
 				78C2F0022B03D58700E4EC4E /* AddTabViewFactory.swift in Sources */,
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
+				5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */,
 				5F70C8392B04BF7A00826B5D /* LocalCheckListItem.swift in Sources */,
+				5FA8466B2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift in Sources */,
 				5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */,
 				4DDC43362B0F19F700859B28 /* WithDetailCheckListDiffableDataSource.swift in Sources */,
 				4DDC43312B0F16CC00859B28 /* WithDetailCheckListViewController.swift in Sources */,
@@ -885,6 +896,7 @@
 				4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */,
 				4DDC43302B0F16CC00859B28 /* WithDetailCheckListRouter.swift in Sources */,
 				4D8AEBDC2B122AAD00292AF3 /* CRDTResponseDTO.swift in Sources */,
+				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
