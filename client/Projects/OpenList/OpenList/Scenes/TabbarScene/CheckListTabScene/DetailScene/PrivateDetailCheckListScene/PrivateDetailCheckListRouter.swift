@@ -7,9 +7,9 @@
 
 import Foundation
 
-final class DetailCheckListRouter {
+final class PrivateDetailCheckListRouter {
 	weak var viewController: ViewControllable?
 }
 
 // MARK: - RoutingLogic
-extension DetailCheckListRouter: DetailCheckListRoutingLogic {}
+extension PrivateDetailCheckListRouter: PrivateDetailCheckListRoutingLogic {}

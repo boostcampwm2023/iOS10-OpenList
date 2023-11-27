@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5FA1F8462AFF7D2600869079 /* CustomSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8452AFF7D2600869079 /* CustomSocket.swift */; };
+		4DDC43442B0F2D1600859B28 /* WebSocketError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDC43432B0F2D1600859B28 /* WebSocketError.swift */; };
+		5FA1F8462AFF7D2600869079 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8452AFF7D2600869079 /* WebSocket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +24,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4DDC43432B0F2D1600859B28 /* WebSocketError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketError.swift; sourceTree = "<group>"; };
 		5FA1F8422AFF7D2600869079 /* libCustomSocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCustomSocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		5FA1F8452AFF7D2600869079 /* CustomSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSocket.swift; sourceTree = "<group>"; };
+		5FA1F8452AFF7D2600869079 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +59,8 @@
 		5FA1F8442AFF7D2600869079 /* CustomSocket */ = {
 			isa = PBXGroup;
 			children = (
-				5FA1F8452AFF7D2600869079 /* CustomSocket.swift */,
+				5FA1F8452AFF7D2600869079 /* WebSocket.swift */,
+				4DDC43432B0F2D1600859B28 /* WebSocketError.swift */,
 			);
 			path = CustomSocket;
 			sourceTree = "<group>";
@@ -143,7 +146,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FA1F8462AFF7D2600869079 /* CustomSocket.swift in Sources */,
+				4DDC43442B0F2D1600859B28 /* WebSocketError.swift in Sources */,
+				5FA1F8462AFF7D2600869079 /* WebSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

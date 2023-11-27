@@ -7,12 +7,12 @@
 
 import Combine
 
-protocol DetailCheckListViewModelable: ViewModelable
-where Input == DetailCheckListInput,
-  State == DetailCheckListState,
+protocol PrivateDetailCheckListViewModelable: ViewModelable
+where Input == PrivateDetailCheckListInput,
+  State == PrivateDetailCheckListState,
   Output == AnyPublisher<State, Never> { }
 
-final class DetailCheckListViewModel {
+final class PrivateDetailCheckListViewModel {
 	private var title: String
 	
 	init(title: String) {
@@ -20,7 +20,7 @@ final class DetailCheckListViewModel {
 	}
 }
 
-extension DetailCheckListViewModel: DetailCheckListViewModelable {
+extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany<Output>(
 			viewWillAppear(input)
@@ -28,7 +28,7 @@ extension DetailCheckListViewModel: DetailCheckListViewModelable {
   }
 }
 			
-private extension DetailCheckListViewModel {
+private extension PrivateDetailCheckListViewModel {
 	func viewWillAppear(_ input: Input) -> Output {
 		return input.viewWillAppear
 			.flatMap { [weak self] () -> AnyPublisher<String?, Never> in

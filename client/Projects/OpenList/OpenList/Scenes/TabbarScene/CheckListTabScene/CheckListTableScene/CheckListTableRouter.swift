@@ -13,11 +13,11 @@ final class CheckListTableRouter {
 	private var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	private var cancellables: Set<AnyCancellable> = []
 	
-	private var detailCheckListViewFactory: DetailCheckListFactoryable
+	private var detailCheckListViewFactory: WithDetailCheckListFactoryable
 	weak var detailCheckListViewControllable: ViewControllable?
 	
 	init(
-		detailCheckListViewFactory: DetailCheckListFactoryable,
+		detailCheckListViewFactory: WithDetailCheckListFactoryable,
 		deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	) {
 		self.detailCheckListViewFactory = detailCheckListViewFactory

@@ -36,6 +36,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		self.router = router
 		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
+		self.bind()
 	}
 	
 	@available(*, unavailable)
@@ -51,7 +52,10 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewAttributes()
 		setViewHierarchies()
 		setConstraints()
-		bind()
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		viewAppear.send()
 	}
 }
@@ -91,6 +95,7 @@ private extension CheckListTableViewController {
 		guard var snapshot = self.dataSource?.snapshot() else {
 			return
 		}
+		snapshot.deleteItems(items)
 		snapshot.appendItems(items, toSection: .main)
 		dataSource?.apply(snapshot, animatingDifferences: true)
 	}
