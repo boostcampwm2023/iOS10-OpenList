@@ -11,6 +11,7 @@ import { AuthUserDto } from './dto/auth-user.dto';
 import { loginUserDto } from './dto/login-user.dto';
 
 type TokenType = 'access' | 'refresh';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,6 +23,7 @@ export class AuthService {
    * Apple ID 토큰을 검증합니다.
    * @param idToken Apple ID 토큰
    // * @param expectedNonce 클라이언트에서 전달된 nonce 값
+   * @returns {Promise<jwt.JwtPayload>}
    */
   async verifyAppleIdToken(idToken: string): Promise<jwt.JwtPayload> {
     const decodedTokenHeader = jwt.decode(idToken, { complete: true }).header;
@@ -61,13 +63,12 @@ export class AuthService {
    * @param {string} kid
    * @returns {Promise<string | Buffer>}
    */
-
   async getApplePublicKey(kid: string) {
     try {
-      // Apple의 공개 키를 JWK 형식으로 가져오기
+      // Apple 의 공개 키를 JWK 형식으로 가져오기
       const response = await axios.get('https://appleid.apple.com/auth/keys');
 
-      // 일치하는 kid를 가진 키를 찾기
+      // 일치하는 kid 를 가진 키를 찾기
       const keys = response.data.keys;
       const matchingKey = keys.find((key) => key.kid === kid);
 
@@ -155,9 +156,9 @@ export class AuthService {
   }
 
   /**
-   * 토근을 검증한다. 검증에 실패하면 UnauthorizedException을 발생시킨다.
+   * 토근을 검증한다. 검증에 실패하면 UnauthorizedException 을 발생시킨다.
    * @param token
-   * @returns 토근에 담긴 정보
+   * @returns payload
    */
   verifyToken(token: string) {
     try {
@@ -170,25 +171,28 @@ export class AuthService {
   }
 
   /**
-   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * refresh 토큰을 통해 access 토큰과 refresh 토큰을 재발급한다.
    * @param refreshToken
-   * @returns 새로 발급된 access 토큰
+   * @returns { accessToken: string, refreshToken: string}
    */
-  refreshAccessToken(refreshToken: string) {
-    const payload = this.verifyToken(refreshToken);
+  async refreshAccessToken(refreshToken: string) {
+    const payload = await this.verifyToken(refreshToken);
+
     if (payload.tokenType !== 'refresh') {
       throw new UnauthorizedException(
         'access토큰 재발급은 refresh 토큰으로만 가능합니다.',
       );
     }
-    const accessToken = this.signToken({ ...payload }, 'access');
-    return { accessToken };
+    const newAccessToken = this.signToken({ ...payload }, 'access');
+    const newRefreshToken = this.signToken({ ...payload }, 'refresh');
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 인증한다.
-   * 없는 이메일이면 UnauthorizedException을 발생시킨다.
-   * provider가 다르면 UnauthorizedException을 발생시키고 어떤 provider로 가입되어 있는지 알려준다.
+   * 이메일과 provider 를 통해 유저를 인증한다.
+   * 없는 이메일이면 UnauthorizedException 을 발생시킨다.
+   * provider 가 다르면 UnauthorizedException 을 발생시키고 어떤 provider 로 가입되어 있는지 알려준다.
    * @param user
    * @returns existUser
    */
@@ -206,7 +210,7 @@ export class AuthService {
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 인증하고 토큰을 발급한다.
+   * 이메일과 provider 를 통해 유저를 인증하고 토큰을 발급한다.
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */
@@ -220,7 +224,7 @@ export class AuthService {
   /**
    * 헤더에서 토큰을 추출한다.
    * @param header
-   * @returns 토큰
+   * @returns token
    */
   extractTokenFromHeader(header: string) {
     // 정규식을 사용하여 'Bearer' 토큰 추출
@@ -234,7 +238,7 @@ export class AuthService {
   }
 
   /**
-   * 이메일과 provider를 통해 유저를 등록하고 토큰을 발급한다.
+   * 이메일과 provider 를 통해 유저를 등록하고 토큰을 발급한다.
    * @param user
    * @returns { accessToken: string, refreshToken: string}
    */

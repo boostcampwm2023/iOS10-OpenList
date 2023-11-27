@@ -14,7 +14,9 @@ export class AuthController {
    * @returns {accessToken, refreshToken}
    */
   @Post('apple/login')
-  async postAppleLogin(@Body() dto: AuthUserDto) {
+  async postAppleLogin(
+    @Body() dto: AuthUserDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return await this.authService.registerOrLoginWithApple(dto);
   }
 
@@ -29,12 +31,14 @@ export class AuthController {
   }
 
   /**
-   * refresh 토큰을 통해 access 토큰을 재발급한다.
+   * refresh 토큰을 통해 access 토큰과 refresh 토큰을 재발급한다
    * @param rawToken
-   * @returns {accessToken}
+   * @returns {accessToken, refreshToken}
    */
   @Post('token/access')
-  postAccessToken(@Headers('authorization') rawToken: string) {
+  postAccessToken(
+    @Headers('authorization') rawToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const token = this.authService.extractTokenFromHeader(rawToken);
     return this.authService.refreshAccessToken(token);
   }
