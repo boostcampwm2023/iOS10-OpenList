@@ -9,5 +9,5 @@ import Foundation
 
 enum DeepLinkTarget {
 	/// openlist://shared-checklists?shared-checklistId=\(id)
-	case routeToSharedCheckList(id: String)
+	case routeToSharedCheckList(id: UUID)
 }

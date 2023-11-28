@@ -7,12 +7,18 @@
 
 import Foundation
 
-protocol PrivateDetailCheckListDependency: Dependency {}
+protocol PrivateDetailCheckListDependency: Dependency {
+	var checkListRepository: CheckListRepository { get }
+}
 
-final class PrivateDetailCheckListComponent: Component<PrivateDetailCheckListDependency> {}
+final class PrivateDetailCheckListComponent: Component<PrivateDetailCheckListDependency> {
+	fileprivate var detailCheckListUseCase: DetailCheckListUseCase {
+		return DefaultDetailCheckListUseCase(checkListRepository: parent.checkListRepository)
+	}
+}
 
 protocol PrivateDetailCheckListFactoryable: Factoryable {
-	func make(with title: String) -> ViewControllable
+	func make(with id: UUID) -> ViewControllable
 }
 
 final class PrivateDetailCheckListViewFactory:
@@ -22,9 +28,13 @@ final class PrivateDetailCheckListViewFactory:
 		super.init(parent: parent)
 	}
 	
-	func make(with title: String) -> ViewControllable {
+	func make(with id: UUID) -> ViewControllable {
+		let component = PrivateDetailCheckListComponent(parent: parent)
 		let router = PrivateDetailCheckListRouter()
-		let viewModel = PrivateDetailCheckListViewModel(title: title)
+		let viewModel = PrivateDetailCheckListViewModel(
+			id: id,
+			detailCheckListUseCase: component.detailCheckListUseCase
+		)
 		let viewController = PrivateDetailCheckListViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

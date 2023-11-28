@@ -61,7 +61,7 @@ private extension WithDetailCheckListViewModel {
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { item in
+			.map { _ in
 				return .none
 			}
 			.eraseToAnyPublisher()
@@ -76,7 +76,7 @@ private extension WithDetailCheckListViewModel {
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { item in
+			.map { _ in
 				return .none
 			}
 			.eraseToAnyPublisher()

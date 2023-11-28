@@ -28,6 +28,22 @@ private extension DefaultCheckListStorage {
 		}
 	}
 	
+	func fetchCheckListFault(id: UUID) async throws -> [CheckListEntity] {
+		return try await withCheckedThrowingContinuation { continuation in
+			Task { [weak self] in
+				guard let self else { return }
+				let request: NSFetchRequest<CheckListEntity> = CheckListEntity.fetchRequest()
+				request.predicate = NSPredicate(
+					format: "%K == %@",
+					#keyPath(CheckListEntity.checklistId),
+					id as CVarArg
+				)
+				let checkListFaults = try coreDataStorage.backgroundViewContext.fetch(request)
+				continuation.resume(returning: checkListFaults)
+			}
+		}
+	}
+	
 	func fetchEntity<T>(by id: NSManagedObjectID, type: T.Type) throws -> T {
 		guard let entity = try coreDataStorage.viewContext.existingObject(with: id) as? T else {
 			throw CoreDataStorageError.noData
@@ -42,6 +58,18 @@ extension DefaultCheckListStorage: CheckListStorage {
 			.map(\.objectID)
 			.map { try fetchEntity(by: $0, type: CheckListEntity.self) }
 			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
+	}
+	
+	func fetchCheckList(id: UUID) async throws -> LocalStorageCheckListResponseDTO {
+		let response = try await fetchCheckListFault(id: id)
+			.map(\.objectID)
+			.map { try fetchEntity(by: $0, type: CheckListEntity.self) }
+			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
+			.first
+		guard let response else {
+			throw CoreDataStorageError.noData
+		}
+		return response
 	}
 	
 	func saveCheckList(id: UUID, title: String) async throws {

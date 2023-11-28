@@ -10,18 +10,23 @@ import Foundation
 
 protocol CheckListTableDependency: Dependency {
 	var persistenceUseCase: PersistenceUseCase { get }
+	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
 }
 
 final class CheckListTableComponent:
 	Component<CheckListTableDependency>,
-	WithDetailCheckListDependency {
+	PrivateDetailCheckListDependency {
+	var checkListRepository: CheckListRepository {
+		return parent.checkListRepository
+	}
+	
 	fileprivate var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
 	}
 	
-	fileprivate var detailCheckListFactoryable: WithDetailCheckListFactoryable {
-		return WithDetailCheckListViewFactory(parent: self)
+	fileprivate var detailCheckListFactoryable: PrivateDetailCheckListFactoryable {
+		return PrivateDetailCheckListViewFactory(parent: self)
 	}
 	
 	fileprivate var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {

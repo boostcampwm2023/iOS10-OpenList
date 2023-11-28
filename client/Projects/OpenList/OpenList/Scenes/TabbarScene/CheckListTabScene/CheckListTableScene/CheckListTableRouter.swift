@@ -13,11 +13,11 @@ final class CheckListTableRouter {
 	private var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	private var cancellables: Set<AnyCancellable> = []
 	
-	private var detailCheckListViewFactory: WithDetailCheckListFactoryable
+	private var detailCheckListViewFactory: PrivateDetailCheckListFactoryable
 	weak var detailCheckListViewControllable: ViewControllable?
 	
 	init(
-		detailCheckListViewFactory: WithDetailCheckListFactoryable,
+		detailCheckListViewFactory: PrivateDetailCheckListFactoryable,
 		deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	) {
 		self.detailCheckListViewFactory = detailCheckListViewFactory
@@ -41,8 +41,8 @@ final class CheckListTableRouter {
 
 // MARK: - RoutingLogic
 extension CheckListTableRouter: CheckListTableRoutingLogic {
-	func routeToDetailScene(with title: String) {
-		let detailCheckListViewControllable = detailCheckListViewFactory.make(with: title)
+	func routeToDetailScene(with id: UUID) {
+		let detailCheckListViewControllable = detailCheckListViewFactory.make(with: id)
 		self.detailCheckListViewControllable = detailCheckListViewControllable
 		viewController?.pushViewController(detailCheckListViewControllable, animated: true)
 	}

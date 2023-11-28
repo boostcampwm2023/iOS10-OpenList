@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol CheckListTableRoutingLogic: AnyObject {
-	func routeToDetailScene(with title: String)
+	func routeToDetailScene(with id: UUID)
 }
 
 final class CheckListTableViewController: UIViewController, ViewControllable {
@@ -201,6 +201,6 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 extension CheckListTableViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-		router.routeToDetailScene(with: item.title)
+		router.routeToDetailScene(with: item.id)
 	}
 }
