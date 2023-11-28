@@ -23,7 +23,7 @@ export class PrivateChecklistsService {
   ) {
     // 1. folderId를 통해 해당 folder가 존재하는지 확인합니다.
     // userId를 통해 user entity를 가져옵니다.
-    const folder = await this.foldersService.findFolderById(folderId);
+    const folder = await this.foldersService.findFolderById(folderId, userId);
     const user = await this.usersService.findUserById(userId);
 
     // 3. 새로운 checklist를 생성합니다.
@@ -69,7 +69,8 @@ export class PrivateChecklistsService {
     }
 
     if (folderId) {
-      const folder = await this.foldersService.findFolderById(folderId);
+      const userId = 2;
+      const folder = await this.foldersService.findFolderById(folderId, userId);
       checklist.folder = folder;
     }
 
