@@ -35,4 +35,22 @@ extension DefaultCheckListRepository: CheckListRepository {
 			)
 		}
 	}
+	
+	func fetchCheckList(id: UUID) async throws -> CheckList {
+		let result = try await checkListStorage.fetchCheckList(id: id)
+		return .init(
+			id: result.checklistId,
+			title: result.title,
+			createdAt: result.createdAt,
+			updatedAt: result.updatedAt,
+			progress: result.progress,
+			items: result.items.map {
+				.init(
+					itemId: $0.itemId,
+					title: $0.content,
+					isChecked: $0.isChecked
+				)
+			}
+		)
+	}
 }

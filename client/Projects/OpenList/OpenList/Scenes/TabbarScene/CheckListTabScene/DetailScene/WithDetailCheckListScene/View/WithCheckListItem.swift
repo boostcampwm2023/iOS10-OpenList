@@ -1,22 +1,23 @@
 //
-//  LocalCheckListItem.swift
+//  WithCheckListItem.swift
 //  OpenList
 //
-//  Created by 김영균 on 11/15/23.
+//  Created by wi_seong on 11/25/23.
 //
 
 import UIKit
 
-protocol LocalCheckListItemDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: LocalCheckListItem, indexPath: IndexPath)
+protocol WithCheckListItemDelegate: AnyObject {
+	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: WithCheckListItem, indexPath: IndexPath)
 	func textField(
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+		replacementString string: String,
+		cellId: UUID
 	) -> Bool
 }
 
-final class LocalCheckListItem: UITableViewCell {
+final class WithCheckListItem: UITableViewCell {
 	enum LayoutConstant {
 		static let buttonSize = CGSize(width: 24, height: 24)
 		static let verticalPadding: CGFloat = 12
@@ -28,7 +29,8 @@ final class LocalCheckListItem: UITableViewCell {
 	private let checkButton: CheckListItemButton = .init()
 	private let textField: CheckListItemTextField = .init()
 	private var indexPath: IndexPath?
-	weak var delegate: LocalCheckListItemDelegate?
+	private var cellId: UUID?
+	weak var delegate: WithCheckListItemDelegate?
 	
 	// MARK: - Initializers
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -44,9 +46,10 @@ final class LocalCheckListItem: UITableViewCell {
 	}
 }
 
-extension LocalCheckListItem {
+extension WithCheckListItem {
 	func configure(with checkListItem: CheckListItem, indexPath: IndexPath) {
 		self.indexPath = indexPath
+		self.cellId = checkListItem.id
 		textField.text = checkListItem.title
 		if checkListItem.isChecked {
 			checkButton.setChecked()
@@ -56,7 +59,7 @@ extension LocalCheckListItem {
 	}
 }
 
-private extension LocalCheckListItem {
+private extension WithCheckListItem {
 	func setViewAttributes() {
 		backgroundColor = .background
 		contentView.isUserInteractionEnabled = true
@@ -92,7 +95,7 @@ private extension LocalCheckListItem {
 	}
 }
 
-extension LocalCheckListItem: UITextFieldDelegate {
+extension WithCheckListItem: UITextFieldDelegate {
 	func textFieldDidEndEditing(_ textField: UITextField) {
 		guard let indexPath = indexPath else { return }
 		delegate?.textFieldDidEndEditing(self.textField, cell: self, indexPath: indexPath)
@@ -108,7 +111,15 @@ extension LocalCheckListItem: UITextFieldDelegate {
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
-		guard let delegate else { return true }
-		return delegate.textField(self.textField, shouldChangeCharactersIn: range, replacementString: string)
+		guard
+			let delegate,
+			let cellId
+		else { return true }
+		return delegate.textField(
+			self.textField,
+			shouldChangeCharactersIn: range,
+			replacementString: string,
+			cellId: cellId
+		)
 	}
 }

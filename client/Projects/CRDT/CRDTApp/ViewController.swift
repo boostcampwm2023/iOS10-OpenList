@@ -29,8 +29,8 @@ final class OperationBasedViewController: UIViewController {
 
 private extension OperationBasedViewController {
 	func crdt(at response: Node) throws {
-		if response.id != deviceId {
-			try response.message.execute(on: merge0)
+		if response.event != deviceId {
+			try response.data.execute(on: merge0)
 			DispatchQueue.main.async { [weak self] in
 				self?.inputTextField.text = self?.rgaSDocument.view()
 			}
@@ -61,7 +61,7 @@ private extension OperationBasedViewController {
 	}
 	
 	func sendMessage(to message: CRDTMessage) throws {
-		let node = Node(id: deviceId, message: message)
+		let node = Node(event: deviceId, data: message)
 		let data = try encoder.encode(node)
 		printDocument(document: rgaSDocument)
 		WebSocket.shared.send(data: data)

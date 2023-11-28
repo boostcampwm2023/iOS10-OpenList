@@ -11,4 +11,5 @@ import Foundation
 protocol CheckListStorage {
 	func saveCheckList(id: UUID, title: String) async throws
 	func fetchAllCheckList() async throws -> [LocalStorageCheckListResponseDTO]
+	func fetchCheckList(id: UUID) async throws -> LocalStorageCheckListResponseDTO
 }

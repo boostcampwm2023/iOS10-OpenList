@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol CheckListTableRoutingLogic: AnyObject {
-	func routeToDetailScene(with title: String)
+	func routeToDetailScene(with id: UUID)
 }
 
 final class CheckListTableViewController: UIViewController, ViewControllable {
@@ -27,6 +27,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var cancellables: Set<AnyCancellable> = []
+	private let navigationBar = OpenListNavigationBar(rightItems: [.bell, .search, .more])
 	
 	// MARK: - Initializers
 	init(
@@ -36,6 +37,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		self.router = router
 		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
+		self.bind()
 	}
 	
 	@available(*, unavailable)
@@ -51,7 +53,10 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewAttributes()
 		setViewHierarchies()
 		setConstraints()
-		bind()
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		viewAppear.send()
 	}
 }
@@ -91,6 +96,7 @@ private extension CheckListTableViewController {
 		guard var snapshot = self.dataSource?.snapshot() else {
 			return
 		}
+		snapshot.deleteItems(items)
 		snapshot.appendItems(items, toSection: .main)
 		dataSource?.apply(snapshot, animatingDifferences: true)
 	}
@@ -103,17 +109,23 @@ private extension CheckListTableViewController {
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
-		
 		collectionView.delegate = self
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		navigationBar.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		view.addSubview(collectionView)
-		collectionView.delegate = self
+		view.addSubview(navigationBar)
 	}
 	
 	func setConstraints() {
-		collectionView.frame = view.bounds
+		NSLayoutConstraint.activate([
+			collectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+			collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+		])
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
 		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
@@ -196,6 +208,16 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 extension CheckListTableViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-		router.routeToDetailScene(with: item.title)
+		router.routeToDetailScene(with: item.id)
+	}
+}
+
+extension CheckListTableViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		debugPrint("didTapBarItem: \(item.type)")
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		debugPrint("didPressBackButton")
 	}
 }

@@ -1,16 +1,17 @@
 //
-//  DetailCheckListViewController.swift
+//  WithDetailCheckListViewController.swift
 //  OpenList
 //
-//  Created by 김영균 on 11/15/23.
+//  Created by wi_seong on 11/23/23.
 //
 
 import Combine
+import CustomSocket
 import UIKit
 
-protocol DetailCheckListRoutingLogic: AnyObject {}
+protocol WithDetailCheckListRoutingLogic: AnyObject {}
 
-final class DetailCheckListViewController: UIViewController, ViewControllable {
+final class WithDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
 		static let checkListItemHeight: CGFloat = 44
 		static let headerHeight: CGFloat = 24
@@ -20,10 +21,11 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	}
 	
 	// MARK: - Properties
-	private let router: DetailCheckListRoutingLogic
-	private let viewModel: any DetailCheckListViewModelable
+	private let router: WithDetailCheckListRoutingLogic
+	private let viewModel: any WithDetailCheckListViewModelable
 	private var cancellables: Set<AnyCancellable> = []
-	private var dataSource: DetailCheckListDiffableDataSource?
+	private var dataSource: WithDetailCheckListDiffableDataSource?
+	private var isOpenSocket: Bool = false
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -31,11 +33,17 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private var socketConnet: PassthroughSubject<Void, Never> = .init()
+	private var insert: PassthroughSubject<EditText, Never> = .init()
+	private var delete: PassthroughSubject<EditText, Never> = .init()
+	private var appendDocument: PassthroughSubject<EditText, Never> = .init()
+	private var removeDocument: PassthroughSubject<EditText, Never> = .init()
+	private var receive: PassthroughSubject<Data, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
-		router: DetailCheckListRoutingLogic,
-		viewModel: some DetailCheckListViewModelable
+		router: WithDetailCheckListRoutingLogic,
+		viewModel: some WithDetailCheckListViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -59,22 +67,36 @@ final class DetailCheckListViewController: UIViewController, ViewControllable {
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
+		setWebSocket()
 		bind()
+		socketConnet.send()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		viewWillAppear.send(())
 	}
+	
+	deinit {
+		WebSocket.shared.closeWebSocket()
+	}
 }
 
 // MARK: - Bind Methods
-extension DetailCheckListViewController: ViewBindable {
-	typealias State = DetailCheckListState
+extension WithDetailCheckListViewController: ViewBindable {
+	typealias State = WithDetailCheckListState
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = DetailCheckListInput(viewWillAppear: viewWillAppear)
+		let input = WithDetailCheckListInput(
+			viewWillAppear: viewWillAppear,
+			socketConnet: socketConnet,
+			insert: insert,
+			delete: delete,
+			appendDocument: appendDocument,
+			removeDocument: removeDocument,
+			receive: receive
+		)
 		let output = viewModel.transform(input)
 		
 		output
@@ -86,16 +108,38 @@ extension DetailCheckListViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
+		case .none:
+			break
 		case let .title(title):
 			headerView.configure(title: title!, isLocked: true)
+		case let .updateItem(item):
+			updateTextField(to: item)
+		case let .appendItem(item):
+			appendItem(item)
+		case let .removeItem(content):
+			print(content)
+		case let .socketConnet(isConnect):
+			print(isConnect)
 		}
 	}
 	
 	func handleError(_ error: OutputError) {}
 }
 
+// MARK: - Helper
+private extension WithDetailCheckListViewController {
+	func updateTextField(to item: CheckListItem) {
+		dataSource?.receiveCheckListItem(with: item)
+	}
+	
+	func appendItem(_ item: CheckListItem) {
+		dataSource?.appendCheckListItem(item)
+		dataSource?.updatePlaceholder()
+	}
+}
+
 // MARK: - View Methods
-private extension DetailCheckListViewController {
+private extension WithDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
 		setCheckListViewAttributes()
@@ -105,7 +149,7 @@ private extension DetailCheckListViewController {
 	func setCheckListViewAttributes() {
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
-		checkListView.registerCell(LocalCheckListItem.self)
+		checkListView.registerCell(WithCheckListItem.self)
 		checkListView.registerCell(CheckListItemPlaceholder.self)
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
@@ -149,23 +193,48 @@ private extension DetailCheckListViewController {
 		])
 	}
 	
+	func setWebSocket() {
+		do {
+			WebSocket.shared.delegate = self
+			WebSocket.shared.url = URL(string: "ws://localhost:1337/")
+			try WebSocket.shared.openWebSocket()
+			WebSocket.shared.send(message: Device.id)
+		} catch {
+			print(error)
+		}
+	}
+	
+	func webSocketReceive() {
+		if !isOpenSocket {
+			return
+		}
+		
+		DispatchQueue.global().async {
+			WebSocket.shared.receive { [weak self] _, data in
+				guard let data else { return }
+				self?.receive.send(data)
+				self?.webSocketReceive()
+			}
+		}
+	}
+	
 	@objc func hideKeyboard() {
 		checkListView.endEditing(true)
 	}
 	
 	func makeDataSource() {
-		dataSource = DetailCheckListDiffableDataSource(
+		dataSource = WithDetailCheckListDiffableDataSource(
 			tableView: checkListView,
 			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
 				case is CheckListItem:
-					let cell = tableView.dequeueCell(LocalCheckListItem.self, for: indexPath)
+					let cell = tableView.dequeueCell(WithCheckListItem.self, for: indexPath)
 					guard let item = itemIdentifier as? CheckListItem else { return cell }
 					cell.configure(with: item, indexPath: indexPath)
 					cell.delegate = self
 					return cell
 					
-				case is CheckListPlaceholderItem:
+				case is WithCheckListPlaceholderItem:
 					let cell = tableView.dequeueCell(CheckListItemPlaceholder.self, for: indexPath)
 					cell.configure(indexPath: indexPath)
 					cell.delegate = self
@@ -180,7 +249,7 @@ private extension DetailCheckListViewController {
 }
 
 // MARK: - UITableViewDelegate
-extension DetailCheckListViewController: UITableViewDelegate {
+extension WithDetailCheckListViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return LayoutConstant.checkListItemHeight
 	}
@@ -211,11 +280,11 @@ extension DetailCheckListViewController: UITableViewDelegate {
 	}
 }
 
-// MARK: - LocalCheckListItemDelegate
-extension DetailCheckListViewController: LocalCheckListItemDelegate {
+// MARK: - WithCheckListItemDelegate
+extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
-		cell: LocalCheckListItem,
+		cell: WithCheckListItem,
 		indexPath: IndexPath
 	) {
 		if let text = textField.text, !text.isEmpty {
@@ -229,6 +298,52 @@ extension DetailCheckListViewController: LocalCheckListItemDelegate {
 	func textField(
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
+		replacementString string: String,
+		cellId: UUID
+	) -> Bool {
+		guard let text = textField.text else { return true }
+		guard let stringRange = Range(range, in: text) else { return false }
+		let updatedText = text.replacingCharacters(in: stringRange, with: string)
+		guard updatedText.count <= 30 else { return false }
+		
+		switch range.length {
+		case 0:
+			insert.send(.init(id: cellId, content: string, range: range))
+		case 1:
+			delete.send(.init(id: cellId, content: string, range: range))
+		default:
+			return false
+		}
+		
+		return true
+	}
+}
+
+extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
+	func urlSession(
+		_ session: URLSession,
+		webSocketTask: URLSessionWebSocketTask,
+		didOpenWithProtocol protocol: String?
+	) {
+		isOpenSocket = true
+		webSocketReceive()
+	}
+	
+	func urlSession(
+		_ session: URLSession,
+		webSocketTask: URLSessionWebSocketTask,
+		didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+		reason: Data?
+	) {
+		isOpenSocket = false
+	}
+}
+
+// MARK: - WithCheckListItemPlaceholderDelegate
+extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
+	func textField(
+		_ textField: CheckListItemTextField,
+		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
 		guard let text = textField.text else { return true }
@@ -236,15 +351,11 @@ extension DetailCheckListViewController: LocalCheckListItemDelegate {
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30
 	}
-}
-
-// MARK: - CheckListItemPlaceholderDelegate
-extension DetailCheckListViewController: CheckListItemPlaceholderDelegate {
+	
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		dataSource?.appendCheckListItem(CheckListItem(title: text, isChecked: false))
-		dataSource?.updatePlaceholder()
+		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
 	}
 }

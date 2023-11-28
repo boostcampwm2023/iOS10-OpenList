@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct OperationBasedMessagesBag {
+public struct OperationBasedMessagesBag {
 	private var operations = [OperationBasedOneMessage]()
 	
 	init() {}
@@ -39,7 +39,7 @@ extension OperationBasedMessagesBag: Encodable {
 		case operations
 	}
 	
-	func encode(to encoder: Encoder) throws {
+	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(operations, forKey: .operations)
 	}
@@ -47,7 +47,7 @@ extension OperationBasedMessagesBag: Encodable {
 
 // MARK: - Decodable
 extension OperationBasedMessagesBag: Decodable {
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		operations = try container.decode([OperationBasedOneMessage].self, forKey: .operations)
 	}
@@ -55,7 +55,7 @@ extension OperationBasedMessagesBag: Decodable {
 
 // MARK: - OperationBasedMessage
 extension OperationBasedMessagesBag: OperationBasedMessage {
-	func concat(with message: CRDTMessage) throws -> CRDTMessage {
+	public func concat(with message: CRDTMessage) throws -> CRDTMessage {
 		guard let message = message as? OperationBasedMessage else {
 			throw CRDTError.inCompatibleType(
 				message,
@@ -68,7 +68,7 @@ extension OperationBasedMessagesBag: OperationBasedMessage {
 		return ret
 	}
 	
-	func clone() throws -> CRDTMessage {
+	public func clone() throws -> CRDTMessage {
 		var clone = OperationBasedMessagesBag()
 		for operation in operations {
 			guard let operation = operation.clone() as? OperationBasedOneMessage else {
@@ -82,20 +82,20 @@ extension OperationBasedMessagesBag: OperationBasedMessage {
 		return clone
 	}
 	
-	func execute<T>(on crdt: CRDT<T>) throws {
+	public func execute<T>(on crdt: CRDT<T>) throws {
 		for operation in operations {
 			try crdt.applyOneRemote(operation)
 		}
 	}
 	
-	func size() -> Int {
+	public func size() -> Int {
 		return operations.count
 	}
 }
 
 // MARK: - CustomDebugStringConvertible
 extension OperationBasedMessagesBag: CustomDebugStringConvertible {
-	var debugDescription: String {
+	public var debugDescription: String {
 		var string = "BAG:"
 		for operation in operations {
 			string += " + \(operation)"

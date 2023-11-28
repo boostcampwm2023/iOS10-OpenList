@@ -44,6 +44,7 @@ final class NavigationControllable: ViewControllable {
 	
 	init(root: ViewControllable) {
 		self.navigationController = UINavigationController(rootViewController: root.uiviewController)
+		navigationController.isNavigationBarHidden = true
 	}
 }
 
