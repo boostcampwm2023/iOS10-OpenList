@@ -221,13 +221,3 @@ extension CheckListTableViewController: OpenListNavigationBarDelegate {
 		debugPrint("didPressBackButton")
 	}
 }
-
-extension CheckListTableViewController: OpenListNavigationBarDelegate {
-	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
-		debugPrint("didTapBarItem: \(item.type)")
-	}
-	
-	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
-		debugPrint("didPressBackButton")
-	}
-}
