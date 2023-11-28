@@ -7,26 +7,10 @@
 
 import Foundation
 
-final class AppComponent: EmptyComponent, TabBarDependency {
+final class AppComponent: EmptyComponent, TabBarDependency, LoginDependency {
 	var navigationControllable: NavigationControllable
 	var coreDataStorage: CoreDataStorage {
 		return CoreDataStorage.shared
-	}
-	
-	init(navigationControllable: NavigationControllable) {
-		self.navigationControllable = navigationControllable
-	}
-}
-
-final class AppLoginComponent: EmptyComponent, LoginDependency {
-	var navigationControllable: NavigationControllable
-	
-	var loginUseCase: AuthUseCase {
-		return DefaultAuthUseCase(defaultAuthRepository: defaultAuthRepository)
-	}
-	
-	var defaultAuthRepository: AuthRepository {
-		return DefaultAuthRepository()
 	}
 	
 	init(navigationControllable: NavigationControllable) {

@@ -23,15 +23,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let navigationControllable = NavigationControllable(navigationController: UINavigationController())
 		let component = AppComponent(navigationControllable: navigationControllable)
 		let tabBarViewFactory = TabBarViewFactory(parent: component)
-		let loginViewFactory = LoginViewFactory(parent: AppLoginComponent(navigationControllable: navigationControllable))
+		let loginViewFactory = LoginViewFactory(parent: component)
 		let appRootRouter = AppRouter(
 			window: window,
 			tabBarFactoryable: tabBarViewFactory,
 			loginFactoryable: loginViewFactory
 		)
 
-		if KeyChain.shared.read(key: "accessToken") != nil,
-		KeyChain.shared.read(key: "refreshToken") != nil {
+		if KeyChain.shared.read(key: AuthKey.accessToken) != nil,
+			 KeyChain.shared.read(key: AuthKey.refreshToken) != nil {
 			appRootRouter.showTapFlow()
 		} else {
 			appRootRouter.showLoginFlow()

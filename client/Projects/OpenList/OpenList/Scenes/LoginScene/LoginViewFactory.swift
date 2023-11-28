@@ -19,10 +19,6 @@ final class LoginComponent:
 	fileprivate var loginUseCase: AuthUseCase {
 		return DefaultAuthUseCase(defaultAuthRepository: authRepository)
 	}
-	
-	fileprivate var tabBarFactoryable: TabBarFactoryable {
-		return TabBarViewFactory(parent: self)
-	}
 }
 
 protocol LoginFactoryable: Factoryable {

@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum AuthKey {
+	static let accessToken = "accessToken"
+	static let refreshToken = "refreshToken"
+}
+
 protocol AuthUseCase {
 	func postLoginInfo(loginInfo: LoginInfo) async -> Bool
 }
@@ -24,8 +29,8 @@ extension DefaultAuthUseCase: AuthUseCase {
 		guard let result = await defaultAuthRepository.postLoginInfo(loginInfo: loginInfo) else {
 			return false
 		}
-		KeyChain.shared.create(key: "accessToken", token: result.accessToken)
-		KeyChain.shared.create(key: "refreshToken", token: result.refreshToken)
+		KeyChain.shared.create(key: AuthKey.accessToken, token: result.accessToken)
+		KeyChain.shared.create(key: AuthKey.refreshToken, token: result.refreshToken)
 		
 		return true
 	}
