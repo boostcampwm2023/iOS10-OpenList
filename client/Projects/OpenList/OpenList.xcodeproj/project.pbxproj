@@ -150,6 +150,7 @@
 		78E9559E2B15061C005CF5D3 /* CategoryProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */; };
 		78E955A02B15B5A8005CF5D3 /* GradientStageCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */; };
 		78E955A22B15E238005CF5D3 /* GradientStageStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A12B15E238005CF5D3 /* GradientStageStick.swift */; };
+		78E955A42B164270005CF5D3 /* SkipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A32B164270005CF5D3 /* SkipButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -322,6 +323,7 @@
 		78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryProgressView.swift; sourceTree = "<group>"; };
 		78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientStageCircle.swift; sourceTree = "<group>"; };
 		78E955A12B15E238005CF5D3 /* GradientStageStick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientStageStick.swift; sourceTree = "<group>"; };
+		78E955A32B164270005CF5D3 /* SkipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkipButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -844,6 +846,7 @@
 				78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */,
 				78E955A12B15E238005CF5D3 /* GradientStageStick.swift */,
 				78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */,
+				78E955A32B164270005CF5D3 /* SkipButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1059,6 +1062,7 @@
 				78C2F0002B03D58700E4EC4E /* AddTabRouter.swift in Sources */,
 				5F9349062B16DF4600282545 /* SharedCheckListViewModel.swift in Sources */,
 				78C2F0032B03D58700E4EC4E /* AddTabViewModel.swift in Sources */,
+				78E955A42B164270005CF5D3 /* SkipButton.swift in Sources */,
 				78C2F0002B03D58700E4EC4E /* AddCheckListTitleRouter.swift in Sources */,
 				7846D4062B0CE7600034BA7D /* CategoryCollectionViewCell.swift in Sources */,
 				78C2F0032B03D58700E4EC4E /* AddCheckListTitleViewModel.swift in Sources */,

@@ -27,10 +27,11 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	typealias CategoryCellRegistration = UICollectionView.CellRegistration<CategoryCollectionViewCell, String>
 	
 	private let nextButton = ConfirmButton(title: "다음")
-	private let skipButton: UIButton = .init(type: .system)
+	private let skipButton: UIButton = .init()
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
 	private let gradationView: CategoryProgressView = .init(stage: .major)
+	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false, backButtonTitle: "뒤로")
 	
   // MARK: - Initializers
 	init(
@@ -58,6 +59,7 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		viewWillAppear.send()
 	}
 }
@@ -88,7 +90,7 @@ extension MajorCategoryViewController: ViewBindable {
 		case .load(let categories):
 			reload(categories: categories)
 		case .viewWillAppear(let title):
-			navigationItem.title = title
+			dump(title)
 		}
 	}
 
@@ -201,8 +203,7 @@ private extension MajorCategoryViewController {
 	}
 
 	func setSkipButton() {
-		skipButton.titleLabel?.text = "건너뛰기"
-		skipButton.translatesAutoresizingMaskIntoConstraints = false
+		skipButton.configureAsSkipButton(title: "건너뛰기")
 	}
 	
 	func setNextButton() {
@@ -215,6 +216,7 @@ private extension MajorCategoryViewController {
 	}
 	
 	func setViewHierarchies() {
+		view.addSubview(navigationBar)
 		view.addSubview(gradationView)
 		view.addSubview(nextButton)
 		view.addSubview(skipButton)
@@ -224,7 +226,7 @@ private extension MajorCategoryViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			gradationView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 100),
+			gradationView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
 			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
 			gradationView.heightAnchor.constraint(equalToConstant: 100),
