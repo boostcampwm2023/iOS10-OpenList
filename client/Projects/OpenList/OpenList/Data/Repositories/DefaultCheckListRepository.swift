@@ -31,7 +31,7 @@ extension DefaultCheckListRepository: CheckListRepository {
 			CheckListTableItem(
 				id: $0.checklistId,
 				title: $0.title,
-				achievementRate: Double($0.progress)
+				achievementRate: Double($0.progress) / Double($0.items.count)
 			)
 		}
 	}
@@ -59,8 +59,8 @@ extension DefaultCheckListRepository: CheckListRepository {
 		return try await checkListStorage.appendCheckListItem(id: id, item: item)
 	}
 	
-	func updateCheckList(item: CheckListItem) async throws {
-		return try await checkListStorage.updateCheckListItem(item: item)
+	func updateCheckList(id: UUID, item: CheckListItem) async throws {
+		return try await checkListStorage.updateCheckListItem(id: id, item: item)
 	}
 	
 	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws {

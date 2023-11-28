@@ -134,14 +134,22 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 		}
 	}
 	
-	func updateCheckListItem(item: CheckListItem) async throws {
+	func updateCheckListItem(id: UUID, item: CheckListItem) async throws {
 		Task { [weak self] in
 			guard let self else { return }
 			let context = coreDataStorage.backgroundViewContext
 			guard let checkListItemFaults = try await fetchCheckListItemFault(id: item.id, context: context).first else {
 				throw CoreDataStorageError.noData
 			}
-			checkListItemFaults.update(item: item)
+			if checkListItemFaults.isChecked == item.isChecked {
+				checkListItemFaults.update(content: item.title)
+			} else {
+				guard let checkListFaults = try await fetchCheckListFault(id: id, context: context).first else {
+					throw CoreDataStorageError.noData
+				}
+				checkListFaults.update(item.isChecked)
+				checkListItemFaults.update(isChecked: item.isChecked)
+			}
 			try context.save()
 			return
 		}
@@ -231,6 +239,11 @@ private extension PrivateCheckListEntity {
 		}
 		self.orderBy = orderBy + [id]
 	}
+	
+	func update(_ positive: Bool) {
+		let progress = (positive ? progress + 1 : progress - 1)
+		self.progress = max(0, progress)
+	}
 }
 
 private extension PrivateCheckListItemEntity {
@@ -245,8 +258,11 @@ private extension PrivateCheckListItemEntity {
 		self.createdAt = .now
 	}
 	
-	func update(item: CheckListItem) {
-		self.content = item.title
-		self.isChecked = item.isChecked
+	func update(content: String) {
+		self.content = content
+	}
+	
+	func update(isChecked: Bool) {
+		self.isChecked = isChecked
 	}
 }

@@ -53,7 +53,8 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 	
 	func updateItem(_ item: CheckListItem) async -> CheckListItem? {
 		do {
-			try await checkListRepository.updateCheckList(item: item)
+			guard let checkListId else { return nil }
+			try await checkListRepository.updateCheckList(id: checkListId, item: item)
 			return item
 		} catch {
 			return nil
