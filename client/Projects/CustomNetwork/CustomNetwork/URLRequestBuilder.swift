@@ -13,7 +13,7 @@ public struct URLRequestBuilder {
 	private var headers: [String: String] = [:]
 	private var body: Data?
 	
-	enum HTTPMethod: String {
+	public enum HTTPMethod: String {
 		case get = "GET"
 		case post = "POST"
 		case put = "PUT"
@@ -25,17 +25,17 @@ public struct URLRequestBuilder {
 		self.url = URL(string: url)
 	}
 	
-	mutating func setMethod(_ method: HTTPMethod) -> URLRequestBuilder {
+	mutating public func setMethod(_ method: HTTPMethod) -> URLRequestBuilder {
 		self.method = method
 		return self
 	}
 	
-	mutating func addHeader(field: String, value: String) -> URLRequestBuilder {
+	mutating public func addHeader(field: String, value: String) -> URLRequestBuilder {
 		headers[field] = value
 		return self
 	}
 	
-	mutating func setBody(_ body: Data) -> URLRequestBuilder {
+	mutating public func setBody(_ body: Data) -> URLRequestBuilder {
 		self.body = body
 		return self
 	}
