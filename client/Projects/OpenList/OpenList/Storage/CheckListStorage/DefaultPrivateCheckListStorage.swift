@@ -1,5 +1,5 @@
 //
-//  DefaultCheckListStorage.swift
+//  DefaultPrivateCheckListStorage.swift
 //  OpenList
 //
 //  Created by 김영균 on 11/16/23.
@@ -8,7 +8,7 @@
 import CoreData
 import Foundation
 
-final class DefaultCheckListStorage {
+final class DefaultPrivateCheckListStorage {
 	private let coreDataStorage: CoreDataStorage
 	
 	init(coreDataStorage: CoreDataStorage = .shared) {
@@ -16,26 +16,26 @@ final class DefaultCheckListStorage {
 	}
 }
 
-private extension DefaultCheckListStorage {
-	func fetchAllCheckListFault() async throws -> [CheckListEntity] {
+private extension DefaultPrivateCheckListStorage {
+	func fetchAllCheckListFault() async throws -> [PrivateCheckListEntity] {
 		return try await withCheckedThrowingContinuation { continuation in
 			Task { [weak self] in
 				guard let self else { return }
-				let request: NSFetchRequest<CheckListEntity> = CheckListEntity.fetchRequest()
+				let request: NSFetchRequest<PrivateCheckListEntity> = PrivateCheckListEntity.fetchRequest()
 				let checkListFaults = try coreDataStorage.backgroundViewContext.fetch(request)
 				continuation.resume(returning: checkListFaults)
 			}
 		}
 	}
 	
-	func fetchCheckListFault(id: UUID) async throws -> [CheckListEntity] {
+	func fetchCheckListFault(id: UUID) async throws -> [PrivateCheckListEntity] {
 		return try await withCheckedThrowingContinuation { continuation in
 			Task { [weak self] in
 				guard let self else { return }
-				let request: NSFetchRequest<CheckListEntity> = CheckListEntity.fetchRequest()
+				let request: NSFetchRequest<PrivateCheckListEntity> = PrivateCheckListEntity.fetchRequest()
 				request.predicate = NSPredicate(
 					format: "%K == %@",
-					#keyPath(CheckListEntity.checklistId),
+					#keyPath(PrivateCheckListEntity.checklistId),
 					id as CVarArg
 				)
 				let checkListFaults = try coreDataStorage.backgroundViewContext.fetch(request)
@@ -52,18 +52,18 @@ private extension DefaultCheckListStorage {
 	}
 }
 
-extension DefaultCheckListStorage: CheckListStorage {
-	func fetchAllCheckList() async throws -> [LocalStorageCheckListResponseDTO] {
+extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
+	func fetchAllCheckList() async throws -> [PrivateCheckListResponseDTO] {
 		return try await fetchAllCheckListFault()
 			.map(\.objectID)
-			.map { try fetchEntity(by: $0, type: CheckListEntity.self) }
+			.map { try fetchEntity(by: $0, type: PrivateCheckListEntity.self) }
 			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
 	}
 	
-	func fetchCheckList(id: UUID) async throws -> LocalStorageCheckListResponseDTO {
+	func fetchCheckList(id: UUID) async throws -> PrivateCheckListResponseDTO {
 		let response = try await fetchCheckListFault(id: id)
 			.map(\.objectID)
-			.map { try fetchEntity(by: $0, type: CheckListEntity.self) }
+			.map { try fetchEntity(by: $0, type: PrivateCheckListEntity.self) }
 			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
 			.first
 		guard let response else {
@@ -76,7 +76,7 @@ extension DefaultCheckListStorage: CheckListStorage {
 		Task { [weak self] in
 			guard let self else { return }
 			let backgroundContext = coreDataStorage.backgroundViewContext
-			let checkList = CheckListEntity(context: backgroundContext)
+			let checkList = PrivateCheckListEntity(context: backgroundContext)
 			checkList.makeInitialCheckListEntity(title: title)
 			do {
 				try backgroundContext.save()
@@ -88,23 +88,23 @@ extension DefaultCheckListStorage: CheckListStorage {
 	}
 }
 
-private extension DefaultCheckListStorage {
+private extension DefaultPrivateCheckListStorage {
 	func mapToLocalStorageCheckListResponseDTO(
-		_ entity: CheckListEntity
-	) throws -> LocalStorageCheckListResponseDTO {
+		_ entity: PrivateCheckListEntity
+	) throws -> PrivateCheckListResponseDTO {
 		guard
 			let checklistId = entity.checklistId,
 			let title = entity.title,
 			let createdAt = entity.createdAt,
 			let updatedAt = entity.updatedAt,
-			let itemEntities = entity.itemId as? Set<CheckListItemEntity>
+			let itemEntities = entity.itemId as? Set<PrivateCheckListItemEntity>
 		else {
 			throw CoreDataStorageError.unwrapError
 		}
 		
-		let items = try itemEntities.compactMap(mapToLocalStorageCheckListItemResponseDTO(_:))
+		let items = try itemEntities.compactMap(mapToCheckListItemResponseDTO(_:))
 		
-		return LocalStorageCheckListResponseDTO(
+		return PrivateCheckListResponseDTO(
 			checklistId: checklistId,
 			createdAt: createdAt,
 			updatedAt: updatedAt,
@@ -114,9 +114,9 @@ private extension DefaultCheckListStorage {
 		)
 	}
 	
-	func mapToLocalStorageCheckListItemResponseDTO(
-		_ entity: CheckListItemEntity
-	) throws -> LocalStorageCheckListItemResponseDTO {
+	func mapToCheckListItemResponseDTO(
+		_ entity: PrivateCheckListItemEntity
+	) throws -> PrivateCheckListItemResponseDTO {
 		guard
 			let itemId = entity.itemId,
 			let content = entity.content,
@@ -124,7 +124,7 @@ private extension DefaultCheckListStorage {
 		else {
 			throw CoreDataStorageError.unwrapError
 		}
-		return LocalStorageCheckListItemResponseDTO(
+		return PrivateCheckListItemResponseDTO(
 			itemId: itemId,
 			content: content,
 			createdAt: createdAt,
@@ -133,7 +133,7 @@ private extension DefaultCheckListStorage {
 	}
 }
 
-private extension CheckListEntity {
+private extension PrivateCheckListEntity {
 	func makeInitialCheckListEntity(title: String) {
 		self.checklistId = UUID()
 		self.title = title
@@ -144,7 +144,7 @@ private extension CheckListEntity {
 	}
 }
 
-private extension CheckListItemEntity {
+private extension PrivateCheckListItemEntity {
 	func makeInitialCheckListItemEntity(
 		content: String,
 		isChecked: Bool

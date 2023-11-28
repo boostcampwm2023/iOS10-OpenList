@@ -8,9 +8,9 @@
 import Foundation
 
 final class DefaultCheckListRepository {
-	private let checkListStorage: CheckListStorage
+	private let checkListStorage: PrivateCheckListStorage
 	
-	init(checkListStorage: CheckListStorage) {
+	init(checkListStorage: PrivateCheckListStorage) {
 		self.checkListStorage = checkListStorage
 	}
 }

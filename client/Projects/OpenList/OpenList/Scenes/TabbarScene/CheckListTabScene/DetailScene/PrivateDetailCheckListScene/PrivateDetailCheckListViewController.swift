@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol PrivateDetailCheckListRoutingLogic: AnyObject {}
+protocol PrivateDetailCheckListRoutingLogic: AnyObject {
+	func dismissDetailScene()
+}
 
 final class PrivateDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
@@ -24,6 +26,7 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	private let viewModel: any PrivateDetailCheckListViewModelable & PrivateDetailCheckListDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: PrivateDetailCheckListDiffableDataSource?
+	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -135,26 +138,14 @@ private extension PrivateDetailCheckListViewController {
 private extension PrivateDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
+		
 		setNavigationAttributes()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
 	}
 	
 	func setNavigationAttributes() {
-		setMoreButton()
-		navigationItem.rightBarButtonItem = .init(customView: moreButton)
-	}
-	
-	func setMoreButton() {
-		let moreImage: UIImage = .more
-		guard
-			let resizeMoreImage = moreImage
-			.resizeImage(size: .init(width: 24, height: 24))?
-			.withRenderingMode(.alwaysTemplate)
-		else { return }
-		moreButton.setImage(resizeMoreImage, for: .normal)
-		moreButton.tintColor = .primary1
-		moreButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+		navigationBar.delegate = self
 	}
 	
 	func setCheckListViewAttributes() {
@@ -178,12 +169,13 @@ private extension PrivateDetailCheckListViewController {
 	func setViewHierarchies() {
 		view.addSubview(checkListView)
 		view.addSubview(headerView)
+		view.addSubview(navigationBar)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			headerView.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: LayoutConstant.topPadding
 			),
 			headerView.leadingAnchor.constraint(
@@ -302,5 +294,15 @@ extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate
 		textField.text = nil
 		dataSource?.appendCheckListItem(CheckListItem(itemId: UUID(), title: text, isChecked: false))
 		dataSource?.updatePlaceholder()
+	}
+}
+
+extension PrivateDetailCheckListViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		router.dismissDetailScene()
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		showMenu()
 	}
 }

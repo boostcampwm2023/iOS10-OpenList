@@ -12,4 +12,8 @@ final class PrivateDetailCheckListRouter {
 }
 
 // MARK: - RoutingLogic
-extension PrivateDetailCheckListRouter: PrivateDetailCheckListRoutingLogic {}
+extension PrivateDetailCheckListRouter: PrivateDetailCheckListRoutingLogic {
+	func dismissDetailScene() {
+		viewController?.popViewController(animated: true)
+	}
+}
