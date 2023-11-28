@@ -33,8 +33,8 @@ final class TabBarComponent:
 		return DefaultCheckListRepository(checkListStorage: checkListStorage)
 	}
 	
-	var checkListStorage: CheckListStorage {
-		return DefaultCheckListStorage()
+	var checkListStorage: PrivateCheckListStorage {
+		return DefaultPrivateCheckListStorage()
 	}
 	
 	fileprivate var addTabFactoryable: AddTabFactoryable {
