@@ -17,8 +17,8 @@ export class PrivateChecklistsService {
   ) {}
 
   async createPrivateChecklist(
-    userId: number,
     folderId: number,
+    userId: number,
     dto: CreatePrivateChecklistDto,
   ) {
     // 1. folderId를 통해 해당 folder가 존재하는지 확인합니다.
