@@ -30,7 +30,7 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	private let skipButton: UIButton = .init(type: .system)
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
-	private let gradationView: UIView = .init()
+	private let gradationView: CategoryProgressView = .init()
 	
   // MARK: - Initializers
 	init(
@@ -212,7 +212,6 @@ private extension MajorCategoryViewController {
 	
 	func setGradationView() {
 		gradationView.translatesAutoresizingMaskIntoConstraints = false
-		gradationView.backgroundColor = .primary1
 	}
 	
 	func setViewHierarchies() {
@@ -225,7 +224,7 @@ private extension MajorCategoryViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			gradationView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+			gradationView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 100),
 			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
 			gradationView.heightAnchor.constraint(equalToConstant: 100),

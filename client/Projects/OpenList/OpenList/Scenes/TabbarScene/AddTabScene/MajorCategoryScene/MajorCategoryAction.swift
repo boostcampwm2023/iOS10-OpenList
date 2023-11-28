@@ -8,7 +8,6 @@
 import Combine
 
 struct MajorCategoryInput {
-//	let categoryDidSelect: AnyPublisher<Void, Never>
 	let viewLoad: PassthroughSubject<Void, Never>
 	let viewWillAppear: PassthroughSubject<Void, Never>
 }

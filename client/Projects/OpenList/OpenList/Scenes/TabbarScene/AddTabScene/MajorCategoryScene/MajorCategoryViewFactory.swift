@@ -23,7 +23,10 @@ final class MajorCategoryViewFactory: Factory<MajorCategoryDependency>, MajorCat
 	func make(with title: String) -> ViewControllable {
 		let router = MajorCategoryRouter()
 		let viewModel = MajorCategoryViewModel(title: title)
-		let viewController = MajorCategoryViewController(router: router, viewModel: viewModel)
+		let viewController = MajorCategoryViewController(
+			router: router,
+			viewModel: viewModel
+		)
 		router.viewController = viewController
 		return viewController
 	}
