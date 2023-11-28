@@ -44,6 +44,20 @@ extension PrivateDetailCheckListDiffableDataSource {
 		updateSection(with: checkList, to: .checkList)
 	}
 	
+	func updateCheckListItem(_ item: CheckListItem) {
+		var snapshot = snapshot()
+		guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
+		snapshot.deleteItems(items)
+		if let index = items.firstIndex(where: { $0.id == item.id}) {
+			items[index].title = item.title
+			items[index].isChecked = item.isChecked
+		} else {
+			items.append(item)
+		}
+		snapshot.appendItems(items, toSection: .checkList)
+		apply(snapshot, animatingDifferences: false)
+	}
+	
 	func updateCheckListItemString(at indexPath: IndexPath, with text: String) {
 		var snapshot = snapshot()
 		guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }

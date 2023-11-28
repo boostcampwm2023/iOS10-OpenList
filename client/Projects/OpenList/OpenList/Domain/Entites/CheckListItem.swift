@@ -11,6 +11,7 @@ import Foundation
 struct CheckListItem: Hashable, Identifiable {
 	var id: UUID { itemId	}
 	let itemId: UUID
+	var index: Int32
 	var title: String
 	var isChecked: Bool
 }

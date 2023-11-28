@@ -47,6 +47,49 @@ extension DefaultCheckListRepository: CheckListRepository {
 			items: result.items.map {
 				.init(
 					itemId: $0.itemId,
+					index: $0.index,
+					title: $0.content,
+					isChecked: $0.isChecked
+				)
+			}
+		)
+	}
+	
+	func appendCheckList(id: UUID, item: CheckListItem) async throws {
+		return try await checkListStorage.appendCheckListItem(id: id, item: item)
+	}
+	
+	func updateCheckList(id: UUID, item: CheckListItem) async throws -> CheckList {
+		let result = try await checkListStorage.updateCheckListItem(id: id, item: item)
+		return .init(
+			id: result.checklistId,
+			title: result.title,
+			createdAt: result.createdAt,
+			updatedAt: result.updatedAt,
+			progress: result.progress,
+			items: result.items.map {
+				.init(
+					itemId: $0.itemId,
+					index: $0.index,
+					title: $0.content,
+					isChecked: $0.isChecked
+				)
+			}
+		)
+	}
+	
+	func removeCheckList(id: UUID, item: CheckListItem) async throws -> CheckList {
+		let result = try await checkListStorage.removeCheckListItem(id: id, item: item)
+		return .init(
+			id: result.checklistId,
+			title: result.title,
+			createdAt: result.createdAt,
+			updatedAt: result.updatedAt,
+			progress: result.progress,
+			items: result.items.map {
+				.init(
+					itemId: $0.itemId,
+					index: $0.index,
 					title: $0.content,
 					isChecked: $0.isChecked
 				)
