@@ -61,11 +61,6 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 		bind()
 		viewLoad.send()
 	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		viewWillAppear.send()
-	}
 }
 
 // MARK: - Bind Methods
@@ -76,7 +71,6 @@ extension MajorCategoryViewController: ViewBindable {
 	func bind() {
 		let input = MajorCategoryInput(
 			viewLoad: viewLoad,
-			viewWillAppear: viewWillAppear,
 			nextButtonDidTap: nextButton.tapPublisher,
 			collectionViewCellDidSelect: collectionViewCellDidSelect
 		)
@@ -95,8 +89,6 @@ extension MajorCategoryViewController: ViewBindable {
 			handleError(error)
 		case .load(let categories):
 			reload(categories: categories)
-		case .viewWillAppear(let title):
-			dump(title)
 		case .routeToNext(let category):
 			router.routeToMediumCategoryView(with: category)
 		}
@@ -132,6 +124,15 @@ private extension MajorCategoryViewController {
 		setNextButton()
 	}
 	
+	enum CollectionViewLayoutConstant {
+		static let itemSizeWidth = 58.0
+		static let itemSizeHeight = 36.0
+		static let groupSizeHeight = 36.0
+		static let headerHeight = 34.0
+		static let groupInternalSpacing = 8.0
+		static let sectionInternalSpacing = 10.0
+	}
+	
 	func setCollectionView() {
 		collectionView.backgroundColor = .background
 		collectionView.register(
@@ -141,21 +142,21 @@ private extension MajorCategoryViewController {
 		
 		let layout: UICollectionViewCompositionalLayout = {
 			let itemSize = NSCollectionLayoutSize(
-				widthDimension: .estimated(58),
-				heightDimension: .absolute(36)
+				widthDimension: .estimated(CollectionViewLayoutConstant.itemSizeWidth),
+				heightDimension: .absolute(CollectionViewLayoutConstant.groupSizeHeight)
 			)
 			let item = NSCollectionLayoutItem(layoutSize: itemSize)
 					
 			let groupSize = NSCollectionLayoutSize(
 				widthDimension: .fractionalWidth(1.0),
-				heightDimension: .absolute(36)
+				heightDimension: .absolute(CollectionViewLayoutConstant.groupSizeHeight)
 			)
 			let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-			group.interItemSpacing = NSCollectionLayoutSpacing.fixed(8)
+			group.interItemSpacing = NSCollectionLayoutSpacing.fixed(CollectionViewLayoutConstant.groupInternalSpacing)
 			
 			let headerSize = NSCollectionLayoutSize(
 				widthDimension: .fractionalWidth(1.0),
-				heightDimension: .absolute(34)
+				heightDimension: .absolute(CollectionViewLayoutConstant.headerHeight)
 			)
 			
 			let header = NSCollectionLayoutBoundarySupplementaryItem(
@@ -165,7 +166,7 @@ private extension MajorCategoryViewController {
 			)
 			
 			let section = NSCollectionLayoutSection(group: group)
-			section.interGroupSpacing = 10
+			section.interGroupSpacing = CollectionViewLayoutConstant.sectionInternalSpacing
 			section.boundarySupplementaryItems = [header]
 			
 			return UICollectionViewCompositionalLayout(section: section)
@@ -241,6 +242,14 @@ private extension MajorCategoryViewController {
 		view.addSubview(collectionView)
 	}
 	
+	enum LayoutConstant {
+		static let defaultPadding = 20.0
+		static let navigationGradationViewSpacing = 10.0
+		static let gradationCollectionViewSpacing = 60.0
+		static let gradationViewHeight = 27.0
+		static let nextAndSkipButtonSpacing = 10.0
+	}
+	
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
@@ -249,21 +258,47 @@ private extension MajorCategoryViewController {
 			navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 			navigationBar.heightAnchor.constraint(equalToConstant: 44),
 			
-			gradationView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 10),
-			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-			gradationView.heightAnchor.constraint(equalToConstant: 27),
+			gradationView.topAnchor.constraint(
+				equalTo: navigationBar.bottomAnchor,
+				constant: LayoutConstant.navigationGradationViewSpacing
+			),
+			gradationView.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: LayoutConstant.defaultPadding
+			),
+			gradationView.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -LayoutConstant.defaultPadding
+			),
+			gradationView.heightAnchor.constraint(equalToConstant: LayoutConstant.gradationViewHeight),
 			
-			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor, constant: 60),
-			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
-			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+			collectionView.topAnchor.constraint(
+				equalTo: gradationView.bottomAnchor,
+				constant: LayoutConstant.gradationCollectionViewSpacing),
+			collectionView.bottomAnchor.constraint(
+				equalTo: skipButton.topAnchor,
+				constant: -LayoutConstant.defaultPadding),
+			collectionView.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: LayoutConstant.defaultPadding),
+			collectionView.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -LayoutConstant.defaultPadding),
 			
 			nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-			nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-			nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+			nextButton.leadingAnchor.constraint(
+				equalTo: safeArea.leadingAnchor,
+				constant: LayoutConstant.defaultPadding
+			),
+			nextButton.trailingAnchor.constraint(
+				equalTo: safeArea.trailingAnchor,
+				constant: -LayoutConstant.defaultPadding
+			),
 			
-			skipButton.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -10),
+			skipButton.bottomAnchor.constraint(
+				equalTo: nextButton.topAnchor,
+				constant: -LayoutConstant.nextAndSkipButtonSpacing
+			),
 			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
 		])
 	}
