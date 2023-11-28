@@ -275,12 +275,14 @@ extension PrivateDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
-		let itemId = checkListView.cellForRow(LocalCheckListItem.self, at: indexPath).id
+		let item = checkListView.cellForRow(LocalCheckListItem.self, at: indexPath)
+		let itemId = item.id
+		let isChecked = item.isChecked
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
 			let checkListItem = CheckListItem(
 				itemId: itemId,
 				title: "",
-				isChecked: false
+				isChecked: isChecked
 			)
 			self?.remove.send(checkListItem)
 			completion(true)

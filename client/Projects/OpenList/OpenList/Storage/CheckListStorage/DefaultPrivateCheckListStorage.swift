@@ -168,6 +168,9 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 			
 			checkListFaults.removeFromItemId(checkListItemFaults)
 			checkListFaults.orderBy = orderBy
+			if item.isChecked {
+				checkListFaults.update(false)
+			}
 			context.delete(checkListItemFaults)
 			try context.save()
 			return
