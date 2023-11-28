@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIImage {
-	func resizeImage(size: CGSize) -> UIImage {
+	func resizeImage(size: CGSize) -> UIImage? {
 		let originalSize = self.size
 		let ratio: CGFloat = {
 			if originalSize.width > originalSize.height {
@@ -17,7 +17,8 @@ extension UIImage {
 				return 1 / (size.height / originalSize.height)
 			}
 		}()
-
-		return UIImage(cgImage: self.cgImage!, scale: self.scale * ratio, orientation: self.imageOrientation)
+		guard let cgImage = self.cgImage else { return nil }
+		
+		return UIImage(cgImage: cgImage, scale: self.scale * ratio, orientation: self.imageOrientation)
 	}
 }

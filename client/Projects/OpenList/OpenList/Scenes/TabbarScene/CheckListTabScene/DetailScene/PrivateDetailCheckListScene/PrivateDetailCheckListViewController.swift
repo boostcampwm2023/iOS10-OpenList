@@ -147,9 +147,11 @@ private extension PrivateDetailCheckListViewController {
 	
 	func setMoreButton() {
 		let moreImage: UIImage = .more
-		let resizeMoreImage = moreImage
-			.resizeImage(size: .init(width: 24, height: 24))
+		guard
+			let resizeMoreImage = moreImage
+			.resizeImage(size: .init(width: 24, height: 24))?
 			.withRenderingMode(.alwaysTemplate)
+		else { return }
 		moreButton.setImage(resizeMoreImage, for: .normal)
 		moreButton.tintColor = .primary1
 		moreButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
