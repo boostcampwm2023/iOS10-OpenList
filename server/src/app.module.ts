@@ -21,6 +21,7 @@ import { SharedChecklistsModule } from './shared-checklists/shared-checklists.mo
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
+import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { winstonConfig } from './utils/winston.config';
     ChecklistsModule,
     AuthModule,
     SharedChecklistsModule,
+    ChecklistAiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
