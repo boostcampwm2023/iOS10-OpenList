@@ -27,7 +27,6 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var cancellables: Set<AnyCancellable> = []
-	private let navigationBar = OpenListNavigationBar(rightItems: [.bell, .search, .more])
 	
 	// MARK: - Initializers
 	init(
@@ -104,28 +103,32 @@ private extension CheckListTableViewController {
 
 // MARK: SetUp
 private extension CheckListTableViewController {
+	enum LayoutConstant {
+		static let bottomPadding: CGFloat = 12
+	}
+	
 	func setViewAttributes() {
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		dataSource = setupDataSource()
 		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
 		collectionView.delegate = self
-		collectionView.translatesAutoresizingMaskIntoConstraints = false
-		navigationBar.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		view.addSubview(collectionView)
-		view.addSubview(navigationBar)
 	}
 	
 	func setConstraints() {
-		NSLayoutConstraint.activate([
-			collectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
-			collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-		])
+		collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		collectionView.bottomAnchor.constraint(
+			equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+			constant: -LayoutConstant.bottomPadding
+		).isActive = true
+		collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
 		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
