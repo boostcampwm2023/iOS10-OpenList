@@ -19,7 +19,6 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
   private let router: MajorCategoryRoutingLogic
   private let viewModel: any MajorCategoryViewModelable
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
-	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	private let collectionViewCellDidSelect: PassthroughSubject<String, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
 	
@@ -231,6 +230,7 @@ private extension MajorCategoryViewController {
 	
 	func setNavigationBar() {
 		navigationBar.delegate = self
+		navigationBar.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
 	func setViewHierarchies() {
@@ -244,23 +244,27 @@ private extension MajorCategoryViewController {
 	func setViewConstraints() {
 		let safeArea = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			gradationView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+			navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
+			navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			navigationBar.heightAnchor.constraint(equalToConstant: 44),
+			
+			gradationView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 10),
 			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
 			gradationView.heightAnchor.constraint(equalToConstant: 27),
 			
+			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor, constant: 60),
+			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
+			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+			
 			nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
 			nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			nextButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-			nextButton.heightAnchor.constraint(equalToConstant: 56),
 			
 			skipButton.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -10),
-			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			
-			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
-			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor, constant: 60),
-			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20)
+			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
 		])
 	}
 }

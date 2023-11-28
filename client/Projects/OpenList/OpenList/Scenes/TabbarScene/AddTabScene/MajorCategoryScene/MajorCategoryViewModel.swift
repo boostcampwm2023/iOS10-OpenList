@@ -24,12 +24,10 @@ final class MajorCategoryViewModel {
 
 extension MajorCategoryViewModel: MajorCategoryViewModelable {
 	func transform(_ input: Input) -> Output {
-		let viewWillAppear = viewWillAppear(input)
 		let viewLoad = viewLoad(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
 		collectionViewCellDidSelect(input)
 		return Publishers.MergeMany(
-			viewWillAppear,
 			viewLoad,
 			nextButtonDidTap
 		).eraseToAnyPublisher()
@@ -37,14 +35,6 @@ extension MajorCategoryViewModel: MajorCategoryViewModelable {
 }
 
 private extension MajorCategoryViewModel {
-	func viewWillAppear(_ input: Input) -> Output {
-		return input.viewWillAppear
-			.withUnretained(self)
-			.map { (owner, _) in
-				return .viewWillAppear(owner.title)
-			}.eraseToAnyPublisher()
-	}
-	
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewLoad
 			.map { _ in
