@@ -9,6 +9,7 @@ import Combine
 import UIKit
 
 protocol MajorCategoryRoutingLogic: AnyObject {
+	func routeToTitleView()
 	func routeToMediumCategoryView(with majorCategory: String)
 	func routeToConfirmView()
 }
@@ -35,7 +36,7 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
 	private let gradationView: CategoryProgressView = .init(stage: .major)
-	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false, backButtonTitle: "뒤로")
+	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false)
 	
   // MARK: - Initializers
 	init(
@@ -125,6 +126,7 @@ private extension MajorCategoryViewController {
 		view.backgroundColor = .background
 		dataSource = setDataSource()
 		snapShot()
+		setNavigationBar()
 		setGradationView()
 		setCollectionView()
 		setSkipButton()
@@ -227,6 +229,10 @@ private extension MajorCategoryViewController {
 		gradationView.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
+	func setNavigationBar() {
+		navigationBar.delegate = self
+	}
+	
 	func setViewHierarchies() {
 		view.addSubview(navigationBar)
 		view.addSubview(gradationView)
@@ -241,7 +247,7 @@ private extension MajorCategoryViewController {
 			gradationView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
 			gradationView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			gradationView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-			gradationView.heightAnchor.constraint(equalToConstant: 100),
+			gradationView.heightAnchor.constraint(equalToConstant: 27),
 			
 			nextButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
 			nextButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
@@ -252,7 +258,7 @@ private extension MajorCategoryViewController {
 			skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			
 			collectionView.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
-			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor),
+			collectionView.topAnchor.constraint(equalTo: gradationView.bottomAnchor, constant: 60),
 			collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 			collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20)
 		])
@@ -260,12 +266,31 @@ private extension MajorCategoryViewController {
 }
 
 extension MajorCategoryViewController: UICollectionViewDelegate {
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+	func collectionView(
+		_ collectionView: UICollectionView,
+		didSelectItemAt indexPath: IndexPath
+	) {
 		nextButton.isEnabled = true
 		guard
 			let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell,
 			let categoryText = cell.getCatergoryName()
 		else { return }
 		collectionViewCellDidSelect.send(categoryText)
+	}
+}
+
+extension MajorCategoryViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(
+		_ navigationBar: OpenListNavigationBar,
+		didTapBackButton button: UIButton
+	) {
+		router.routeToTitleView()
+	}
+	
+	func openListNavigationBar(
+		_ navigationBar: OpenListNavigationBar,
+		didTapBarItem item: OpenListNavigationBarItem
+	) {
+		return
 	}
 }

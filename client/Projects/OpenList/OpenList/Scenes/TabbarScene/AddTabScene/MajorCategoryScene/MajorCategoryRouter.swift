@@ -13,6 +13,10 @@ final class MajorCategoryRouter {
 
 // MARK: - RoutingLogic
 extension MajorCategoryRouter: MajorCategoryRoutingLogic {
+	func routeToTitleView() {
+		viewController?.popViewController(animated: true)
+	}
+	
 	func routeToMediumCategoryView(with majorCategory: String) {
 		dump("\(majorCategory)를 가지고 다음 뷰로 이동")
 	}
