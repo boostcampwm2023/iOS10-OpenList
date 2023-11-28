@@ -8,6 +8,11 @@
 import Combine
 import Foundation
 
+enum DetailCheckListViewModelError: Error {
+	case failedFetchData
+	case failedSaveData
+}
+
 protocol PrivateDetailCheckListViewModelable: ViewModelable
 where Input == PrivateDetailCheckListInput,
   State == PrivateDetailCheckListState,
@@ -39,7 +44,8 @@ extension PrivateDetailCheckListViewModel: PrivateDetailCheckListDataSource {
 extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany<Output>(
-			viewWillAppear(input)
+			viewWillAppear(input),
+			append(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -56,9 +62,27 @@ private extension PrivateDetailCheckListViewModel {
 			}
 			.map { checkList in
 				guard let checkList = checkList else {
-					return .title("fail")
+					return .error(DetailCheckListViewModelError.failedFetchData)
 				}
-				return .title(checkList.title)
+				return .viewLoad(checkList)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func append(_ input: Input) -> Output {
+		return input.append
+			.withUnretained(self)
+			.flatMap { (owner, item) -> AnyPublisher<CheckListItem?, Never>  in
+				let future = Future(asyncFunc: {
+					await owner.detailCheckListUseCase.appendItem(item)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { item in
+				guard let item else {
+					return .error(DetailCheckListViewModelError.failedSaveData)
+				}
+				return .updateItem(item)
 			}
 			.eraseToAnyPublisher()
 	}

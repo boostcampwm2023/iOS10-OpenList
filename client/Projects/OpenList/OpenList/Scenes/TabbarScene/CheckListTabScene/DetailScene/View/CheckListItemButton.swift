@@ -51,6 +51,10 @@ extension CheckListItemButton {
 }
 
 extension CheckListItemButton {
+	var isChecked: Bool {
+		return checkState == .checked
+	}
+	
 	func setChecked() {
 		checkState = .checked
 		setImage(Image.checked, for: .normal)

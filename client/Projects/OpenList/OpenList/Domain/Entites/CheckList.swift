@@ -13,5 +13,5 @@ struct CheckList {
 	let createdAt: Date
 	let updatedAt: Date
 	let progress: Int
-	let items: [CheckListItem]
+	var items: [CheckListItem]
 }

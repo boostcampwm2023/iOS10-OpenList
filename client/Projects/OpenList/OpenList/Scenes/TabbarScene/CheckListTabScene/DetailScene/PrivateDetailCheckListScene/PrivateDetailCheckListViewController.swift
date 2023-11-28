@@ -35,6 +35,9 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let append: PassthroughSubject<CheckListItem, Never> = .init()
+	private let update: PassthroughSubject<CheckListItem, Never> = .init()
+	private let remove: PassthroughSubject<CheckListItem, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -78,7 +81,12 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = PrivateDetailCheckListInput(viewWillAppear: viewWillAppear)
+		let input = PrivateDetailCheckListInput(
+			viewWillAppear: viewWillAppear,
+			append: append,
+			update: update,
+			remove: remove
+		)
 		let output = viewModel.transform(input)
 		
 		output
@@ -90,12 +98,18 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
-		case let .title(title):
-			headerView.configure(title: title!, isLocked: true)
+		case let .error(error):
+			handleError(error)
+		case let .viewLoad(checkList):
+			viewLoad(checkList)
+		case let .updateItem(item):
+			dataSource?.updateCheckListItem(item)
 		}
 	}
 	
-	func handleError(_ error: OutputError) {}
+	func handleError(_ error: OutputError) {
+		dump(error)
+	}
 }
 
 // MARK: - Helper
@@ -131,6 +145,11 @@ private extension PrivateDetailCheckListViewController {
 		activityVC.popoverPresentationController?.sourceView = self.view
 		
 		self.present(activityVC, animated: true, completion: nil)
+	}
+	
+	func viewLoad(_ checkList: CheckList) {
+		headerView.configure(title: checkList.title, isLocked: true)
+		dataSource?.updateCheckList(checkList.items)
 	}
 }
 
@@ -266,8 +285,13 @@ extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 		indexPath: IndexPath
 	) {
 		if let text = textField.text, !text.isEmpty {
-			// 로컬에 저장합니다.
-			dataSource?.updateCheckListItemString(at: indexPath, with: text)
+			let checkListItem = CheckListItem(
+				itemId: cell.id,
+				index: Int32(indexPath.row),
+				title: text,
+				isChecked: cell.isChecked
+			)
+			update.send(checkListItem)
 		} else {
 			dataSource?.deleteCheckListItem(at: indexPath)
 		}
@@ -292,7 +316,15 @@ extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		dataSource?.appendCheckListItem(CheckListItem(itemId: UUID(), title: text, isChecked: false))
+		let count = checkListView.numberOfRows(inSection: 0)
+		let checkListItem = CheckListItem(
+			itemId: UUID(),
+			index: Int32(count),
+			title: text,
+			isChecked: false
+		)
+		
+		append.send(checkListItem)
 		dataSource?.updatePlaceholder()
 	}
 }

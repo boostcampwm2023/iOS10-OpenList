@@ -21,4 +21,5 @@ struct PrivateCheckListItemResponseDTO {
 	let content: String
 	let createdAt: Date
 	let isChecked: Bool
+	let index: Int32
 }
