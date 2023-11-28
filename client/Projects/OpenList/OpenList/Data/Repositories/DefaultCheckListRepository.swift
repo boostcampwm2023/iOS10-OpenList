@@ -44,10 +44,10 @@ extension DefaultCheckListRepository: CheckListRepository {
 			createdAt: result.createdAt,
 			updatedAt: result.updatedAt,
 			progress: result.progress,
+			orderBy: result.orderBy,
 			items: result.items.map {
 				.init(
 					itemId: $0.itemId,
-					index: $0.index,
 					title: $0.content,
 					isChecked: $0.isChecked
 				)
@@ -59,41 +59,11 @@ extension DefaultCheckListRepository: CheckListRepository {
 		return try await checkListStorage.appendCheckListItem(id: id, item: item)
 	}
 	
-	func updateCheckList(id: UUID, item: CheckListItem) async throws -> CheckList {
-		let result = try await checkListStorage.updateCheckListItem(id: id, item: item)
-		return .init(
-			id: result.checklistId,
-			title: result.title,
-			createdAt: result.createdAt,
-			updatedAt: result.updatedAt,
-			progress: result.progress,
-			items: result.items.map {
-				.init(
-					itemId: $0.itemId,
-					index: $0.index,
-					title: $0.content,
-					isChecked: $0.isChecked
-				)
-			}
-		)
+	func updateCheckList(item: CheckListItem) async throws {
+		return try await checkListStorage.updateCheckListItem(item: item)
 	}
 	
-	func removeCheckList(id: UUID, item: CheckListItem) async throws -> CheckList {
-		let result = try await checkListStorage.removeCheckListItem(id: id, item: item)
-		return .init(
-			id: result.checklistId,
-			title: result.title,
-			createdAt: result.createdAt,
-			updatedAt: result.updatedAt,
-			progress: result.progress,
-			items: result.items.map {
-				.init(
-					itemId: $0.itemId,
-					index: $0.index,
-					title: $0.content,
-					isChecked: $0.isChecked
-				)
-			}
-		)
+	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws {
+		return try await checkListStorage.removeCheckListItem(id: id, item: item, orderBy: orderBy)
 	}
 }

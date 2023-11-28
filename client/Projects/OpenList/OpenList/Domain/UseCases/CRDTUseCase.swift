@@ -25,7 +25,6 @@ final class DefaultCRDTUseCase {
 	private var documentDictionary: [UUID: RGASDocument<String>] = [:]
 	private var mergeDictionary: [UUID: RGASMerge<String>] = [:]
 	private var checkList: [CheckListItem] = []
-	private var checkListIndex: [UUID: Int32] = [:]
 	private var documentsId: LinkedList<UUID> = .init()
 	
 	init(crdtRepository: CRDTRepository) {
@@ -125,9 +124,8 @@ private extension DefaultCRDTUseCase {
 		let merge = createMerge(id: id, document: document)
 		try message.execute(on: merge)
 		let title = document.view()
-		let index = checkListIndex[id]!
 		
-		return CheckListItem(itemId: id, index: index, title: title, isChecked: false)
+		return CheckListItem(itemId: id, title: title, isChecked: false)
 	}
 	
 	func appendCheckListItem(
@@ -138,10 +136,9 @@ private extension DefaultCRDTUseCase {
 		let merge = createMerge(id: id, document: document)
 		let message = try merge.applyLocal(to: operation)
 		let title = document.view()
-		let index = checkListIndex[id]!
 		
 		return (
-			item: CheckListItem(itemId: id, index: index, title: title, isChecked: false),
+			item: CheckListItem(itemId: id, title: title, isChecked: false),
 			message: message
 		)
 	}
@@ -149,14 +146,13 @@ private extension DefaultCRDTUseCase {
 	func updateCheckListItem(to id: UUID, message: CRDTMessage) throws -> CheckListItem {
 		guard
 			let document = documentDictionary[id],
-			let merge = mergeDictionary[id],
-			let index = checkListIndex[id]
+			let merge = mergeDictionary[id]
 		else {
 			throw CRDTUseCaseError.docmuentNotFound
 		}
 		try message.execute(on: merge)
 		let title = document.view()
-		return CheckListItem(itemId: id, index: index, title: title, isChecked: false)
+		return CheckListItem(itemId: id, title: title, isChecked: false)
 	}
 	
 	func updateCheckListItem(
@@ -165,8 +161,7 @@ private extension DefaultCRDTUseCase {
 	) throws -> (item: CheckListItem, message: CRDTMessage) {
 		guard
 			let document = documentDictionary[id],
-			let merge = mergeDictionary[id],
-			let index = checkListIndex[id]
+			let merge = mergeDictionary[id]
 		else {
 			throw CRDTUseCaseError.docmuentNotFound
 		}
@@ -174,7 +169,7 @@ private extension DefaultCRDTUseCase {
 		dump(message)
 		let title = document.view()
 		return (
-			item: CheckListItem(itemId: id, index: index, title: title, isChecked: false),
+			item: CheckListItem(itemId: id, title: title, isChecked: false),
 			message: message
 		)
 	}

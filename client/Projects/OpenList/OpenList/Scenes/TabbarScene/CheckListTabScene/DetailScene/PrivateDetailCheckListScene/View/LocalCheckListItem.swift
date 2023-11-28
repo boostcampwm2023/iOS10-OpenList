@@ -18,6 +18,12 @@ protocol LocalCheckListItemDelegate: AnyObject {
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool
+	func didChangedCheckButton(
+		_ textField: CheckListItemTextField,
+		cell: LocalCheckListItem,
+		indexPath: IndexPath,
+		isChecked: Bool
+	)
 }
 
 final class LocalCheckListItem: UITableViewCell {
@@ -96,8 +102,18 @@ private extension LocalCheckListItem {
 	}
 	
 	@objc func checkButtonDidTap() {
-		isChecked = checkButton.isChecked
 		checkButton.toggleCheckState()
+		isChecked = checkButton.isChecked
+		guard
+			let delegate,
+			let indexPath
+		else { return }
+		delegate.didChangedCheckButton(
+			textField,
+			cell: self,
+			indexPath: indexPath,
+			isChecked: isChecked
+		)
 	}
 }
 

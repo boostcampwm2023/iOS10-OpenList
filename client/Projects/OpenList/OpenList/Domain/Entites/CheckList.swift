@@ -13,5 +13,6 @@ struct CheckList {
 	let createdAt: Date
 	let updatedAt: Date
 	let progress: Int
+	let orderBy: [UUID]
 	var items: [CheckListItem]
 }
