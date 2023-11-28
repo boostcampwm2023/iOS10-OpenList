@@ -78,7 +78,7 @@ describe('FoldersService', () => {
     expect(mockFoldersRepository.save).toHaveBeenCalledWith(
       expectedFolderObject,
     ); // 수정된 부분
-    expect(result).toEqual({ folderId: 1, ...expectedFolderObject });
+    expect(result).toEqual({ folderId: 1, ...createFolderDto });
   });
 
   it('service.createFolder(createFolderDto) : 이미 존재하는 폴더명일 경우 BadRequestException을 던진다.', async () => {
@@ -124,8 +124,7 @@ describe('FoldersService', () => {
     const result = await service.findFolderById(1, 1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(result).toEqual(folder);
   });
@@ -155,8 +154,7 @@ describe('FoldersService', () => {
     const result = await service.updateFolder(1, 1, updateFolderDto);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(mockFoldersRepository.save).toHaveBeenCalledWith({
       ...existingFolder,
@@ -182,8 +180,7 @@ describe('FoldersService', () => {
     const result = await service.removeFolder(1, 1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(mockFoldersRepository.remove).toHaveBeenCalledWith(folder);
     expect(result).toEqual({ message: '삭제되었습니다.' });

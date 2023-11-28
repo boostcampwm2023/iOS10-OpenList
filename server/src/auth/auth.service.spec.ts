@@ -91,33 +91,46 @@ describe('AuthService', () => {
   });
 
   describe('refreshAccessToken', () => {
-    it('유효한 refresh 토큰으로 access 토큰을 재발급한다.', () => {
+    it('유효한 refresh 토큰으로 access 토큰을 재발급한다.', async () => {
       const refreshToken = 'valid_refresh_token';
       const accessToken = 'new_access_token';
+      const newRefreshToken = 'new_refresh_token';
+
       jest
         .spyOn(authService, 'verifyToken')
         .mockReturnValue({ tokenType: 'refresh' });
-      jest.spyOn(authService, 'signToken').mockReturnValue(accessToken);
 
-      const result = authService.refreshAccessToken(refreshToken);
+      jest
+        .spyOn(authService, 'signToken')
+        .mockReturnValueOnce(accessToken) // 첫 번째 호출에서 accessToken 반환
+        .mockReturnValueOnce(newRefreshToken); // 두 번째 호출에서 newRefreshToken 반환
+
+      const result = await authService.refreshAccessToken(refreshToken);
 
       expect(authService.verifyToken).toHaveBeenCalledWith(refreshToken);
       expect(authService.signToken).toHaveBeenCalledWith(
         expect.anything(),
         'access',
       );
-      expect(result).toEqual({ accessToken });
+      expect(authService.signToken).toHaveBeenCalledWith(
+        expect.anything(),
+        'refresh',
+      );
+      expect(result).toEqual({
+        accessToken: accessToken,
+        refreshToken: newRefreshToken,
+      });
     });
 
-    it('access 토큰을 재발급하는데 refresh 토큰이 아닌 경우 UnauthorizedException을 발생시킨다.', () => {
+    it('access 토큰을 재발급하는데 refresh 토큰이 아닌 경우 UnauthorizedException을 발생시킨다.', async () => {
       const invalidToken = 'invalid_refresh_token';
       jest
         .spyOn(authService, 'verifyToken')
-        .mockReturnValue({ tokenType: 'access' });
+        .mockReturnValue(Promise.resolve({ tokenType: 'access' }));
 
-      expect(() => authService.refreshAccessToken(invalidToken)).toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        authService.refreshAccessToken(invalidToken),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
