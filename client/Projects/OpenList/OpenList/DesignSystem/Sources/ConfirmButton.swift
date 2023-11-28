@@ -8,6 +8,10 @@
 import UIKit
 
 final class ConfirmButton: UIButton {
+	override var intrinsicContentSize: CGSize {
+		return CGSize(width: UIScreen.main.bounds.width - 40, height: 56)
+	}
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		configure()
@@ -32,19 +36,19 @@ final class ConfirmButton: UIButton {
 	override var isEnabled: Bool {
 		didSet {
 			if isEnabled {
-				backgroundColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
-				setTitleColor(.systemBackground, for: .normal)
+				backgroundColor = UIColor.primary1
+				setTitleColor(.background, for: .normal)
 			} else {
-				layer.borderColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0).cgColor
+				layer.borderColor = UIColor.primary1.cgColor
 				layer.borderWidth = 1
-				backgroundColor = .systemBackground
-				setTitleColor(UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0), for: .normal)
+				backgroundColor = .background
+				setTitleColor(UIColor.primary1, for: .normal)
 			}
 		}
 	}
 	
 	private func configure() {
-		backgroundColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
+		backgroundColor = UIColor.primary1
 		layer.cornerRadius = 10
 		titleLabel?.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
 	}
