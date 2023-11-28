@@ -48,7 +48,11 @@ final class OpenListNavigationBarItem: UIButton {
 final class OpenListNavigationBackButtonItem: UIButton {
 	init(backButtonTitle: String?) {
 		super.init(frame: .zero)
-		setImage(.chevronLeft.withRenderingMode(.alwaysTemplate), for: .normal)
+		let backButtonImage = UIImage.chevronLeft
+			.resizeImage(size: .init(width: 24, height: 24))?
+			.withTintColor(.primary1)
+		setImage(backButtonImage, for: .normal)
+		
 		let attributedTitle = NSAttributedString(
 			string: backButtonTitle ?? "",
 			attributes: [
@@ -57,11 +61,6 @@ final class OpenListNavigationBackButtonItem: UIButton {
 			]
 		)
 		setAttributedTitle(attributedTitle, for: .normal)
-		var configuration = UIButton.Configuration.plain()
-		configuration.imagePadding = -8
-		configuration.contentInsets = .zero
-		configuration.baseForegroundColor = UIColor.primary1
-		self.configuration = configuration
 	}
 	
 	@available(*, unavailable)
