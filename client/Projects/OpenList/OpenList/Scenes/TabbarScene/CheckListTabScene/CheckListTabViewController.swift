@@ -38,8 +38,9 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 		options: nil
 	)
 	// 상단 탭의 컨텐츠 뷰 컨트롤러
-	private var checkListFolderFactory: CheckListFolderFactoryable
-	private var checkListTableFactory: CheckListTableFactoryable
+	private let checkListFolderFactory: CheckListFolderFactoryable
+	private let checkListTableFactory: CheckListTableFactoryable
+	private let sharedCheckListFactory: SharedCheckListFactoryable
 	private var childCheckListViewControllers: [UIViewController] = []
 	/// 인디케이터 뷰 센터 레이아웃
 	private var indicatorViewCenterConstraint: NSLayoutConstraint?
@@ -47,10 +48,12 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 	// MARK: - Initializers
 	init(
 		checkListFolderFactory: CheckListFolderFactoryable,
-		checkListTableFactory: CheckListTableFactoryable
+		checkListTableFactory: CheckListTableFactoryable,
+		sharedCheckListFactory: SharedCheckListFactoryable
 	) {
 		self.checkListFolderFactory = checkListFolderFactory
 		self.checkListTableFactory = checkListTableFactory
+		self.sharedCheckListFactory = sharedCheckListFactory
 		super.init(nibName: nil, bundle: nil)
 	}
 	
@@ -74,8 +77,10 @@ private extension CheckListTabViewController {
 	func setChildViewControllers() {
 		let checkListFolderViewControllable = checkListFolderFactory.make()
 		let checkListTableViewControllable = checkListTableFactory.make()
+		let sharedCheckListViewControllable = sharedCheckListFactory.make()
 		childCheckListViewControllers.append(checkListFolderViewControllable.uiviewController)
 		childCheckListViewControllers.append(checkListTableViewControllable.uiviewController)
+		childCheckListViewControllers.append(sharedCheckListViewControllable.uiviewController)
 	}
 	
 	func setViewAttributes() {
