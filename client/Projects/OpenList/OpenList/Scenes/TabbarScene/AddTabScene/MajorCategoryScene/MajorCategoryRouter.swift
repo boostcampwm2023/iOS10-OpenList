@@ -12,4 +12,12 @@ final class MajorCategoryRouter {
 }
 
 // MARK: - RoutingLogic
-extension MajorCategoryRouter: MajorCategoryRoutingLogic {}
+extension MajorCategoryRouter: MajorCategoryRoutingLogic {
+	func routeToMediumCategoryView(with majorCategory: String) {
+		dump("\(majorCategory)를 가지고 다음 뷰로 이동")
+	}
+	
+	func routeToConfirmView() {
+		dump("AI 추천 마지막 뷰로 이동")
+	}
+}

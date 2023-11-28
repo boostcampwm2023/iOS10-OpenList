@@ -34,6 +34,10 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 	func configure(categoryItem: String) {
 		cateGoryLabel.text = categoryItem
 	}
+	
+	func getCatergoryName() -> String? {
+		return cateGoryLabel.text
+	}
 }
 
 // MARK: - UI Configure

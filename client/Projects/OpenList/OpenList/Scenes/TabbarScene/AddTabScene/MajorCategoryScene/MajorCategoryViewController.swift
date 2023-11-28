@@ -8,7 +8,10 @@
 import Combine
 import UIKit
 
-protocol MajorCategoryRoutingLogic: AnyObject {}
+protocol MajorCategoryRoutingLogic: AnyObject {
+	func routeToMediumCategoryView(with majorCategory: String)
+	func routeToConfirmView()
+}
 
 final class MajorCategoryViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
@@ -16,6 +19,7 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
   private let viewModel: any MajorCategoryViewModelable
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let collectionViewCellDidSelect: PassthroughSubject<String, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
 	
 	// MARK: - UI Components
@@ -72,7 +76,9 @@ extension MajorCategoryViewController: ViewBindable {
 	func bind() {
 		let input = MajorCategoryInput(
 			viewLoad: viewLoad,
-			viewWillAppear: viewWillAppear
+			viewWillAppear: viewWillAppear,
+			nextButtonDidTap: nextButton.tapPublisher,
+			collectionViewCellDidSelect: collectionViewCellDidSelect
 		)
 		let output = viewModel.transform(input)
 		
@@ -91,6 +97,8 @@ extension MajorCategoryViewController: ViewBindable {
 			reload(categories: categories)
 		case .viewWillAppear(let title):
 			dump(title)
+		case .routeToNext(let category):
+			router.routeToMediumCategoryView(with: category)
 		}
 	}
 
@@ -101,11 +109,13 @@ extension MajorCategoryViewController: ViewBindable {
 // MARK: - Helper
 private extension MajorCategoryViewController {
 	func reload(categories: [String]) {
-		guard var snapshot = dataSource?.snapshot() else {
-			return
-		}
+		guard var snapshot = dataSource?.snapshot() else { return }
 		snapshot.appendItems(categories, toSection: .category)
 		dataSource?.apply(snapshot, animatingDifferences: true)
+	}
+	
+	@objc func skipButtonDidTap() {
+		router.routeToConfirmView()
 	}
 }
 
@@ -204,6 +214,7 @@ private extension MajorCategoryViewController {
 
 	func setSkipButton() {
 		skipButton.configureAsSkipButton(title: "건너뛰기")
+		skipButton.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
 	}
 	
 	func setNextButton() {
@@ -250,5 +261,10 @@ private extension MajorCategoryViewController {
 extension MajorCategoryViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		nextButton.isEnabled = true
+		guard 
+			let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell,
+			let categoryText = cell.getCatergoryName()
+		else { return }
+		collectionViewCellDidSelect.send(categoryText)
 	}
 }
