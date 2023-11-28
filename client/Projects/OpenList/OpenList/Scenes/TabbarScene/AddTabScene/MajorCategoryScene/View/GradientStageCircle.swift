@@ -31,6 +31,10 @@ final class GradientStageCircle: UIView {
 		setProgressPath()
 		progressGradientLayer.frame = bounds
 	}
+	
+	override var intrinsicContentSize: CGSize {
+		return CGSize(width: 27, height: 27)
+	}
 }
 
 extension GradientStageCircle {
@@ -41,7 +45,6 @@ extension GradientStageCircle {
 	func activates() {
 		setGradientLayer()
 		progressLabel.textColor = .primary1
-//		progressGradientLayer.mask = progressLayer
 	}
 }
 
@@ -81,7 +84,8 @@ private extension GradientStageCircle {
 	}
 	
 	func setGradientLayer() {
-		progressGradientLayer.colors = [UIColor.primary1.cgColor, UIColor.systemBackground.cgColor]
+		let endColor = UIColor.primary1.cgColor.copy(alpha: 0.3)!
+		progressGradientLayer.colors = [UIColor.primary1.cgColor, endColor]
 		progressGradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
 		progressGradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
 		progressGradientLayer.position = progressLayer.position

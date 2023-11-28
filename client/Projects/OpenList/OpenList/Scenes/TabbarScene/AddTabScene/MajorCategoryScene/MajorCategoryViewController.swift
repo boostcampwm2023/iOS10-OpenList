@@ -30,7 +30,7 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	private let skipButton: UIButton = .init(type: .system)
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
-	private let gradationView: CategoryProgressView = .init()
+	private let gradationView: CategoryProgressView = .init(stage: .major)
 	
   // MARK: - Initializers
 	init(

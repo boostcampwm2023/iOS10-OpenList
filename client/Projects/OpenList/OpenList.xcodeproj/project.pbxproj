@@ -149,6 +149,7 @@
 		78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F747722B148C2E003ED6DA /* LoginInfo.swift */; };
 		78E9559E2B15061C005CF5D3 /* CategoryProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */; };
 		78E955A02B15B5A8005CF5D3 /* GradientStageCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */; };
+		78E955A22B15E238005CF5D3 /* GradientStageStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A12B15E238005CF5D3 /* GradientStageStick.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -320,6 +321,7 @@
 		78F747722B148C2E003ED6DA /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 		78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryProgressView.swift; sourceTree = "<group>"; };
 		78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientStageCircle.swift; sourceTree = "<group>"; };
+		78E955A12B15E238005CF5D3 /* GradientStageStick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientStageStick.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -840,6 +842,7 @@
 				7846D4052B0CE7600034BA7D /* CategoryCollectionViewCell.swift */,
 				7846D4072B0D0E4E0034BA7D /* CategoryHeaderView.swift */,
 				78E9559D2B15061C005CF5D3 /* CategoryProgressView.swift */,
+				78E955A12B15E238005CF5D3 /* GradientStageStick.swift */,
 				78E9559F2B15B5A8005CF5D3 /* GradientStageCircle.swift */,
 			);
 			path = View;
@@ -1078,6 +1081,7 @@
 				4DDC432F2B0F16CC00859B28 /* WithDetailCheckListAction.swift in Sources */,
 				5F9349212B16E03400282545 /* PrivateDetailCheckListAction.swift in Sources */,
 				5F9349172B16DF5500282545 /* CheckListFolderCell.swift in Sources */,
+				78E955A22B15E238005CF5D3 /* GradientStageStick.swift in Sources */,
 				5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */,
 				5F9349222B16E03400282545 /* PrivateDetailCheckListRouter.swift in Sources */,
 				5F8F5FC22B1772CA001F7978 /* CheckListEmptyView.swift in Sources */,

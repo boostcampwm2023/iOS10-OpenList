@@ -14,7 +14,32 @@ enum Progress {
 }
 
 final class CategoryProgressView: UIView {
-	let gradientCircle1 = GradientStageCircle.init()
+	private let progressStackView: UIStackView = .init()
+	private let gradientCircleFirst: GradientStageCircle = .init()
+	private let gradientCircleSecond: GradientStageCircle = .init()
+	private let gradientCircleThrid: GradientStageCircle = .init()
+	private let gradientStickFirst: GradientStageStick = .init()
+	private let gradientStickSecond: GradientStageStick = .init()
+	
+	convenience init(stage: Progress) {
+		self.init()
+		switch stage {
+		case .major:
+			gradientCircleFirst.activates()
+			gradientStickFirst.activates()
+		case .medium:
+			gradientCircleFirst.activates()
+			gradientStickFirst.activates()
+			gradientCircleSecond.activates()
+			gradientStickSecond.activates()
+		case .sub:
+			gradientCircleFirst.activates()
+			gradientStickFirst.activates()
+			gradientCircleSecond.activates()
+			gradientStickSecond.activates()
+			gradientCircleThrid.activates()
+		}
+	}
 	
 	override init(frame: CGRect = .zero) {
 		super.init(frame: frame)
@@ -31,24 +56,44 @@ final class CategoryProgressView: UIView {
 
 private extension CategoryProgressView {
 	func setAttributes() {
-		gradientCircle1.configure(stage: "1")
+		setGradientCircle()
+		setStackView()
+	}
+	
+	func setGradientCircle() {
+		gradientCircleFirst.configure(stage: "1")
+		gradientCircleSecond.configure(stage: "2")
+		gradientCircleThrid.configure(stage: "3")
+	}
+	
+	func setStackView() {
+		progressStackView.axis = .horizontal
+		progressStackView.alignment = .center
+		progressStackView.distribution = .equalSpacing
+		progressStackView.spacing = 10
+		progressStackView.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
 	func setViewHierachies() {
+		addSubview(progressStackView)
 		[
-			gradientCircle1
+			gradientCircleFirst,
+			gradientStickFirst,
+			gradientCircleSecond,
+			gradientStickSecond,
+			gradientCircleThrid
 		].forEach {
 			$0.translatesAutoresizingMaskIntoConstraints = false
-			addSubview($0)
+			progressStackView.addArrangedSubview($0)
 		}
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
-			gradientCircle1.centerXAnchor.constraint(equalTo: centerXAnchor),
-			gradientCircle1.centerYAnchor.constraint(equalTo: centerYAnchor),
-			gradientCircle1.heightAnchor.constraint(equalToConstant: 27),
-			gradientCircle1.widthAnchor.constraint(equalToConstant: 27)
+			progressStackView.topAnchor.constraint(equalTo: topAnchor),
+			progressStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+			progressStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+			progressStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
 		])
 	}
 }
