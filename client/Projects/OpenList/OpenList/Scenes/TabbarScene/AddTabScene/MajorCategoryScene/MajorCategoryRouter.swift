@@ -9,6 +9,18 @@ import Foundation
 
 final class MajorCategoryRouter {
 	weak var viewController: ViewControllable?
+	weak var mediumCategoryViewControllable: ViewControllable?
+	private var mediumCategoryFactory: MediumCategoryFactoryable
+	
+	init(
+		viewController: ViewControllable? = nil,
+		mediumCategoryViewControllable: ViewControllable? = nil,
+		mediumCategoryFactory: MediumCategoryFactoryable
+	) {
+		self.viewController = viewController
+		self.mediumCategoryViewControllable = mediumCategoryViewControllable
+		self.mediumCategoryFactory = mediumCategoryFactory
+	}
 }
 
 // MARK: - RoutingLogic
@@ -18,7 +30,8 @@ extension MajorCategoryRouter: MajorCategoryRoutingLogic {
 	}
 	
 	func routeToMediumCategoryView(with majorCategory: String) {
-		dump("\(majorCategory)를 가지고 다음 뷰로 이동")
+		let mediumCategoryViewControllable = mediumCategoryFactory.make(with: majorCategory)
+		viewController?.pushViewController(mediumCategoryViewControllable, animated: true)
 	}
 	
 	func routeToConfirmView() {

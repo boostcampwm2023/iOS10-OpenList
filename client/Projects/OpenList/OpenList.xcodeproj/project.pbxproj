@@ -152,6 +152,11 @@
 		78E955A22B15E238005CF5D3 /* GradientStageStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A12B15E238005CF5D3 /* GradientStageStick.swift */; };
 		78E955A42B164270005CF5D3 /* SkipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A32B164270005CF5D3 /* SkipButton.swift */; };
 		78E955A62B164920005CF5D3 /* CategoryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A52B164920005CF5D3 /* CategoryDTO.swift */; };
+		78E955AD2B16682E005CF5D3 /* MediumCategoryAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A82B16682E005CF5D3 /* MediumCategoryAction.swift */; };
+		78E955AE2B16682E005CF5D3 /* MediumCategoryRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955A92B16682E005CF5D3 /* MediumCategoryRouter.swift */; };
+		78E955AF2B16682E005CF5D3 /* MediumCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955AA2B16682E005CF5D3 /* MediumCategoryViewController.swift */; };
+		78E955B02B16682E005CF5D3 /* MediumCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955AB2B16682E005CF5D3 /* MediumCategoryViewFactory.swift */; };
+		78E955B12B16682E005CF5D3 /* MediumCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955AC2B16682E005CF5D3 /* MediumCategoryViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -326,6 +331,11 @@
 		78E955A12B15E238005CF5D3 /* GradientStageStick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientStageStick.swift; sourceTree = "<group>"; };
 		78E955A32B164270005CF5D3 /* SkipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkipButton.swift; sourceTree = "<group>"; };
 		78E955A52B164920005CF5D3 /* CategoryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDTO.swift; sourceTree = "<group>"; };
+		78E955A82B16682E005CF5D3 /* MediumCategoryAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumCategoryAction.swift; sourceTree = "<group>"; };
+		78E955A92B16682E005CF5D3 /* MediumCategoryRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumCategoryRouter.swift; sourceTree = "<group>"; };
+		78E955AA2B16682E005CF5D3 /* MediumCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewController.swift; sourceTree = "<group>"; };
+		78E955AB2B16682E005CF5D3 /* MediumCategoryViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewFactory.swift; sourceTree = "<group>"; };
+		78E955AC2B16682E005CF5D3 /* MediumCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -772,6 +782,7 @@
 		5FA1F8CB2AFF802900869079 /* AddTabScene */ = {
 			isa = PBXGroup;
 			children = (
+				78E955A72B16680F005CF5D3 /* MediumCategoryScene */,
 				7846D3F92B0C6E4A0034BA7D /* MajorCategoryScene */,
 				7846D3F82B0C6CEE0034BA7D /* AddCheckListTitleScene */,
 			);
@@ -890,6 +901,16 @@
 				78F7476D2B126EC3003ED6DA /* KeyChain.swift */,
 			);
 			path = KeyChain;
+		78E955A72B16680F005CF5D3 /* MediumCategoryScene */ = {
+			isa = PBXGroup;
+			children = (
+				78E955A82B16682E005CF5D3 /* MediumCategoryAction.swift */,
+				78E955A92B16682E005CF5D3 /* MediumCategoryRouter.swift */,
+				78E955AA2B16682E005CF5D3 /* MediumCategoryViewController.swift */,
+				78E955AB2B16682E005CF5D3 /* MediumCategoryViewFactory.swift */,
+				78E955AC2B16682E005CF5D3 /* MediumCategoryViewModel.swift */,
+			);
+			path = MediumCategoryScene;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1040,6 +1061,7 @@
 				78C2F00D2B04882700E4EC4E /* UIControl+Combine.swift in Sources */,
 				5F93490A2B16DF4D00282545 /* CheckListTabViewController.swift in Sources */,
 				5FA1F8AD2AFF7F9F00869079 /* AppRouter.swift in Sources */,
+				78E955B02B16682E005CF5D3 /* MediumCategoryViewFactory.swift in Sources */,
 				78C2F0012B03D58700E4EC4E /* AddCheckListTitleViewController.swift in Sources */,
 				78C2F0242B049AF100E4EC4E /* CheckListRepository.swift in Sources */,
 				78A4C71A2B0F2ED900E07492 /* LoginAction.swift in Sources */,
@@ -1055,6 +1077,7 @@
 				5FA1F8B62AFF7FBB00869079 /* Dependency.swift in Sources */,
 				78A4C72B2B0F5FB100E07492 /* AuthRepository.swift in Sources */,
 				78C2F00F2B048B6C00E4EC4E /* TabBarViewController.swift in Sources */,
+				78E955AE2B16682E005CF5D3 /* MediumCategoryRouter.swift in Sources */,
 				78C2F0222B049A8A00E4EC4E /* PersistenceUseCase.swift in Sources */,
 				4D8AEBDA2B122AA400292AF3 /* CRDTRequestDTO.swift in Sources */,
 				5F70C84F2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift in Sources */,
@@ -1094,6 +1117,7 @@
 				5F9349222B16E03400282545 /* PrivateDetailCheckListRouter.swift in Sources */,
 				5F8F5FC22B1772CA001F7978 /* CheckListEmptyView.swift in Sources */,
 				4DDC43262B0F0FAB00859B28 /* CRDTUseCase.swift in Sources */,
+				78E955AD2B16682E005CF5D3 /* MediumCategoryAction.swift in Sources */,
 				4DD97D9E2B14D56B00DF73BC /* CheckList.swift in Sources */,
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
@@ -1101,6 +1125,7 @@
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
 				5F70C83D2B04C39F00826B5D /* CheckListItemTextField.swift in Sources */,
+				78E955B12B16682E005CF5D3 /* MediumCategoryViewModel.swift in Sources */,
 				4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */,
 				4D967D172B0617260032E0D7 /* Future+.swift in Sources */,
 				78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */,
@@ -1163,6 +1188,7 @@
 				78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
 				5F93491A2B16DF5500282545 /* CheckListFolderViewController.swift in Sources */,
+				78E955AF2B16682E005CF5D3 /* MediumCategoryViewController.swift in Sources */,
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
 				5F70C8302B04A96E00826B5D /* PrivateDetailCheckListViewController.swift in Sources */,
 				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,

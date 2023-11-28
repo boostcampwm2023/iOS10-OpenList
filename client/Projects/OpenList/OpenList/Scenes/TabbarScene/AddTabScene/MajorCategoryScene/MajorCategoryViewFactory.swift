@@ -9,7 +9,13 @@ import Foundation
 
 protocol MajorCategoryDependency: Dependency {}
 
-final class MajorCategoryComponent: Component<MajorCategoryDependency> { }
+final class MajorCategoryComponent:
+	Component<MajorCategoryDependency>,
+	MediumCategoryDependency {
+	fileprivate var mediumCategoryFactory: MediumCategoryFactoryable {
+		return MediumCategoryViewFactory(parent: self)
+	}
+}
 
 protocol MajorCategoryFactoryable: Factoryable {
 	func make(with title: String) -> ViewControllable
@@ -21,7 +27,8 @@ final class MajorCategoryViewFactory: Factory<MajorCategoryDependency>, MajorCat
 	}
 	
 	func make(with title: String) -> ViewControllable {
-		let router = MajorCategoryRouter()
+		let component = MajorCategoryComponent(parent: parent)
+		let router = MajorCategoryRouter(mediumCategoryFactory: component.mediumCategoryFactory)
 		let viewModel = MajorCategoryViewModel(title: title)
 		let viewController = MajorCategoryViewController(
 			router: router,
