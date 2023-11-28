@@ -26,8 +26,9 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 	
 	override var isSelected: Bool {
 		didSet {
-			layer.borderColor = isSelected ? UIColor.primary1.cgColor : UIColor.gray2.cgColor
-			cateGoryLabel.textColor = isSelected ? UIColor.primary1 : UIColor.gray2
+			layer.borderColor = isSelected ? UIColor.clear.cgColor : UIColor.gray2.cgColor
+			backgroundColor = isSelected ? UIColor.primary1 : UIColor.background
+			cateGoryLabel.textColor = isSelected ? UIColor.background : UIColor.gray2
 		}
 	}
 	

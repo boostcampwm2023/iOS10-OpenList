@@ -40,10 +40,10 @@ final class CategoryHeaderView: UICollectionReusableView {
 private extension CategoryHeaderView {
 	func setViewAttributes() {
 		categoryLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .large)
-		categoryLabel.textColor = .black
+		categoryLabel.textColor = .label
 		categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
-	
+
 	func setViewHierachies() {
 		addSubview(categoryLabel)
 	}

@@ -122,7 +122,7 @@ private extension MajorCategoryViewController {
 // MARK: - UI Configure
 private extension MajorCategoryViewController {
 	func setViewAttributes() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		dataSource = setDataSource()
 		snapShot()
 		setGradationView()
@@ -132,6 +132,7 @@ private extension MajorCategoryViewController {
 	}
 	
 	func setCollectionView() {
+		collectionView.backgroundColor = .background
 		collectionView.register(
 			CategoryHeaderView.self,
 			forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -261,7 +262,7 @@ private extension MajorCategoryViewController {
 extension MajorCategoryViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		nextButton.isEnabled = true
-		guard 
+		guard
 			let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell,
 			let categoryText = cell.getCatergoryName()
 		else { return }
