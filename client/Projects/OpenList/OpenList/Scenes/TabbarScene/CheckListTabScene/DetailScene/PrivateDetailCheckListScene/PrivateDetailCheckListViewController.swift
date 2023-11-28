@@ -103,7 +103,7 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 		case let .viewLoad(checkList):
 			viewLoad(checkList)
 		case let .updateItem(item):
-			dataSource?.updateCheckListItem(item)
+			updateItem(item)
 		}
 	}
 	
@@ -150,6 +150,14 @@ private extension PrivateDetailCheckListViewController {
 	func viewLoad(_ checkList: CheckList) {
 		headerView.configure(title: checkList.title, isLocked: true)
 		dataSource?.updateCheckList(checkList.items)
+	}
+	
+	func updateItem(_ item: CheckListItem) {
+		if item.title.isEmpty {
+			dataSource?.deleteCheckListItem(item)
+		} else {
+			dataSource?.updateCheckListItem(item)
+		}
 	}
 }
 
@@ -267,8 +275,14 @@ extension PrivateDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
+		let itemId = checkListView.cellForRow(LocalCheckListItem.self, at: indexPath).id
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
-			self?.dataSource?.deleteCheckListItem(at: indexPath)
+			let checkListItem = CheckListItem(
+				itemId: itemId,
+				title: "",
+				isChecked: false
+			)
+			self?.remove.send(checkListItem)
 			completion(true)
 		}
 		action.image = UIImage(systemName: "trash")
@@ -284,16 +298,15 @@ extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 		cell: LocalCheckListItem,
 		indexPath: IndexPath
 	) {
+		let checkListItem = CheckListItem(
+			itemId: cell.id,
+			title: textField.text ?? "",
+			isChecked: cell.isChecked
+		)
 		if let text = textField.text, !text.isEmpty {
-			let checkListItem = CheckListItem(
-				itemId: cell.id,
-				index: Int32(indexPath.row),
-				title: text,
-				isChecked: cell.isChecked
-			)
 			update.send(checkListItem)
 		} else {
-			dataSource?.deleteCheckListItem(at: indexPath)
+			remove.send(checkListItem)
 		}
 	}
 	
@@ -308,6 +321,20 @@ extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 		
 		return updatedText.count <= 30
 	}
+	
+	func didChangedCheckButton(
+		_ textField: CheckListItemTextField,
+		cell: LocalCheckListItem,
+		indexPath: IndexPath,
+		isChecked: Bool
+	) {
+		let checkListItem = CheckListItem(
+			itemId: cell.id,
+			title: textField.text ?? "",
+			isChecked: cell.isChecked
+		)
+		update.send(checkListItem)
+	}
 }
 
 // MARK: - CheckListItemPlaceholderDelegate
@@ -316,10 +343,8 @@ extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		let count = checkListView.numberOfRows(inSection: 0)
 		let checkListItem = CheckListItem(
 			itemId: UUID(),
-			index: Int32(count),
 			title: text,
 			isChecked: false
 		)

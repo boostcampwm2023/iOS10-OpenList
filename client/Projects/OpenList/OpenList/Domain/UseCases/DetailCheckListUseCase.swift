@@ -10,13 +10,14 @@ import Foundation
 protocol DetailCheckListUseCase {
 	func fetchCheckList(id: UUID) async -> CheckList?
 	func appendItem(_ item: CheckListItem) async -> CheckListItem?
-	func updateItem(_ item: CheckListItem) async -> CheckList?
-	func removeItem(_ item: CheckListItem) async -> CheckList?
+	func updateItem(_ item: CheckListItem) async -> CheckListItem?
+	func removeItem(_ item: CheckListItem) async -> CheckListItem?
 }
 
 final class DefaultDetailCheckListUseCase {
 	private let checkListRepository: CheckListRepository
 	private var checkListId: UUID?
+	private var orderBy: [UUID] = []
 	
 	init(checkListRepository: CheckListRepository) {
 		self.checkListRepository = checkListRepository
@@ -26,10 +27,15 @@ final class DefaultDetailCheckListUseCase {
 extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 	func fetchCheckList(id: UUID) async -> CheckList? {
 		do {
-			var item = try await checkListRepository.fetchCheckList(id: id)
+			var response = try await checkListRepository.fetchCheckList(id: id)
 			checkListId = id
-			item.items.sort(by: { $0.index < $1.index })
-			return item
+			orderBy = response.orderBy
+			let itemDictionary = Dictionary(uniqueKeysWithValues: response.items.map { ($0.id, $0) })
+			let newItems: [CheckListItem] = response.orderBy.compactMap {
+				return itemDictionary[$0]
+			}
+			response.items = newItems
+			return response
 		} catch {
 			return nil
 		}
@@ -45,20 +51,23 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 		}
 	}
 	
-	func updateItem(_ item: CheckListItem) async -> CheckList? {
+	func updateItem(_ item: CheckListItem) async -> CheckListItem? {
 		do {
-			guard let checkListId else { return nil }
-			let item = try await checkListRepository.updateCheckList(id: checkListId, item: item)
+			try await checkListRepository.updateCheckList(item: item)
 			return item
 		} catch {
 			return nil
 		}
 	}
 	
-	func removeItem(_ item: CheckListItem) async -> CheckList? {
+	func removeItem(_ item: CheckListItem) async -> CheckListItem? {
 		do {
-			guard let checkListId else { return nil }
-			let item = try await checkListRepository.removeCheckList(id: checkListId, item: item)
+			guard
+				let checkListId,
+				let deleteIndex = orderBy.firstIndex(where: { $0 == item.id })
+			else { return nil }
+			orderBy.remove(at: deleteIndex)
+			try await checkListRepository.removeCheckList(id: checkListId, item: item, orderBy: orderBy)
 			return item
 		} catch {
 			return nil

@@ -13,6 +13,6 @@ protocol PrivateCheckListStorage {
 	func fetchAllCheckList() async throws -> [PrivateCheckListResponseDTO]
 	func fetchCheckList(id: UUID) async throws -> PrivateCheckListResponseDTO
 	func appendCheckListItem(id: UUID, item: CheckListItem) async throws
-	func updateCheckListItem(id: UUID, item: CheckListItem) async throws -> PrivateCheckListResponseDTO
-	func removeCheckListItem(id: UUID, item: CheckListItem) async throws -> PrivateCheckListResponseDTO
+	func updateCheckListItem(item: CheckListItem) async throws
+	func removeCheckListItem(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws
 }

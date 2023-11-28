@@ -45,7 +45,9 @@ extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany<Output>(
 			viewWillAppear(input),
-			append(input)
+			append(input),
+			update(input),
+			remove(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -75,6 +77,42 @@ private extension PrivateDetailCheckListViewModel {
 			.flatMap { (owner, item) -> AnyPublisher<CheckListItem?, Never>  in
 				let future = Future(asyncFunc: {
 					await owner.detailCheckListUseCase.appendItem(item)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { item in
+				guard let item else {
+					return .error(DetailCheckListViewModelError.failedSaveData)
+				}
+				return .updateItem(item)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func update(_ input: Input) -> Output {
+		return input.update
+			.withUnretained(self)
+			.flatMap { (owner, item) -> AnyPublisher<CheckListItem?, Never>  in
+				let future = Future(asyncFunc: {
+					await owner.detailCheckListUseCase.updateItem(item)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { item in
+				guard let item else {
+					return .error(DetailCheckListViewModelError.failedSaveData)
+				}
+				return .updateItem(item)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func remove(_ input: Input) -> Output {
+		return input.remove
+			.withUnretained(self)
+			.flatMap { (owner, item) -> AnyPublisher<CheckListItem?, Never>  in
+				let future = Future(asyncFunc: {
+					await owner.detailCheckListUseCase.removeItem(item)
 				})
 				return future.eraseToAnyPublisher()
 			}

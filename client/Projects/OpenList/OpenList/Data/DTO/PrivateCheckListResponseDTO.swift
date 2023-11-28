@@ -13,6 +13,7 @@ struct PrivateCheckListResponseDTO {
 	let updatedAt: Date
 	let title: String
 	let progress: Int
+	let orderBy: [UUID]
 	var items: [PrivateCheckListItemResponseDTO]
 }
 
@@ -21,5 +22,4 @@ struct PrivateCheckListItemResponseDTO {
 	let content: String
 	let createdAt: Date
 	let isChecked: Bool
-	let index: Int32
 }

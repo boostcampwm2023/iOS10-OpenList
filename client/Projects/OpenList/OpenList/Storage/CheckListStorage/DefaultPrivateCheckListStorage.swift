@@ -47,9 +47,26 @@ private extension DefaultPrivateCheckListStorage {
 		}
 	}
 	
+	func fetchCheckListItemFault(
+		id: UUID,
+		context: NSManagedObjectContext
+	) async throws -> [PrivateCheckListItemEntity] {
+		return try await withCheckedThrowingContinuation { continuation in
+			Task {
+				let request: NSFetchRequest<PrivateCheckListItemEntity> = PrivateCheckListItemEntity.fetchRequest()
+				request.predicate = NSPredicate(
+					format: "%K == %@",
+					#keyPath(PrivateCheckListItemEntity.itemId),
+					id as CVarArg
+				)
+				let checkListItemFaults = try context.fetch(request)
+				continuation.resume(returning: checkListItemFaults)
+			}
+		}
+	}
+	
 	func fetchEntity<T>(
 		by id: NSManagedObjectID,
-		context: NSManagedObjectContext,
 		type: T.Type
 	) throws -> T {
 		guard let entity = try coreDataStorage.viewContext.existingObject(with: id) as? T else {
@@ -64,7 +81,7 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 		let context = coreDataStorage.backgroundViewContext
 		return try await fetchAllCheckListFault(context: context)
 			.map(\.objectID)
-			.map { try fetchEntity(by: $0, context: context, type: PrivateCheckListEntity.self) }
+			.map { try fetchEntity(by: $0, type: PrivateCheckListEntity.self) }
 			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
 	}
 	
@@ -72,7 +89,7 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 		let context = coreDataStorage.backgroundViewContext
 		let response = try await fetchCheckListFault(id: id, context: context)
 			.map(\.objectID)
-			.map { try fetchEntity(by: $0, context: context, type: PrivateCheckListEntity.self) }
+			.map { try fetchEntity(by: $0, type: PrivateCheckListEntity.self) }
 			.compactMap(mapToLocalStorageCheckListResponseDTO(_:))
 			.first
 		guard let response else {
@@ -107,22 +124,46 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 			let itemEntity = PrivateCheckListItemEntity(context: context)
 			itemEntity.makeInitialCheckListItemEntity(
 				itemId: item.id,
-				index: item.index,
 				content: item.title,
 				isChecked: item.isChecked
 			)
 			checkListFaults.addToItemId(itemEntity)
+			try checkListFaults.appendOrderBy(item.id)
 			try context.save()
 			return
 		}
 	}
 	
-	func updateCheckListItem(id: UUID, item: CheckListItem) async throws -> PrivateCheckListResponseDTO {
-		fatalError()
+	func updateCheckListItem(item: CheckListItem) async throws {
+		Task { [weak self] in
+			guard let self else { return }
+			let context = coreDataStorage.backgroundViewContext
+			guard let checkListItemFaults = try await fetchCheckListItemFault(id: item.id, context: context).first else {
+				throw CoreDataStorageError.noData
+			}
+			checkListItemFaults.update(item: item)
+			try context.save()
+			return
+		}
 	}
 	
-	func removeCheckListItem(id: UUID, item: CheckListItem) async throws -> PrivateCheckListResponseDTO {
-		fatalError()
+	func removeCheckListItem(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws {
+		Task { [weak self] in
+			guard let self else { return }
+			let context = coreDataStorage.backgroundViewContext
+			guard let checkListFaults = try await fetchCheckListFault(id: id, context: context).first else {
+				throw CoreDataStorageError.noData
+			}
+			guard let checkListItemFaults = try await fetchCheckListItemFault(id: item.id, context: context).first else {
+				throw CoreDataStorageError.noData
+			}
+			
+			checkListFaults.removeFromItemId(checkListItemFaults)
+			checkListFaults.orderBy = orderBy
+			context.delete(checkListItemFaults)
+			try context.save()
+			return
+		}
 	}
 }
 
@@ -135,6 +176,7 @@ private extension DefaultPrivateCheckListStorage {
 			let title = entity.title,
 			let createdAt = entity.createdAt,
 			let updatedAt = entity.updatedAt,
+			let orderBy = entity.orderBy,
 			let itemEntities = entity.itemId as? Set<PrivateCheckListItemEntity>
 		else {
 			throw CoreDataStorageError.unwrapError
@@ -148,6 +190,7 @@ private extension DefaultPrivateCheckListStorage {
 			updatedAt: updatedAt,
 			title: title,
 			progress: Int(entity.progress),
+			orderBy: orderBy,
 			items: items
 		)
 	}
@@ -166,8 +209,7 @@ private extension DefaultPrivateCheckListStorage {
 			itemId: itemId,
 			content: content,
 			createdAt: createdAt,
-			isChecked: entity.isChecked,
-			index: entity.index
+			isChecked: entity.isChecked
 		)
 	}
 }
@@ -180,32 +222,31 @@ private extension PrivateCheckListEntity {
 		self.createdAt = .now
 		self.updatedAt = .now
 		self.itemId = nil
+		self.orderBy = []
+	}
+	
+	func appendOrderBy(_ id: UUID) throws {
+		guard let orderBy = self.orderBy else {
+			throw CoreDataStorageError.unwrapError
+		}
+		self.orderBy = orderBy + [id]
 	}
 }
 
 private extension PrivateCheckListItemEntity {
 	func makeInitialCheckListItemEntity(
 		itemId: UUID,
-		index: Int32,
 		content: String,
 		isChecked: Bool
 	) {
 		self.itemId = itemId
-		self.index = index
 		self.content = content
 		self.isChecked = isChecked
 		self.createdAt = .now
 	}
-}
-
-extension NSManagedObject {
-	func addObject(value: NSManagedObject, forKey key: String) {
-		let items = self.mutableSetValue(forKey: key)
-		items.add(value)
-	}
 	
-	func removeObject(value: NSManagedObject, forKey key: String) {
-		let items = self.mutableSetValue(forKey: key)
-		items.remove(value)
+	func update(item: CheckListItem) {
+		self.content = item.title
+		self.isChecked = item.isChecked
 	}
 }
