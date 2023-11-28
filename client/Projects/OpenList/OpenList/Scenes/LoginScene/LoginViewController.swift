@@ -111,18 +111,11 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 	) {
 		switch authorization.credential {
 		case let appleIDCredential as ASAuthorizationAppleIDCredential:
-			guard
-				let identityToken = appleIDCredential.identityToken,
-				let authorizationCode = appleIDCredential.authorizationCode
-				else { return }
-			guard
-				let identityTokenString = String(data: identityToken, encoding: .utf8),
-				let authorizationCodeString = String(data: authorizationCode, encoding: .utf8)
-				else { return }
+			guard let identityToken = appleIDCredential.identityToken else { return }
+			guard let identityTokenString = String(data: identityToken, encoding: .utf8) else { return }
 			let fullName = checkName(nameContent: appleIDCredential.fullName)
 			let loginInfo = LoginInfo(
 				identityToken: identityTokenString,
-				authorizationCode: authorizationCodeString,
 				fullName: fullName
 			)
 			loginButtonTap.send(loginInfo)

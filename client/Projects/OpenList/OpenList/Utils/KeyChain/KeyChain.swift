@@ -47,7 +47,7 @@ final class KeyChain {
 				return value
 			} else { return nil }
 		} else {
-			print("failed to loading, status code = \(status)")
+			dump("failed to loading, status code = \(status)")
 			return nil
 		}
 	}

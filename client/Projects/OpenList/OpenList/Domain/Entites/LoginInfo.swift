@@ -9,6 +9,5 @@ import Foundation
 
 struct LoginInfo: Encodable {
 	let identityToken: String
-	let authorizationCode: String
 	let fullName: String
 }

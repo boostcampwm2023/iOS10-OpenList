@@ -18,7 +18,7 @@ final class DefaultAuthRepository {
 
 extension DefaultAuthRepository: AuthRepository {
 	func postLoginInfo(loginInfo: LoginInfo) async -> LoginResponseDTO? {
-		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/login/")
+		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/apple/login/")
 		builder.addHeader(
 			field: "Content-Type",
 			value: "application/json"
