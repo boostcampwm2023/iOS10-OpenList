@@ -42,7 +42,7 @@ describe('CategoriesService', () => {
   describe('findMinorCategories(mainId, subId)', () => {
     it('존재하는 중카테고리 ID에 대해 소카테고리를 반환한다', () => {
       const mainId = 1; // 존재한다고 가정한 대카테고리 ID
-      const subId = 1; // 존재한다고 가정한 중카테고리 ID
+      const subId = 101; // 존재한다고 가정한 중카테고리 ID
       const result = service.findMinorCategories(mainId, subId);
       const expectedMinorCategories = CATEGORIES.mainCategory
         .find((cat) => cat.id === mainId)
