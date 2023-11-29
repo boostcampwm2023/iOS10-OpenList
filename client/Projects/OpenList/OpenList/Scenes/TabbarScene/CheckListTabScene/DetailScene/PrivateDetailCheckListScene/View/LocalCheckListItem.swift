@@ -8,12 +8,22 @@
 import UIKit
 
 protocol LocalCheckListItemDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: LocalCheckListItem, indexPath: IndexPath)
+	func textFieldDidEndEditing(
+		_ textField: CheckListItemTextField,
+		cell: LocalCheckListItem,
+		indexPath: IndexPath
+	)
 	func textField(
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool
+	func didChangedCheckButton(
+		_ textField: CheckListItemTextField,
+		cell: LocalCheckListItem,
+		indexPath: IndexPath,
+		isChecked: Bool
+	)
 }
 
 final class LocalCheckListItem: UITableViewCell {
@@ -28,6 +38,8 @@ final class LocalCheckListItem: UITableViewCell {
 	private let checkButton: CheckListItemButton = .init()
 	private let textField: CheckListItemTextField = .init()
 	private var indexPath: IndexPath?
+	private(set) var id: UUID = UUID()
+	private(set) var isChecked: Bool = false
 	weak var delegate: LocalCheckListItemDelegate?
 	
 	// MARK: - Initializers
@@ -47,6 +59,8 @@ final class LocalCheckListItem: UITableViewCell {
 extension LocalCheckListItem {
 	func configure(with checkListItem: CheckListItem, indexPath: IndexPath) {
 		self.indexPath = indexPath
+		id = checkListItem.id
+		isChecked = checkListItem.isChecked
 		textField.text = checkListItem.title
 		if checkListItem.isChecked {
 			checkButton.setChecked()
@@ -89,6 +103,17 @@ private extension LocalCheckListItem {
 	
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
+		isChecked = checkButton.isChecked
+		guard
+			let delegate,
+			let indexPath
+		else { return }
+		delegate.didChangedCheckButton(
+			textField,
+			cell: self,
+			indexPath: indexPath,
+			isChecked: isChecked
+		)
 	}
 }
 

@@ -44,6 +44,20 @@ extension PrivateDetailCheckListDiffableDataSource {
 		updateSection(with: checkList, to: .checkList)
 	}
 	
+	func updateCheckListItem(_ item: CheckListItem) {
+		var snapshot = snapshot()
+		guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
+		snapshot.deleteItems(items)
+		if let index = items.firstIndex(where: { $0.id == item.id}) {
+			items[index].title = item.title
+			items[index].isChecked = item.isChecked
+		} else {
+			items.append(item)
+		}
+		snapshot.appendItems(items, toSection: .checkList)
+		apply(snapshot, animatingDifferences: false)
+	}
+	
 	func updateCheckListItemString(at indexPath: IndexPath, with text: String) {
 		var snapshot = snapshot()
 		guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
@@ -57,6 +71,16 @@ extension PrivateDetailCheckListDiffableDataSource {
 		var snapshot = snapshot()
 		guard let item = itemIdentifier(for: indexPath) else { return }
 		snapshot.deleteItems([item])
+		apply(snapshot, animatingDifferences: true)
+	}
+	
+	func deleteCheckListItem(_ item: CheckListItem) {
+		var snapshot = snapshot()
+		guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
+		guard let index = items.firstIndex(where: { $0.id == item.id}) else { return }
+		snapshot.deleteItems(items)
+		items.remove(at: index)
+		snapshot.appendItems(items, toSection: .checkList)
 		apply(snapshot, animatingDifferences: true)
 	}
 	

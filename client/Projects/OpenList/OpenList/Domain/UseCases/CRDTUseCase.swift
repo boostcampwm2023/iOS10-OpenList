@@ -12,11 +12,6 @@ enum CRDTUseCaseError: Error {
 	case sendMyself
 }
 
-struct UpdateItem {
-	let indexPath: IndexPath
-	let content: String
-}
-
 protocol CRDTUseCase {
 	func receive(data: Data) async throws -> CheckListItem
 	func insert(at editText: EditText) async throws -> CheckListItem
@@ -30,7 +25,6 @@ final class DefaultCRDTUseCase {
 	private var documentDictionary: [UUID: RGASDocument<String>] = [:]
 	private var mergeDictionary: [UUID: RGASMerge<String>] = [:]
 	private var checkList: [CheckListItem] = []
-	private var checkListIndex: [UUID: Int] = [:]
 	private var documentsId: LinkedList<UUID> = .init()
 	
 	init(crdtRepository: CRDTRepository) {
@@ -130,6 +124,7 @@ private extension DefaultCRDTUseCase {
 		let merge = createMerge(id: id, document: document)
 		try message.execute(on: merge)
 		let title = document.view()
+		
 		return CheckListItem(itemId: id, title: title, isChecked: false)
 	}
 	
@@ -171,7 +166,7 @@ private extension DefaultCRDTUseCase {
 			throw CRDTUseCaseError.docmuentNotFound
 		}
 		let message = try merge.applyLocal(to: operation)
-		print(message)
+		dump(message)
 		let title = document.view()
 		return (
 			item: CheckListItem(itemId: id, title: title, isChecked: false),
