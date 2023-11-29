@@ -15,7 +15,6 @@ Output == AnyPublisher<State, Never> { }
 final class MajorCategoryViewModel {
 	private var title: String
 	private var categoryText: String = ""
-	private var cancellables: Set<AnyCancellable> = []
 	
 	init(title: String) {
 		self.title = title
@@ -26,10 +25,11 @@ extension MajorCategoryViewModel: MajorCategoryViewModelable {
 	func transform(_ input: Input) -> Output {
 		let viewLoad = viewLoad(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
-		collectionViewCellDidSelect(input)
+		let collectionViewCellDidSelect = collectionViewCellDidSelect(input)
 		return Publishers.MergeMany(
 			viewLoad,
-			nextButtonDidTap
+			nextButtonDidTap,
+			collectionViewCellDidSelect
 		).eraseToAnyPublisher()
 	}
 }
@@ -54,12 +54,12 @@ private extension MajorCategoryViewModel {
 			}.eraseToAnyPublisher()
 	}
 	
-	func collectionViewCellDidSelect(_ input: Input) {
+	func collectionViewCellDidSelect(_ input: Input) -> Output {
 		input.collectionViewCellDidSelect
 			.withUnretained(self)
-			.sink { (owner, text) in
+			.map { (owner, text) in
 				owner.categoryText = text
-			}
-			.store(in: &cancellables)
+				return .none
+			}.eraseToAnyPublisher()
 	}
 }

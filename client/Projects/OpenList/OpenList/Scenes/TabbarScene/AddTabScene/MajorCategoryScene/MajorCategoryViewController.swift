@@ -91,6 +91,8 @@ extension MajorCategoryViewController: ViewBindable {
 			reload(categories: categories)
 		case .routeToNext(let category):
 			router.routeToMediumCategoryView(with: category)
+		case .none:
+			break
 		}
 	}
 
@@ -248,6 +250,7 @@ private extension MajorCategoryViewController {
 		static let gradationCollectionViewSpacing = 60.0
 		static let gradationViewHeight = 27.0
 		static let nextAndSkipButtonSpacing = 10.0
+		static let navigationBarHeight = 56.0
 	}
 	
 	func setViewConstraints() {
@@ -256,7 +259,7 @@ private extension MajorCategoryViewController {
 			navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
 			navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 			navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			navigationBar.heightAnchor.constraint(equalToConstant: 44),
+			navigationBar.heightAnchor.constraint(equalToConstant: LayoutConstant.navigationBarHeight),
 			
 			gradationView.topAnchor.constraint(
 				equalTo: navigationBar.bottomAnchor,
