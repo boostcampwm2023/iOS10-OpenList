@@ -176,6 +176,10 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 			return
 		}
 	}
+	
+	func transfromToWith(id: UUID) async throws {
+		throw CoreDataStorageError.noData
+	}
 }
 
 private extension DefaultPrivateCheckListStorage {

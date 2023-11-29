@@ -47,7 +47,8 @@ extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
 			viewWillAppear(input),
 			append(input),
 			update(input),
-			remove(input)
+			remove(input),
+			transformWith(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -121,6 +122,24 @@ private extension PrivateDetailCheckListViewModel {
 					return .error(DetailCheckListViewModelError.failedSaveData)
 				}
 				return .updateItem(item)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func transformWith(_ input: Input) -> Output {
+		return input.transformWith
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Bool, Never>  in
+				let future = Future(asyncFunc: {
+					await owner.detailCheckListUseCase.transformWith()
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { success in
+				guard success else {
+					return .error(DetailCheckListViewModelError.failedSaveData)
+				}
+				return .dismiss
 			}
 			.eraseToAnyPublisher()
 	}

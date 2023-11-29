@@ -35,6 +35,7 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let transformWith: PassthroughSubject<Void, Never> = .init()
 	private let append: PassthroughSubject<CheckListItem, Never> = .init()
 	private let update: PassthroughSubject<CheckListItem, Never> = .init()
 	private let remove: PassthroughSubject<CheckListItem, Never> = .init()
@@ -85,7 +86,8 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 			viewWillAppear: viewWillAppear,
 			append: append,
 			update: update,
-			remove: remove
+			remove: remove,
+			transformWith: transformWith
 		)
 		let output = viewModel.transform(input)
 		
@@ -104,6 +106,8 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 			viewLoad(checkList)
 		case let .updateItem(item):
 			updateItem(item)
+		case .dismiss:
+			router.dismissDetailScene()
 		}
 	}
 	
@@ -117,8 +121,8 @@ private extension PrivateDetailCheckListViewController {
 	@IBAction func showMenu() {
 		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		
-		let inviteAction = UIAlertAction(title: "초대하기", style: .default) { [weak self] _ in
-			self?.invite()
+		let inviteAction = UIAlertAction(title: "함께 작성하기", style: .default) { [weak self] _ in
+			self?.transformWith.send()
 		}
 		
 		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in

@@ -14,4 +14,5 @@ protocol CheckListRepository {
 	func appendCheckList(id: UUID, item: CheckListItem) async throws
 	func updateCheckList(id: UUID, item: CheckListItem) async throws
 	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws
+	func transfromToWith(id: UUID) async throws
 }
