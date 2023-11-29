@@ -17,8 +17,8 @@ extension MinorCategoryRouter: MinorCategoryRoutingLogic {
 		viewController?.popViewController(animated: true)
 	}
 	
-	func routeToConfirmView(category: Category? = nil) {
-		dump(category)
+	func routeToConfirmView(categoryInfo: CategoryInfo) {
+		dump(categoryInfo)
 		dump("AI 추천 마지막 뷰로 이동")
 	}
 }

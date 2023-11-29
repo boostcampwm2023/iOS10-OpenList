@@ -13,11 +13,17 @@ State == SubCategoryState,
 Output == AnyPublisher<State, Never> { }
 
 final class SubCategoryViewModel {
-	private var categoryInfo: Category
+	private var mainCategoryItem: CategoryItem
 	private var subCategoryTitle: String = ""
+	private var subCategoryItems: [String: CategoryItem] = [:]
+	private let categoryUseCase: CategoryUseCase
 	
-	init(categoryInfo: Category) {
-		self.categoryInfo = categoryInfo
+	init(
+		mainCategoryItem: CategoryItem,
+		categoryUseCase: CategoryUseCase
+	) {
+		self.mainCategoryItem = mainCategoryItem
+		self.categoryUseCase = categoryUseCase
 	}
 }
 
@@ -37,12 +43,21 @@ extension SubCategoryViewModel: SubCategoryViewModelable {
 private extension SubCategoryViewModel {
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewLoad
-			.map { _ in
-				let dummy = [
-					"부산여행", "마산여행", "제주여행", "일산여행", "무안여행", "성훈이집여행",
-					"댄싱빈스여행", "애플코리아여행", "캘리포니아여행", "서울구경", "경복궁여행"
-				]
-				return .load(dummy)
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Result<[CategoryItem], Error>, Never> in
+				let future = Future(asyncFunc: {
+					await owner.categoryUseCase.fetchSubCategory(with: owner.mainCategoryItem)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { [weak self] result in
+				switch result {
+					case let .success(items):
+						self?.subCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
+						return .load(items)
+					case let .failure(error):
+						return .error(error)
+				}
 			}.eraseToAnyPublisher()
 	}
 	
@@ -50,9 +65,8 @@ private extension SubCategoryViewModel {
 		return input.nextButtonDidTap
 			.withUnretained(self)
 			.map { (owner, _) in
-				// useCase Login
-				owner.categoryInfo.subCategory = owner.subCategoryTitle
-				return .routeToNext(owner.categoryInfo)
+				guard let subCategoryItem = owner.subCategoryItems[owner.subCategoryTitle] else { return .none }
+				return .routeToNext(owner.mainCategoryItem, subCategoryItem)
 			}.eraseToAnyPublisher()
 	}
 	

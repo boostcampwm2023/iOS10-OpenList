@@ -7,12 +7,14 @@
 
 import Foundation
 
-protocol MinorCategoryDependency: Dependency {}
+protocol MinorCategoryDependency: Dependency {
+	var categoryUseCase: CategoryUseCase { get }
+}
 
 final class MinorCategoryComponent: Component<MinorCategoryDependency> {}
 
 protocol MinorCategoryFactoryable: Factoryable {
-	func make(with category: Category) -> ViewControllable
+	func make(_ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable
 }
 
 final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCategoryFactoryable {
@@ -20,9 +22,13 @@ final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCat
 		super.init(parent: parent)
 	}
 	
-	func make(with category: Category) -> ViewControllable {
+	func make(_ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable {
 		let router = MinorCategoryRouter()
-		let viewModel = MinorCategoryViewModel(categoryInfo: category)
+		let viewModel = MinorCategoryViewModel(
+			mainCategory: mainCategory,
+			subCategory: subCategory,
+			categoryUseCase: parent.categoryUseCase
+		)
 		let viewController = MinorCategoryViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

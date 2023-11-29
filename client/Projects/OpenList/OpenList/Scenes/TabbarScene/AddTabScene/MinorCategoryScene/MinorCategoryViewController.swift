@@ -10,7 +10,7 @@ import UIKit
 
 protocol MinorCategoryRoutingLogic: AnyObject {
 	func routeToSubCategoryView()
-	func routeToConfirmView(category: Category?)
+	func routeToConfirmView(categoryInfo: CategoryInfo)
 }
 
 final class MinorCategoryViewController: UIViewController, ViewControllable {
@@ -85,9 +85,9 @@ extension MinorCategoryViewController: ViewBindable {
 		case .error(let error):
 			handleError(error)
 		case .load(let categories):
-			reload(categories: categories)
-		case .routeToNext(let category):
-			router.routeToConfirmView(category: category)
+				reload(categories: categories.map { $0.name })
+		case .routeToNext(let categoryInfo):
+			router.routeToConfirmView(categoryInfo: categoryInfo)
 		case .none:
 			break
 		}
@@ -105,7 +105,7 @@ private extension MinorCategoryViewController {
 	}
 	
 	@objc func skipButtonDidTap() {
-		router.routeToConfirmView(category: nil)
+//		router.routeToConfirmView(categoryInfo: /*nil*/)
 	}
 }
 

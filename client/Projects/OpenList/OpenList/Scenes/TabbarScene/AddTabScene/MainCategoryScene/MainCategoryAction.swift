@@ -15,7 +15,7 @@ struct MainCategoryInput {
 
 enum MainCategoryState {
 	case error(_ error: Error)
-	case load(_ category: [String])
-	case routeToNext(_ category: Category)
+	case load(_ category: [CategoryItem])
+	case routeToNext(_ category: CategoryItem)
 	case none
 }

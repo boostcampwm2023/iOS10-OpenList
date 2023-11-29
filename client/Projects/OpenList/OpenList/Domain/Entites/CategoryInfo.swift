@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Category: Encodable {
+struct CategoryInfo {
 	var title: String?
 	var mainCategory: String?
 	var subCategory: String?
@@ -24,4 +24,10 @@ struct Category: Encodable {
 		self.subCategory = subCategory
 		self.minorCategory = minorCategory
 	}
+}
+
+struct CategoryInfoRequestDTO: Encodable {
+	let mainCategory: String
+	let subCategory: String
+	let minorCategory: String
 }

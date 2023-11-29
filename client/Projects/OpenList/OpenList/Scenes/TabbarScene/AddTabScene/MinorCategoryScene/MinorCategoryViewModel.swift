@@ -14,11 +14,19 @@ where Input == MinorCategoryInput,
 	Output == AnyPublisher<State, Never> { }
 
 final class MinorCategoryViewModel {
+	private let mainCategoryItem: CategoryItem
+	private let subCategoryItem: CategoryItem
+	private let categoryUseCase: CategoryUseCase
 	private var minorCategoryTitle: String = ""
-	private var categoryInfo: Category
 	
-	init(categoryInfo: Category) {
-		self.categoryInfo = categoryInfo
+	init(
+		mainCategory: CategoryItem,
+		subCategory: CategoryItem, 
+		categoryUseCase: CategoryUseCase
+	) {
+		self.mainCategoryItem = mainCategory
+		self.subCategoryItem = subCategory
+		self.categoryUseCase = categoryUseCase
 	}
 }
 
@@ -38,12 +46,23 @@ extension MinorCategoryViewModel: MinorCategoryViewModelable {
 private extension MinorCategoryViewModel {
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewLoad
-			.map { _ in
-				let dummy = [
-					"준비물", "핫플레이스", "맛집리스트", "시장투어", "쇼핑리스트", "커피리스트",
-					"유적명소", "클럽추천", "이색여행지", "노포투어", "어르신투어"
-				]
-				return .load(dummy)
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Result<[CategoryItem], Error>, Never> in
+				let future = Future(asyncFunc: {
+					await owner.categoryUseCase.fetchMinorCategory(
+						with: owner.mainCategoryItem,
+						subCategory: owner.subCategoryItem
+					)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { result in
+				switch result {
+					case let .success(items):
+						return .load(items)
+					case let .failure(error):
+						return .error(error)
+				}
 			}.eraseToAnyPublisher()
 	}
 	
@@ -51,9 +70,12 @@ private extension MinorCategoryViewModel {
 		return input.nextButtonDidTap
 			.withUnretained(self)
 			.map { (owner, _) in
-				// useCase Login
-				owner.categoryInfo.minorCategory = owner.minorCategoryTitle
-				return .routeToNext(owner.categoryInfo)
+				let categoryInfo = CategoryInfo(
+					mainCategory: owner.mainCategoryItem.name,
+					subCategory: owner.subCategoryItem.name,
+					minorCategory: owner.minorCategoryTitle
+				)
+				return .routeToNext(categoryInfo)
 			}.eraseToAnyPublisher()
 	}
 	

@@ -14,11 +14,16 @@ Output == AnyPublisher<State, Never> { }
 
 final class MainCategoryViewModel {
 	private var title: String
+	private var mainCategoryItems: [String: CategoryItem] = [:]
 	private var categoryText: String = ""
-	private var categoryInfo: Category = .init()
+	private let categoryUseCase: CategoryUseCase
 	
-	init(title: String) {
+	init(
+		title: String,
+		categoryUseCase: CategoryUseCase
+	) {
 		self.title = title
+		self.categoryUseCase = categoryUseCase
 	}
 }
 
@@ -38,11 +43,21 @@ extension MainCategoryViewModel: MainCategoryViewModelable {
 private extension MainCategoryViewModel {
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewLoad
-			.map { _ in
-				let dummy = [
-					"여행", "부동산", "가계", "기타등등", "5글자짜리", "여섯글자짜리"
-				]
-				return .load(dummy)
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Result<[CategoryItem], Error>, Never> in
+				let future = Future(asyncFunc: {
+					await owner.categoryUseCase.fetchMainCategory()
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { [weak self] result in
+				switch result {
+					case let .success(items):
+						self?.mainCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
+						return .load(items)
+					case let .failure(error):
+						return .error(error)
+				}
 			}.eraseToAnyPublisher()
 	}
 	
@@ -50,10 +65,8 @@ private extension MainCategoryViewModel {
 		return input.nextButtonDidTap
 			.withUnretained(self)
 			.map { (owner, _) in
-				// useCase Login
-				owner.categoryInfo.title = owner.title
-				owner.categoryInfo.mainCategory = owner.categoryText
-				return .routeToNext(owner.categoryInfo)
+				guard let categoryItem = owner.mainCategoryItems[owner.categoryText] else { return .none }
+				return .routeToNext(categoryItem)
 			}.eraseToAnyPublisher()
 	}
 	

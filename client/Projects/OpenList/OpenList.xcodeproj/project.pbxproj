@@ -151,7 +151,14 @@
 		78E956162B171973005CF5D3 /* MinorCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956112B171973005CF5D3 /* MinorCategoryViewController.swift */; };
 		78E956172B171973005CF5D3 /* MinorCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956122B171973005CF5D3 /* MinorCategoryViewFactory.swift */; };
 		78E956182B171973005CF5D3 /* MinorCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956132B171973005CF5D3 /* MinorCategoryViewModel.swift */; };
-		78E9561A2B171F4D005CF5D3 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956192B171F4D005CF5D3 /* Category.swift */; };
+		78E9561A2B171F4D005CF5D3 /* CategoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956192B171F4D005CF5D3 /* CategoryInfo.swift */; };
+		78E9561C2B177DAB005CF5D3 /* CategoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9561B2B177DAB005CF5D3 /* CategoryUseCase.swift */; };
+		78E9561E2B17810C005CF5D3 /* CategoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9561D2B17810C005CF5D3 /* CategoryRepository.swift */; };
+		78E956202B178365005CF5D3 /* DefaultCategoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9561F2B178365005CF5D3 /* DefaultCategoryRepository.swift */; };
+		78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956212B178CB3005CF5D3 /* CategoryResponseDTO.swift */; };
+		78E956242B178E3A005CF5D3 /* CategoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956232B178E3A005CF5D3 /* CategoryItem.swift */; };
+		78E956262B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */; };
+		78E956282B1795CC005CF5D3 /* RecommendChecklistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */; };
 		78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F7476D2B126EC3003ED6DA /* KeyChain.swift */; };
 		78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F747722B148C2E003ED6DA /* LoginInfo.swift */; };
 /* End PBXBuildFile section */
@@ -327,7 +334,14 @@
 		78E956112B171973005CF5D3 /* MinorCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinorCategoryViewController.swift; sourceTree = "<group>"; };
 		78E956122B171973005CF5D3 /* MinorCategoryViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinorCategoryViewFactory.swift; sourceTree = "<group>"; };
 		78E956132B171973005CF5D3 /* MinorCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinorCategoryViewModel.swift; sourceTree = "<group>"; };
-		78E956192B171F4D005CF5D3 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		78E956192B171F4D005CF5D3 /* CategoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryInfo.swift; sourceTree = "<group>"; };
+		78E9561B2B177DAB005CF5D3 /* CategoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryUseCase.swift; sourceTree = "<group>"; };
+		78E9561D2B17810C005CF5D3 /* CategoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRepository.swift; sourceTree = "<group>"; };
+		78E9561F2B178365005CF5D3 /* DefaultCategoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCategoryRepository.swift; sourceTree = "<group>"; };
+		78E956212B178CB3005CF5D3 /* CategoryResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResponseDTO.swift; sourceTree = "<group>"; };
+		78E956232B178E3A005CF5D3 /* CategoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryItem.swift; sourceTree = "<group>"; };
+		78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistResponseDTO.swift; sourceTree = "<group>"; };
+		78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistItem.swift; sourceTree = "<group>"; };
 		78F7476D2B126EC3003ED6DA /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 		78F747722B148C2E003ED6DA /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -428,6 +442,7 @@
 				78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */,
 				78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */,
 				4DDC433D2B0F2A3D00859B28 /* DefaultCRDTRepository.swift */,
+				78E9561F2B178365005CF5D3 /* DefaultCategoryRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -498,7 +513,9 @@
 			children = (
 				4DD947042B044FF20054C104 /* CheckListTableItem.swift */,
 				78F747722B148C2E003ED6DA /* LoginInfo.swift */,
-				78E956192B171F4D005CF5D3 /* Category.swift */,
+				78E956192B171F4D005CF5D3 /* CategoryInfo.swift */,
+				78E956232B178E3A005CF5D3 /* CategoryItem.swift */,
+				78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */,
 				4DD97D9D2B14D56B00DF73BC /* CheckList.swift */,
 				4DDC43372B0F214300859B28 /* CheckListItem.swift */,
 				4DDC434A2B0F432900859B28 /* Device.swift */,
@@ -583,6 +600,8 @@
 			isa = PBXGroup;
 			children = (
 				78A4C7262B0F5E4300E07492 /* LoginResponseDTO.swift */,
+				78E956212B178CB3005CF5D3 /* CategoryResponseDTO.swift */,
+				78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */,
 				5F70C84A2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift */,
 			);
 			path = DTO;
@@ -720,6 +739,7 @@
 				78C2F0232B049AF100E4EC4E /* CheckListRepository.swift */,
 				78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */,
 				4DDC43282B0F10EF00859B28 /* CRDTRepository.swift */,
+				78E9561D2B17810C005CF5D3 /* CategoryRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -732,6 +752,7 @@
 				78A4C7242B0F5C6900E07492 /* AuthUseCase.swift */,
 				4DDC43252B0F0FAB00859B28 /* CRDTUseCase.swift */,
 				4DD97D9B2B14D3A600DF73BC /* DetailCheckListUseCase.swift */,
+				78E9561B2B177DAB005CF5D3 /* CategoryUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -1099,12 +1120,13 @@
 				78E956092B16FC23005CF5D3 /* AddCheckListTitleViewController.swift in Sources */,
 				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
 				78E956062B16FC23005CF5D3 /* SubCategoryAction.swift in Sources */,
+				78E956242B178E3A005CF5D3 /* CategoryItem.swift in Sources */,
 				4DDC434B2B0F432900859B28 /* Device.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */,
 				78E956042B16FC23005CF5D3 /* SubCategoryViewFactory.swift in Sources */,
 				78A4C7252B0F5C6900E07492 /* AuthUseCase.swift in Sources */,
-				78E9561A2B171F4D005CF5D3 /* Category.swift in Sources */,
+				78E9561A2B171F4D005CF5D3 /* CategoryInfo.swift in Sources */,
 				5F93491E2B16DFF300282545 /* UICollectionView+Extensions.swift in Sources */,
 				5F9349162B16DF5500282545 /* CheckListFolderRouter.swift in Sources */,
 				4DD97D9C2B14D3A600DF73BC /* DetailCheckListUseCase.swift in Sources */,
@@ -1131,10 +1153,12 @@
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
 				5F70C83D2B04C39F00826B5D /* CheckListItemTextField.swift in Sources */,
 				4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */,
+				78E956282B1795CC005CF5D3 /* RecommendChecklistItem.swift in Sources */,
 				78E956012B16FC23005CF5D3 /* CategoryProgressView.swift in Sources */,
 				4D967D172B0617260032E0D7 /* Future+.swift in Sources */,
 				78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */,
 				5F93491C2B16DFE300282545 /* CALayer+applySketchShadow.swift in Sources */,
+				78E956262B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift in Sources */,
 				78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */,
 				78E955FF2B16FC23005CF5D3 /* SkipButton.swift in Sources */,
 				4DDC43322B0F16CC00859B28 /* WithDetailCheckListViewFactory.swift in Sources */,
@@ -1142,6 +1166,7 @@
 				78E955FA2B16FC23005CF5D3 /* MainCategoryViewFactory.swift in Sources */,
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
+				78E9561C2B177DAB005CF5D3 /* CategoryUseCase.swift in Sources */,
 				4D696CBB2B0F946100873B3B /* EditText.swift in Sources */,
 				5F70C84B2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift in Sources */,
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
@@ -1187,15 +1212,18 @@
 				78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */,
 				4D8AEBDC2B122AAD00292AF3 /* CRDTResponseDTO.swift in Sources */,
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
+				78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
 				78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */,
 				78E956032B16FC23005CF5D3 /* MainCategoryRouter.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
 				5F93491A2B16DF5500282545 /* CheckListFolderViewController.swift in Sources */,
+				78E9561E2B17810C005CF5D3 /* CategoryRepository.swift in Sources */,
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
 				5F70C8302B04A96E00826B5D /* PrivateDetailCheckListViewController.swift in Sources */,
 				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,
 				78E956082B16FC23005CF5D3 /* SubCategoryViewModel.swift in Sources */,
+				78E956202B178365005CF5D3 /* DefaultCategoryRepository.swift in Sources */,
 				78E955FC2B16FC23005CF5D3 /* MainCategoryViewController.swift in Sources */,
 				78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */,
 			);

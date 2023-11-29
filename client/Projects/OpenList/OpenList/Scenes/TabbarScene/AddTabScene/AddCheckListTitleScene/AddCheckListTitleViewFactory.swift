@@ -10,11 +10,16 @@ import Foundation
 protocol AddCheckListTitleDependency: Dependency {
 	var validCheckUseCase: ValidCheckUseCase { get }
 	var persistenceUseCase: PersistenceUseCase { get }
+	var categoryUseCase: CategoryUseCase { get }
 }
 
 final class AddCheckListTitleComponent:
 	Component<AddCheckListTitleDependency>,
 	MainCategoryDependency {
+	var categoryUseCase: CategoryUseCase {
+		return parent.categoryUseCase
+	}
+	
 	fileprivate var validCheckUseCase: ValidCheckUseCase {
 		return parent.validCheckUseCase
 	}
