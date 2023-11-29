@@ -16,46 +16,8 @@ public final class NetworkService {
 		self.urlRequestBuilder = urlRequestBuilder
 	}
 	
-	public func getData() async throws -> Data {
-		var builder = urlRequestBuilder
-		_ = builder.setMethod(.get)
-		guard let request = builder.build() else {
-			throw NetworkError.invalidRequest
-		}
-		return try await sendRequest(request)
-	}
-	
-	public func postData() async throws -> Data {
-		var builder = urlRequestBuilder
-		_ = builder.setMethod(.post)
-		guard let request = builder.build() else {
-			throw NetworkError.invalidRequest
-		}
-		return try await sendRequest(request)
-	}
-	
-	public func putData() async throws -> Data {
-		var builder = urlRequestBuilder
-		_ = builder.setMethod(.put)
-		guard let request = builder.build() else {
-			throw NetworkError.invalidRequest
-		}
-		return try await sendRequest(request)
-	}
-	
-	public func deleteData() async throws -> Data {
-		var builder = urlRequestBuilder
-		_ = builder.setMethod(.delete)
-		guard let request = builder.build() else {
-			throw NetworkError.invalidRequest
-		}
-		return try await sendRequest(request)
-	}
-	
-	public func patchData() async throws -> Data {
-		var builder = urlRequestBuilder
-		_ = builder.setMethod(.patch)
-		guard let request = builder.build() else {
+	public func repuest() async throws -> Data {
+		guard let request = urlRequestBuilder.build() else {
 			throw NetworkError.invalidRequest
 		}
 		return try await sendRequest(request)

@@ -9,19 +9,18 @@
 import XCTest
 
 final class NetworkServiceTests: XCTestCase {
-	private var service: NetworkService!
-	
-	override func setUp() {
-		super.setUp()
+	func createService(_ method: URLRequestBuilder.HTTPMethod) -> NetworkService {
 		let configuration: URLSessionConfiguration = .ephemeral
 		configuration.protocolClasses = [MockURLProtocol.self]
 		let customSession = CustomSession(configuration: configuration)
-		let urlRequestBuilder = URLRequestBuilder(url: "https://google.com/")
+		var urlRequestBuilder = URLRequestBuilder(url: "https://google.com/")
+		urlRequestBuilder.setMethod(method)
 		let service = NetworkService(customSession: customSession, urlRequestBuilder: urlRequestBuilder)
-		self.service = service
+		return service
 	}
 	
 	func testGetData() async {
+		let service = createService(.get)
 		let response = """
 			{
 				"result": "OK",
@@ -46,7 +45,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.getData()
+			let result = try await service.repuest()
 			XCTAssertEqual(result, data, "Get data should match expected data")
 		} catch {
 			XCTFail("Expected successful get, but got error: \(error)")
@@ -54,6 +53,7 @@ final class NetworkServiceTests: XCTestCase {
 	}
 	
 	func testPostData() async {
+		let service = createService(.post)
 		let response = """
 			{
 				"result": "OK",
@@ -78,7 +78,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.postData()
+			let result = try await service.repuest()
 			XCTAssertEqual(result, data, "Post data should match expected data")
 		} catch {
 			XCTFail("Expected successful post, but got error: \(error)")
@@ -86,6 +86,7 @@ final class NetworkServiceTests: XCTestCase {
 	}
 	
 	func testPutData() async {
+		let service = createService(.put)
 		let response = """
 			{
 				"result": "OK",
@@ -110,7 +111,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.putData()
+			let result = try await service.repuest()
 			XCTAssertEqual(result, data, "Put data should match expected data")
 		} catch {
 			XCTFail("Expected successful put, but got error: \(error)")
@@ -118,6 +119,7 @@ final class NetworkServiceTests: XCTestCase {
 	}
 	
 	func testDeleteData() async {
+		let service = createService(.delete)
 		let response = """
 			{
 				"result": "OK",
@@ -142,7 +144,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.deleteData()
+			let result = try await service.repuest()
 			XCTAssertEqual(result, data, "Delete data should match expected data")
 		} catch {
 			XCTFail("Expected successful delete, but got error: \(error)")
@@ -150,6 +152,7 @@ final class NetworkServiceTests: XCTestCase {
 	}
 	
 	func testPatchData() async {
+		let service = createService(.patch)
 		let response = """
 			{
 				"result": "OK",
@@ -174,7 +177,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.patchData()
+			let result = try await service.repuest()
 			XCTAssertEqual(result, data, "Patch data should match expected data")
 		} catch {
 			XCTFail("Expected successful patch, but got error: \(error)")
