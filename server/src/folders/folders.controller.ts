@@ -29,22 +29,22 @@ export class FoldersController {
     return this.foldersService.findAllFolders(userId);
   }
 
-  @Get(':forderId')
-  getFolder(@Param('forderId') forderId: number, @UserId() userId: number) {
-    return this.foldersService.findFolderById(forderId, userId);
+  @Get(':folderId')
+  getFolder(@Param('folderId') folderId: number, @UserId() userId: number) {
+    return this.foldersService.findFolderById(folderId, userId);
   }
 
-  @Put(':forderId')
+  @Put(':folderId')
   putFolder(
-    @Param('forderId') forderId: number,
+    @Param('folderId') folderId: number,
     @UserId() userId: number,
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
-    return this.foldersService.updateFolder(forderId, userId, updateFolderDto);
+    return this.foldersService.updateFolder(folderId, userId, updateFolderDto);
   }
 
-  @Delete(':forderId')
-  deleteFolder(@Param('forderId') forderId: number, @UserId() userId: number) {
-    return this.foldersService.removeFolder(forderId, userId);
+  @Delete(':folderId')
+  deleteFolder(@Param('folderId') folderId: number, @UserId() userId: number) {
+    return this.foldersService.removeFolder(folderId, userId);
   }
 }
