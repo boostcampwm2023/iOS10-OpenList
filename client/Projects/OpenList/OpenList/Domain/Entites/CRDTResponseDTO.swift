@@ -8,25 +8,19 @@
 import CRDT
 import Foundation
 
-struct CRDTResponseDTO: Codable {
+struct CRDTResponseDTO: Decodable {
 	let event: String
-	let documentNode: LinkedListNode<UUID>
+	let id: UUID
 	let data: CRDTMessage
 	
-	init(event: String, documentNode: LinkedListNode<UUID>, data: CRDTMessage) {
-		self.event = event
-		self.documentNode = documentNode
-		self.data = data
-	}
-	
 	enum CodingKeys: CodingKey {
-		case event, documentNode, message
+		case event, id, message
 	}
 	
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.event = try container.decode(String.self, forKey: .event)
-		self.documentNode = try container.decode(LinkedListNode<UUID>.self, forKey: .documentNode)
+		self.id = try container.decode(UUID.self, forKey: .id)
 		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
 			self.data = message
 		} else if let messages = try? container.decode(OperationBasedMessagesBag.self, forKey: .message) {
@@ -38,24 +32,6 @@ struct CRDTResponseDTO: Codable {
 					codingPath: [CodingKeys.message],
 					debugDescription: "Unknown CRDTMessage type"
 				)
-			)
-		}
-	}
-	
-	func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encode(event, forKey: .event)
-		try container.encode(documentNode, forKey: .documentNode)
-		if let myMessage = data as? OperationBasedOneMessage {
-			try container.encode(myMessage, forKey: .message)
-		} else if let myMessages = data as? OperationBasedMessagesBag {
-			try container.encode(myMessages, forKey: .message)
-		} else {
-			throw EncodingError.invalidValue(
-				data,
-				EncodingError.Context(
-					codingPath: [CodingKeys.message],
-					debugDescription: "Unknown CRDTMessage type")
 			)
 		}
 	}

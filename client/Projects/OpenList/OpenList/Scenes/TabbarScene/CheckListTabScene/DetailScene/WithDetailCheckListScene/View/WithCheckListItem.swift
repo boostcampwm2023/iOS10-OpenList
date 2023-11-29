@@ -13,6 +13,7 @@ protocol WithCheckListItemDelegate: AnyObject {
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
+		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
 }
@@ -113,12 +114,14 @@ extension WithCheckListItem: UITextFieldDelegate {
 	) -> Bool {
 		guard
 			let delegate,
+			let indexPath,
 			let cellId
 		else { return true }
 		return delegate.textField(
 			self.textField,
 			shouldChangeCharactersIn: range,
 			replacementString: string,
+			indexPath: indexPath,
 			cellId: cellId
 		)
 	}

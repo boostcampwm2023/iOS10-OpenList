@@ -55,6 +55,25 @@ final class LinkedList<T: Codable & Equatable> {
 		node?.next = LinkedListNode(value: value)
 	}
 	
+	func remove(value: T) {
+		if head == nil { return }
+		
+		if head?.value == value {
+			head = head?.next
+			return
+		}
+		
+		var node = head
+		while node != nil {
+			if node?.next?.value == value {
+				node?.next = node?.next?.next
+				node?.next?.next = nil
+				return
+			}
+			node = node?.next
+		}
+	}
+	
 	func searchNode(from value: T?) -> LinkedListNode<T>? {
 		if head == nil { return nil }
 		
