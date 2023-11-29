@@ -110,8 +110,8 @@ export class SharedChecklistsGateway
   }
 
   /**
-   * 'sendChecklist' 이벤트를 처리하고, 해당 sharedChecklistId를 가진 다른 클라이언트들에게
-   * 'listenChecklist' 이벤트를 브로드캐스트한다.
+   * 'send' 이벤트에 대한 요청을 처리하고, 해당 sharedChecklistId를 가진 다른 클라이언트들에게 'listen' 이벤트를 브로드캐스트한다.
+   * 데이터가 20개 누적될 때마다 데이터베이스에 저장하고, 'saved' 이벤트를 브로드캐스트한다.
    * @param client 메시지를 보낸 클라이언트의 웹소켓 객체
    * @param data 클라이언트로부터 받은 데이터
    * @returns 이벤트 처리 결과를 나타내는 객체
@@ -142,6 +142,12 @@ export class SharedChecklistsGateway
     return { event: 'sendChecklist', data: data };
   }
 
+  /**
+   * 'history' 이벤트에 대한 요청을 처리하고, 해당 sharedChecklistId에 대한 이전 메시지 기록을 클라이언트에 전송한다.
+   * @param client 요청한 클라이언트의 웹소켓 객체
+   * @param data 클라이언트로부터 받은 데이터
+   * @returns 이벤트 처리 결과를 나타내는 객체
+   */
   @SubscribeMessage('history')
   async handleHistoryRequest(
     @ConnectedSocket() client: WebSocket,
@@ -155,6 +161,12 @@ export class SharedChecklistsGateway
     return { event: 'history', data: data };
   }
 
+  /**
+   * 특정 클라이언트에 이벤트와 데이터를 전송한다.
+   * @param client 데이터를 전송할 클라이언트의 웹소켓 객체
+   * @param event 전송할 이벤트 이름
+   * @param data 전송할 데이터
+   */
   private sendDateToClient(
     client: WebSocket,
     event: string,
@@ -163,6 +175,13 @@ export class SharedChecklistsGateway
     client.send(JSON.stringify({ event, data }));
   }
 
+  /**
+   * 데이터를 데이터베이스에 저장하고 관련 클라이언트들에게 'saved' 이벤트를 브로드캐스트한다.
+   * 마지막 저장 시간을 기록한다.
+   * @param sharedChecklistId 데이터를 저장할 체크리스트 ID
+   * @param dataForThisChecklist 저장할 데이터 배열
+   * @param broadcast 브로드캐스트 여부. 기본값은 false
+   */
   private async saveAndBroadcastData(
     sharedChecklistId: string,
     dataForThisChecklist: string[],
