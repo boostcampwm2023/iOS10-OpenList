@@ -7,12 +7,6 @@
 
 import UIKit
 
-struct CheckListFolderItem: Hashable {
-	var id = UUID()
-	var categoryTitle: String
-	var saveCount: Int
-}
-
 final class CheckListFolderCell: UICollectionViewCell {
 	// MARK: Properties
 	private let titleLabel: UILabel = .init()
@@ -37,7 +31,7 @@ final class CheckListFolderCell: UICollectionViewCell {
 	
 	// 폴더의 데이터를 넣는 메서드
 	func configure(with item: CheckListFolderItem) {
-		titleLabel.text = item.categoryTitle
+		titleLabel.text = item.title
 		descriptionLabel.text = "\(item.saveCount)개 저장됨"
 	}
 }

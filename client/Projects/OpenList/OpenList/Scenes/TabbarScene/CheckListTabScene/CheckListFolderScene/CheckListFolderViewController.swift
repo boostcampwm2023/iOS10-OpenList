@@ -16,8 +16,10 @@ final class CheckListFolderViewController: UIViewController, ViewControllable {
 	}
 	// MARK: - Properties
 	private let router: CheckListFolderRoutingLogic
-	private let viewModel: any ViewModelable
+	private let viewModel: any CheckListFolderViewModelable
 	private var cancellables: Set<AnyCancellable> = []
+	// Event Properties
+	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	
 	// MARK: - UI Components
 	private let folderView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
@@ -26,7 +28,7 @@ final class CheckListFolderViewController: UIViewController, ViewControllable {
 	// MARK: - Initializers
 	init(
 		router: CheckListFolderRoutingLogic,
-		viewModel: some ViewModelable
+		viewModel: some CheckListFolderViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -47,6 +49,11 @@ final class CheckListFolderViewController: UIViewController, ViewControllable {
 		setViewHierarchies()
 		setViewConstraints()
 	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		viewWillAppear.send()
+	}
 }
 
 // MARK: - Bind Methods
@@ -54,11 +61,36 @@ extension CheckListFolderViewController: ViewBindable {
 	typealias State = CheckListFolderState
 	typealias OutputError = Error
 	
-	func bind() {}
+	func bind() {
+		let input = CheckListFolderInput(viewWillAppear: viewWillAppear)
+		let state = viewModel.transform(input)
+		state
+			.receive(on: DispatchQueue.main)
+			.withUnretained(self)
+			.sink { (owner, state) in owner.render(state)}
+			.store(in: &cancellables)
+	}
 	
-	func render(_ state: State) { }
+	func render(_ state: State) {
+		switch state {
+		case let .folders(folders):
+			reloadFolders(folders)
+		case let .error(error):
+			handleError(error)
+		}
+	}
 	
-	func handleError(_ error: OutputError) { }
+	func handleError(_ error: OutputError) {
+		dump(error.localizedDescription)
+	}
+	
+	func reloadFolders(_ folders: [CheckListFolderItem]) {
+		guard var snapshot = folderViewDataSource?.snapshot() else { return }
+		let previousItems = snapshot.itemIdentifiers(inSection: .folder)
+		snapshot.deleteItems(previousItems)
+		snapshot.appendItems(folders)
+		folderViewDataSource?.apply(snapshot)
+	}
 }
 
 // MARK: - View Methods
