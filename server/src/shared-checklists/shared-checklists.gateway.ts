@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { parse } from 'url';
 import * as WebSocket from 'ws';
+import { SharedChecklistsService } from './shared-checklists.service';
 
 /**
  * 웹소켓 통신을 통해 클라이언트들의 체크리스트 공유를 관리하는 게이트웨이.
@@ -17,6 +18,9 @@ import * as WebSocket from 'ws';
 export class SharedChecklistsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(
+    private readonly sharedChecklistsService: SharedChecklistsService,
+  ) {}
   @WebSocketServer() server: WebSocket.Server;
 
   // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
@@ -56,7 +60,13 @@ export class SharedChecklistsGateway
       const clientsSet = this.clients.get(sharedChecklistId);
       clientsSet?.delete(client);
       // 더 이상 해당 sharedChecklistId에 연결된 클라이언트가 없으면 맵에서 제거
+      // 해당 sharedChecklistId에 저장된 데이터를 DB에 저장하고 맵에서 제거
       if (clientsSet?.size === 0) {
+        this.saveAndBroadcastData(
+          sharedChecklistId,
+          this.checklistData.get(sharedChecklistId),
+        );
+        this.checklistData.delete(sharedChecklistId);
         this.clients.delete(sharedChecklistId);
       }
     }
@@ -100,17 +110,22 @@ export class SharedChecklistsGateway
   ) {
     const sharedChecklistId = client['sharedChecklistId'];
 
+    if (!sharedChecklistId)
+      return { event: 'error', data: 'No sharedChecklistId provided' };
+
     // 현재 sharedChecklistId에 해당하는 데이터 배열을 가져오거나 새로 생성
     const dataForThisChecklist =
       this.checklistData.get(sharedChecklistId) || [];
     dataForThisChecklist.push(data);
 
-    // 맵에 업데이트된 데이터 배열 저장
-    this.checklistData.set(sharedChecklistId, dataForThisChecklist);
+    // 데이터 저장 및 브로드캐스트
+    if (dataForThisChecklist.length >= 20) {
+      this.saveAndBroadcastData(sharedChecklistId, dataForThisChecklist, true);
+    } else {
+      this.checklistData.set(sharedChecklistId, dataForThisChecklist);
+    }
 
-    // 다른 클라이언트들에게 데이터 브로드캐스트
     this.broadcastToChecklist(sharedChecklistId, 'listen', data, client);
-
     return { event: 'sendChecklist', data: data };
   }
 
@@ -129,8 +144,20 @@ export class SharedChecklistsGateway
     return { event: 'history', data: data };
   }
 
-  // sharedChecklistId에 해당하는 모든 데이터를 가져오는 메소드
-  getChecklistData(sharedChecklistId: string): string[] {
-    return this.checklistData.get(sharedChecklistId) || [];
+  private async saveAndBroadcastData(
+    sharedChecklistId: string,
+    dataForThisChecklist: string[],
+    broadcast?: boolean,
+  ) {
+    const now = new Date();
+    if (broadcast) {
+      this.broadcastToChecklist(sharedChecklistId, 'saved', now.toISOString());
+    }
+    await this.sharedChecklistsService.createSharedChecklistItem(
+      dataForThisChecklist,
+      sharedChecklistId,
+      now,
+    );
+    this.checklistData.set(sharedChecklistId, []);
   }
 }

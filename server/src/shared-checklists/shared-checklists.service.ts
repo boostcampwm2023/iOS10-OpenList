@@ -50,14 +50,27 @@ export class SharedChecklistsService {
    * 체크리스트 아이템 데이터와 체크리스트 ID를 받아 새로운 체크리스트 아이템을 생성한다.
    * @param items 체크리스트 아이템의 메시지 배열
    * @param checklistId 체크리스트 식별자
+   * @param now  전달되는 현재 시간(옵션)
    * @returns 생성된 체크리스트 아이템 객체
    */
-  async createSharedChecklistItem(items: string[], checklistId: string) {
+  async createSharedChecklistItem(
+    items: string[],
+    checklistId: string,
+    now?: Date,
+  ) {
     // 새 ChecklistItem 생성
-    const newChecklistItem = this.SharedChecklistItemsrepository.create({
+    const checklistItemData = {
       messages: items,
       sharedChecklist: { sharedChecklistId: checklistId },
-    });
+    };
+
+    if (now) {
+      checklistItemData['createdAt'] = now;
+      checklistItemData['updatedAt'] = now;
+    }
+
+    const newChecklistItem =
+      this.SharedChecklistItemsrepository.create(checklistItemData);
 
     return this.SharedChecklistItemsrepository.save(newChecklistItem);
   }
