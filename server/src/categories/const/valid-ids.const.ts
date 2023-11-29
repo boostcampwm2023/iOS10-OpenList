@@ -1,4 +1,4 @@
-import { categories } from './categories.const';
+import { CATEGORIES } from './categories.const';
 
 const extractValidIds = (categories) => {
   const mainCategoryIds = categories.mainCategory.map((cat) => cat.id);
@@ -18,4 +18,4 @@ const extractValidIds = (categories) => {
   };
 };
 
-export const validIds = extractValidIds(categories);
+export const validIds = extractValidIds(CATEGORIES);
