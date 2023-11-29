@@ -10,8 +10,7 @@ import Foundation
 
 protocol LoginDependency: Dependency {}
 
-final class LoginComponent:
-	Component<LoginDependency>, TabBarDependency {
+final class LoginComponent: Component<LoginDependency> {
 	fileprivate var authRepository: AuthRepository {
 		return DefaultAuthRepository()
 	}

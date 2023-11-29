@@ -30,11 +30,13 @@ public struct URLRequestBuilder {
 		return self
 	}
 	
+	@discardableResult
 	mutating public func addHeader(field: String, value: String) -> URLRequestBuilder {
 		headers[field] = value
 		return self
 	}
 	
+	@discardableResult
 	mutating public func setBody(_ body: Data) -> URLRequestBuilder {
 		self.body = body
 		return self
