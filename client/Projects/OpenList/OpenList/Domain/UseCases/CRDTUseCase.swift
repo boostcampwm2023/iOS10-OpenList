@@ -13,7 +13,10 @@ enum CRDTUseCaseError: Error {
 }
 
 protocol CRDTUseCase {
+	func fetchCheckList(id: UUID) async throws -> CheckList
 	func receive(data: Data) async throws -> CheckListItem
+	func itemChecked(at id: UUID) async throws -> CheckListItem
+	func begingEdit(at id: UUID) async throws -> CheckListItem
 	func insert(at editText: EditText) async throws -> CheckListItem
 	func delete(at editText: EditText) async throws -> CheckListItem
 	func appendDocument(at editText: EditText) async throws -> CheckListItem
@@ -32,6 +35,18 @@ final class DefaultCRDTUseCase {
 }
 
 extension DefaultCRDTUseCase: CRDTUseCase {
+	func fetchCheckList(id: UUID) async throws -> CheckList {
+		return .init(
+			id: id,
+			title: "Test",
+			createdAt: .now,
+			updatedAt: .now,
+			progress: 0,
+			orderBy: [],
+			items: []
+		)
+	}
+	
 	func receive(data: Data) async throws -> CheckListItem {
 		guard
 			let response = try? JSONDecoder().decode(CRDTResponseDTO.self, from: data),
@@ -45,6 +60,14 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		} else {
 			return try updateCheckListItem(to: id, message: response.data)
 		}
+	}
+	
+	func itemChecked(at id: UUID) async throws -> CheckListItem {
+		fatalError()
+	}
+	
+	func begingEdit(at id: UUID) async throws -> CheckListItem {
+		fatalError()
 	}
 	
 	func insert(at editText: EditText) async throws -> CheckListItem {
@@ -77,7 +100,14 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	}
 	
 	func removeDocument(at editText: EditText) async throws -> CheckListItem {
-		fatalError()
+		let operation = createOperation(at: editText, type: .delete, argument: editText.range.length)
+		let id = editText.id
+		let (item, message) = try updateCheckListItem(to: id, operation: operation)
+		try await updateRepository(id: id, message: message)
+		documentsId.remove(value: id)
+		documentDictionary.removeValue(forKey: id)
+		mergeDictionary.removeValue(forKey: id)
+		return item
 	}
 }
 

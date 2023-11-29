@@ -30,8 +30,12 @@ final class WithCheckListItem: UITableViewCell {
 	private let checkButton: CheckListItemButton = .init()
 	private let textField: CheckListItemTextField = .init()
 	private var indexPath: IndexPath?
-	private var cellId: UUID?
+	private(set) var cellId: UUID?
 	weak var delegate: WithCheckListItemDelegate?
+	
+	var content: String {
+		textField.text ?? ""
+	}
 	
 	// MARK: - Initializers
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

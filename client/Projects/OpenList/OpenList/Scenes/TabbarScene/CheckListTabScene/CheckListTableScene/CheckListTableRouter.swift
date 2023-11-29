@@ -42,7 +42,7 @@ final class CheckListTableRouter {
 // MARK: - RoutingLogic
 extension CheckListTableRouter: CheckListTableRoutingLogic {
 	func routeToDetailScene(with id: UUID) {
-		let detailCheckListViewControllable = detailCheckListViewFactory.make(with: "id")
+		let detailCheckListViewControllable = detailCheckListViewFactory.make(with: id)
 		self.detailCheckListViewControllable = detailCheckListViewControllable
 		viewController?.pushViewController(detailCheckListViewControllable, animated: true)
 	}

@@ -24,7 +24,7 @@ final class WithDetailCheckListComponent: Component<WithDetailCheckListDependenc
 }
 
 protocol WithDetailCheckListFactoryable: Factoryable {
-	func make(with title: String) -> ViewControllable
+	func make(with id: UUID) -> ViewControllable
 }
 
 final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependency>, WithDetailCheckListFactoryable {
@@ -32,11 +32,11 @@ final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependenc
 		super.init(parent: parent)
 	}
 	
-	func make(with title: String) -> ViewControllable {
+	func make(with id: UUID) -> ViewControllable {
 		let component = WithDetailCheckListComponent(parent: parent)
 		let router = WithDetailCheckListRouter()
 		let viewModel = WithDetailCheckListViewModel(
-			title: title,
+			id: id,
 			crdtUseCase: component.crdtUseCase
 		)
 		let viewController = WithDetailCheckListViewController(router: router, viewModel: viewModel)
