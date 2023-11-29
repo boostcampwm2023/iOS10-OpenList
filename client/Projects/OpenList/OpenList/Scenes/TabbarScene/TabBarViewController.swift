@@ -8,12 +8,12 @@
 import UIKit
 
 final class TabBarViewController: UITabBarController, ViewControllable {
-	private let checkListTabFactoryable: CheckListTableFactoryable
+	private let checkListTabFactoryable: CheckListTabFactoryable
 	private let addTabFactoryable: AddCheckListTitleFactoryable
 	private let recommendTabFactoryable: RecommendTabFactoryable
 	
 	init(
-		checkListTabFactoryable: CheckListTableFactoryable,
+		checkListTabFactoryable: CheckListTabFactoryable,
 		addTabFactoryable: AddCheckListTitleFactoryable,
 		recommendTabFactoryable: RecommendTabFactoryable
 	) {

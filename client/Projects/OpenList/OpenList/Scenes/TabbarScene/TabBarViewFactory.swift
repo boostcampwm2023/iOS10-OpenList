@@ -14,7 +14,7 @@ protocol TabBarDependency: Dependency {
 
 final class TabBarComponent:
 	Component<TabBarDependency>,
-	CheckListTableDependency,
+	CheckListTabDependency,
 	AddCheckListTitleDependency,
 	RecommendTabDependency {
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
