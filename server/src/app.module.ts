@@ -22,6 +22,7 @@ import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
 import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
     AuthModule,
     SharedChecklistsModule,
     ChecklistAiModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
