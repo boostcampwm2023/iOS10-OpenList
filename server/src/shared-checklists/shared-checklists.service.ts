@@ -20,6 +20,12 @@ export class SharedChecklistsService {
 
     private readonly usersService: UsersService,
   ) {}
+  /**
+   * 사용자 ID와 공유 체크리스트 데이터를 받아 새로운 공유 체크리스트를 생성한다.
+   * @param userId 사용자 식별자
+   * @param dto 공유 체크리스트 생성에 필요한 데이터 전송 객체
+   * @returns 생성된 공유 체크리스트 객체
+   */
   async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
     // 중복된 sharedChecklistId가 있는지 확인
     const checklistExists = await this.SharedChecklistsrepository.exist({
@@ -40,6 +46,12 @@ export class SharedChecklistsService {
     return this.SharedChecklistsrepository.save(newChecklist);
   }
 
+  /**
+   * 체크리스트 아이템 데이터와 체크리스트 ID를 받아 새로운 체크리스트 아이템을 생성한다.
+   * @param items 체크리스트 아이템의 메시지 배열
+   * @param checklistId 체크리스트 식별자
+   * @returns 생성된 체크리스트 아이템 객체
+   */
   async createSharedChecklistItem(items: string[], checklistId: string) {
     // 새 ChecklistItem 생성
     const newChecklistItem = this.SharedChecklistItemsrepository.create({
@@ -50,7 +62,13 @@ export class SharedChecklistsService {
     return this.SharedChecklistItemsrepository.save(newChecklistItem);
   }
 
-  async createSharedChecklistWithItems(
+  /**
+   * 사용자 ID와 공유 체크리스트 데이터를 받아 새로운 공유 체크리스트와 체크리스트 아이템을 함께 생성한다.
+   * @param userId 사용자 식별자
+   * @param dto 공유 체크리스트 생성에 필요한 데이터 전송 객체
+   * @returns 생성된 공유 체크리스트와 체크리스트 아이템 객체
+   */
+  async createSharedChecklistAndItems(
     userId: number,
     dto: CreateSharedChecklistDto,
   ) {
@@ -62,6 +80,11 @@ export class SharedChecklistsService {
     return { sharedChecklist, items };
   }
 
+  /**
+   * 사용자 ID를 기반으로 모든 공유 체크리스트를 조회한다.
+   * @param userId 사용자 식별자
+   * @returns 해당 사용자의 모든 공유 체크리스트 배열
+   */
   async findAllSharedChecklists(userId: number) {
     const checklistIdsArray =
       await this.findAllSharedChecklistIdsByUserId(userId);
@@ -75,6 +98,13 @@ export class SharedChecklistsService {
     return checklists;
   }
 
+  /**
+   * 공유 체크리스트 ID와 사용자 ID를 받아 해당 체크리스트와 체크리스트 아이템을 조회한다.
+   * @param sharedChecklistId 공유 체크리스트 식별자
+   * @param userId 사용자 식별자
+   * @param date 특정 날짜 이후의 체크리스트 아이템을 필터링하는 날짜 문자열 (선택적)
+   * @returns 조회된 공유 체크리스트와 체크리스트 아이템 객체
+   */
   async findSharedChecklistAndItemsById(
     sharedChecklistId: string,
     userId: number,
@@ -94,6 +124,11 @@ export class SharedChecklistsService {
     return { sharedChecklist, items };
   }
 
+  /**
+   * 공유 체크리스트 ID를 기반으로 공유 체크리스트를 조회한다.
+   * @param sharedChecklistId 공유 체크리스트 식별자
+   * @returns 조회된 공유 체크리스트 객체
+   */
   async findSharedChecklistById(sharedChecklistId: string) {
     const sharedChecklist = await this.SharedChecklistsrepository.findOne({
       where: { sharedChecklistId },
@@ -105,6 +140,12 @@ export class SharedChecklistsService {
     return sharedChecklist;
   }
 
+  /**
+   * 공유 체크리스트 ID를 기반으로 해당 체크리스트의 모든 아이템을 조회한다.
+   * @param sharedChecklistId 공유 체크리스트 식별자
+   * @param date 선택적 날짜 필터링 (이 날짜 이후의 아이템만 조회)
+   * @returns 조회된 체크리스트 아이템 배열
+   */
   async findSharedChecklistItemsById(sharedChecklistId: string, date?: string) {
     const queryOptions = {
       where: { sharedChecklist: { sharedChecklistId } },
@@ -126,6 +167,11 @@ export class SharedChecklistsService {
     return checklistItems;
   }
 
+  /**
+   * 사용자 ID를 기반으로 해당 사용자가 편집자로 있는 모든 공유 체크리스트 ID를 조회한다.
+   * @param userId 사용자 식별자
+   * @returns 해당 사용자가 편집자로 있는 공유 체크리스트 ID 배열
+   */
   async findAllSharedChecklistIdsByUserId(userId: number) {
     const checklistIdObjects = await this.entityManager.query(
       `SELECT "sharedChecklistModelSharedChecklistId" FROM shared_checklist_model_editors_user_model WHERE "userModelUserId" = $1`,
@@ -136,6 +182,12 @@ export class SharedChecklistsService {
     );
   }
 
+  /**
+   * 공유 체크리스트 ID와 사용자 ID를 기반으로 새로운 에디터를 해당 체크리스트에 추가한다.
+   * @param cid 공유 체크리스트 식별자
+   * @param userId 추가할 사용자 식별자
+   * @returns 추가 작업에 대한 메시지
+   */
   async addEditor(cid: string, userId: number) {
     const checklist = await this.findSharedChecklistById(cid);
     const editorExists = checklist.editors.some(
@@ -151,7 +203,13 @@ export class SharedChecklistsService {
     return { message: '추가되었습니다.' };
   }
 
-  async removeSharedChecklist(id: string, userId: number) {
+  /**
+   * 공유 체크리스트 ID와 사용자 ID를 기반으로 해당 체크리스트에서 사용자를 제거한다.
+   * @param id 공유 체크리스트 식별자
+   * @param userId 제거할 사용자 식별자
+   * @returns 제거 작업에 대한 메시지
+   */
+  async removeEditor(id: string, userId: number) {
     const checklist = await this.findSharedChecklistById(id);
     checklist.editors = checklist.editors.filter(
       (editor) => editor.userId !== userId,

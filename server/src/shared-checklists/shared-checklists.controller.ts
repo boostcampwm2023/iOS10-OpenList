@@ -26,7 +26,7 @@ export class SharedChecklistsController {
     @UserId() userId: number,
     @Body() createSharedChecklistDto: CreateSharedChecklistDto,
   ) {
-    return this.checklistsService.createSharedChecklistWithItems(
+    return this.checklistsService.createSharedChecklistAndItems(
       userId,
       createSharedChecklistDto,
     );
@@ -80,6 +80,6 @@ export class SharedChecklistsController {
    */
   @Delete(':checklistId')
   deleteChecklist(@Param('checklistId') cid: string, @UserId() userId: number) {
-    return this.checklistsService.removeSharedChecklist(cid, userId);
+    return this.checklistsService.removeEditor(cid, userId);
   }
 }
