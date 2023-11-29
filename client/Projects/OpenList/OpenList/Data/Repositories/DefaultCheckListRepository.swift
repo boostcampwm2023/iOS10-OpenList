@@ -67,4 +67,8 @@ extension DefaultCheckListRepository: CheckListRepository {
 	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws {
 		return try await checkListStorage.removeCheckListItem(id: id, item: item, orderBy: orderBy)
 	}
+	
+	func transfromToWith(id: UUID) async throws {
+		return try await checkListStorage.transfromToWith(id: id)
+	}
 }

@@ -15,4 +15,5 @@ protocol PrivateCheckListStorage {
 	func appendCheckListItem(id: UUID, item: CheckListItem) async throws
 	func updateCheckListItem(id: UUID, item: CheckListItem) async throws
 	func removeCheckListItem(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws
+	func transfromToWith(id: UUID) async throws
 }

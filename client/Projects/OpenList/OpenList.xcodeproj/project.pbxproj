@@ -546,10 +546,10 @@
 		5F9348F92B16DF4600282545 /* SharedCheckListScene */ = {
 			isa = PBXGroup;
 			children = (
+				5F9348FD2B16DF4600282545 /* View */,
 				5F9348FA2B16DF4600282545 /* SharedCheckListAction.swift */,
 				5F9348FB2B16DF4600282545 /* SharedCheckListViewController.swift */,
 				5F9348FC2B16DF4600282545 /* SharedCheckListRouter.swift */,
-				5F9348FD2B16DF4600282545 /* View */,
 				5F9348FF2B16DF4600282545 /* SharedCheckListViewFactory.swift */,
 				5F9349002B16DF4600282545 /* SharedCheckListViewModel.swift */,
 			);
@@ -567,9 +567,9 @@
 		5F93490D2B16DF5500282545 /* CheckListFolderScene */ = {
 			isa = PBXGroup;
 			children = (
+				5F9349102B16DF5500282545 /* View */,
 				5F93490E2B16DF5500282545 /* CheckListFolderViewFactory.swift */,
 				5F93490F2B16DF5500282545 /* CheckListFolderRouter.swift */,
-				5F9349102B16DF5500282545 /* View */,
 				5F9349122B16DF5500282545 /* CheckListFolderViewModel.swift */,
 				5F9349132B16DF5500282545 /* CheckListFolderAction.swift */,
 				5F9349142B16DF5500282545 /* CheckListFolderViewController.swift */,

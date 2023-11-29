@@ -12,10 +12,12 @@ struct PrivateDetailCheckListInput {
 	let append: PassthroughSubject<CheckListItem, Never>
 	let update: PassthroughSubject<CheckListItem, Never>
 	let remove: PassthroughSubject<CheckListItem, Never>
+	let transformWith: PassthroughSubject<Void, Never>
 }
 
 enum PrivateDetailCheckListState {
 	case error(Error)
 	case viewLoad(CheckList)
 	case updateItem(CheckListItem)
+	case dismiss
 }
