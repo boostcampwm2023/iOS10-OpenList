@@ -1,4 +1,4 @@
-export const categories = {
+export const CATEGORIES = {
   mainCategory: [
     {
       id: 1,
