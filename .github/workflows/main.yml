@@ -37,6 +37,9 @@ jobs:
           KID=${{ secrets.KID }}
           ISS=${{ secrets.ISS }}
           AUTHKEY=${{ secrets.AUTHKEY }}
+          X_NCP_CLOVASTUDIO_API_KEY=${{ secrets.X_NCP_CLOVASTUDIO_API_KEY }}
+          X_NCP_APIGW_API_KEY=${{ secrets.X_NCP_APIGW_API_KEY }}
+          X_NCP_CLOVASTUDIO_REQUEST_ID=${{ secrets.X_NCP_CLOVASTUDIO_REQUEST_ID }}
           EOF
       # .p8 파일 생성
       - name: Generate .p8 file
