@@ -299,6 +299,7 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
+		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool {
 		guard let text = textField.text else { return true }
@@ -311,6 +312,9 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 			insert.send(.init(id: cellId, content: string, range: range))
 		case 1:
 			delete.send(.init(id: cellId, content: string, range: range))
+			if updatedText.isEmpty {
+				dataSource?.deleteCheckListItem(at: indexPath)
+			}
 		default:
 			return false
 		}

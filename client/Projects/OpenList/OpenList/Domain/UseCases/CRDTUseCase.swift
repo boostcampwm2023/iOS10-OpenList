@@ -24,7 +24,6 @@ final class DefaultCRDTUseCase {
 	private let crdtRepository: CRDTRepository
 	private var documentDictionary: [UUID: RGASDocument<String>] = [:]
 	private var mergeDictionary: [UUID: RGASMerge<String>] = [:]
-	private var checkList: [CheckListItem] = []
 	private var documentsId: LinkedList<UUID> = .init()
 	
 	init(crdtRepository: CRDTRepository) {
@@ -40,7 +39,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			throw CRDTUseCaseError.sendMyself
 		}
 		
-		let id = response.documentNode.value
+		let id = response.id
 		if documentsId.searchNode(from: id) == nil {
 			return try appendCheckListItem(to: id, message: response.data)
 		} else {
@@ -51,35 +50,29 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	func insert(at editText: EditText) async throws -> CheckListItem {
 		let operation = createOperation(at: editText, type: .insert, argument: 0)
 		let id = editText.id
-		guard let documentNode = documentsId.searchNode(from: id) else {
-			throw CRDTUseCaseError.docmuentNotFound
-		}
 		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(documentNode: documentNode, message: message)
+		try await updateRepository(id: id, message: message)
 		return item
 	}
 	
 	func delete(at editText: EditText) async throws -> CheckListItem {
 		let operation = createOperation(at: editText, type: .delete, argument: 1)
 		let id = editText.id
-		guard let documentNode = documentsId.searchNode(from: id) else {
-			throw CRDTUseCaseError.docmuentNotFound
-		}
 		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(documentNode: documentNode, message: message)
-		print(message)
+		try await updateRepository(id: id, message: message)
+		if item.title.isEmpty {
+			documentsId.remove(value: id)
+			documentDictionary.removeValue(forKey: id)
+			mergeDictionary.removeValue(forKey: id)
+		}
 		return item
 	}
 	
 	func appendDocument(at editText: EditText) async throws -> CheckListItem {
 		let operation = createOperation(at: editText, type: .insert, argument: 0)
 		let id = editText.id
-		documentsId.append(value: id)
-		guard let documentNode = documentsId.searchNode(from: id) else {
-			throw CRDTUseCaseError.docmuentNotFound
-		}
 		let (item, message) = try appendCheckListItem(to: id, operation: operation)
-		try await updateRepository(documentNode: documentNode, message: message)
+		try await updateRepository(id: id, message: message)
 		return item
 	}
 	
@@ -174,8 +167,8 @@ private extension DefaultCRDTUseCase {
 		)
 	}
 	
-	func updateRepository(documentNode: LinkedListNode<UUID>, message: CRDTMessage) async throws {
-		try crdtRepository.send(documentNode: documentNode, message: message)
+	func updateRepository(id: UUID, message: CRDTMessage) async throws {
+		try crdtRepository.send(id: id, message: message)
 		try await crdtRepository.save(message: message)
 	}
 }

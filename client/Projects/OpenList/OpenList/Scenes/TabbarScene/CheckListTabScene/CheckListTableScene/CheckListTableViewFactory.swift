@@ -16,7 +16,7 @@ protocol CheckListTableDependency: Dependency {
 
 final class CheckListTableComponent:
 	Component<CheckListTableDependency>,
-	PrivateDetailCheckListDependency {
+	WithDetailCheckListDependency {
 	var checkListRepository: CheckListRepository {
 		return parent.checkListRepository
 	}
@@ -25,8 +25,8 @@ final class CheckListTableComponent:
 		return parent.persistenceUseCase
 	}
 	
-	fileprivate var detailCheckListFactoryable: PrivateDetailCheckListFactoryable {
-		return PrivateDetailCheckListViewFactory(parent: self)
+	fileprivate var detailCheckListFactoryable: WithDetailCheckListFactoryable {
+		return WithDetailCheckListViewFactory(parent: self)
 	}
 	
 	fileprivate var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
