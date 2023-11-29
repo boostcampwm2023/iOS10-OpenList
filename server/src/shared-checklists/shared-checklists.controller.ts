@@ -43,23 +43,23 @@ export class SharedChecklistsController {
 
   /**
    * @description checklistId를 통해 해당 checklist를 조회합니다.
-   * @param {number} cid
+   * @param {string} cid
    * @returns {Promise<SharedChecklistModel>}
    */
   @Get(':checklistId')
-  getSharedChecklist(@Param('checklistId') cid: number) {
+  getSharedChecklist(@Param('checklistId') cid: string) {
     return this.checklistsService.findSharedChecklistById(cid);
   }
 
   /**
    * @description checklistId를 통해 해당 checklist의 title을 수정합니다.
-   * @param {number} cid
+   * @param {string} cid
    * @param {UpdateSharedChecklistDto} updateChecklistDto
    * @returns {Promise<SharedChecklistModel>}
    */
   @Put(':checklistId')
   updateSharedChecklist(
-    @Param('checklistId') cid: number,
+    @Param('checklistId') cid: string,
     @Body() updateChecklistDto: UpdateSharedChecklistDto,
   ) {
     return this.checklistsService.updateSharedChecklist(
@@ -70,11 +70,11 @@ export class SharedChecklistsController {
 
   /**
    * @description checklistId를 통해 해당 checklist를 삭제합니다.
-   * @param {number} cid
+   * @param {string} cid
    * @returns {Promise<message:string>}
    */
   @Delete(':checklistId')
-  deleteChecklist(@Param('checklistId') cid: number) {
+  deleteChecklist(@Param('checklistId') cid: string) {
     return this.checklistsService.removeSharedChecklist(cid);
   }
 }

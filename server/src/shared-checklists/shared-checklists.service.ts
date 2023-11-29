@@ -45,7 +45,7 @@ export class SharedChecklistsService {
     return checklists;
   }
 
-  async findSharedChecklistById(sharedChecklistId: number) {
+  async findSharedChecklistById(sharedChecklistId: string) {
     const checklist = await this.repository.findOne({
       where: { sharedChecklistId },
     });
@@ -55,7 +55,7 @@ export class SharedChecklistsService {
     return checklist;
   }
 
-  async updateSharedChecklist(id: number, dto: UpdateSharedChecklistDto) {
+  async updateSharedChecklist(id: string, dto: UpdateSharedChecklistDto) {
     const { title, editorsId } = dto;
     const checklist = await this.findSharedChecklistById(id);
     if (!checklist) {
@@ -77,7 +77,7 @@ export class SharedChecklistsService {
     return newChecklist;
   }
 
-  async removeSharedChecklist(id: number) {
+  async removeSharedChecklist(id: string) {
     const checklist = await this.findSharedChecklistById(id);
 
     // soft-delete 방식으로 수정필요
