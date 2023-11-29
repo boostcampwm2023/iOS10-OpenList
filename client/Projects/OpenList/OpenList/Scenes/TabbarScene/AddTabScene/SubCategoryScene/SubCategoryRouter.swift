@@ -12,4 +12,16 @@ final class SubCategoryRouter {
 }
 
 // MARK: - RoutingLogic
-extension SubCategoryRouter: SubCategoryRoutingLogic {}
+extension SubCategoryRouter: SubCategoryRoutingLogic {
+	func routeToMainCategoryView() {
+		viewController?.popViewController(animated: true)
+	}
+	
+	func routeToMinorCategoryView(with subCategory: String) {
+		dump("다음 뷰로 이동")
+	}
+	
+	func routeToConfirmView() {
+		dump("AI 추천 마지막 뷰로 이동")
+	}
+}

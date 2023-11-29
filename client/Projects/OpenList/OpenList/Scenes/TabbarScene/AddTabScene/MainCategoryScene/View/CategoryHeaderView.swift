@@ -13,8 +13,8 @@ final class CategoryHeaderView: UICollectionReusableView {
 	
 	enum Category: String {
 		case main = "대 카테고리"
-		case medium = "중 카테고리"
-		case sub = "소 카테고리"
+		case sub = "중 카테고리"
+		case minor = "소 카테고리"
 	}
 
 	private let categoryLabel: UILabel = .init()

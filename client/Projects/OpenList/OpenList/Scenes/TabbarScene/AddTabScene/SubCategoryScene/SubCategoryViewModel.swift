@@ -15,7 +15,6 @@ Output == AnyPublisher<State, Never> { }
 final class SubCategoryViewModel {
 	private let majorCategoryTitle: String
 	private var subCategoryTitle: String = ""
-	private var cancellables: Set<AnyCancellable> = []
 	
 	init(majorCategoryTitle: String) {
 		self.majorCategoryTitle = majorCategoryTitle
@@ -26,10 +25,11 @@ extension SubCategoryViewModel: SubCategoryViewModelable {
   func transform(_ input: Input) -> Output {
 		let viewLoad = viewLoad(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
-		collectionViewCellDidSelect(input)
+		let collectionViewCellDidSelect = collectionViewCellDidSelect(input)
     return Publishers.MergeMany([
 			viewLoad,
-			nextButtonDidTap
+			nextButtonDidTap,
+			collectionViewCellDidSelect
     ]).eraseToAnyPublisher()
   }
 }
@@ -55,12 +55,12 @@ private extension SubCategoryViewModel {
 			}.eraseToAnyPublisher()
 	}
 	
-	func collectionViewCellDidSelect(_ input: Input) {
+	func collectionViewCellDidSelect(_ input: Input) -> Output {
 		input.collectionViewCellDidSelect
 			.withUnretained(self)
-			.sink { (owner, text) in
+			.map { (owner, text) in
 				owner.subCategoryTitle = text
-			}
-			.store(in: &cancellables)
+				return .none
+			}.eraseToAnyPublisher()
 	}
 }

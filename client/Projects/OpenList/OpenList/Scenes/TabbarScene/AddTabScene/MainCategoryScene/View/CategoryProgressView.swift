@@ -9,8 +9,8 @@ import UIKit
 
 enum Progress {
 	case main
-	case medium
 	case sub
+	case minor
 }
 
 final class CategoryProgressView: UIView {
@@ -27,12 +27,12 @@ final class CategoryProgressView: UIView {
 		case .main:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()
-		case .medium:
+		case .sub:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()
 			gradientCircleSecond.activates()
 			gradientStickSecond.activates()
-		case .sub:
+		case .minor:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()
 			gradientCircleSecond.activates()
