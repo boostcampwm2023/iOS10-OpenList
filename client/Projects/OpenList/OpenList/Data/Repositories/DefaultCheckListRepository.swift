@@ -32,7 +32,7 @@ extension DefaultCheckListRepository: CheckListRepository {
 			return CheckListTableItem(
 				id: $0.checklistId,
 				title: $0.title,
-				achievementRate: achievementRate
+				achievementRate: Double($0.progress) / Double($0.items.count)
 			)
 		}
 	}
