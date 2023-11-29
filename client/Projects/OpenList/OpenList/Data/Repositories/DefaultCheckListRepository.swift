@@ -28,7 +28,6 @@ extension DefaultCheckListRepository: CheckListRepository {
 	func fetchAllCheckList() async throws -> [CheckListTableItem] {
 		let result = try await checkListStorage.fetchAllCheckList()
 		return result.map {
-			let achievementRate = ($0.items.isEmpty ? 0 : Double($0.progress) / Double($0.items.count))
 			return CheckListTableItem(
 				id: $0.checklistId,
 				title: $0.title,
