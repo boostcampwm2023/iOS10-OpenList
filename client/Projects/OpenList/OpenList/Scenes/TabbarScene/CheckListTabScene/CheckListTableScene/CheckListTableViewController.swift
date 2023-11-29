@@ -94,7 +94,7 @@ extension CheckListTableViewController: ViewBindable {
 private extension CheckListTableViewController {
 	func reload(items: [CheckListTableItem]) {
 		guard var snapshot = dataSource?.snapshot() else { return }
-		var previousProducts = snapshot.itemIdentifiers(inSection: .main)
+		let previousProducts = snapshot.itemIdentifiers(inSection: .main)
 		snapshot.deleteItems(previousProducts)
 		snapshot.appendItems(items, toSection: .main)
 		dataSource?.apply(snapshot, animatingDifferences: true)
