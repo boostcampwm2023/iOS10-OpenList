@@ -65,6 +65,7 @@
 		5F70C84F2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84E2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift */; };
 		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
 		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
+		5F8F5FC22B1772CA001F7978 /* CheckListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */; };
 		5F9349012B16DF4600282545 /* SharedCheckListAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9348FA2B16DF4600282545 /* SharedCheckListAction.swift */; };
 		5F9349022B16DF4600282545 /* SharedCheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9348FB2B16DF4600282545 /* SharedCheckListViewController.swift */; };
 		5F9349032B16DF4600282545 /* SharedCheckListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9348FC2B16DF4600282545 /* SharedCheckListRouter.swift */; };
@@ -214,6 +215,7 @@
 		5F833AFB2B0E075C007EDD45 /* CRDT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CRDT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8615DF2B02249C00CF2686 /* ViewModelable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelable.swift; sourceTree = "<group>"; };
 		5F8615E12B0224E100CF2686 /* ViewBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBindable.swift; sourceTree = "<group>"; };
+		5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListEmptyView.swift; sourceTree = "<group>"; };
 		5F9348FA2B16DF4600282545 /* SharedCheckListAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedCheckListAction.swift; sourceTree = "<group>"; };
 		5F9348FB2B16DF4600282545 /* SharedCheckListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedCheckListViewController.swift; sourceTree = "<group>"; };
 		5F9348FC2B16DF4600282545 /* SharedCheckListRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedCheckListRouter.swift; sourceTree = "<group>"; };
@@ -793,6 +795,7 @@
 				78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */,
 				5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */,
 				5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */,
+				5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1001,6 +1004,7 @@
 				5F9349172B16DF5500282545 /* CheckListFolderCell.swift in Sources */,
 				5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */,
 				5F9349222B16E03400282545 /* PrivateDetailCheckListRouter.swift in Sources */,
+				5F8F5FC22B1772CA001F7978 /* CheckListEmptyView.swift in Sources */,
 				4DDC43262B0F0FAB00859B28 /* CRDTUseCase.swift in Sources */,
 				4DD97D9E2B14D56B00DF73BC /* CheckList.swift in Sources */,
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,

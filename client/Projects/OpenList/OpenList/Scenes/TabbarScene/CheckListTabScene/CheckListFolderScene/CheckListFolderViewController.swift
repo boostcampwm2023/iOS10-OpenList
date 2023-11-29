@@ -22,6 +22,7 @@ final class CheckListFolderViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
 	private let folderView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var folderViewDataSource: UICollectionViewDiffableDataSource<Section, CheckListFolderItem>?
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
 	
 	// MARK: - Initializers
 	init(
@@ -68,6 +69,7 @@ private extension CheckListFolderViewController {
 	}
 	
 	func setViewAttributes() {
+		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
 		folderView.translatesAutoresizingMaskIntoConstraints = false
 		folderView.registerCell(CheckListFolderCell.self)
 		folderView.collectionViewLayout = makeFolderViewLayout()
@@ -84,9 +86,15 @@ private extension CheckListFolderViewController {
 	
 	func setViewHierarchies() {
 		view.addSubview(folderView)
+		view.addSubview(checkListEmptyView)
 	}
 	
 	func setViewConstraints() {
+		checkListEmptyView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+		checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		
 		folderView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 		folderView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		folderView.bottomAnchor.constraint(

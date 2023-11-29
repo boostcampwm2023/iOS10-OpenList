@@ -26,6 +26,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withTab)
 	private var cancellables: Set<AnyCancellable> = []
 	
 	// MARK: - Initializers
@@ -92,6 +93,7 @@ extension CheckListTableViewController: ViewBindable {
 // MARK: Helper
 private extension CheckListTableViewController {
 	func reload(items: [CheckListTableItem]) {
+		checkListEmptyView.isHidden = !items.isEmpty
 		guard var snapshot = dataSource?.snapshot() else { return }
 		let previousProducts = snapshot.itemIdentifiers(inSection: .main)
 		snapshot.deleteItems(previousProducts)
@@ -113,13 +115,20 @@ private extension CheckListTableViewController {
 		snapshot.appendSections([.main])
 		dataSource?.apply(snapshot)
 		collectionView.delegate = self
+		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
 	func setViewHierarchies() {
 		view.addSubview(collectionView)
+		view.addSubview(checkListEmptyView)
 	}
 	
 	func setConstraints() {
+		checkListEmptyView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+		checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		
 		collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 		collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		collectionView.bottomAnchor.constraint(
