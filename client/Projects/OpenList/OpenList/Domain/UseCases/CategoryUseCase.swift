@@ -10,7 +10,10 @@ import Foundation
 protocol CategoryUseCase {
 	func fetchMainCategory() async -> Result<[CategoryItem], Error>
 	func fetchSubCategory(with mainCategory: CategoryItem) async -> Result<[CategoryItem], Error>
-	func fetchMinorCategory(with mainCategory: CategoryItem, subCategory: CategoryItem) async -> Result<[CategoryItem], Error>
+	func fetchMinorCategory(
+		with mainCategory: CategoryItem,
+		subCategory: CategoryItem
+	) async -> Result<[CategoryItem], Error>
 	func fetchRecommendCheckList(with categoryInfo: CategoryInfo) async -> Result<[RecommendChecklistItem], Error>
 }
 
@@ -41,7 +44,10 @@ extension DefaultCategoryUseCase: CategoryUseCase {
 		}
 	}
 	
-	func fetchMinorCategory(with mainCategory: CategoryItem, subCategory: CategoryItem) async -> Result<[CategoryItem], Error> {
+	func fetchMinorCategory(
+		with mainCategory: CategoryItem,
+		subCategory: CategoryItem
+	) async -> Result<[CategoryItem], Error> {
 		do {
 			let items = try await categoryRepository.fetchMinorCategory(with: mainCategory, subCategory: subCategory)
 			return .success(items)

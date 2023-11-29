@@ -22,7 +22,7 @@ final class SubCategoryComponent: Component<SubCategoryDependency>, MinorCategor
 }
 
 protocol SubCategoryFactoryable: Factoryable {
-	func make(with category: CategoryItem) -> ViewControllable
+	func make(_ title: String, _ mainCategory: CategoryItem) -> ViewControllable
 }
 
 final class SubCategoryViewFactory: Factory<SubCategoryDependency>, SubCategoryFactoryable {
@@ -30,11 +30,12 @@ final class SubCategoryViewFactory: Factory<SubCategoryDependency>, SubCategoryF
 		super.init(parent: parent)
 	}
 	
-	func make(with category: CategoryItem) -> ViewControllable {
+	func make(_ title: String, _ mainCategory: CategoryItem) -> ViewControllable {
 		let component = SubCategoryComponent(parent: parent)
 		let router = SubCategoryRouter(minorCategoryFactory: component.minorCategoryFactory)
 		let viewModel = SubCategoryViewModel(
-			mainCategoryItem: category,
+			title: title,
+			mainCategoryItem: mainCategory,
 			categoryUseCase: parent.categoryUseCase
 		)
 		let viewController = SubCategoryViewController(router: router, viewModel: viewModel)

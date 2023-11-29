@@ -52,11 +52,11 @@ private extension MainCategoryViewModel {
 			}
 			.map { [weak self] result in
 				switch result {
-					case let .success(items):
-						self?.mainCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
-						return .load(items)
-					case let .failure(error):
-						return .error(error)
+				case let .success(items):
+					self?.mainCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
+					return .load(items)
+				case let .failure(error):
+					return .error(error)
 				}
 			}.eraseToAnyPublisher()
 	}
@@ -66,7 +66,7 @@ private extension MainCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				guard let categoryItem = owner.mainCategoryItems[owner.categoryText] else { return .none }
-				return .routeToNext(categoryItem)
+				return .routeToNext(owner.title, categoryItem)
 			}.eraseToAnyPublisher()
 	}
 	

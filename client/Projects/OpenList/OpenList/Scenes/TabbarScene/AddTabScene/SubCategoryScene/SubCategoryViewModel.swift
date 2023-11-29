@@ -13,15 +13,18 @@ State == SubCategoryState,
 Output == AnyPublisher<State, Never> { }
 
 final class SubCategoryViewModel {
+	private let title: String
 	private var mainCategoryItem: CategoryItem
 	private var subCategoryTitle: String = ""
 	private var subCategoryItems: [String: CategoryItem] = [:]
 	private let categoryUseCase: CategoryUseCase
 	
 	init(
+		title: String,
 		mainCategoryItem: CategoryItem,
 		categoryUseCase: CategoryUseCase
 	) {
+		self.title = title
 		self.mainCategoryItem = mainCategoryItem
 		self.categoryUseCase = categoryUseCase
 	}
@@ -52,11 +55,11 @@ private extension SubCategoryViewModel {
 			}
 			.map { [weak self] result in
 				switch result {
-					case let .success(items):
-						self?.subCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
-						return .load(items)
-					case let .failure(error):
-						return .error(error)
+				case let .success(items):
+					self?.subCategoryItems = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0) })
+					return .load(items)
+				case let .failure(error):
+					return .error(error)
 				}
 			}.eraseToAnyPublisher()
 	}
@@ -66,7 +69,7 @@ private extension SubCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				guard let subCategoryItem = owner.subCategoryItems[owner.subCategoryTitle] else { return .none }
-				return .routeToNext(owner.mainCategoryItem, subCategoryItem)
+				return .routeToNext(owner.title, owner.mainCategoryItem, subCategoryItem)
 			}.eraseToAnyPublisher()
 	}
 	

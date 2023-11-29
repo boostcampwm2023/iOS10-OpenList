@@ -14,16 +14,19 @@ where Input == MinorCategoryInput,
 	Output == AnyPublisher<State, Never> { }
 
 final class MinorCategoryViewModel {
+	private let title: String
 	private let mainCategoryItem: CategoryItem
 	private let subCategoryItem: CategoryItem
 	private let categoryUseCase: CategoryUseCase
 	private var minorCategoryTitle: String = ""
 	
 	init(
+		title: String,
 		mainCategory: CategoryItem,
-		subCategory: CategoryItem, 
+		subCategory: CategoryItem,
 		categoryUseCase: CategoryUseCase
 	) {
+		self.title = title
 		self.mainCategoryItem = mainCategory
 		self.subCategoryItem = subCategory
 		self.categoryUseCase = categoryUseCase
@@ -39,7 +42,7 @@ extension MinorCategoryViewModel: MinorCategoryViewModelable {
 			viewLoad,
 			nextButtonDidTap,
 			collectionViewCellDidSelect
-    ]).eraseToAnyPublisher()
+		]).eraseToAnyPublisher()
   }
 }
 
@@ -58,10 +61,10 @@ private extension MinorCategoryViewModel {
 			}
 			.map { result in
 				switch result {
-					case let .success(items):
-						return .load(items)
-					case let .failure(error):
-						return .error(error)
+				case let .success(items):
+					return .load(items)
+				case let .failure(error):
+					return .error(error)
 				}
 			}.eraseToAnyPublisher()
 	}
@@ -71,6 +74,7 @@ private extension MinorCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				let categoryInfo = CategoryInfo(
+					title: owner.title,
 					mainCategory: owner.mainCategoryItem.name,
 					subCategory: owner.subCategoryItem.name,
 					minorCategory: owner.minorCategoryTitle

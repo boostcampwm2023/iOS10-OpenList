@@ -29,8 +29,8 @@ extension SubCategoryRouter: SubCategoryRoutingLogic {
 		viewController?.popViewController(animated: true)
 	}
 	
-	func routeToMinorCategoryView(_ mainCategory: CategoryItem, _ subCategory: CategoryItem) {
-		let minorCategoryViewControllable = minorCategoryFactory.make(mainCategory, subCategory)
+	func routeToMinorCategoryView(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem) {
+		let minorCategoryViewControllable = minorCategoryFactory.make(title, mainCategory, subCategory)
 		viewController?.pushViewController(minorCategoryViewControllable, animated: true)
 	}
 	

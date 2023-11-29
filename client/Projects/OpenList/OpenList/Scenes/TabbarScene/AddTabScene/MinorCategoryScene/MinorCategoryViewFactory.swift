@@ -14,7 +14,7 @@ protocol MinorCategoryDependency: Dependency {
 final class MinorCategoryComponent: Component<MinorCategoryDependency> {}
 
 protocol MinorCategoryFactoryable: Factoryable {
-	func make(_ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable
+	func make(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable
 }
 
 final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCategoryFactoryable {
@@ -22,9 +22,10 @@ final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCat
 		super.init(parent: parent)
 	}
 	
-	func make(_ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable {
+	func make(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable {
 		let router = MinorCategoryRouter()
 		let viewModel = MinorCategoryViewModel(
+			title: title,
 			mainCategory: mainCategory,
 			subCategory: subCategory,
 			categoryUseCase: parent.categoryUseCase

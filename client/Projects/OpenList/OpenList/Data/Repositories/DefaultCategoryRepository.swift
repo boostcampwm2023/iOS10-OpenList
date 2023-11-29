@@ -63,7 +63,9 @@ extension DefaultCategoryRepository: CategoryRepository {
 		return minorCategories
 	}
 	
-	func fetchRecommendCheckList(with categoryRequestDTO: CategoryInfoRequestDTO) async throws -> [RecommendChecklistItem] {
+	func fetchRecommendCheckList(
+		with categoryRequestDTO: CategoryInfoRequestDTO
+	) async throws -> [RecommendChecklistItem] {
 		var builder = URLRequestBuilder(url: Constant.aiBaseUrl)
 		builder.addHeader(
 			field: "Content-Type",

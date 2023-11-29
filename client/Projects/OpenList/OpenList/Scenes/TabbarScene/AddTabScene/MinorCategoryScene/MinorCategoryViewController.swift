@@ -85,7 +85,7 @@ extension MinorCategoryViewController: ViewBindable {
 		case .error(let error):
 			handleError(error)
 		case .load(let categories):
-				reload(categories: categories.map { $0.name })
+			reload(categories: categories.map { $0.name })
 		case .routeToNext(let categoryInfo):
 			router.routeToConfirmView(categoryInfo: categoryInfo)
 		case .none:

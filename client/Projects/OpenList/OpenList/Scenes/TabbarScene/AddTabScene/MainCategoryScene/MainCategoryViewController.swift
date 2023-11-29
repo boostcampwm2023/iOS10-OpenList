@@ -10,7 +10,7 @@ import UIKit
 
 protocol MainCategoryRoutingLogic: AnyObject {
 	func routeToTitleView()
-	func routeToSubCategoryView(with mainCategory: CategoryItem)
+	func routeToSubCategoryView(_ title: String, _ mainCategory: CategoryItem)
 	func routeToConfirmView()
 }
 
@@ -88,9 +88,9 @@ extension MainCategoryViewController: ViewBindable {
 		case .error(let error):
 			handleError(error)
 		case .load(let categories):
-			reload(categories: categories.map { $0.name } )
-		case .routeToNext(let category):
-			router.routeToSubCategoryView(with: category)
+			reload(categories: categories.map { $0.name })
+		case .routeToNext(let title, let category):
+			router.routeToSubCategoryView(title, category)
 		case .none:
 			break
 		}

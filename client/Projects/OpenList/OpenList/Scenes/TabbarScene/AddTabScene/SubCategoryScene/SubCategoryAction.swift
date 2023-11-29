@@ -16,6 +16,6 @@ struct SubCategoryInput {
 enum SubCategoryState {
 	case error(_ error: Error)
 	case load(_ category: [CategoryItem])
-	case routeToNext(_ mainCategory: CategoryItem, _ subCategory: CategoryItem)
+	case routeToNext(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem)
 	case none
 }

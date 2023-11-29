@@ -6,8 +6,8 @@
 //
 
 import Combine
-import Foundation
 import CustomNetwork
+import Foundation
 
 protocol TabBarDependency: Dependency {
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
