@@ -26,14 +26,14 @@ export class SharedChecklistsService {
     }
 
     // 2. editorsId를 통해 해당 유저들이 존재하는지 확인하고 가져옵니다.
-    const editors = await Promise.all(
-      dto.editorsId.map((id) => this.usersService.findUserById(id)),
-    );
+    // const editors = await Promise.all(
+    //   dto.editorsId.map((id) => this.usersService.findUserById(id)),
+    // );
 
     // 3. 새로운 checklist를 생성합니다.
     const newChecklist = this.repository.create({
       title: dto.title,
-      editors,
+      // editors,
     });
 
     // 4. 생성된 checklist를 저장하고, 해당 checklist를 반환합니다.
