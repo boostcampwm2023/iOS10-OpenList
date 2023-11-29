@@ -70,6 +70,7 @@ extension MinorCategoryViewController: ViewBindable {
 		let input = MinorCategoryInput(
 			viewLoad: viewLoad,
 			nextButtonDidTap: nextButton.tapPublisher,
+			skipButtonDidTap: skipButton.tapPublisher,
 			collectionViewCellDidSelect: collectionViewCellDidSelect
 		)
 		let output = viewModel.transform(input)
@@ -102,10 +103,6 @@ private extension MinorCategoryViewController {
 		guard var snapshot = dataSource?.snapshot() else { return }
 		snapshot.appendItems(categories, toSection: .category)
 		dataSource?.apply(snapshot, animatingDifferences: true)
-	}
-	
-	@objc func skipButtonDidTap() {
-//		router.routeToConfirmView(categoryInfo: /*nil*/)
 	}
 }
 
@@ -206,7 +203,7 @@ private extension MinorCategoryViewController {
 				for: indexPath
 			) as? CategoryHeaderView else { return nil }
 			
-			headerView.configure(.sub)
+			headerView.configure(.minor)
 			
 			return headerView
 		}
@@ -215,7 +212,6 @@ private extension MinorCategoryViewController {
 	
 	func setSkipButton() {
 		skipButton.configureAsSkipButton(title: "건너뛰기")
-		skipButton.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
 	}
 	
 	func setNextButton() {

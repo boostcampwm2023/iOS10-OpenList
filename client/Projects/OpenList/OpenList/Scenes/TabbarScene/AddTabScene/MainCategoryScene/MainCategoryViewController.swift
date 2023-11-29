@@ -11,7 +11,7 @@ import UIKit
 protocol MainCategoryRoutingLogic: AnyObject {
 	func routeToTitleView()
 	func routeToSubCategoryView(_ title: String, _ mainCategory: CategoryItem)
-	func routeToConfirmView()
+	func routeToConfirmView(_ categoryInfo: CategoryInfo)
 }
 
 final class MainCategoryViewController: UIViewController, ViewControllable {
@@ -72,6 +72,7 @@ extension MainCategoryViewController: ViewBindable {
 		let input = MainCategoryInput(
 			viewLoad: viewLoad,
 			nextButtonDidTap: nextButton.tapPublisher,
+			skipButtonDidTap: skipButton.tapPublisher,
 			collectionViewCellDidSelect: collectionViewCellDidSelect
 		)
 		let output = viewModel.transform(input)
@@ -91,6 +92,8 @@ extension MainCategoryViewController: ViewBindable {
 			reload(categories: categories.map { $0.name })
 		case .routeToNext(let title, let category):
 			router.routeToSubCategoryView(title, category)
+		case .routeToLast(let categoryInfo):
+			router.routeToConfirmView(categoryInfo)
 		case .none:
 			break
 		}
@@ -106,10 +109,6 @@ private extension MainCategoryViewController {
 		guard var snapshot = dataSource?.snapshot() else { return }
 		snapshot.appendItems(categories, toSection: .category)
 		dataSource?.apply(snapshot, animatingDifferences: true)
-	}
-	
-	@objc func skipButtonDidTap() {
-		router.routeToConfirmView()
 	}
 }
 
@@ -219,7 +218,6 @@ private extension MainCategoryViewController {
 
 	func setSkipButton() {
 		skipButton.configureAsSkipButton(title: "건너뛰기")
-		skipButton.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
 	}
 	
 	func setNextButton() {

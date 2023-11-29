@@ -34,7 +34,7 @@ extension SubCategoryRouter: SubCategoryRoutingLogic {
 		viewController?.pushViewController(minorCategoryViewControllable, animated: true)
 	}
 	
-	func routeToConfirmView() {
+	func routeToConfirmView(_ categoryInfo: CategoryInfo) {
+		dump(categoryInfo.title!)
 		dump("AI 추천 마지막 뷰로 이동")
-	}
-}
+	}}

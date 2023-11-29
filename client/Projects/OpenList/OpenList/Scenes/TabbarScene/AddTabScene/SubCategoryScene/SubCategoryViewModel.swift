@@ -34,10 +34,12 @@ extension SubCategoryViewModel: SubCategoryViewModelable {
   func transform(_ input: Input) -> Output {
 		let viewLoad = viewLoad(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
+		let skipButtonDidTap = skipButtonDidTap(input)
 		let collectionViewCellDidSelect = collectionViewCellDidSelect(input)
     return Publishers.MergeMany([
 			viewLoad,
 			nextButtonDidTap,
+			skipButtonDidTap,
 			collectionViewCellDidSelect
     ]).eraseToAnyPublisher()
   }
@@ -74,11 +76,20 @@ private extension SubCategoryViewModel {
 	}
 	
 	func collectionViewCellDidSelect(_ input: Input) -> Output {
-		input.collectionViewCellDidSelect
+		return input.collectionViewCellDidSelect
 			.withUnretained(self)
 			.map { (owner, text) in
 				owner.subCategoryTitle = text
 				return .none
+			}.eraseToAnyPublisher()
+	}
+	
+	func skipButtonDidTap(_ input: Input) -> Output {
+		return input.skipButtonDidTap
+			.withUnretained(self)
+			.map { (owner, _) in
+				let categoryInfo = CategoryInfo(title: owner.title)
+				return .routeToLast(categoryInfo)
 			}.eraseToAnyPublisher()
 	}
 }

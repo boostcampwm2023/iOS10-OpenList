@@ -10,6 +10,7 @@ import Combine
 struct MinorCategoryInput {
 	let viewLoad: PassthroughSubject<Void, Never>
 	let nextButtonDidTap: AnyPublisher<Void, Never>
+	let skipButtonDidTap: AnyPublisher<Void, Never>
 	let collectionViewCellDidSelect: PassthroughSubject<String, Never>
 }
 
