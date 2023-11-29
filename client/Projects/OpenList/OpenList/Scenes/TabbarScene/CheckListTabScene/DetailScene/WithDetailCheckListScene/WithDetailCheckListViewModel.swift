@@ -13,16 +13,26 @@ where Input == WithDetailCheckListInput,
 	State == WithDetailCheckListState,
 	Output == AnyPublisher<State, Never> { }
 
+protocol WithDetailCheckListDataSource {
+	var checkListId: String { get }
+}
+
 final class WithDetailCheckListViewModel {
-	private var title: String
+	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
 	
 	init(
-		title: String,
+		id: UUID,
 		crdtUseCase: CRDTUseCase
 	) {
-		self.title = title
+		self.id = id
 		self.crdtUseCase = crdtUseCase
+	}
+}
+
+extension WithDetailCheckListViewModel: WithDetailCheckListDataSource {
+	var checkListId: String {
+		id.uuidString
 	}
 }
 
@@ -43,11 +53,14 @@ private extension WithDetailCheckListViewModel {
 	func updateTitle(_ input: Input) -> Output {
 		return input.viewWillAppear
 			.withUnretained(self)
-			.flatMap { (owner, _) -> AnyPublisher<String?, Never> in
-				return Just(owner.title).eraseToAnyPublisher()
+			.flatMap { (owner, _) -> AnyPublisher<CheckList, Never> in
+				let future = Future(asyncFunc: {
+					try await owner.crdtUseCase.fetchCheckList(id: owner.id)
+				})
+				return future.eraseToAnyPublisher()
 			}
-			.map { title in
-				return .title(title)
+			.map { checkList in
+				return .title(checkList.title)
 			}
 			.eraseToAnyPublisher()
 	}

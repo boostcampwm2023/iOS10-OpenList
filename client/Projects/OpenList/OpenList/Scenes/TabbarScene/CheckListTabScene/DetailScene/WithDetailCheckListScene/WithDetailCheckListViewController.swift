@@ -9,7 +9,9 @@ import Combine
 import CustomSocket
 import UIKit
 
-protocol WithDetailCheckListRoutingLogic: AnyObject {}
+protocol WithDetailCheckListRoutingLogic: AnyObject {
+	func dismissDetailScene()
+}
 
 final class WithDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
@@ -22,10 +24,11 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	
 	// MARK: - Properties
 	private let router: WithDetailCheckListRoutingLogic
-	private let viewModel: any WithDetailCheckListViewModelable
+	private let viewModel: any WithDetailCheckListViewModelable & WithDetailCheckListDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: WithDetailCheckListDiffableDataSource?
 	private var isOpenSocket: Bool = false
+	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -43,7 +46,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	// MARK: - Initializers
 	init(
 		router: WithDetailCheckListRoutingLogic,
-		viewModel: some WithDetailCheckListViewModelable
+		viewModel: some WithDetailCheckListViewModelable & WithDetailCheckListDataSource
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -111,7 +114,7 @@ extension WithDetailCheckListViewController: ViewBindable {
 		case .none:
 			break
 		case let .title(title):
-			headerView.configure(title: title!, isLocked: true)
+			headerView.configure(title: title ?? "", isLocked: false)
 		case let .updateItem(item):
 			updateTextField(to: item)
 		case let .appendItem(item):
@@ -128,6 +131,39 @@ extension WithDetailCheckListViewController: ViewBindable {
 
 // MARK: - Helper
 private extension WithDetailCheckListViewController {
+	@IBAction func showMenu() {
+		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let inviteAction = UIAlertAction(title: "초대하기", style: .default) { [weak self] _ in
+			self?.invite()
+		}
+		
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+			print("didPress delete")
+		}
+		
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+			print("didPress cancel")
+		}
+		
+		actionSheet.addAction(inviteAction)
+		actionSheet.addAction(deleteAction)
+		actionSheet.addAction(cancelAction)
+		
+		self.present(actionSheet, animated: true, completion: nil)
+	}
+	
+	func invite() {
+		var objectsToShare = [String]()
+		let inviteLink = "openlist://shared-checklists?shared-checklistId=\(viewModel.checkListId)"
+		objectsToShare.append(inviteLink)
+		
+		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+		activityVC.popoverPresentationController?.sourceView = self.view
+		
+		self.present(activityVC, animated: true, completion: nil)
+	}
+	
 	func updateTextField(to item: CheckListItem) {
 		dataSource?.receiveCheckListItem(with: item)
 	}
@@ -142,8 +178,14 @@ private extension WithDetailCheckListViewController {
 private extension WithDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
+		
+		setNavigationAttributes()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
+	}
+	
+	func setNavigationAttributes() {
+		navigationBar.delegate = self
 	}
 	
 	func setCheckListViewAttributes() {
@@ -167,12 +209,13 @@ private extension WithDetailCheckListViewController {
 	func setViewHierarchies() {
 		view.addSubview(checkListView)
 		view.addSubview(headerView)
+		view.addSubview(navigationBar)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			headerView.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: LayoutConstant.topPadding
 			),
 			headerView.leadingAnchor.constraint(
@@ -270,7 +313,15 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
+		let item = checkListView.cellForRow(WithCheckListItem.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
+			self?.removeDocument.send(
+				.init(
+					id: item.cellId ?? UUID(),
+					content: item.content,
+					range: .init(location: 0, length: item.content.count)
+				)
+			)
 			self?.dataSource?.deleteCheckListItem(at: indexPath)
 			completion(true)
 		}
@@ -361,5 +412,15 @@ extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 		guard let text = textField.text else { return }
 		textField.text = nil
 		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
+	}
+}
+
+extension WithDetailCheckListViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		router.dismissDetailScene()
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		showMenu()
 	}
 }

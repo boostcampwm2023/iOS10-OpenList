@@ -140,17 +140,6 @@ private extension PrivateDetailCheckListViewController {
 		self.present(actionSheet, animated: true, completion: nil)
 	}
 	
-	func invite() {
-		var objectsToShare = [String]()
-		let inviteLink = "openlist://shared-checklists?shared-checklistId=\(viewModel.checkListId)"
-		objectsToShare.append(inviteLink)
-		
-		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-		activityVC.popoverPresentationController?.sourceView = self.view
-		
-		self.present(activityVC, animated: true, completion: nil)
-	}
-	
 	func viewLoad(_ checkList: CheckList) {
 		headerView.configure(title: checkList.title, isLocked: true)
 		dataSource?.updateCheckList(checkList.items)
