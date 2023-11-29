@@ -75,8 +75,8 @@ describe('PrivateChecklistsService', () => {
     const createDto = new CreatePrivateChecklistDto();
     const expectedChecklistObject = {
       ...createDto,
-      editor: user,
-      folder: folder,
+      editor: { userId: 1 },
+      folder: { folderId: 1 },
     };
 
     mockChecklistRepository.create.mockReturnValue(expectedChecklistObject);
@@ -84,8 +84,7 @@ describe('PrivateChecklistsService', () => {
 
     const result = await service.createPrivateChecklist(1, 1, createDto);
 
-    expect(mockUsersService.findUserById).toHaveBeenCalledWith(1);
-    expect(mockFoldersService.findFolderById).toHaveBeenCalledWith(1);
+    expect(mockFoldersService.findFolderById).toHaveBeenCalledWith(1, 1);
 
     expect(mockChecklistRepository.create).toHaveBeenCalledWith(
       expectedChecklistObject,
@@ -103,10 +102,10 @@ describe('PrivateChecklistsService', () => {
     ];
     mockChecklistRepository.find.mockResolvedValue(checklists);
 
-    const result = await service.findAllPrivateChecklists(1);
+    const result = await service.findAllPrivateChecklists(1, 1);
 
     expect(mockChecklistRepository.find).toHaveBeenCalledWith({
-      where: { folder: { folderId: 1 } },
+      where: { folder: { folderId: 1 }, editor: { userId: 1 } },
     });
     expect(result).toEqual(checklists);
   });
@@ -115,10 +114,14 @@ describe('PrivateChecklistsService', () => {
     const checklist = new PrivateChecklistModel();
     mockChecklistRepository.findOne.mockResolvedValue(checklist);
 
-    const result = await service.findPrivateChecklistById(1);
+    const result = await service.findPrivateChecklistById(1, 1, 1);
 
     expect(mockChecklistRepository.findOne).toHaveBeenCalledWith({
-      where: { privateChecklistId: 1 },
+      where: {
+        privateChecklistId: 1,
+        folder: { folderId: 1 },
+        editor: { userId: 1 },
+      },
     });
     expect(result).toEqual(checklist);
   });
@@ -126,7 +129,7 @@ describe('PrivateChecklistsService', () => {
   it('service.findPrivateChecklistById(privateChecklistId) : 존재하지 않는 체크리스트일 경우 BadRequestException을 던진다.', async () => {
     mockChecklistRepository.findOne.mockResolvedValue(null);
 
-    await expect(service.findPrivateChecklistById(1)).rejects.toThrow(
+    await expect(service.findPrivateChecklistById(1, 1, 1)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -140,10 +143,14 @@ describe('PrivateChecklistsService', () => {
       ...updateDto,
     });
 
-    const result = await service.updatePrivateChecklist(1, updateDto);
+    const result = await service.updatePrivateChecklist(1, 1, 1, updateDto);
 
     expect(mockChecklistRepository.findOne).toHaveBeenCalledWith({
-      where: { privateChecklistId: 1 },
+      where: {
+        privateChecklistId: 1,
+        folder: { folderId: 1 },
+        editor: { userId: 1 },
+      },
     });
     expect(mockChecklistRepository.save).toHaveBeenCalledWith({
       ...existingChecklist,
@@ -164,10 +171,14 @@ describe('PrivateChecklistsService', () => {
       ...updateDto,
     });
 
-    const result = await service.updatePrivateChecklist(1, updateDto);
+    const result = await service.updatePrivateChecklist(1, 1, 1, updateDto);
 
     expect(mockChecklistRepository.findOne).toHaveBeenCalledWith({
-      where: { privateChecklistId: 1 },
+      where: {
+        privateChecklistId: 1,
+        folder: { folderId: 1 },
+        editor: { userId: 1 },
+      },
     });
     expect(mockChecklistRepository.save).toHaveBeenCalledWith({
       ...existingChecklist,
@@ -180,19 +191,23 @@ describe('PrivateChecklistsService', () => {
     const updateDto = new UpdatePrivateChecklistDto();
     mockChecklistRepository.findOne.mockResolvedValue(null);
 
-    await expect(service.updatePrivateChecklist(1, updateDto)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.updatePrivateChecklist(1, 1, 1, updateDto),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('service.removePrivateChecklist(privateChecklistId) : 체크리스트를 삭제한다.', async () => {
     const checklist = new PrivateChecklistModel();
     mockChecklistRepository.findOne.mockResolvedValue(checklist);
 
-    const result = await service.removePrivateChecklist(1);
+    const result = await service.removePrivateChecklist(1, 1, 1);
 
     expect(mockChecklistRepository.findOne).toHaveBeenCalledWith({
-      where: { privateChecklistId: 1 },
+      where: {
+        privateChecklistId: 1,
+        folder: { folderId: 1 },
+        editor: { userId: 1 },
+      },
     });
     expect(mockChecklistRepository.remove).toHaveBeenCalledWith(checklist);
     expect(result).toEqual({ message: '삭제되었습니다.' });
@@ -201,7 +216,7 @@ describe('PrivateChecklistsService', () => {
   it('service.removePrivateChecklist(privateChecklistId) : 존재하지 않는 체크리스트일 경우 BadRequestException을 던진다.', async () => {
     mockChecklistRepository.findOne.mockResolvedValue(null);
 
-    await expect(service.removePrivateChecklist(1)).rejects.toThrow(
+    await expect(service.removePrivateChecklist(1, 1, 1)).rejects.toThrow(
       BadRequestException,
     );
   });

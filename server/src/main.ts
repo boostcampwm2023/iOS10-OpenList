@@ -2,9 +2,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { AppModule } from './app.module';
+import { AuthService } from './auth/auth.service';
+import { AccessTokenGuard } from './auth/guard/access-token.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // AccessTokenGuard 전역 Guard로 설정
+  const authService = app.get(AuthService);
+  app.useGlobalGuards(new AccessTokenGuard(authService));
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // 요청에서 넘어온 자료들의 형변환을 자동으로 해줌

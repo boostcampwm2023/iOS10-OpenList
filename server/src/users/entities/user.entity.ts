@@ -2,7 +2,6 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import {
   Column,
   Entity,
-  Generated,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,

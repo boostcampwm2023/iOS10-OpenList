@@ -78,7 +78,7 @@ describe('FoldersService', () => {
     expect(mockFoldersRepository.save).toHaveBeenCalledWith(
       expectedFolderObject,
     ); // 수정된 부분
-    expect(result).toEqual({ folderId: 1, ...expectedFolderObject });
+    expect(result).toEqual({ folderId: 1, ...createFolderDto });
   });
 
   it('service.createFolder(createFolderDto) : 이미 존재하는 폴더명일 경우 BadRequestException을 던진다.', async () => {
@@ -121,11 +121,10 @@ describe('FoldersService', () => {
     const folder = { folderId: 1, title: 'blackpink in your area' };
     mockFoldersRepository.findOne.mockResolvedValue(folder);
 
-    const result = await service.findFolderById(1);
+    const result = await service.findFolderById(1, 1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(result).toEqual(folder);
   });
@@ -133,7 +132,7 @@ describe('FoldersService', () => {
   it('service.findFolderById(folderId) : 존재하지 않는 폴더명일 경우 BadRequestException을 던진다.', async () => {
     mockFoldersRepository.findOne.mockResolvedValue(null);
 
-    await expect(service.findFolderById(1)).rejects.toThrow(
+    await expect(service.findFolderById(1, 1)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -152,11 +151,10 @@ describe('FoldersService', () => {
       ...updateFolderDto,
     });
 
-    const result = await service.updateFolder(1, updateFolderDto);
+    const result = await service.updateFolder(1, 1, updateFolderDto);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(mockFoldersRepository.save).toHaveBeenCalledWith({
       ...existingFolder,
@@ -169,9 +167,9 @@ describe('FoldersService', () => {
     const updateFolderDto: UpdateFolderDto = { title: 'UpdatedFolder' };
     mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
 
-    await expect(service.updateFolder(9999, updateFolderDto)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.updateFolder(9999, 1, updateFolderDto),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('service.removeFolder(folderId) : folderId에 해당하는 폴더를 삭제한다.', async () => {
@@ -179,11 +177,10 @@ describe('FoldersService', () => {
     mockFoldersRepository.findOne.mockResolvedValue(folder);
     mockFoldersRepository.remove.mockResolvedValue(folder);
 
-    const result = await service.removeFolder(1);
+    const result = await service.removeFolder(1, 1);
 
     expect(mockFoldersRepository.findOne).toHaveBeenCalledWith({
-      where: { folderId: 1 },
-      relations: ['owner'],
+      where: { folderId: 1, owner: { userId: 1 } },
     });
     expect(mockFoldersRepository.remove).toHaveBeenCalledWith(folder);
     expect(result).toEqual({ message: '삭제되었습니다.' });
@@ -192,7 +189,7 @@ describe('FoldersService', () => {
   it('service.removeFolder(folderId) : 존재하지 않는 폴더 ID에 대한 처리를 검증한다.', async () => {
     mockFoldersRepository.findOne.mockResolvedValueOnce(null); // 폴더가 존재하지 않는다고 가정
 
-    await expect(service.removeFolder(9999)).rejects.toThrow(
+    await expect(service.removeFolder(9999, 1)).rejects.toThrow(
       BadRequestException,
     );
   });

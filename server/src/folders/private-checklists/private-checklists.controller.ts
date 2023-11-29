@@ -7,6 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { UserId } from 'src/users/decorator/userId.decorator';
 import { CreatePrivateChecklistDto } from './dto/create-private-checklist.dto';
 import { UpdatePrivateChecklistDto } from './dto/update-private-checklist.dto';
 import { PrivateChecklistsService } from './private-checklists.service';
@@ -24,10 +25,10 @@ export class PrivateChecklistsController {
   @Post()
   postPrivateChecklist(
     @Param('folderId') folderId: number,
+    @UserId() userId: number,
     @Body() dto: CreatePrivateChecklistDto,
   ) {
-    const userId: number = 2;
-    return this.checklistsService.createPrivateChecklist(userId, folderId, dto);
+    return this.checklistsService.createPrivateChecklist(folderId, userId, dto);
   }
 
   /**
@@ -36,8 +37,11 @@ export class PrivateChecklistsController {
    * @returns {Promise<PrivateChecklistModel[]>}
    */
   @Get()
-  getAllPrivateChecklists(@Param('folderId') folderId: number) {
-    return this.checklistsService.findAllPrivateChecklists(folderId);
+  getAllPrivateChecklists(
+    @Param('folderId') folderId: number,
+    @UserId() userId: number,
+  ) {
+    return this.checklistsService.findAllPrivateChecklists(folderId, userId);
   }
 
   /**
@@ -46,8 +50,16 @@ export class PrivateChecklistsController {
    * @returns {Promise<PrivateChecklistModel>}
    */
   @Get(':privateChecklistId')
-  getPrivateChecklist(@Param('privateChecklistId') privateChecklistId: number) {
-    return this.checklistsService.findPrivateChecklistById(privateChecklistId);
+  getPrivateChecklist(
+    @Param('folderId') folderId: number,
+    @Param('privateChecklistId') privateChecklistId: number,
+    @UserId() userId: number,
+  ) {
+    return this.checklistsService.findPrivateChecklistById(
+      folderId,
+      privateChecklistId,
+      userId,
+    );
   }
 
   /**
@@ -58,11 +70,15 @@ export class PrivateChecklistsController {
    */
   @Put(':privateChecklistId')
   putPrivateChecklist(
+    @Param('folderId') folderId: number,
     @Param('privateChecklistId') privateChecklistId: number,
+    @UserId() userId: number,
     @Body() dto: UpdatePrivateChecklistDto,
   ) {
     return this.checklistsService.updatePrivateChecklist(
+      folderId,
       privateChecklistId,
+      userId,
       dto,
     );
   }
@@ -74,8 +90,14 @@ export class PrivateChecklistsController {
    */
   @Delete(':privateChecklistId')
   deletePrivateChecklist(
+    @Param('folderId') folderId: number,
     @Param('privateChecklistId') privateChecklistId: number,
+    @UserId() userId: number,
   ) {
-    return this.checklistsService.removePrivateChecklist(privateChecklistId);
+    return this.checklistsService.removePrivateChecklist(
+      folderId,
+      privateChecklistId,
+      userId,
+    );
   }
 }
