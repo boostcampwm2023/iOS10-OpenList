@@ -5,7 +5,6 @@
 //  Created by 김영균 on 11/11/23.
 //
 
-import CRDT
 import Foundation
 
 public final class WebSocket: NSObject {
