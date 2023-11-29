@@ -19,29 +19,45 @@ export class SharedChecklistsService {
     private readonly usersService: UsersService,
   ) {}
   async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
-    // 새 ChecklistItem 생성
-    const newChecklistItem = this.SharedChecklistItemsrepository.create({
-      messages: dto.items,
-      // sharedChecklist 객체는 생성 후 관계가 설정됩니다.
+    // 중복된 sharedChecklistId가 있는지 확인
+    const checklistExists = await this.SharedChecklistsrepository.exist({
+      where: {
+        sharedChecklistId: dto.sharedChecklistId,
+      },
     });
-
+    if (checklistExists) {
+      throw new BadRequestException('이미 존재하는 체크리스트 아이디입니다.');
+    }
     // 새 Checklist 생성
     const newChecklist = this.SharedChecklistsrepository.create({
       title: dto.title,
       sharedChecklistId: dto.sharedChecklistId,
-      // editors 배열에는 UserModel 엔티티의 인스턴스가 포함되어야 합니다.
       editors: [{ userId }],
-      // items 배열은 아직 비워둡니다. 저장 후 관계를 설정해야 합니다.
     });
-
-    // 먼저 ChecklistItem 저장
-    await this.SharedChecklistItemsrepository.save(newChecklistItem);
-
-    // ChecklistItem과의 관계 설정
-    newChecklist.items = [newChecklistItem];
-
     // Checklist 저장
     return this.SharedChecklistsrepository.save(newChecklist);
+  }
+
+  async createSharedChecklistItem(items: string[], checklistId: string) {
+    // 새 ChecklistItem 생성
+    const newChecklistItem = this.SharedChecklistItemsrepository.create({
+      messages: items,
+      sharedChecklist: { sharedChecklistId: checklistId },
+    });
+
+    return this.SharedChecklistItemsrepository.save(newChecklistItem);
+  }
+
+  async createSharedChecklistWithItems(
+    userId: number,
+    dto: CreateSharedChecklistDto,
+  ) {
+    const newSharedChecklist = await this.createSharedChecklist(userId, dto);
+    const newSharedChecklistItem = await this.createSharedChecklistItem(
+      dto.items,
+      newSharedChecklist.sharedChecklistId,
+    );
+    return { newSharedChecklist, newSharedChecklistItem };
   }
 
   async findAllSharedChecklists(userId: number) {

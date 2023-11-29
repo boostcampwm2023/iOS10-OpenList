@@ -26,7 +26,7 @@ export class SharedChecklistsController {
     @UserId() userId: number,
     @Body() createSharedChecklistDto: CreateSharedChecklistDto,
   ) {
-    return this.checklistsService.createSharedChecklist(
+    return this.checklistsService.createSharedChecklistWithItems(
       userId,
       createSharedChecklistDto,
     );
