@@ -9,8 +9,13 @@ import Combine
 
 struct PrivateDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
+	let append: PassthroughSubject<CheckListItem, Never>
+	let update: PassthroughSubject<CheckListItem, Never>
+	let remove: PassthroughSubject<CheckListItem, Never>
 }
 
 enum PrivateDetailCheckListState {
-	case title(String?)
+	case error(Error)
+	case viewLoad(CheckList)
+	case updateItem(CheckListItem)
 }

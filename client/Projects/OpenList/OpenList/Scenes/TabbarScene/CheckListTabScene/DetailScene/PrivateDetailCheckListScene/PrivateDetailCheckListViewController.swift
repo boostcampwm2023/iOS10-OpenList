@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol PrivateDetailCheckListRoutingLogic: AnyObject {}
+protocol PrivateDetailCheckListRoutingLogic: AnyObject {
+	func dismissDetailScene()
+}
 
 final class PrivateDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
@@ -24,6 +26,7 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	private let viewModel: any PrivateDetailCheckListViewModelable & PrivateDetailCheckListDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: PrivateDetailCheckListDiffableDataSource?
+	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -32,6 +35,9 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let append: PassthroughSubject<CheckListItem, Never> = .init()
+	private let update: PassthroughSubject<CheckListItem, Never> = .init()
+	private let remove: PassthroughSubject<CheckListItem, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -75,7 +81,12 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = PrivateDetailCheckListInput(viewWillAppear: viewWillAppear)
+		let input = PrivateDetailCheckListInput(
+			viewWillAppear: viewWillAppear,
+			append: append,
+			update: update,
+			remove: remove
+		)
 		let output = viewModel.transform(input)
 		
 		output
@@ -87,12 +98,18 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
-		case let .title(title):
-			headerView.configure(title: title!, isLocked: true)
+		case let .error(error):
+			handleError(error)
+		case let .viewLoad(checkList):
+			viewLoad(checkList)
+		case let .updateItem(item):
+			updateItem(item)
 		}
 	}
 	
-	func handleError(_ error: OutputError) {}
+	func handleError(_ error: OutputError) {
+		dump(error)
+	}
 }
 
 // MARK: - Helper
@@ -129,32 +146,33 @@ private extension PrivateDetailCheckListViewController {
 		
 		self.present(activityVC, animated: true, completion: nil)
 	}
+	
+	func viewLoad(_ checkList: CheckList) {
+		headerView.configure(title: checkList.title, isLocked: true)
+		dataSource?.updateCheckList(checkList.items)
+	}
+	
+	func updateItem(_ item: CheckListItem) {
+		if item.title.isEmpty {
+			dataSource?.deleteCheckListItem(item)
+		} else {
+			dataSource?.updateCheckListItem(item)
+		}
+	}
 }
 
 // MARK: - View Methods
 private extension PrivateDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
+		
 		setNavigationAttributes()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
 	}
 	
 	func setNavigationAttributes() {
-		setMoreButton()
-		navigationItem.rightBarButtonItem = .init(customView: moreButton)
-	}
-	
-	func setMoreButton() {
-		let moreImage: UIImage = .more
-		guard
-			let resizeMoreImage = moreImage
-			.resizeImage(size: .init(width: 24, height: 24))?
-			.withRenderingMode(.alwaysTemplate)
-		else { return }
-		moreButton.setImage(resizeMoreImage, for: .normal)
-		moreButton.tintColor = .primary1
-		moreButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+		navigationBar.delegate = self
 	}
 	
 	func setCheckListViewAttributes() {
@@ -178,12 +196,13 @@ private extension PrivateDetailCheckListViewController {
 	func setViewHierarchies() {
 		view.addSubview(checkListView)
 		view.addSubview(headerView)
+		view.addSubview(navigationBar)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			headerView.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: LayoutConstant.topPadding
 			),
 			headerView.leadingAnchor.constraint(
@@ -256,8 +275,16 @@ extension PrivateDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
+		let item = checkListView.cellForRow(LocalCheckListItem.self, at: indexPath)
+		let itemId = item.id
+		let isChecked = item.isChecked
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
-			self?.dataSource?.deleteCheckListItem(at: indexPath)
+			let checkListItem = CheckListItem(
+				itemId: itemId,
+				title: "",
+				isChecked: isChecked
+			)
+			self?.remove.send(checkListItem)
 			completion(true)
 		}
 		action.image = UIImage(systemName: "trash")
@@ -273,11 +300,15 @@ extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 		cell: LocalCheckListItem,
 		indexPath: IndexPath
 	) {
+		let checkListItem = CheckListItem(
+			itemId: cell.id,
+			title: textField.text ?? "",
+			isChecked: cell.isChecked
+		)
 		if let text = textField.text, !text.isEmpty {
-			// 로컬에 저장합니다.
-			dataSource?.updateCheckListItemString(at: indexPath, with: text)
+			update.send(checkListItem)
 		} else {
-			dataSource?.deleteCheckListItem(at: indexPath)
+			remove.send(checkListItem)
 		}
 	}
 	
@@ -292,6 +323,20 @@ extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
 		
 		return updatedText.count <= 30
 	}
+	
+	func didChangedCheckButton(
+		_ textField: CheckListItemTextField,
+		cell: LocalCheckListItem,
+		indexPath: IndexPath,
+		isChecked: Bool
+	) {
+		let checkListItem = CheckListItem(
+			itemId: cell.id,
+			title: textField.text ?? "",
+			isChecked: cell.isChecked
+		)
+		update.send(checkListItem)
+	}
 }
 
 // MARK: - CheckListItemPlaceholderDelegate
@@ -300,7 +345,23 @@ extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
 		textField.text = nil
-		dataSource?.appendCheckListItem(CheckListItem(itemId: UUID(), title: text, isChecked: false))
+		let checkListItem = CheckListItem(
+			itemId: UUID(),
+			title: text,
+			isChecked: false
+		)
+		
+		append.send(checkListItem)
 		dataSource?.updatePlaceholder()
+	}
+}
+
+extension PrivateDetailCheckListViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		router.dismissDetailScene()
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		showMenu()
 	}
 }
