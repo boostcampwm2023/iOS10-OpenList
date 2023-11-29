@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { UserId } from 'src/users/decorator/userId.decorator';
 import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
@@ -47,8 +48,12 @@ export class SharedChecklistsController {
    * @returns {Promise<SharedChecklistModel>}
    */
   @Get(':checklistId')
-  getSharedChecklist(@Param('checklistId') cid: string) {
-    return this.checklistsService.findSharedChecklistById(cid);
+  getSharedChecklist(
+    @Param('checklistId') cid: string,
+    @UserId() userId: number,
+    @Query('date') date?: string, // 새로운 쿼리 파라미터 추가
+  ) {
+    return this.checklistsService.findSharedChecklistById(cid, userId, date);
   }
 
   /**

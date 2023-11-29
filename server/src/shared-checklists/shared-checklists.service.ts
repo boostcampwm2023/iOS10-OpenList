@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, In, MoreThan, Repository } from 'typeorm';
 import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
 import { SharedChecklistItemModel } from './entities/shared-checklist-item.entity';
@@ -16,7 +15,8 @@ export class SharedChecklistsService {
     @InjectRepository(SharedChecklistItemModel)
     private readonly SharedChecklistItemsrepository: Repository<SharedChecklistItemModel>,
 
-    private readonly usersService: UsersService,
+    @InjectEntityManager()
+    private entityManager: EntityManager,
   ) {}
   async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
     // 중복된 sharedChecklistId가 있는지 확인
@@ -52,62 +52,108 @@ export class SharedChecklistsService {
     userId: number,
     dto: CreateSharedChecklistDto,
   ) {
-    const newSharedChecklist = await this.createSharedChecklist(userId, dto);
-    const newSharedChecklistItem = await this.createSharedChecklistItem(
+    const sharedChecklist = await this.createSharedChecklist(userId, dto);
+    const items = await this.createSharedChecklistItem(
       dto.items,
-      newSharedChecklist.sharedChecklistId,
+      sharedChecklist.sharedChecklistId,
     );
-    return { newSharedChecklist, newSharedChecklistItem };
+    return { sharedChecklist, items };
   }
 
   async findAllSharedChecklists(userId: number) {
-    const checklists = await this.SharedChecklistsrepository.createQueryBuilder(
-      'checklist',
-    )
-      .innerJoinAndSelect('checklist.editors', 'editor')
-      .where('editor.userId = :userId', { userId })
-      .getMany();
+    const checklistIdsArray =
+      await this.findAllSharedChecklistIdsByUserId(userId);
+    const checklists = await this.SharedChecklistsrepository.find({
+      where: {
+        sharedChecklistId: In(checklistIdsArray),
+      },
+      relations: ['editors'],
+    });
 
     return checklists;
   }
 
-  async findSharedChecklistById(sharedChecklistId: string) {
-    const checklist = await this.SharedChecklistsrepository.findOne({
+  async findSharedChecklistById(
+    sharedChecklistId: string,
+    userId: number,
+    date: string,
+  ) {
+    const sharedChecklist = await this.SharedChecklistsrepository.findOne({
       where: { sharedChecklistId },
+      relations: ['editors'],
     });
-    if (!checklist) {
+    if (!sharedChecklist) {
       throw new BadRequestException('존재하지 않는 체크리스트입니다.');
     }
-    return checklist;
+    if (!sharedChecklist.editors.some((editor) => editor.userId === userId)) {
+      throw new BadRequestException('권한이 없습니다.');
+    }
+    delete sharedChecklist.editors;
+
+    const items = await this.findSharedChecklistItemsById(
+      sharedChecklistId,
+      date,
+    );
+    return { sharedChecklist, items };
+  }
+  async findSharedChecklistItemsById(sharedChecklistId: string, date?: string) {
+    const queryOptions = {
+      where: { sharedChecklist: { sharedChecklistId } },
+    };
+    if (date) {
+      const dateObj = new Date(date);
+      if (!isNaN(dateObj.getTime())) {
+        queryOptions.where['createdAt'] = MoreThan(dateObj);
+      }
+    }
+
+    const checklistItems =
+      await this.SharedChecklistItemsrepository.find(queryOptions);
+
+    if (!checklistItems) {
+      throw new BadRequestException('존재하지 않는 체크리스트입니다.');
+    }
+
+    return checklistItems;
+  }
+
+  async findAllSharedChecklistIdsByUserId(userId: number) {
+    const checklistIdObjects = await this.entityManager.query(
+      `SELECT "sharedChecklistModelSharedChecklistId" FROM shared_checklist_model_editors_user_model WHERE "userModelUserId" = $1`,
+      [userId],
+    );
+    return checklistIdObjects.map(
+      (obj) => obj.sharedChecklistModelSharedChecklistId,
+    );
   }
 
   async updateSharedChecklist(id: string, dto: UpdateSharedChecklistDto) {
     const { title, editorsId } = dto;
-    const checklist = await this.findSharedChecklistById(id);
+    const checklist = await this.findSharedChecklistById(id, 1, '');
     if (!checklist) {
       throw new BadRequestException('존재하지 않는 체크리스트입니다.');
     }
 
-    if (title) {
-      checklist.title = title;
-    }
+    // if (title) {
+    //   checklist.title = title;
+    // }
 
-    if (editorsId) {
-      const editors = await Promise.all(
-        editorsId.map((id) => this.usersService.findUserById(id)),
-      );
-      checklist.editors = editors;
-    }
+    // if (editorsId) {
+    //   const editors = await Promise.all(
+    //     editorsId.map((id) => this.usersService.findUserById(id)),
+    //   );
+    //   checklist.editors = editors;
+    // }
 
-    const newChecklist = await this.SharedChecklistsrepository.save(checklist);
-    return newChecklist;
+    // const newChecklist = await this.SharedChecklistsrepository.save(checklist);
+    return checklist;
   }
 
   async removeSharedChecklist(id: string) {
-    const checklist = await this.findSharedChecklistById(id);
+    const checklist = await this.findSharedChecklistById(id, 1, '');
 
     // soft-delete 방식으로 수정필요
-    await this.SharedChecklistsrepository.remove(checklist);
+    // await this.SharedChecklistsrepository.remove(checklist);
     return { message: '삭제되었습니다.' };
   }
 }
