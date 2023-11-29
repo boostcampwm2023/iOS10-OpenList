@@ -5,6 +5,7 @@
 //  Created by 김영균 on 11/9/23.
 //
 
+import AuthenticationServices
 import Combine
 import UIKit
 
@@ -27,8 +28,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			deepLinkSubject: deepLinkSubject
 		)
 		let tabBarViewFactory = TabBarViewFactory(parent: component)
-		let appRootRouter = AppRouter(window: window, tabBarFactoryable: tabBarViewFactory)
-		appRootRouter.showTapFlow()
+		let loginViewFactory = LoginViewFactory(parent: component)
+		let appRootRouter = AppRouter(
+			window: window,
+			tabBarFactoryable: tabBarViewFactory,
+			loginFactoryable: loginViewFactory
+		)
+
+		if
+			KeyChain.shared.read(key: AuthKey.accessToken) != nil,
+			KeyChain.shared.read(key: AuthKey.refreshToken) != nil {
+			appRootRouter.showTapFlow()
+		} else {
+			appRootRouter.showLoginFlow()
+		}
 		
 		// 앱이 종료된 경우 Deeplink
 		if let urlContext = connectionOptions.urlContexts.first {

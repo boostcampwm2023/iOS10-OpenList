@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-final class AppComponent: EmptyComponent, TabBarDependency {
+final class AppComponent: EmptyComponent, TabBarDependency, LoginDependency {
 	var navigationControllable: NavigationControllable
 	private var _deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never>
 	
