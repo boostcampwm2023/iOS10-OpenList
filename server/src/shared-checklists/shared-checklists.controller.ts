@@ -12,7 +12,7 @@ import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
 import { SharedChecklistsService } from './shared-checklists.service';
 
-@Controller('folders/:folderId/checklists')
+@Controller('shared-checklists')
 export class SharedChecklistsController {
   constructor(private readonly checklistsService: SharedChecklistsService) {}
 
@@ -37,8 +37,8 @@ export class SharedChecklistsController {
    * @returns {Promise<SharedChecklistModel[]>}
    */
   @Get()
-  getAllSharedChecklists() {
-    return this.checklistsService.findAllSharedChecklists();
+  getAllSharedChecklists(@UserId() userId: number) {
+    return this.checklistsService.findAllSharedChecklists(userId);
   }
 
   /**

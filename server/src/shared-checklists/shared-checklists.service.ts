@@ -4,49 +4,59 @@ import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
+import { SharedChecklistItemModel } from './entities/shared-checklist-item.entity';
 import { SharedChecklistModel } from './entities/shared-checklist.entity';
 
 @Injectable()
 export class SharedChecklistsService {
   constructor(
     @InjectRepository(SharedChecklistModel)
-    private readonly repository: Repository<SharedChecklistModel>,
+    private readonly SharedChecklistsrepository: Repository<SharedChecklistModel>,
+
+    @InjectRepository(SharedChecklistItemModel)
+    private readonly SharedChecklistItemsrepository: Repository<SharedChecklistItemModel>,
+
     private readonly usersService: UsersService,
   ) {}
-
-  async createSharedChecklist(uId: number, dto: CreateSharedChecklistDto) {
-    // 1. title을 통해 해당 checklist가 존재하는지 확인합니다.
-    const checklistExists = await this.repository.findOne({
-      where: {
-        title: dto.title,
-      },
+  async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
+    // 새 ChecklistItem 생성
+    const newChecklistItem = this.SharedChecklistItemsrepository.create({
+      messages: dto.items,
+      // sharedChecklist 객체는 생성 후 관계가 설정됩니다.
     });
-    if (checklistExists) {
-      throw new BadRequestException('이미 존재하는 체크리스트입니다.');
-    }
 
-    // 2. editorsId를 통해 해당 유저들이 존재하는지 확인하고 가져옵니다.
-    // const editors = await Promise.all(
-    //   dto.editorsId.map((id) => this.usersService.findUserById(id)),
-    // );
-
-    // 3. 새로운 checklist를 생성합니다.
-    const newChecklist = this.repository.create({
+    // 새 Checklist 생성
+    const newChecklist = this.SharedChecklistsrepository.create({
       title: dto.title,
-      // editors,
+      sharedChecklistId: dto.sharedChecklistId,
+      // editors 배열에는 UserModel 엔티티의 인스턴스가 포함되어야 합니다.
+      editors: [{ userId }],
+      // items 배열은 아직 비워둡니다. 저장 후 관계를 설정해야 합니다.
     });
 
-    // 4. 생성된 checklist를 저장하고, 해당 checklist를 반환합니다.
-    return this.repository.save(newChecklist);
+    // 먼저 ChecklistItem 저장
+    await this.SharedChecklistItemsrepository.save(newChecklistItem);
+
+    // ChecklistItem과의 관계 설정
+    newChecklist.items = [newChecklistItem];
+
+    // Checklist 저장
+    return this.SharedChecklistsrepository.save(newChecklist);
   }
 
-  async findAllSharedChecklists() {
-    const checklists = await this.repository.find();
+  async findAllSharedChecklists(userId: number) {
+    const checklists = await this.SharedChecklistsrepository.createQueryBuilder(
+      'checklist',
+    )
+      .innerJoinAndSelect('checklist.editors', 'editor')
+      .where('editor.userId = :userId', { userId })
+      .getMany();
+
     return checklists;
   }
 
   async findSharedChecklistById(sharedChecklistId: string) {
-    const checklist = await this.repository.findOne({
+    const checklist = await this.SharedChecklistsrepository.findOne({
       where: { sharedChecklistId },
     });
     if (!checklist) {
@@ -73,7 +83,7 @@ export class SharedChecklistsService {
       checklist.editors = editors;
     }
 
-    const newChecklist = await this.repository.save(checklist);
+    const newChecklist = await this.SharedChecklistsrepository.save(checklist);
     return newChecklist;
   }
 
@@ -81,7 +91,7 @@ export class SharedChecklistsService {
     const checklist = await this.findSharedChecklistById(id);
 
     // soft-delete 방식으로 수정필요
-    await this.repository.remove(checklist);
+    await this.SharedChecklistsrepository.remove(checklist);
     return { message: '삭제되었습니다.' };
   }
 }
