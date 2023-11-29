@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ChecklistModel } from '../../common/entity/checklist.entity';
 import { UserModel } from '../../users/entities/user.entity';
-import { ShaerdChecklistItemModel } from './shared-checklist-item.entity';
+import { SharedChecklistItemModel } from './shared-checklist-item.entity';
 
 @Entity()
 export class SharedChecklistModel extends ChecklistModel {
@@ -20,6 +20,6 @@ export class SharedChecklistModel extends ChecklistModel {
   @JoinTable()
   editors: UserModel[];
 
-  @OneToMany(() => ShaerdChecklistItemModel, (item) => item.sharedChecklist)
-  items: ShaerdChecklistItemModel[];
+  @OneToMany(() => SharedChecklistItemModel, (item) => item.sharedChecklist)
+  items: SharedChecklistItemModel[];
 }

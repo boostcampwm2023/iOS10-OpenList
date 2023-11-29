@@ -18,7 +18,7 @@ import { FolderModel } from './folders/entities/folder.entity';
 import { FoldersModule } from './folders/folders.module';
 import { PrivateChecklistModel } from './folders/private-checklists/entities/private-checklist.entity';
 import { ChecklistsModule } from './folders/private-checklists/private-checklists.module';
-import { ShaerdChecklistItemModel } from './shared-checklists/entities/shared-checklist-item.entity';
+import { SharedChecklistItemModel } from './shared-checklists/entities/shared-checklist-item.entity';
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 import { SharedChecklistsModule } from './shared-checklists/shared-checklists.module';
 import { UserModel } from './users/entities/user.entity';
@@ -43,7 +43,7 @@ import { winstonConfig } from './utils/winston.config';
         FolderModel,
         PrivateChecklistModel,
         SharedChecklistModel,
-        ShaerdChecklistItemModel,
+        SharedChecklistItemModel,
       ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),

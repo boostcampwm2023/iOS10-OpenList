@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SharedChecklistModel } from './shared-checklist.entity';
 
 @Entity()
-export class ShaerdChecklistItemModel extends BaseModel {
+export class SharedChecklistItemModel extends BaseModel {
   @PrimaryGeneratedColumn()
   itemId: number;
 

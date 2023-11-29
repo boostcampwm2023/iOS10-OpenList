@@ -1,15 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
 } from '@nestjs/common';
-import { SharedChecklistsService } from './shared-checklists.service';
+import { UserId } from 'src/users/decorator/userId.decorator';
 import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
+import { SharedChecklistsService } from './shared-checklists.service';
 
 @Controller('folders/:folderId/checklists')
 export class SharedChecklistsController {
@@ -22,11 +23,11 @@ export class SharedChecklistsController {
    */
   @Post()
   postSharedChecklist(
+    @UserId() userId: number,
     @Body() createSharedChecklistDto: CreateSharedChecklistDto,
   ) {
-    const uId = 1;
     return this.checklistsService.createSharedChecklist(
-      uId,
+      userId,
       createSharedChecklistDto,
     );
   }
