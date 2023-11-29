@@ -15,6 +15,11 @@ where Input == MinorCategoryInput,
 
 final class MinorCategoryViewModel {
 	private var minorCategoryTitle: String = ""
+	private var categoryInfo: Category
+	
+	init(categoryInfo: Category) {
+		self.categoryInfo = categoryInfo
+	}
 }
 
 extension MinorCategoryViewModel: MinorCategoryViewModelable {
@@ -47,7 +52,8 @@ private extension MinorCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				// useCase Login
-				return .routeToNext(owner.minorCategoryTitle)
+				owner.categoryInfo.minorCategory = owner.minorCategoryTitle
+				return .routeToNext(owner.categoryInfo)
 			}.eraseToAnyPublisher()
 	}
 	

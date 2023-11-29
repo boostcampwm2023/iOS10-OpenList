@@ -15,6 +15,7 @@ Output == AnyPublisher<State, Never> { }
 final class MainCategoryViewModel {
 	private var title: String
 	private var categoryText: String = ""
+	private var categoryInfo: Category = .init()
 	
 	init(title: String) {
 		self.title = title
@@ -50,7 +51,9 @@ private extension MainCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				// useCase Login
-				return .routeToNext(owner.categoryText)
+				owner.categoryInfo.title = owner.title
+				owner.categoryInfo.mainCategory = owner.categoryText
+				return .routeToNext(owner.categoryInfo)
 			}.eraseToAnyPublisher()
 	}
 	

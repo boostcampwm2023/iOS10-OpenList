@@ -29,7 +29,7 @@ extension MainCategoryRouter: MainCategoryRoutingLogic {
 		viewController?.popViewController(animated: true)
 	}
 	
-	func routeToSubCategoryView(with mainCategory: String) {
+	func routeToSubCategoryView(with mainCategory: Category) {
 		let subCategoryViewControllable = subCategoryFactory.make(with: mainCategory)
 		viewController?.pushViewController(subCategoryViewControllable, animated: true)
 	}

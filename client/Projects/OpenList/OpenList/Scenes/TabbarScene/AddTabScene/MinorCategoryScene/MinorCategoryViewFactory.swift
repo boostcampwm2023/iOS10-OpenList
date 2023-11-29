@@ -12,7 +12,7 @@ protocol MinorCategoryDependency: Dependency {}
 final class MinorCategoryComponent: Component<MinorCategoryDependency> {}
 
 protocol MinorCategoryFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with category: Category) -> ViewControllable
 }
 
 final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCategoryFactoryable {
@@ -20,9 +20,9 @@ final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCat
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
+	func make(with category: Category) -> ViewControllable {
 		let router = MinorCategoryRouter()
-		let viewModel = MinorCategoryViewModel()
+		let viewModel = MinorCategoryViewModel(categoryInfo: category)
 		let viewController = MinorCategoryViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

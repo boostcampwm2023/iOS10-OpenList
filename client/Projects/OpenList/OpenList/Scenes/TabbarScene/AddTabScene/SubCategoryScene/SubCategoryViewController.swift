@@ -10,7 +10,7 @@ import UIKit
 
 protocol SubCategoryRoutingLogic: AnyObject {
 	func routeToMainCategoryView()
-	func routeToMinorCategoryView(with subCategory: String)
+	func routeToMinorCategoryView(with category: Category)
 	func routeToConfirmView()
 }
 

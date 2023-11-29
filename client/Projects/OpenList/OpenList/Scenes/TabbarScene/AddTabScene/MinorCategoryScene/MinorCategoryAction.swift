@@ -16,6 +16,6 @@ struct MinorCategoryInput {
 enum MinorCategoryState {
 	case error(_ error: Error)
 	case load(_ category: [String])
-	case routeToNext(_ category: String)
+	case routeToNext(_ category: Category)
 	case none
 }

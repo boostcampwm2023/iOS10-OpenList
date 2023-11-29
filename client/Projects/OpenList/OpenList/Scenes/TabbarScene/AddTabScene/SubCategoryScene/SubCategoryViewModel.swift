@@ -13,11 +13,11 @@ State == SubCategoryState,
 Output == AnyPublisher<State, Never> { }
 
 final class SubCategoryViewModel {
-	private let majorCategoryTitle: String
+	private var categoryInfo: Category
 	private var subCategoryTitle: String = ""
 	
-	init(majorCategoryTitle: String) {
-		self.majorCategoryTitle = majorCategoryTitle
+	init(categoryInfo: Category) {
+		self.categoryInfo = categoryInfo
 	}
 }
 
@@ -51,7 +51,8 @@ private extension SubCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				// useCase Login
-				return .routeToNext(owner.subCategoryTitle)
+				owner.categoryInfo.subCategory = owner.subCategoryTitle
+				return .routeToNext(owner.categoryInfo)
 			}.eraseToAnyPublisher()
 	}
 	
