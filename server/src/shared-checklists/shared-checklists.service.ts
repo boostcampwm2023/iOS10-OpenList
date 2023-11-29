@@ -151,11 +151,12 @@ export class SharedChecklistsService {
     return { message: '추가되었습니다.' };
   }
 
-  async removeSharedChecklist(id: string) {
-    const checklist = await this.findSharedChecklistAndItemsById(id, 1, '');
-
-    // soft-delete 방식으로 수정필요
-    // await this.SharedChecklistsrepository.remove(checklist);
+  async removeSharedChecklist(id: string, userId: number) {
+    const checklist = await this.findSharedChecklistById(id);
+    checklist.editors = checklist.editors.filter(
+      (editor) => editor.userId !== userId,
+    );
+    await this.SharedChecklistsrepository.save(checklist);
     return { message: '삭제되었습니다.' };
   }
 }

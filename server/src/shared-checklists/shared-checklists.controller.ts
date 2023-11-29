@@ -79,7 +79,7 @@ export class SharedChecklistsController {
    * @returns {Promise<message:string>}
    */
   @Delete(':checklistId')
-  deleteChecklist(@Param('checklistId') cid: string) {
-    return this.checklistsService.removeSharedChecklist(cid);
+  deleteChecklist(@Param('checklistId') cid: string, @UserId() userId: number) {
+    return this.checklistsService.removeSharedChecklist(cid, userId);
   }
 }
