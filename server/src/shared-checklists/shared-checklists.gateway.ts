@@ -22,6 +22,9 @@ export class SharedChecklistsGateway
   // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
   private clients: Map<string, Set<WebSocket>> = new Map();
 
+  // 각 checklist ID별로 전송된 데이터를 저장하기 위한 맵
+  private checklistData: Map<string, string[]> = new Map();
+
   /**
    * 클라이언트가 연결을 시도할 때 호출되는 메서드.
    * 연결된 클라이언트에 sharedChecklistId를 할당하고 관리한다.
@@ -71,7 +74,7 @@ export class SharedChecklistsGateway
     sharedChecklistId: string,
     event: string,
     data: any,
-    excludeClient: WebSocket,
+    excludeClient?: WebSocket,
   ) {
     const clients = this.clients.get(sharedChecklistId);
     if (clients) {
@@ -90,20 +93,44 @@ export class SharedChecklistsGateway
    * @param data 클라이언트로부터 받은 데이터
    * @returns 이벤트 처리 결과를 나타내는 객체
    */
-  @SubscribeMessage('sendChecklist')
+  @SubscribeMessage('send')
   async handleSendChecklist(
     @ConnectedSocket() client: WebSocket,
     @MessageBody() data: string,
   ) {
     const sharedChecklistId = client['sharedChecklistId'];
-    if (sharedChecklistId) {
-      this.broadcastToChecklist(
-        sharedChecklistId,
-        'listenChecklist',
-        data,
-        client,
-      );
-    }
+
+    // 현재 sharedChecklistId에 해당하는 데이터 배열을 가져오거나 새로 생성
+    const dataForThisChecklist =
+      this.checklistData.get(sharedChecklistId) || [];
+    dataForThisChecklist.push(data);
+
+    // 맵에 업데이트된 데이터 배열 저장
+    this.checklistData.set(sharedChecklistId, dataForThisChecklist);
+
+    // 다른 클라이언트들에게 데이터 브로드캐스트
+    this.broadcastToChecklist(sharedChecklistId, 'listen', data, client);
+
     return { event: 'sendChecklist', data: data };
+  }
+
+  @SubscribeMessage('history')
+  async handleHistoryRequest(
+    @ConnectedSocket() client: WebSocket,
+    @MessageBody() data: string,
+  ) {
+    const sharedChecklistId = client['sharedChecklistId'];
+    const dataForThisChecklist =
+      this.checklistData.get(sharedChecklistId) || [];
+    client.send(
+      JSON.stringify({ event: 'history', data: dataForThisChecklist }),
+    );
+
+    return { event: 'history', data: data };
+  }
+
+  // sharedChecklistId에 해당하는 모든 데이터를 가져오는 메소드
+  getChecklistData(sharedChecklistId: string): string[] {
+    return this.checklistData.get(sharedChecklistId) || [];
   }
 }
