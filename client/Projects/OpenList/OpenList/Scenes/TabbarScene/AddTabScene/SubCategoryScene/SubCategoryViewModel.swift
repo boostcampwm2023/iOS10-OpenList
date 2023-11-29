@@ -1,5 +1,5 @@
 //
-//  MediumCategoryViewModel.swift
+//  SubCategoryViewModel.swift
 //  OpenList
 //
 //  Created by Hoon on 11/29/23.
@@ -7,14 +7,14 @@
 
 import Combine
 
-protocol MediumCategoryViewModelable: ViewModelable
-where Input == MediumCategoryInput,
-State == MediumCategoryState,
+protocol SubCategoryViewModelable: ViewModelable
+where Input == SubCategoryInput,
+State == SubCategoryState,
 Output == AnyPublisher<State, Never> { }
 
-final class MediumCategoryViewModel {
+final class SubCategoryViewModel {
 	private let majorCategoryTitle: String
-	private var mediumCategoryTitle: String = ""
+	private var subCategoryTitle: String = ""
 	private var cancellables: Set<AnyCancellable> = []
 	
 	init(majorCategoryTitle: String) {
@@ -22,7 +22,7 @@ final class MediumCategoryViewModel {
 	}
 }
 
-extension MediumCategoryViewModel: MediumCategoryViewModelable {
+extension SubCategoryViewModel: SubCategoryViewModelable {
   func transform(_ input: Input) -> Output {
 		let viewLoad = viewLoad(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
@@ -34,7 +34,7 @@ extension MediumCategoryViewModel: MediumCategoryViewModelable {
   }
 }
 
-private extension MediumCategoryViewModel {
+private extension SubCategoryViewModel {
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewLoad
 			.map { _ in
@@ -51,7 +51,7 @@ private extension MediumCategoryViewModel {
 			.withUnretained(self)
 			.map { (owner, _) in
 				// useCase Login
-				return .routeToNext(owner.mediumCategoryTitle)
+				return .routeToNext(owner.subCategoryTitle)
 			}.eraseToAnyPublisher()
 	}
 	
@@ -59,7 +59,7 @@ private extension MediumCategoryViewModel {
 		input.collectionViewCellDidSelect
 			.withUnretained(self)
 			.sink { (owner, text) in
-				owner.mediumCategoryTitle = text
+				owner.subCategoryTitle = text
 			}
 			.store(in: &cancellables)
 	}

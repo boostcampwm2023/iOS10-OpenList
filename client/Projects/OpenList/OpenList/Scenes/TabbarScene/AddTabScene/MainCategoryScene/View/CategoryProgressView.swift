@@ -8,7 +8,7 @@
 import UIKit
 
 enum Progress {
-	case major
+	case main
 	case medium
 	case sub
 }
@@ -24,7 +24,7 @@ final class CategoryProgressView: UIView {
 	convenience init(stage: Progress) {
 		self.init()
 		switch stage {
-		case .major:
+		case .main:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()
 		case .medium:

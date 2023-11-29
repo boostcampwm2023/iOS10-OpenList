@@ -9,24 +9,24 @@ import Foundation
 
 final class AddCheckListTitleRouter {
 	weak var viewController: ViewControllable?
-	weak var majorCategoryViewControllable: ViewControllable?
-	private var majorCategoryViewFactory: MajorCategoryFactoryable
+	weak var mainCategoryViewControllable: ViewControllable?
+	private var mainCategoryViewFactory: MainCategoryFactoryable
 	
 	init(
 		viewController: ViewControllable? = nil,
-		majorCategoryViewFactory: MajorCategoryFactoryable,
-		majorCategoryViewControllable: ViewControllable? = nil
+		mainCategoryViewFactory: MainCategoryFactoryable,
+		mainCategoryViewControllable: ViewControllable? = nil
 	) {
 		self.viewController = viewController
-		self.majorCategoryViewFactory = majorCategoryViewFactory
-		self.majorCategoryViewControllable = majorCategoryViewControllable
+		self.mainCategoryViewFactory = mainCategoryViewFactory
+		self.mainCategoryViewControllable = mainCategoryViewControllable
 	}
 }
 
 // MARK: - RoutingLogic
 extension AddCheckListTitleRouter: AddCheckListTitleRoutingLogic {
-	func routeToMajorCategoryScene(with title: String) {
-		let majorCategoryViewControllable = majorCategoryViewFactory.make(with: title)
-		viewController?.pushViewController(majorCategoryViewControllable, animated: true)
+	func routeToMainCategoryScene(with title: String) {
+		let mainCategoryViewControllable = mainCategoryViewFactory.make(with: title)
+		viewController?.pushViewController(mainCategoryViewControllable, animated: true)
 	}
 }

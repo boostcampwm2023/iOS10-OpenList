@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol AddCheckListTitleRoutingLogic: AnyObject {
-	func routeToMajorCategoryScene(with title: String)
+	func routeToMainCategoryScene(with title: String)
 }
 
 final class AddCheckListTitleViewController: UIViewController, ViewControllable {
@@ -96,7 +96,7 @@ private extension AddCheckListTitleViewController {
 	
 	@objc func nextButtonTapped() {
 		guard let title = titleTextField.text else { return }
-		router.routeToMajorCategoryScene(with: title)
+		router.routeToMainCategoryScene(with: title)
 	}
 }
 

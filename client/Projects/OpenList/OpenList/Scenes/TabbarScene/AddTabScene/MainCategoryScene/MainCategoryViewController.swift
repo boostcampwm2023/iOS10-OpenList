@@ -1,5 +1,5 @@
 //
-//  MajorCategoryViewController.swift
+//  MainCategoryViewController.swift
 //  OpenList
 //
 //  Created by Hoon on 11/21/23.
@@ -8,16 +8,16 @@
 import Combine
 import UIKit
 
-protocol MajorCategoryRoutingLogic: AnyObject {
+protocol MainCategoryRoutingLogic: AnyObject {
 	func routeToTitleView()
-	func routeToMediumCategoryView(with majorCategory: String)
+	func routeToSubCategoryView(with mainCategory: String)
 	func routeToConfirmView()
 }
 
-final class MajorCategoryViewController: UIViewController, ViewControllable {
+final class MainCategoryViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
-  private let router: MajorCategoryRoutingLogic
-  private let viewModel: any MajorCategoryViewModelable
+  private let router: MainCategoryRoutingLogic
+  private let viewModel: any MainCategoryViewModelable
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
 	private let collectionViewCellDidSelect: PassthroughSubject<String, Never> = .init()
   private var cancellables: Set<AnyCancellable> = []
@@ -34,13 +34,13 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 	private let skipButton: UIButton = .init()
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private var dataSource: CategoryDataSource?
-	private let gradationView: CategoryProgressView = .init(stage: .major)
+	private let gradationView: CategoryProgressView = .init(stage: .main)
 	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false)
 	
   // MARK: - Initializers
 	init(
-		router: MajorCategoryRoutingLogic,
-		viewModel: some MajorCategoryViewModelable
+		router: MainCategoryRoutingLogic,
+		viewModel: some MainCategoryViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -64,12 +64,12 @@ final class MajorCategoryViewController: UIViewController, ViewControllable {
 }
 
 // MARK: - Bind Methods
-extension MajorCategoryViewController: ViewBindable {
-	typealias State = MajorCategoryState
+extension MainCategoryViewController: ViewBindable {
+	typealias State = MainCategoryState
 	typealias OutputError = Error
 
 	func bind() {
-		let input = MajorCategoryInput(
+		let input = MainCategoryInput(
 			viewLoad: viewLoad,
 			nextButtonDidTap: nextButton.tapPublisher,
 			collectionViewCellDidSelect: collectionViewCellDidSelect
@@ -90,7 +90,7 @@ extension MajorCategoryViewController: ViewBindable {
 		case .load(let categories):
 			reload(categories: categories)
 		case .routeToNext(let category):
-			router.routeToMediumCategoryView(with: category)
+			router.routeToSubCategoryView(with: category)
 		case .none:
 			break
 		}
@@ -101,7 +101,7 @@ extension MajorCategoryViewController: ViewBindable {
 }
 
 // MARK: - Helper
-private extension MajorCategoryViewController {
+private extension MainCategoryViewController {
 	func reload(categories: [String]) {
 		guard var snapshot = dataSource?.snapshot() else { return }
 		snapshot.appendItems(categories, toSection: .category)
@@ -114,7 +114,7 @@ private extension MajorCategoryViewController {
 }
 
 // MARK: - UI Configure
-private extension MajorCategoryViewController {
+private extension MainCategoryViewController {
 	func setViewAttributes() {
 		view.backgroundColor = .background
 		dataSource = setDataSource()
@@ -210,7 +210,7 @@ private extension MajorCategoryViewController {
 				for: indexPath
 			) as? CategoryHeaderView else { return nil }
 			
-			headerView.configure(.major)
+			headerView.configure(.main)
 			
 			return headerView
 		}
@@ -307,7 +307,7 @@ private extension MajorCategoryViewController {
 	}
 }
 
-extension MajorCategoryViewController: UICollectionViewDelegate {
+extension MainCategoryViewController: UICollectionViewDelegate {
 	func collectionView(
 		_ collectionView: UICollectionView,
 		didSelectItemAt indexPath: IndexPath
@@ -321,7 +321,7 @@ extension MajorCategoryViewController: UICollectionViewDelegate {
 	}
 }
 
-extension MajorCategoryViewController: OpenListNavigationBarDelegate {
+extension MainCategoryViewController: OpenListNavigationBarDelegate {
 	func openListNavigationBar(
 		_ navigationBar: OpenListNavigationBar,
 		didTapBackButton button: UIButton

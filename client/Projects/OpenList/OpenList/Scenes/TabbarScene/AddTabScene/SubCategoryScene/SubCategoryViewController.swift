@@ -1,5 +1,5 @@
 //
-//  MediumCategoryViewController.swift
+//  SubCategoryViewController.swift
 //  OpenList
 //
 //  Created by Hoon on 11/29/23.
@@ -8,12 +8,12 @@
 import Combine
 import UIKit
 
-protocol MediumCategoryRoutingLogic: AnyObject {}
+protocol SubCategoryRoutingLogic: AnyObject {}
 
-final class MediumCategoryViewController: UIViewController, ViewControllable {
+final class SubCategoryViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
-  private let router: MediumCategoryRoutingLogic
-  private let viewModel: any MediumCategoryViewModelable
+  private let router: SubCategoryRoutingLogic
+  private let viewModel: any SubCategoryViewModelable
   private var cancellables: Set<AnyCancellable> = []
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
 	private let collectionViewCellDidSelect: PassthroughSubject<String, Never> = .init()
@@ -23,8 +23,8 @@ final class MediumCategoryViewController: UIViewController, ViewControllable {
 
   // MARK: - Initializers
 	init(
-		router: MediumCategoryRoutingLogic,
-		viewModel: some MediumCategoryViewModelable
+		router: SubCategoryRoutingLogic,
+		viewModel: some SubCategoryViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -45,12 +45,12 @@ final class MediumCategoryViewController: UIViewController, ViewControllable {
 }
 
 // MARK: - Bind Methods
-extension MediumCategoryViewController: ViewBindable {
-	typealias State = MediumCategoryState
+extension SubCategoryViewController: ViewBindable {
+	typealias State = SubCategoryState
 	typealias OutputError = Error
 
 	func bind() {
-		let input = MediumCategoryInput(
+		let input = SubCategoryInput(
 			viewLoad: viewLoad,
 			nextButtonDidTap: nextButton.tapPublisher,
 			collectionViewCellDidSelect: collectionViewCellDidSelect

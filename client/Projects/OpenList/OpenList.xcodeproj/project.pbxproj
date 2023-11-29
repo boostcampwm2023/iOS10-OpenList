@@ -125,22 +125,22 @@
 		78C2F0242B049AF100E4EC4E /* CheckListRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0232B049AF100E4EC4E /* CheckListRepository.swift */; };
 		78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */; };
 		78C2F0492B05C00800E4EC4E /* DefaultCheckListRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */; };
-		78E955F92B16FC23005CF5D3 /* MajorCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E12B16FC23005CF5D3 /* MajorCategoryViewModel.swift */; };
-		78E955FA2B16FC23005CF5D3 /* MajorCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E22B16FC23005CF5D3 /* MajorCategoryViewFactory.swift */; };
-		78E955FB2B16FC23005CF5D3 /* MajorCategoryAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E32B16FC23005CF5D3 /* MajorCategoryAction.swift */; };
-		78E955FC2B16FC23005CF5D3 /* MajorCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E42B16FC23005CF5D3 /* MajorCategoryViewController.swift */; };
+		78E955F92B16FC23005CF5D3 /* MainCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E12B16FC23005CF5D3 /* MainCategoryViewModel.swift */; };
+		78E955FA2B16FC23005CF5D3 /* MainCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E22B16FC23005CF5D3 /* MainCategoryViewFactory.swift */; };
+		78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E32B16FC23005CF5D3 /* MainCategoryAction.swift */; };
+		78E955FC2B16FC23005CF5D3 /* MainCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E42B16FC23005CF5D3 /* MainCategoryViewController.swift */; };
 		78E955FD2B16FC23005CF5D3 /* GradientStageStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E62B16FC23005CF5D3 /* GradientStageStick.swift */; };
 		78E955FE2B16FC23005CF5D3 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E72B16FC23005CF5D3 /* CategoryCollectionViewCell.swift */; };
 		78E955FF2B16FC23005CF5D3 /* SkipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E82B16FC23005CF5D3 /* SkipButton.swift */; };
 		78E956002B16FC23005CF5D3 /* CategoryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955E92B16FC23005CF5D3 /* CategoryHeaderView.swift */; };
 		78E956012B16FC23005CF5D3 /* CategoryProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EA2B16FC23005CF5D3 /* CategoryProgressView.swift */; };
 		78E956022B16FC23005CF5D3 /* GradientStageCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EB2B16FC23005CF5D3 /* GradientStageCircle.swift */; };
-		78E956032B16FC23005CF5D3 /* MajorCategoryRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EC2B16FC23005CF5D3 /* MajorCategoryRouter.swift */; };
-		78E956042B16FC23005CF5D3 /* MediumCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EE2B16FC23005CF5D3 /* MediumCategoryViewFactory.swift */; };
-		78E956052B16FC23005CF5D3 /* MediumCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EF2B16FC23005CF5D3 /* MediumCategoryViewController.swift */; };
-		78E956062B16FC23005CF5D3 /* MediumCategoryAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F02B16FC23005CF5D3 /* MediumCategoryAction.swift */; };
-		78E956072B16FC23005CF5D3 /* MediumCategoryRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F12B16FC23005CF5D3 /* MediumCategoryRouter.swift */; };
-		78E956082B16FC23005CF5D3 /* MediumCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F22B16FC23005CF5D3 /* MediumCategoryViewModel.swift */; };
+		78E956032B16FC23005CF5D3 /* MainCategoryRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EC2B16FC23005CF5D3 /* MainCategoryRouter.swift */; };
+		78E956042B16FC23005CF5D3 /* SubCategoryViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EE2B16FC23005CF5D3 /* SubCategoryViewFactory.swift */; };
+		78E956052B16FC23005CF5D3 /* SubCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955EF2B16FC23005CF5D3 /* SubCategoryViewController.swift */; };
+		78E956062B16FC23005CF5D3 /* SubCategoryAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F02B16FC23005CF5D3 /* SubCategoryAction.swift */; };
+		78E956072B16FC23005CF5D3 /* SubCategoryRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F12B16FC23005CF5D3 /* SubCategoryRouter.swift */; };
+		78E956082B16FC23005CF5D3 /* SubCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F22B16FC23005CF5D3 /* SubCategoryViewModel.swift */; };
 		78E956092B16FC23005CF5D3 /* AddCheckListTitleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F42B16FC23005CF5D3 /* AddCheckListTitleViewController.swift */; };
 		78E9560A2B16FC23005CF5D3 /* AddCheckListTitleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F52B16FC23005CF5D3 /* AddCheckListTitleViewModel.swift */; };
 		78E9560B2B16FC23005CF5D3 /* AddCheckListTitleViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E955F62B16FC23005CF5D3 /* AddCheckListTitleViewFactory.swift */; };
@@ -295,22 +295,22 @@
 		78C2F0232B049AF100E4EC4E /* CheckListRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListRepository.swift; sourceTree = "<group>"; };
 		78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListTextField.swift; sourceTree = "<group>"; };
 		78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCheckListRepository.swift; sourceTree = "<group>"; };
-		78E955E12B16FC23005CF5D3 /* MajorCategoryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MajorCategoryViewModel.swift; sourceTree = "<group>"; };
-		78E955E22B16FC23005CF5D3 /* MajorCategoryViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MajorCategoryViewFactory.swift; sourceTree = "<group>"; };
-		78E955E32B16FC23005CF5D3 /* MajorCategoryAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MajorCategoryAction.swift; sourceTree = "<group>"; };
-		78E955E42B16FC23005CF5D3 /* MajorCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MajorCategoryViewController.swift; sourceTree = "<group>"; };
+		78E955E12B16FC23005CF5D3 /* MainCategoryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCategoryViewModel.swift; sourceTree = "<group>"; };
+		78E955E22B16FC23005CF5D3 /* MainCategoryViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCategoryViewFactory.swift; sourceTree = "<group>"; };
+		78E955E32B16FC23005CF5D3 /* MainCategoryAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCategoryAction.swift; sourceTree = "<group>"; };
+		78E955E42B16FC23005CF5D3 /* MainCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCategoryViewController.swift; sourceTree = "<group>"; };
 		78E955E62B16FC23005CF5D3 /* GradientStageStick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientStageStick.swift; sourceTree = "<group>"; };
 		78E955E72B16FC23005CF5D3 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		78E955E82B16FC23005CF5D3 /* SkipButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkipButton.swift; sourceTree = "<group>"; };
 		78E955E92B16FC23005CF5D3 /* CategoryHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryHeaderView.swift; sourceTree = "<group>"; };
 		78E955EA2B16FC23005CF5D3 /* CategoryProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryProgressView.swift; sourceTree = "<group>"; };
 		78E955EB2B16FC23005CF5D3 /* GradientStageCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientStageCircle.swift; sourceTree = "<group>"; };
-		78E955EC2B16FC23005CF5D3 /* MajorCategoryRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MajorCategoryRouter.swift; sourceTree = "<group>"; };
-		78E955EE2B16FC23005CF5D3 /* MediumCategoryViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewFactory.swift; sourceTree = "<group>"; };
-		78E955EF2B16FC23005CF5D3 /* MediumCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewController.swift; sourceTree = "<group>"; };
-		78E955F02B16FC23005CF5D3 /* MediumCategoryAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediumCategoryAction.swift; sourceTree = "<group>"; };
-		78E955F12B16FC23005CF5D3 /* MediumCategoryRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediumCategoryRouter.swift; sourceTree = "<group>"; };
-		78E955F22B16FC23005CF5D3 /* MediumCategoryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediumCategoryViewModel.swift; sourceTree = "<group>"; };
+		78E955EC2B16FC23005CF5D3 /* MainCategoryRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCategoryRouter.swift; sourceTree = "<group>"; };
+		78E955EE2B16FC23005CF5D3 /* SubCategoryViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubCategoryViewFactory.swift; sourceTree = "<group>"; };
+		78E955EF2B16FC23005CF5D3 /* SubCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubCategoryViewController.swift; sourceTree = "<group>"; };
+		78E955F02B16FC23005CF5D3 /* SubCategoryAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubCategoryAction.swift; sourceTree = "<group>"; };
+		78E955F12B16FC23005CF5D3 /* SubCategoryRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubCategoryRouter.swift; sourceTree = "<group>"; };
+		78E955F22B16FC23005CF5D3 /* SubCategoryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubCategoryViewModel.swift; sourceTree = "<group>"; };
 		78E955F42B16FC23005CF5D3 /* AddCheckListTitleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCheckListTitleViewController.swift; sourceTree = "<group>"; };
 		78E955F52B16FC23005CF5D3 /* AddCheckListTitleViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCheckListTitleViewModel.swift; sourceTree = "<group>"; };
 		78E955F62B16FC23005CF5D3 /* AddCheckListTitleViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCheckListTitleViewFactory.swift; sourceTree = "<group>"; };
@@ -764,8 +764,8 @@
 			isa = PBXGroup;
 			children = (
 				78E955F32B16FC23005CF5D3 /* AddCheckListTitleScene */,
-				78E955E02B16FC23005CF5D3 /* MajorCategoryScene */,
-				78E955ED2B16FC23005CF5D3 /* MediumCategoryScene */,
+				78E955E02B16FC23005CF5D3 /* MainCategoryScene */,
+				78E955ED2B16FC23005CF5D3 /* SubCategoryScene */,
 			);
 			path = AddTabScene;
 			sourceTree = "<group>";
@@ -840,17 +840,17 @@
 			path = "Combine+";
 			sourceTree = "<group>";
 		};
-		78E955E02B16FC23005CF5D3 /* MajorCategoryScene */ = {
+		78E955E02B16FC23005CF5D3 /* MainCategoryScene */ = {
 			isa = PBXGroup;
 			children = (
-				78E955E12B16FC23005CF5D3 /* MajorCategoryViewModel.swift */,
-				78E955E22B16FC23005CF5D3 /* MajorCategoryViewFactory.swift */,
-				78E955E32B16FC23005CF5D3 /* MajorCategoryAction.swift */,
-				78E955E42B16FC23005CF5D3 /* MajorCategoryViewController.swift */,
+				78E955E12B16FC23005CF5D3 /* MainCategoryViewModel.swift */,
+				78E955E22B16FC23005CF5D3 /* MainCategoryViewFactory.swift */,
+				78E955E32B16FC23005CF5D3 /* MainCategoryAction.swift */,
+				78E955E42B16FC23005CF5D3 /* MainCategoryViewController.swift */,
+				78E955EC2B16FC23005CF5D3 /* MainCategoryRouter.swift */,
 				78E955E52B16FC23005CF5D3 /* View */,
-				78E955EC2B16FC23005CF5D3 /* MajorCategoryRouter.swift */,
 			);
-			path = MajorCategoryScene;
+			path = MainCategoryScene;
 			sourceTree = "<group>";
 		};
 		78E955E52B16FC23005CF5D3 /* View */ = {
@@ -866,16 +866,16 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		78E955ED2B16FC23005CF5D3 /* MediumCategoryScene */ = {
+		78E955ED2B16FC23005CF5D3 /* SubCategoryScene */ = {
 			isa = PBXGroup;
 			children = (
-				78E955EE2B16FC23005CF5D3 /* MediumCategoryViewFactory.swift */,
-				78E955EF2B16FC23005CF5D3 /* MediumCategoryViewController.swift */,
-				78E955F02B16FC23005CF5D3 /* MediumCategoryAction.swift */,
-				78E955F12B16FC23005CF5D3 /* MediumCategoryRouter.swift */,
-				78E955F22B16FC23005CF5D3 /* MediumCategoryViewModel.swift */,
+				78E955EE2B16FC23005CF5D3 /* SubCategoryViewFactory.swift */,
+				78E955EF2B16FC23005CF5D3 /* SubCategoryViewController.swift */,
+				78E955F02B16FC23005CF5D3 /* SubCategoryAction.swift */,
+				78E955F12B16FC23005CF5D3 /* SubCategoryRouter.swift */,
+				78E955F22B16FC23005CF5D3 /* SubCategoryViewModel.swift */,
 			);
-			path = MediumCategoryScene;
+			path = SubCategoryScene;
 			sourceTree = "<group>";
 		};
 		78E955F32B16FC23005CF5D3 /* AddCheckListTitleScene */ = {
@@ -1062,7 +1062,7 @@
 				78E955FD2B16FC23005CF5D3 /* GradientStageStick.swift in Sources */,
 				5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */,
 				4DDC43332B0F16CC00859B28 /* WithDetailCheckListViewModel.swift in Sources */,
-				78E956072B16FC23005CF5D3 /* MediumCategoryRouter.swift in Sources */,
+				78E956072B16FC23005CF5D3 /* SubCategoryRouter.swift in Sources */,
 				78E9560C2B16FC23005CF5D3 /* AddCheckListTitleRouter.swift in Sources */,
 				5FA1F8D32AFF802900869079 /* TabBarPage.swift in Sources */,
 				5F9349062B16DF4600282545 /* SharedCheckListViewModel.swift in Sources */,
@@ -1070,11 +1070,11 @@
 				5F93490C2B16DF4D00282545 /* CheckListTopTabView.swift in Sources */,
 				78E956092B16FC23005CF5D3 /* AddCheckListTitleViewController.swift in Sources */,
 				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
-				78E956062B16FC23005CF5D3 /* MediumCategoryAction.swift in Sources */,
+				78E956062B16FC23005CF5D3 /* SubCategoryAction.swift in Sources */,
 				4DDC434B2B0F432900859B28 /* Device.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */,
-				78E956042B16FC23005CF5D3 /* MediumCategoryViewFactory.swift in Sources */,
+				78E956042B16FC23005CF5D3 /* SubCategoryViewFactory.swift in Sources */,
 				78A4C7252B0F5C6900E07492 /* AuthUseCase.swift in Sources */,
 				5F93491E2B16DFF300282545 /* UICollectionView+Extensions.swift in Sources */,
 				5F9349162B16DF5500282545 /* CheckListFolderRouter.swift in Sources */,
@@ -1108,14 +1108,14 @@
 				78E955FF2B16FC23005CF5D3 /* SkipButton.swift in Sources */,
 				4DDC43322B0F16CC00859B28 /* WithDetailCheckListViewFactory.swift in Sources */,
 				4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
-				78E955FA2B16FC23005CF5D3 /* MajorCategoryViewFactory.swift in Sources */,
+				78E955FA2B16FC23005CF5D3 /* MainCategoryViewFactory.swift in Sources */,
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
 				4D696CBB2B0F946100873B3B /* EditText.swift in Sources */,
 				5F70C84B2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift in Sources */,
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
-				78E956052B16FC23005CF5D3 /* MediumCategoryViewController.swift in Sources */,
+				78E956052B16FC23005CF5D3 /* SubCategoryViewController.swift in Sources */,
 				5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */,
 				5F70C8392B04BF7A00826B5D /* LocalCheckListItem.swift in Sources */,
 				5F9349022B16DF4600282545 /* SharedCheckListViewController.swift in Sources */,
@@ -1136,7 +1136,7 @@
 				5F9349012B16DF4600282545 /* SharedCheckListAction.swift in Sources */,
 				5F9349152B16DF5500282545 /* CheckListFolderViewFactory.swift in Sources */,
 				5FA1F8AB2AFF7F7300869079 /* SceneDelegate.swift in Sources */,
-				78E955F92B16FC23005CF5D3 /* MajorCategoryViewModel.swift in Sources */,
+				78E955F92B16FC23005CF5D3 /* MainCategoryViewModel.swift in Sources */,
 				5F70C8422B04C7F800826B5D /* PrivateDetailCheckListDiffableDataSource.swift in Sources */,
 				4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */,
 				5F9349192B16DF5500282545 /* CheckListFolderAction.swift in Sources */,
@@ -1152,19 +1152,19 @@
 				5F70C8312B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift in Sources */,
 				4DD947052B044FF20054C104 /* CheckListTableItem.swift in Sources */,
 				4DDC43302B0F16CC00859B28 /* WithDetailCheckListRouter.swift in Sources */,
-				78E955FB2B16FC23005CF5D3 /* MajorCategoryAction.swift in Sources */,
+				78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */,
 				4D8AEBDC2B122AAD00292AF3 /* CRDTResponseDTO.swift in Sources */,
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
 				78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */,
-				78E956032B16FC23005CF5D3 /* MajorCategoryRouter.swift in Sources */,
+				78E956032B16FC23005CF5D3 /* MainCategoryRouter.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
 				5F93491A2B16DF5500282545 /* CheckListFolderViewController.swift in Sources */,
 				78C2F02E2B05427E00E4EC4E /* OpenListTextField.swift in Sources */,
 				5F70C8302B04A96E00826B5D /* PrivateDetailCheckListViewController.swift in Sources */,
 				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,
-				78E956082B16FC23005CF5D3 /* MediumCategoryViewModel.swift in Sources */,
-				78E955FC2B16FC23005CF5D3 /* MajorCategoryViewController.swift in Sources */,
+				78E956082B16FC23005CF5D3 /* SubCategoryViewModel.swift in Sources */,
+				78E955FC2B16FC23005CF5D3 /* MainCategoryViewController.swift in Sources */,
 				78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

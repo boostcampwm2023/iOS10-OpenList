@@ -14,7 +14,7 @@ protocol AddCheckListTitleDependency: Dependency {
 
 final class AddCheckListTitleComponent:
 	Component<AddCheckListTitleDependency>,
-	MajorCategoryDependency {
+	MainCategoryDependency {
 	fileprivate var validCheckUseCase: ValidCheckUseCase {
 		return parent.validCheckUseCase
 	}
@@ -23,8 +23,8 @@ final class AddCheckListTitleComponent:
 		return parent.persistenceUseCase
 	}
 	
-	fileprivate var majorCategoryFactoryable: MajorCategoryFactoryable {
-		return MajorCategoryViewFactory(parent: self)
+	fileprivate var mainCategoryFactoryable: MainCategoryFactoryable {
+		return MainCategoryViewFactory(parent: self)
 	}
 }
 
@@ -40,7 +40,7 @@ final class AddCheckListTitleViewFactory: Factory<AddCheckListTitleDependency>, 
 	func make() -> ViewControllable {
 		let component = AddCheckListTitleComponent(parent: parent)
 		let router = AddCheckListTitleRouter(
-			majorCategoryViewFactory: component.majorCategoryFactoryable
+			mainCategoryViewFactory: component.mainCategoryFactoryable
 		)
 		let viewModel = AddCheckListTitleViewModel(
 			validCheckUseCase: component.validCheckUseCase,
