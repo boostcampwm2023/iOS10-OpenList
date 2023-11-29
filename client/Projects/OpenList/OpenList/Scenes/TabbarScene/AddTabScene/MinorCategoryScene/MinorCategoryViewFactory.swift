@@ -7,14 +7,9 @@
 
 import Foundation
 
-protocol MinorCategoryDependency: Dependency {
-  // TODO: 부모에게 넘겨받을 의존성 프로퍼티를 작성합니다.
-}
+protocol MinorCategoryDependency: Dependency {}
 
-final class MinorCategoryComponent: Component<MinorCategoryDependency> {
-  // TODO: 부모에게 넘겨받은 의존성을 가지고  MinorCategory 뷰를 만드는데 필요한 의존성을 만듭니다.
-  // 또한 자식 뷰에게 넘겨줄 의존성도 정의할 수 있습니다.
-}
+final class MinorCategoryComponent: Component<MinorCategoryDependency> {}
 
 protocol MinorCategoryFactoryable: Factoryable {
 	func make() -> ViewControllable

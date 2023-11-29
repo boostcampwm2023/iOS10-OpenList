@@ -8,9 +8,14 @@
 import Combine
 
 struct MinorCategoryInput {
-	// TODO: View의 입력 메서드를 구현합니다.
+	let viewLoad: PassthroughSubject<Void, Never>
+	let nextButtonDidTap: AnyPublisher<Void, Never>
+	let collectionViewCellDidSelect: PassthroughSubject<String, Never>
 }
 
 enum MinorCategoryState {
-  // TODO: View의 반영할 상태를 구현합니다.
+	case error(_ error: Error)
+	case load(_ category: [String])
+	case routeToNext(_ category: String)
+	case none
 }

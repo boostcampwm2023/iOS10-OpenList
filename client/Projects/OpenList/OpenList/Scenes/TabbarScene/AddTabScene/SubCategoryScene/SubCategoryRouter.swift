@@ -9,6 +9,18 @@ import Foundation
 
 final class SubCategoryRouter {
 	weak var viewController: ViewControllable?
+	weak var minorCategoryViewControllable: ViewControllable?
+	private var minorCategoryFactory: MinorCategoryFactoryable
+	
+	init(
+		viewController: ViewControllable? = nil,
+		minorCategoryViewControllable: ViewControllable? = nil,
+		minorCategoryFactory: MinorCategoryFactoryable
+	) {
+		self.viewController = viewController
+		self.minorCategoryViewControllable = minorCategoryViewControllable
+		self.minorCategoryFactory = minorCategoryFactory
+	}
 }
 
 // MARK: - RoutingLogic
@@ -18,7 +30,8 @@ extension SubCategoryRouter: SubCategoryRoutingLogic {
 	}
 	
 	func routeToMinorCategoryView(with subCategory: String) {
-		dump("다음 뷰로 이동")
+		let minorCategoryViewControllable = minorCategoryFactory.make()
+		viewController?.pushViewController(minorCategoryViewControllable, animated: true)
 	}
 	
 	func routeToConfirmView() {

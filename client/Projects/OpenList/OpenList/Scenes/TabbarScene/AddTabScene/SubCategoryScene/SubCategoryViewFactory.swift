@@ -9,7 +9,11 @@ import Foundation
 
 protocol SubCategoryDependency: Dependency { }
 
-final class SubCategoryComponent: Component<SubCategoryDependency> {}
+final class SubCategoryComponent: Component<SubCategoryDependency>, MinorCategoryDependency {
+	fileprivate var minorCategoryFactory: MinorCategoryFactoryable {
+		return MinorCategoryViewFactory(parent: self)
+	}
+}
 
 protocol SubCategoryFactoryable: Factoryable {
 	func make(with category: String) -> ViewControllable
@@ -21,7 +25,8 @@ final class SubCategoryViewFactory: Factory<SubCategoryDependency>, SubCategoryF
 	}
 	
 	func make(with category: String) -> ViewControllable {
-		let router = SubCategoryRouter()
+		let component = SubCategoryComponent(parent: parent)
+		let router = SubCategoryRouter(minorCategoryFactory: component.minorCategoryFactory)
 		let viewModel = SubCategoryViewModel(majorCategoryTitle: category)
 		let viewController = SubCategoryViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

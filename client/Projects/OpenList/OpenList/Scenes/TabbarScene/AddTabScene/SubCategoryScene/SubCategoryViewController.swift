@@ -55,7 +55,6 @@ final class SubCategoryViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		super.viewDidLoad()
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
