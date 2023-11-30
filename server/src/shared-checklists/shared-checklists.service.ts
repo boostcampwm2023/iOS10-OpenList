@@ -27,6 +27,8 @@ export class SharedChecklistsService {
    * @returns 생성된 공유 체크리스트 객체
    */
   async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
+    // 사용자가 존재하는지 확인
+    const user = await this.usersService.findUserById(userId);
     // 중복된 sharedChecklistId가 있는지 확인
     const checklistExists = await this.SharedChecklistsrepository.exist({
       where: {
@@ -40,7 +42,7 @@ export class SharedChecklistsService {
     const newChecklist = this.SharedChecklistsrepository.create({
       title: dto.title,
       sharedChecklistId: dto.sharedChecklistId,
-      editors: [{ userId }],
+      editors: [user],
     });
     // Checklist 저장
     return this.SharedChecklistsrepository.save(newChecklist);
