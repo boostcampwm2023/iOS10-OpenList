@@ -27,7 +27,7 @@ extension MinorCategoryRouter: MinorCategoryRoutingLogic {
 	}
 	
 	func routeToConfirmView(categoryInfo: CategoryInfo) {
-		let addCheckListItemViewControllable = addCheckListItemFactory.make()
+		let addCheckListItemViewControllable = addCheckListItemFactory.make(with: categoryInfo)
 		viewController?.pushViewController(addCheckListItemViewControllable, animated: true)
 	}
 }

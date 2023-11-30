@@ -57,16 +57,6 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		setViewConstraints()
 		bind()
 		viewLoad.send()
-		dataSource?.updateSelectItem([
-			.init(itemId: UUID(), title: "선택된 체크리스트1", isChecked: true),
-			.init(itemId: UUID(), title: "선택된 체크리스트2", isChecked: true),
-			.init(itemId: UUID(), title: "선택된 체크리스트3", isChecked: true)
-		])
-		dataSource?.updateAiItem([
-			.init(itemId: UUID(), title: "AI 추천체크리스트1", isChecked: false),
-			.init(itemId: UUID(), title: "AI 추천체크리스트2", isChecked: false),
-			.init(itemId: UUID(), title: "AI 추천체크리스트3", isChecked: false)
-		])
 	}
 }
 
@@ -90,8 +80,15 @@ extension AddCheckListItemViewController: ViewBindable {
 
 	func render(_ state: State) {
 		switch state {
-		case .viewDidLoad:
-			updateView()
+		case .viewDidLoad(let items, let categoryInfo):
+			updateView(categoryInfo: categoryInfo)
+			dataSource?.updateAiItem(
+				items.map {
+					return CheckListItem(itemId: UUID(), title: $0.content, isChecked: false)
+				}
+			)
+		case .error(let error):
+			handleError(error)
 		}
 	}
 
@@ -100,8 +97,16 @@ extension AddCheckListItemViewController: ViewBindable {
 
 // MARK: - Helper
 private extension AddCheckListItemViewController {
-	func updateView() {
-		headerView.configure(title: "Test", tags: ["여행", "국내여행", "부산"])
+	func updateView(categoryInfo: CategoryInfo) {
+		guard
+			let mainCategory = categoryInfo.mainCategory,
+			let subCategory = categoryInfo.subCategory,
+			let minorCategory = categoryInfo.minorCategory
+		else {
+			headerView.configure(title: categoryInfo.title, tags: ["", "", ""])
+			return
+		}
+		headerView.configure(title: categoryInfo.title, tags: [mainCategory, subCategory, minorCategory])
 	}
 }
 

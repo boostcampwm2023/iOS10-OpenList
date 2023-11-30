@@ -7,7 +7,4 @@
 
 import Foundation
 
-struct RecommendChecklistResponseDTO: Decodable {
-	let id: String
-	let content: String
-}
+typealias RecommendChecklistResponseDTO = [String: String]

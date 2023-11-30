@@ -90,7 +90,6 @@ private extension AiCheckListCell {
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
 		guard
-			let _ = self.indexPath,
 			let cellId = self.cellId
 		else { return }
 		delegate?.checklistButtonDidToggle(textField, cell: self, cellId: cellId)

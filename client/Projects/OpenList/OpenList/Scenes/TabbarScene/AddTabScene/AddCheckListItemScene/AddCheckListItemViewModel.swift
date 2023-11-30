@@ -12,7 +12,7 @@ where Input == AddCheckListItemInput,
   State == AddCheckListItemState,
   Output == AnyPublisher<State, Never> { }
 
-final class AddCheckListItemViewModel { 
+final class AddCheckListItemViewModel {
 	private let categoryInfo: CategoryInfo
 	private let categoryUseCase: CategoryUseCase
 	
@@ -35,10 +35,31 @@ extension AddCheckListItemViewModel: AddCheckListItemViewModelable {
 
 private extension AddCheckListItemViewModel {
 	func viewDidLoad(_ input: Input) -> Output {
+		if categoryInfo.mainCategory != nil &&
+			categoryInfo.subCategory != nil &&
+			categoryInfo.minorCategory != nil {
+			return input.viewDidLoad
+				.withUnretained(self)
+				.flatMap { (owner, _) -> AnyPublisher<Result<[RecommendChecklistItem], Error>, Never> in
+					let future = Future(asyncFunc: {
+						await owner.categoryUseCase.fetchRecommendCheckList(with: owner.categoryInfo)
+					})
+					return future.eraseToAnyPublisher()
+				}
+				.map { [weak self] result in
+					switch result {
+					case let .success(items):
+						return .viewDidLoad(items, self!.categoryInfo)
+					case let .failure(error):
+						return .error(error)
+					}
+				}.eraseToAnyPublisher()
+		}
+
 		return input.viewDidLoad
-			.map { _ in
-				return .viewDidLoad
-			}
-			.eraseToAnyPublisher()
+			.withUnretained(self)
+			.map { (owner, _) in
+				return .viewDidLoad([], owner.categoryInfo)
+			}.eraseToAnyPublisher()
 	}
 }

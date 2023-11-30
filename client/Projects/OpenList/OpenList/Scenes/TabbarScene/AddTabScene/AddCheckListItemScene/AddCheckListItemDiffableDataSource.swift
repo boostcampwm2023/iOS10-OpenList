@@ -93,7 +93,7 @@ private extension AddCheckListItemDiffableDataSource {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = snapshot()
-			let previousProducts = snapshot.itemIdentifiers(inSection: section)
+			_ = snapshot.itemIdentifiers(inSection: section)
 			snapshot.appendItems(items, toSection: section)
 			apply(snapshot, animatingDifferences: false)
 		}
