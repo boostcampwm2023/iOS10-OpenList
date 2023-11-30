@@ -16,7 +16,7 @@ public final class NetworkService {
 		self.urlRequestBuilder = urlRequestBuilder
 	}
 	
-	public func repuest() async throws -> Data {
+	public func request() async throws -> Data {
 		guard let request = urlRequestBuilder.build() else {
 			throw NetworkError.invalidRequest
 		}
