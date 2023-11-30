@@ -57,13 +57,9 @@ extension DefaultCategoryUseCase: CategoryUseCase {
 	}
 	
 	func fetchRecommendCheckList(with categoryInfo: CategoryInfo) async -> Result<[RecommendChecklistItem], Error> {
-		let categoryRequestDTO = CategoryInfoRequestDTO(
-			mainCategory: categoryInfo.mainCategory!,
-			subCategory: categoryInfo.subCategory!,
-			minorCategory: categoryInfo.minorCategory!
-		)
+		
 		do {
-			let items = try await categoryRepository.fetchRecommendCheckList(with: categoryRequestDTO)
+			let items = try await categoryRepository.fetchRecommendCheckList(categoryInfo: categoryInfo)
 			return .success(items)
 		} catch {
 			return .failure(error)

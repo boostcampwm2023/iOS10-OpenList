@@ -11,5 +11,5 @@ protocol CategoryRepository {
 	func fetchMainCategory() async throws -> [CategoryItem]
 	func fetchSubCategory(with mainCategory: CategoryItem) async throws -> [CategoryItem]
 	func fetchMinorCategory(with mainCategory: CategoryItem, subCategory: CategoryItem) async throws -> [CategoryItem]
-	func fetchRecommendCheckList(with categoryRequestDTO: CategoryInfoRequestDTO) async throws -> [RecommendChecklistItem]
+	func fetchRecommendCheckList(categoryInfo: CategoryInfo) async throws -> [RecommendChecklistItem]
 }

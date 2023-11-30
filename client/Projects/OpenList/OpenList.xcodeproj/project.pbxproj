@@ -159,7 +159,6 @@
 		78E956242B178E3A005CF5D3 /* CategoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956232B178E3A005CF5D3 /* CategoryItem.swift */; };
 		78E956262B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */; };
 		78E956282B1795CC005CF5D3 /* RecommendChecklistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */; };
-		78E9562A2B18368C005CF5D3 /* AccessTokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */; };
 		78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F7476D2B126EC3003ED6DA /* KeyChain.swift */; };
 		78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F747722B148C2E003ED6DA /* LoginInfo.swift */; };
 /* End PBXBuildFile section */
@@ -343,7 +342,6 @@
 		78E956232B178E3A005CF5D3 /* CategoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryItem.swift; sourceTree = "<group>"; };
 		78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistResponseDTO.swift; sourceTree = "<group>"; };
 		78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistItem.swift; sourceTree = "<group>"; };
-		78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInterceptor.swift; sourceTree = "<group>"; };
 		78F7476D2B126EC3003ED6DA /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 		78F747722B148C2E003ED6DA /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -708,7 +706,6 @@
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
-				78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1196,7 +1193,6 @@
 				5F9349152B16DF5500282545 /* CheckListFolderViewFactory.swift in Sources */,
 				78E956182B171973005CF5D3 /* MinorCategoryViewModel.swift in Sources */,
 				5FA1F8AB2AFF7F7300869079 /* SceneDelegate.swift in Sources */,
-				78E9562A2B18368C005CF5D3 /* AccessTokenInterceptor.swift in Sources */,
 				78E955F92B16FC23005CF5D3 /* MainCategoryViewModel.swift in Sources */,
 				5F70C8422B04C7F800826B5D /* PrivateDetailCheckListDiffableDataSource.swift in Sources */,
 				4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */,

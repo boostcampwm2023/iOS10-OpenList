@@ -8,6 +8,10 @@
 import CustomNetwork
 import Foundation
 
+enum CategoryNilError: Error {
+	case categoryNilError
+}
+
 final class DefaultCategoryRepository {
 	private let session: CustomSession
 	
@@ -64,13 +68,26 @@ extension DefaultCategoryRepository: CategoryRepository {
 	}
 	
 	func fetchRecommendCheckList(
-		with categoryRequestDTO: CategoryInfoRequestDTO
+		categoryInfo: CategoryInfo
 	) async throws -> [RecommendChecklistItem] {
 		var builder = URLRequestBuilder(url: Constant.aiBaseUrl)
 		builder.addHeader(
 			field: "Content-Type",
 			value: "application/json"
 		)
+		
+		guard
+			let mainCategory = categoryInfo.mainCategory,
+			let subCategory = categoryInfo.subCategory,
+			let minorCategory = categoryInfo.minorCategory
+		else { throw CategoryNilError.categoryNilError }
+		
+		let categoryRequestDTO = CategoryInfoRequestDTO(
+			mainCategory: mainCategory,
+			subCategory: subCategory,
+			minorCategory: minorCategory
+		)
+		
 		let body = try JSONEncoder().encode(categoryRequestDTO)
 		builder.setBody(body)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
