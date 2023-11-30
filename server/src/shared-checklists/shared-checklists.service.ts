@@ -27,6 +27,8 @@ export class SharedChecklistsService {
    * @returns 생성된 공유 체크리스트 객체
    */
   async createSharedChecklist(userId: number, dto: CreateSharedChecklistDto) {
+    // 사용자가 존재하는지 확인
+    const user = await this.usersService.findUserById(userId);
     // 중복된 sharedChecklistId가 있는지 확인
     const checklistExists = await this.SharedChecklistsrepository.exist({
       where: {
@@ -125,6 +127,7 @@ export class SharedChecklistsService {
   ) {
     const sharedChecklist =
       await this.findSharedChecklistById(sharedChecklistId);
+
     if (!sharedChecklist.editors.some((editor) => editor.userId === userId)) {
       throw new BadRequestException('권한이 없습니다.');
     }
@@ -150,6 +153,7 @@ export class SharedChecklistsService {
     if (!sharedChecklist) {
       throw new BadRequestException('존재하지 않는 체크리스트입니다.');
     }
+
     return sharedChecklist;
   }
 
