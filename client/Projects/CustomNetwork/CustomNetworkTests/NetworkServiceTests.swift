@@ -45,7 +45,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.repuest()
+			let result = try await service.request()
 			XCTAssertEqual(result, data, "Get data should match expected data")
 		} catch {
 			XCTFail("Expected successful get, but got error: \(error)")
@@ -78,7 +78,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.repuest()
+			let result = try await service.request()
 			XCTAssertEqual(result, data, "Post data should match expected data")
 		} catch {
 			XCTFail("Expected successful post, but got error: \(error)")
@@ -111,7 +111,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.repuest()
+			let result = try await service.request()
 			XCTAssertEqual(result, data, "Put data should match expected data")
 		} catch {
 			XCTFail("Expected successful put, but got error: \(error)")
@@ -144,7 +144,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.repuest()
+			let result = try await service.request()
 			XCTAssertEqual(result, data, "Delete data should match expected data")
 		} catch {
 			XCTFail("Expected successful delete, but got error: \(error)")
@@ -177,7 +177,7 @@ final class NetworkServiceTests: XCTestCase {
 		}
 		
 		do {
-			let result = try await service.repuest()
+			let result = try await service.request()
 			XCTAssertEqual(result, data, "Patch data should match expected data")
 		} catch {
 			XCTFail("Expected successful patch, but got error: \(error)")
