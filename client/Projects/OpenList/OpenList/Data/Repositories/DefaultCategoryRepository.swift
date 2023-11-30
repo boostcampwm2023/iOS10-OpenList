@@ -90,10 +90,11 @@ extension DefaultCategoryRepository: CategoryRepository {
 		
 		let body = try JSONEncoder().encode(categoryRequestDTO)
 		builder.setBody(body)
+		builder.setMethod(.post)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
 		let data = try await service.request()
-		let recommendChecklistResponseDTO = try JSONDecoder().decode([RecommendChecklistResponseDTO].self, from: data)
-		let recommendChecklist = recommendChecklistResponseDTO.map { RecommendChecklistItem(id: $0.id, content: $0.content)}
+		let recommendChecklistResponseDTO = try JSONDecoder().decode(RecommendChecklistResponseDTO.self, from: data)
+		let recommendChecklist = recommendChecklistResponseDTO.map { RecommendChecklistItem(id: $0.key, content: $0.value)}
 		return recommendChecklist
 	}
 }

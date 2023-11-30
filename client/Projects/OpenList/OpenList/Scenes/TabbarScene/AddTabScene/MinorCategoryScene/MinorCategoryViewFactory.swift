@@ -9,9 +9,16 @@ import Foundation
 
 protocol MinorCategoryDependency: Dependency {
 	var categoryUseCase: CategoryUseCase { get }
+	var addCheckListItemFactory: AddCheckListItemFactoryable { get }
 }
 
-final class MinorCategoryComponent: Component<MinorCategoryDependency> {}
+final class MinorCategoryComponent:
+	Component<MinorCategoryDependency>,
+	AddCheckListItemDependency {
+	var categoryUseCase: CategoryUseCase {
+		return parent.categoryUseCase
+	}
+}
 
 protocol MinorCategoryFactoryable: Factoryable {
 	func make(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable
@@ -23,7 +30,9 @@ final class MinorCategoryViewFactory: Factory<MinorCategoryDependency>, MinorCat
 	}
 	
 	func make(_ title: String, _ mainCategory: CategoryItem, _ subCategory: CategoryItem) -> ViewControllable {
-		let router = MinorCategoryRouter()
+		let router = MinorCategoryRouter(
+			addCheckListItemFactory: parent.addCheckListItemFactory
+		)
 		let viewModel = MinorCategoryViewModel(
 			title: title,
 			mainCategory: mainCategory,
