@@ -6,10 +6,10 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol CheckListTableDependency: Dependency {
-	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
 	var crdtRepository: CRDTRepository { get }
 }

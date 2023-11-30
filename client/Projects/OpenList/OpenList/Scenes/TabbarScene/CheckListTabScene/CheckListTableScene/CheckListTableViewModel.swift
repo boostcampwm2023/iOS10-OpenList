@@ -13,10 +13,10 @@ where Input == CheckListTableInput,
   Output == AnyPublisher<State, Never> { }
 
 final class CheckListTableViewModel {
-	private let persistenceUseCase: PersistenceUseCase
+	private let withCheckListUseCase: WithCheckListUseCase
 	
-	init(persistenceUseCase: PersistenceUseCase) {
-		self.persistenceUseCase = persistenceUseCase
+	init(withCheckListUseCase: WithCheckListUseCase) {
+		self.withCheckListUseCase = withCheckListUseCase
 	}
 }
 
@@ -37,7 +37,7 @@ private extension CheckListTableViewModel {
 			.withUnretained(self)
 			.flatMap { (owner, _) -> AnyPublisher<[CheckListTableItem], Never>  in
 				let future = Future(asyncFunc: {
-					await owner.persistenceUseCase.fetchAllCheckList()
+					await owner.withCheckListUseCase.fetchAllCheckList()
 				})
 				return future.eraseToAnyPublisher()
 			}
