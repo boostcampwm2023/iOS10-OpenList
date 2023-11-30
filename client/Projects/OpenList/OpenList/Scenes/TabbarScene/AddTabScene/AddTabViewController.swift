@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
-protocol AddTabRoutingLogic: AnyObject { }
+protocol AddTabRoutingLogic: AnyObject { 
+	func dismissScene()
+}
 
 final class AddTabViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
@@ -76,7 +78,8 @@ extension AddTabViewController: ViewBindable {
 		case .valid(let state):
 			setButtonIsEnabled(state)
 		case .dismiss:
-			dismiss(animated: true)
+			router.dismissScene()
+//			dismiss(animated: true)
 		}
 	}
 

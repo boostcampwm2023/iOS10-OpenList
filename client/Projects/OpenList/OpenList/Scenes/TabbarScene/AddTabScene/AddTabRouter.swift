@@ -12,4 +12,14 @@ final class AddTabRouter {
 }
 
 // MARK: - RoutingLogic
-extension AddTabRouter: AddTabRoutingLogic {}
+extension AddTabRouter: AddTabRoutingLogic {
+	func dismissScene() {
+		viewController?.uiviewController.dismiss(animated: true, completion: {
+			NotificationCenter.default.post(name: OpenListNotificationName.checkListAdded, object: self)
+		})
+	}
+}
+
+enum OpenListNotificationName {
+	static let checkListAdded: Notification.Name = Notification.Name(rawValue: "checkListAdded")
+}
