@@ -1,17 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Put,
+  Get,
+  Param,
+  Post,
+  Query,
 } from '@nestjs/common';
-import { SharedChecklistsService } from './shared-checklists.service';
+import { UserId } from 'src/users/decorator/userId.decorator';
 import { CreateSharedChecklistDto } from './dto/create-shared-checklist.dto';
 import { UpdateSharedChecklistDto } from './dto/update-shared-checklist.dto';
+import { SharedChecklistsService } from './shared-checklists.service';
 
-@Controller('folders/:folderId/checklists')
+@Controller('shared-checklists')
 export class SharedChecklistsController {
   constructor(private readonly checklistsService: SharedChecklistsService) {}
 
@@ -22,11 +23,11 @@ export class SharedChecklistsController {
    */
   @Post()
   postSharedChecklist(
+    @UserId() userId: number,
     @Body() createSharedChecklistDto: CreateSharedChecklistDto,
   ) {
-    const uId = 1;
-    return this.checklistsService.createSharedChecklist(
-      uId,
+    return this.checklistsService.createSharedChecklistAndItems(
+      userId,
       createSharedChecklistDto,
     );
   }
@@ -36,44 +37,49 @@ export class SharedChecklistsController {
    * @returns {Promise<SharedChecklistModel[]>}
    */
   @Get()
-  getAllSharedChecklists() {
-    return this.checklistsService.findAllSharedChecklists();
+  getAllSharedChecklists(@UserId() userId: number) {
+    return this.checklistsService.findAllSharedChecklists(userId);
   }
 
   /**
    * @description checklistId를 통해 해당 checklist를 조회합니다.
-   * @param {number} cid
+   * @param {string} cid
    * @returns {Promise<SharedChecklistModel>}
    */
   @Get(':checklistId')
-  getSharedChecklist(@Param('checklistId') cid: number) {
-    return this.checklistsService.findSharedChecklistById(cid);
-  }
-
-  /**
-   * @description checklistId를 통해 해당 checklist의 title을 수정합니다.
-   * @param {number} cid
-   * @param {UpdateSharedChecklistDto} updateChecklistDto
-   * @returns {Promise<SharedChecklistModel>}
-   */
-  @Put(':checklistId')
-  updateSharedChecklist(
-    @Param('checklistId') cid: number,
-    @Body() updateChecklistDto: UpdateSharedChecklistDto,
+  getSharedChecklist(
+    @Param('checklistId') cid: string,
+    @UserId() userId: number,
+    @Query('date') date?: string, // 새로운 쿼리 파라미터 추가
   ) {
-    return this.checklistsService.updateSharedChecklist(
+    return this.checklistsService.findSharedChecklistAndItemsById(
       cid,
-      updateChecklistDto,
+      userId,
+      date,
     );
   }
 
   /**
+   * @description checklistId를 통해 해당 checklist의 title을 수정합니다.
+   * @param {string} cid
+   * @param {UpdateSharedChecklistDto} updateChecklistDto
+   * @returns {Promise<SharedChecklistModel>}
+   */
+  @Post(':checklistId/editors')
+  updateSharedChecklist(
+    @Param('checklistId') cid: string,
+    @UserId() userId: number,
+  ) {
+    return this.checklistsService.addEditor(cid, userId);
+  }
+
+  /**
    * @description checklistId를 통해 해당 checklist를 삭제합니다.
-   * @param {number} cid
+   * @param {string} cid
    * @returns {Promise<message:string>}
    */
   @Delete(':checklistId')
-  deleteChecklist(@Param('checklistId') cid: number) {
-    return this.checklistsService.removeSharedChecklist(cid);
+  deleteChecklist(@Param('checklistId') cid: string, @UserId() userId: number) {
+    return this.checklistsService.removeEditor(cid, userId);
   }
 }

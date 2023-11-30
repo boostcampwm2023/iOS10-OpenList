@@ -10,19 +10,20 @@ import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesModule } from './categories/categories.module';
+import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
 import { CommonModule } from './common/common.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { FolderModel } from './folders/entities/folder.entity';
 import { FoldersModule } from './folders/folders.module';
 import { PrivateChecklistModel } from './folders/private-checklists/entities/private-checklist.entity';
 import { ChecklistsModule } from './folders/private-checklists/private-checklists.module';
+import { SharedChecklistItemModel } from './shared-checklists/entities/shared-checklist-item.entity';
 import { SharedChecklistModel } from './shared-checklists/entities/shared-checklist.entity';
 import { SharedChecklistsModule } from './shared-checklists/shared-checklists.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
-import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
-import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CategoriesModule } from './categories/categories.module';
         FolderModel,
         PrivateChecklistModel,
         SharedChecklistModel,
+        SharedChecklistItemModel,
       ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
