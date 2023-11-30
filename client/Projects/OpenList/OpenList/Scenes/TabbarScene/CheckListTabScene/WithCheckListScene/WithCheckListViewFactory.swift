@@ -6,16 +6,30 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol WithCheckListDependency: Dependency {
 	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
+	var session: CustomSession { get }
 }
 
 final class WithCheckListComponent: Component<WithCheckListDependency>, WithDetailCheckListDependency {
+	var session: CustomSession {
+		parent.session
+	}
+	
 	fileprivate var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
 		return parent.deepLinkSubject
+	}
+	
+	fileprivate var withCheckListRepository: WithCheckListRepository {
+		return DefaultWithCheckListRepository(session: session)
+	}
+	
+	fileprivate var withCheckListUseCase: WithCheckListUseCase {
+		return DefaultWithCheckListUseCase(withCheckListRepository: withCheckListRepository)
 	}
 	
 	fileprivate var withCheckListDetailFactoryable: WithDetailCheckListFactoryable {
@@ -38,7 +52,7 @@ final class WithCheckListViewFactory: Factory<WithCheckListDependency>, WithChec
 			withCheckListDetailFactory: component.withCheckListDetailFactoryable,
 			deepLinkSubject: component.deepLinkSubject
 		)
-		let viewModel = WithCheckListViewModel()
+		let viewModel = WithCheckListViewModel(withCheckListUseCase: component.withCheckListUseCase)
 		let viewController = WithCheckListViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

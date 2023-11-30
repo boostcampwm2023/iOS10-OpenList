@@ -19,7 +19,7 @@ final class DefaultWithCheckListRepository {
 
 struct RequestDTO: Encodable {
 	let title: String
-	let items: [CRDTRequestDTO]
+	let items: [CRDTMessageRequestDTO]
 	let sharedChecklistId: UUID
 }
 
@@ -37,8 +37,8 @@ extension DefaultWithCheckListRepository: WithCheckListRepository {
 		builder.addHeader(field: "Content-Type", value: "application/json")
 		builder.setMethod(.post)
 		do {
-			let crdtItems = items.map { (editTextId: UUID, message: CRDTMessage) -> CRDTRequestDTO in
-				return CRDTRequestDTO(event: Device.id, id: editTextId, data: message)
+			let crdtItems = items.map { (editTextId: UUID, message: CRDTMessage) -> CRDTMessageRequestDTO in
+				return CRDTMessageRequestDTO(id: editTextId, data: message)
 			}
 			
 			let reuqestDTO = RequestDTO(title: title, items: crdtItems, sharedChecklistId: sharedChecklistId)

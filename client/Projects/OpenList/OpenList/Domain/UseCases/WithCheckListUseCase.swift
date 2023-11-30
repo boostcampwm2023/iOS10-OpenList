@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WithCheckListUseCase {
-	func fetchAllCheckList() async -> [CheckListTableItem]
+	func fetchAllCheckList() async -> [WithCheckList]
 }
 
 final class DefaultWithCheckListUseCase {
@@ -20,12 +20,7 @@ final class DefaultWithCheckListUseCase {
 }
 
 extension DefaultWithCheckListUseCase: WithCheckListUseCase {
-	func fetchAllCheckList() async -> [CheckListTableItem] {
-		do {
-			return try await withCheckListRepository.fetchAllCheckList()
-		} catch {
-			dump(error)
-			return []
-		}
+	func fetchAllCheckList() async -> [WithCheckList] {
+		return await withCheckListRepository.fetchAllSharedCheckList()
 	}
 }

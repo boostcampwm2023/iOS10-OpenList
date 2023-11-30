@@ -6,9 +6,11 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol CheckListTabDependency: Dependency {
+	var session: CustomSession { get }
 	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
@@ -19,6 +21,8 @@ final class CheckListTabComponent:
 	CheckListTableDependency,
 	WithCheckListDependency,
 	SharedCheckListDependency {
+	var session: CustomSession { parent.session }
+	
 	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
 	
 	var crdtRepository: CRDTRepository { DefaultCRDTRepository(crdtStorage: crdtStorage) }
