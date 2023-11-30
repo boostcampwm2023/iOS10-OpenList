@@ -57,7 +57,6 @@ extension DefaultCategoryUseCase: CategoryUseCase {
 	}
 	
 	func fetchRecommendCheckList(with categoryInfo: CategoryInfo) async -> Result<[RecommendChecklistItem], Error> {
-		
 		do {
 			let items = try await categoryRepository.fetchRecommendCheckList(categoryInfo: categoryInfo)
 			return .success(items)

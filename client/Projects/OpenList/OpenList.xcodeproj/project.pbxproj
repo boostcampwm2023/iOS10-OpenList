@@ -170,8 +170,8 @@
 		78E956242B178E3A005CF5D3 /* CategoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956232B178E3A005CF5D3 /* CategoryItem.swift */; };
 		78E956262B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */; };
 		78E956282B1795CC005CF5D3 /* RecommendChecklistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */; };
-		78E9562A2B18368C005CF5D3 /* AccessTokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */; };
 		78E9562C2B188772005CF5D3 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E9562B2B188772005CF5D3 /* LoadingIndicator.swift */; };
+		78E956482B18AA3F005CF5D3 /* AccessTokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E956472B18AA3F005CF5D3 /* AccessTokenInterceptor.swift */; };
 		78F7476E2B126EC3003ED6DA /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F7476D2B126EC3003ED6DA /* KeyChain.swift */; };
 		78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F747722B148C2E003ED6DA /* LoginInfo.swift */; };
 /* End PBXBuildFile section */
@@ -366,8 +366,8 @@
 		78E956232B178E3A005CF5D3 /* CategoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryItem.swift; sourceTree = "<group>"; };
 		78E956252B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistResponseDTO.swift; sourceTree = "<group>"; };
 		78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistItem.swift; sourceTree = "<group>"; };
-		78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInterceptor.swift; sourceTree = "<group>"; };
 		78E9562B2B188772005CF5D3 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
+		78E956472B18AA3F005CF5D3 /* AccessTokenInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInterceptor.swift; sourceTree = "<group>"; };
 		78F7476D2B126EC3003ED6DA /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 		78F747722B148C2E003ED6DA /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -758,8 +758,8 @@
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
-				78E956292B18368C005CF5D3 /* AccessTokenInterceptor.swift */,
 				78E9562B2B188772005CF5D3 /* LoadingIndicator.swift */,
+				78E956472B18AA3F005CF5D3 /* AccessTokenInterceptor.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1243,6 +1243,7 @@
 				5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */,
 				4DDC43362B0F19F700859B28 /* WithDetailCheckListDiffableDataSource.swift in Sources */,
 				4DDC43312B0F16CC00859B28 /* WithDetailCheckListViewController.swift in Sources */,
+				78E956482B18AA3F005CF5D3 /* AccessTokenInterceptor.swift in Sources */,
 				5F70C8322B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift in Sources */,
 				4D33980B2B023BE800963664 /* CheckListTableViewController.swift in Sources */,
 				5FA1F8D02AFF802900869079 /* RecommendTabViewFactory.swift in Sources */,
