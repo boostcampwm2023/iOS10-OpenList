@@ -14,7 +14,8 @@ where Input == WithDetailCheckListInput,
 	Output == AnyPublisher<State, Never> { }
 
 protocol WithDetailCheckListDataSource {
-	var checkListId: String { get }
+	var inviteLinkUrlString: String { get }
+	var webSocketUrl: URL? { get }
 }
 
 final class WithDetailCheckListViewModel {
@@ -31,8 +32,12 @@ final class WithDetailCheckListViewModel {
 }
 
 extension WithDetailCheckListViewModel: WithDetailCheckListDataSource {
-	var checkListId: String {
-		id.uuidString
+	var inviteLinkUrlString: String {
+		"openlist://shared-checklists?shared-checklistId=\(id)"
+	}
+	
+	var webSocketUrl: URL? {
+		URL(string: "wss://openlist.kro.kr/share-checklist?cid=\(id)")
 	}
 }
 
@@ -60,7 +65,7 @@ private extension WithDetailCheckListViewModel {
 				return future.eraseToAnyPublisher()
 			}
 			.map { checkList in
-				return .title(checkList.title)
+				return .viewWillAppear(checkList)
 			}
 			.eraseToAnyPublisher()
 	}
@@ -128,14 +133,14 @@ private extension WithDetailCheckListViewModel {
 	func receive(_ input: Input) -> Output {
 		return input.receive
 			.withUnretained(self)
-			.flatMap { (owner, data) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, jsonString) -> AnyPublisher<[CheckListItem], Never>  in
 				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.receive(data: data)
+					try await owner.crdtUseCase.receive(jsonString)
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { item in
-				return .updateItem(item)
+			.map { items in
+				return .updateItem(items)
 			}
 			.eraseToAnyPublisher()
 	}

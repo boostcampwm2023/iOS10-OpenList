@@ -5,6 +5,7 @@
 //  Created by wi_seong on 11/27/23.
 //
 
+import CRDT
 import Foundation
 
 protocol DetailCheckListUseCase {
@@ -17,11 +18,19 @@ protocol DetailCheckListUseCase {
 
 final class DefaultDetailCheckListUseCase {
 	private let checkListRepository: CheckListRepository
+	private let withCheckListRepository: WithCheckListRepository
 	private var orderBy: [UUID] = []
 	private var checkList: CheckList?
+	private let crdtDocumentUseCase: CRDTDocumentUseCase
 	
-	init(checkListRepository: CheckListRepository) {
+	init(
+		checkListRepository: CheckListRepository,
+		withCheckListRepository: WithCheckListRepository,
+		crdtDocumentUseCase: CRDTDocumentUseCase
+	) {
 		self.checkListRepository = checkListRepository
+		self.withCheckListRepository = withCheckListRepository
+		self.crdtDocumentUseCase = crdtDocumentUseCase
 	}
 }
 
@@ -83,10 +92,30 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 	}
 	
 	func transformWith() async -> Bool {
+		guard let checkList else { return false }
+		let checkListEditText = checkList.items.map {
+			EditText(id: $0.itemId, content: $0.title, range: .init(location: 0, length: $0.title.count))
+		}
+		
 		do {
-			guard let checkList else { return false }
-			try await checkListRepository.transfromToWith(id: checkList.id)
-			return true
+			// 로컬에서 함께 체크리스트의 데이터로 변환합니다.
+			// 함께 체크리스트의 CRDT 메세지로 변환하여 보냅니다.
+			let items = try checkListEditText.map { editText in
+				let document = crdtDocumentUseCase.createDocument(id: editText.id)
+				let operation = crdtDocumentUseCase.createOperation(at: editText, type: .insert, argument: 0)
+				let merge = crdtDocumentUseCase.createMerge(id: editText.id, document: document)
+				let message = try merge.applyLocal(to: operation)
+				return (editTextId: editText.id, message: message)
+			}
+			
+			let isSuccess = await withCheckListRepository.changeToWithCheckList(
+				title: checkList.title,
+				items: items,
+				sharedChecklistId: checkList.id
+			)
+			guard isSuccess else { return false }
+			
+			return checkListRepository.removeCheckList(checkList.id)
 		} catch {
 			return false
 		}

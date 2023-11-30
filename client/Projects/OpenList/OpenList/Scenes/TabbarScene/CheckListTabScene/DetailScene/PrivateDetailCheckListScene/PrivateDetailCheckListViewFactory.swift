@@ -9,11 +9,17 @@ import Foundation
 
 protocol PrivateDetailCheckListDependency: Dependency {
 	var checkListRepository: CheckListRepository { get }
+	var withCheckListRepository: WithCheckListRepository { get }
+	var crdtRepository: CRDTRepository { get }
 }
 
 final class PrivateDetailCheckListComponent: Component<PrivateDetailCheckListDependency> {
 	fileprivate var detailCheckListUseCase: DetailCheckListUseCase {
-		return DefaultDetailCheckListUseCase(checkListRepository: parent.checkListRepository)
+		return DefaultDetailCheckListUseCase(
+			checkListRepository: parent.checkListRepository,
+			withCheckListRepository: parent.withCheckListRepository,
+			crdtDocumentUseCase: DefaultCRDTUseCase(crdtRepository: parent.crdtRepository)
+		)
 	}
 }
 

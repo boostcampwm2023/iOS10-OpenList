@@ -1,38 +1,38 @@
 //
-//  CheckListTableViewController.swift
+//  WithCheckListViewController.swift
 //  OpenList
 //
-//  Created by wi_seong on 11/13/23.
+//  Created by 김영균 on 11/30/23.
 //
 
 import Combine
 import UIKit
 
-protocol CheckListTableRoutingLogic: AnyObject {
+protocol WithCheckListRoutingLogic: AnyObject {
 	func routeToDetailScene(with id: UUID)
 }
 
-final class CheckListTableViewController: UIViewController, ViewControllable {
-	// MARK: - CollectionView Type
-	enum Section {
-		case main
-	}
-	typealias CheckListTableDataSource = UICollectionViewDiffableDataSource<Section, CheckListTableItem>
-	typealias CheckListTableCellRegistration = UICollectionView.CellRegistration<CheckListTableCell, CheckListTableItem>
+final class WithCheckListViewController: UIViewController, ViewControllable {
+	typealias CheckListTableDataSource = UICollectionViewDiffableDataSource<CheckListTabType, WithCheckList>
+	typealias CheckListTableCellRegistration = UICollectionView.CellRegistration<WithCheckListCell, WithCheckList>
 	
 	// MARK: - Properties
-	private let router: CheckListTableRoutingLogic
-	private let viewModel: any CheckListTableViewModelable
-	private let viewAppear: PassthroughSubject<Void, Never> = .init()
-	private var dataSource: CheckListTableDataSource?
-	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
+	private let router: WithCheckListRoutingLogic
+	private let viewModel: any WithCheckListViewModelable
 	private var cancellables: Set<AnyCancellable> = []
+	
+	// UI Components
+	private var dataSource: CheckListTableDataSource?
+	private let checkListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withTab)
+	
+	// Event Properties
+	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
-		router: CheckListTableRoutingLogic,
-		viewModel: some CheckListTableViewModelable
+		router: WithCheckListRoutingLogic,
+		viewModel: some WithCheckListViewModelable
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -47,34 +47,31 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemBackground
-		setLongGestureRecognizerOnCollection()
+		self.view.backgroundColor = .systemBackground
 		setViewAttributes()
 		setViewHierarchies()
-		setConstraints()
+		setViewConstraints()
 		bind()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		viewAppear.send()
+		viewWillAppear.send()
 	}
 }
 
 // MARK: - Bind Methods
-extension CheckListTableViewController: ViewBindable {
-	typealias State = CheckListTableState
+extension WithCheckListViewController: ViewBindable {
+	typealias State = WithCheckListState
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = CheckListTableInput(viewAppear: viewAppear)
-		
-		let output = viewModel.transform(input)
-		
-		output
+		let input = WithCheckListInput(viewWillAppear: viewWillAppear)
+		let state = viewModel.transform(input)
+		state
 			.receive(on: DispatchQueue.main)
 			.withUnretained(self)
-			.sink { (owner, output) in owner.render(output) }
+			.sink { (owner, state) in owner.render(state) }
 			.store(in: &cancellables)
 	}
 	
@@ -87,69 +84,80 @@ extension CheckListTableViewController: ViewBindable {
 		}
 	}
 	
-	func handleError(_ error: OutputError) { }
+	func handleError(_ error: OutputError) {}
 }
 
 // MARK: Helper
-private extension CheckListTableViewController {
-	func reload(items: [CheckListTableItem]) {
+private extension WithCheckListViewController {
+	func reload(items: [WithCheckList]) {
 		checkListEmptyView.isHidden = !items.isEmpty
 		guard var snapshot = dataSource?.snapshot() else { return }
-		let previousProducts = snapshot.itemIdentifiers(inSection: .main)
+		let previousProducts = snapshot.itemIdentifiers(inSection: .withTab)
 		snapshot.deleteItems(previousProducts)
-		snapshot.appendItems(items, toSection: .main)
+		snapshot.appendItems(items, toSection: .withTab)
 		dataSource?.apply(snapshot, animatingDifferences: true)
 	}
 }
 
-// MARK: SetUp
-private extension CheckListTableViewController {
+// MARK: - View Methods
+private extension WithCheckListViewController {
 	enum LayoutConstant {
 		static let bottomPadding: CGFloat = 12
 	}
 	
 	func setViewAttributes() {
-		collectionView.translatesAutoresizingMaskIntoConstraints = false
-		dataSource = setupDataSource()
-		var snapshot = NSDiffableDataSourceSnapshot<Section, CheckListTableItem>()
-		snapshot.appendSections([.main])
-		dataSource?.apply(snapshot)
-		collectionView.delegate = self
 		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
+		checkListView.translatesAutoresizingMaskIntoConstraints = false
+		checkListView.delegate = self
+		
+		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+		configuration.showsSeparators = false
+		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
+			let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+			let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+			section.interGroupSpacing = 24
+			section.contentInsets = .init(top: 0, leading: 20, bottom: 12, trailing: 20)
+			return section
+		}
+		checkListView.collectionViewLayout = layout
+		
+		dataSource = makeDataSource()
+		makeInitialSection()
 	}
 	
 	func setViewHierarchies() {
-		view.addSubview(collectionView)
+		view.addSubview(checkListView)
 		view.addSubview(checkListEmptyView)
 	}
 	
-	func setConstraints() {
+	func setViewConstraints() {
 		checkListEmptyView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 		checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
 		checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 		
-		collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-		collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-		collectionView.bottomAnchor.constraint(
+		checkListView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		checkListView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		checkListView.bottomAnchor.constraint(
 			equalTo: view.safeAreaLayoutGuide.bottomAnchor,
 			constant: -LayoutConstant.bottomPadding
 		).isActive = true
-		collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-		
-		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-		configuration.showsSeparators = false
-		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
-		collectionView.collectionViewLayout = layout
+		checkListView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 	}
 	
-	func setupDataSource() -> CheckListTableDataSource {
+	func makeInitialSection() {
+		var snapshot = NSDiffableDataSourceSnapshot<CheckListTabType, WithCheckList>()
+		snapshot.appendSections([.withTab])
+		dataSource?.apply(snapshot)
+	}
+	
+	func makeDataSource() -> CheckListTableDataSource {
 		let cellRegistration = CheckListTableCellRegistration { cell, _, itemIdentifier in
-			cell.configure(item: itemIdentifier)
+			cell.configure(with: itemIdentifier)
 		}
 		
 		let dataSource = CheckListTableDataSource(
-			collectionView: collectionView,
+			collectionView: checkListView,
 			cellProvider: { collectionView, indexPath, item in
 				return collectionView.dequeueConfiguredReusableCell(
 					using: cellRegistration,
@@ -161,7 +169,9 @@ private extension CheckListTableViewController {
 		
 		return dataSource
 	}
-	
+}
+
+extension WithCheckListViewController: UIGestureRecognizerDelegate {
 	func setLongGestureRecognizerOnCollection() {
 		let longPressedGesture = UILongPressGestureRecognizer(
 			target: self,
@@ -170,21 +180,15 @@ private extension CheckListTableViewController {
 		longPressedGesture.minimumPressDuration = 0.5
 		longPressedGesture.delegate = self
 		longPressedGesture.delaysTouchesBegan = true
-		collectionView.addGestureRecognizer(longPressedGesture)
+		checkListView.addGestureRecognizer(longPressedGesture)
 	}
-}
-
-extension CheckListTableViewController: UIGestureRecognizerDelegate {
+	
 	@objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
-		if gestureRecognizer.state != .began {
-			return
-		}
+		guard gestureRecognizer.state == .began else { return }
+		let point = gestureRecognizer.location(in: checkListView)
 		
-		let point = gestureRecognizer.location(in: collectionView)
-		
-		if let indexPath = collectionView.indexPathForItem(at: point) {
+		if let indexPath = checkListView.indexPathForItem(at: point) {
 			showActionSheet()
-			print("Long press at item: \(indexPath.row)")
 		}
 	}
 	
@@ -212,23 +216,13 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		actionSheet.addAction(deleteAction)
 		actionSheet.addAction(cancelAction)
 		
-		self.present(actionSheet, animated: true, completion: nil)
+		present(actionSheet, animated: true, completion: nil)
 	}
 }
 
-extension CheckListTableViewController: UICollectionViewDelegate {
+extension WithCheckListViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-		router.routeToDetailScene(with: item.id)
-	}
-}
-
-extension CheckListTableViewController: OpenListNavigationBarDelegate {
-	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
-		debugPrint("didTapBarItem: \(item.type)")
-	}
-	
-	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
-		debugPrint("didPressBackButton")
+		router.routeToDetailScene(with: item.sharedCheckListId)
 	}
 }

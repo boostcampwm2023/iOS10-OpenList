@@ -9,17 +9,27 @@ import CRDT
 import Foundation
 
 struct CRDTRequestDTO: Encodable {
-	let event: String
+	let event: Event
+	let data: CRDTMessageRequestDTO
+}
+
+enum Event: String, Codable {
+	case send
+	case listen
+	case history
+	case lastDate
+}
+
+struct CRDTMessageRequestDTO: Encodable {
 	let id: UUID
 	let data: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case event, id, message
+		case id, message
 	}
 	
 	func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encode(event, forKey: .event)
 		try container.encode(id, forKey: .id)
 		if let myMessage = data as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)

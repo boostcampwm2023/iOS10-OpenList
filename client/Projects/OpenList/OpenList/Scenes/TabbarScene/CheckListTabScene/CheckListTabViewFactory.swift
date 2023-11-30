@@ -6,9 +6,11 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol CheckListTabDependency: Dependency {
+	var session: CustomSession { get }
 	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
@@ -16,21 +18,27 @@ protocol CheckListTabDependency: Dependency {
 
 final class CheckListTabComponent:
 	Component<CheckListTabDependency>,
-	CheckListFolderDependency,
 	CheckListTableDependency,
+	WithCheckListDependency,
 	SharedCheckListDependency {
+	var session: CustomSession { parent.session }
+	
+	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
+	
+	var crdtRepository: CRDTRepository { DefaultCRDTRepository(crdtStorage: crdtStorage) }
+	
 	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
 	
 	var checkListRepository: CheckListRepository { parent.checkListRepository }
 	
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { parent.deepLinkSubject }
 	
-	fileprivate var checkListFolderFactoryable: CheckListFolderFactoryable {
-		return CheckListFolderViewFactory(parent: self)
+	fileprivate var privateCheckListTableFactoryable: CheckListTableFactoryable {
+		return CheckListTableViewFactory(parent: self)
 	}
 	
-	fileprivate var checkListTableFactoryable: CheckListTableFactoryable {
-		return CheckListTableViewFactory(parent: self)
+	fileprivate var withCheckListFactoryable: WithCheckListFactoryable {
+		return WithCheckListViewFactory(parent: self)
 	}
 	
 	fileprivate var sharedCheckListFactoryable: SharedCheckListFactoryable {
@@ -50,8 +58,8 @@ final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListT
 	func make() -> ViewControllable {
 		let component = CheckListTabComponent(parent: parent)
 		let viewController = CheckListTabViewController(
-			checkListFolderFactory: component.checkListFolderFactoryable,
-			checkListTableFactory: component.checkListTableFactoryable,
+			privateCheckListTableFactory: component.privateCheckListTableFactoryable,
+			withCheckListFactoryable: component.withCheckListFactoryable,
 			sharedCheckListFactory: component.sharedCheckListFactoryable
 		)
 		return viewController
