@@ -25,6 +25,8 @@ final class CheckListTabComponent:
 	
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { parent.deepLinkSubject }
 	
+	var folderRepository: FolderRepository = DefaultFolderRepository()
+	
 	fileprivate var checkListFolderFactoryable: CheckListFolderFactoryable {
 		return CheckListFolderViewFactory(parent: self)
 	}

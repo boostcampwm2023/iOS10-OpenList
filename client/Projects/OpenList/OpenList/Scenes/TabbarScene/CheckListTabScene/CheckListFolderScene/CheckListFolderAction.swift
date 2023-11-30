@@ -7,6 +7,11 @@
 
 import Combine
 
-struct CheckListFolderInput { }
+struct CheckListFolderInput {
+	let viewWillAppear: PassthroughSubject<Void, Never>
+}
 
-enum CheckListFolderState { }
+enum CheckListFolderState {
+	case folders([CheckListFolderItem])
+	case error(Error)
+}

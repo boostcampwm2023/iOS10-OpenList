@@ -85,6 +85,13 @@
 		5F93491E2B16DFF300282545 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F93491D2B16DFF300282545 /* UICollectionView+Extensions.swift */; };
 		5F9349212B16E03400282545 /* PrivateDetailCheckListAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F93491F2B16E03400282545 /* PrivateDetailCheckListAction.swift */; };
 		5F9349222B16E03400282545 /* PrivateDetailCheckListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349202B16E03400282545 /* PrivateDetailCheckListRouter.swift */; };
+		5F9349242B17014700282545 /* FolderResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349232B17014700282545 /* FolderResponseDTO.swift */; };
+		5F9349262B17016000282545 /* UserResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349252B17016000282545 /* UserResponseDTO.swift */; };
+		5F9349282B17028100282545 /* FolderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349272B17028100282545 /* FolderRepository.swift */; };
+		5F93492A2B1702A000282545 /* CheckListFolderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349292B1702A000282545 /* CheckListFolderItem.swift */; };
+		5F93492C2B1702CF00282545 /* DefaultFolderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F93492B2B1702CF00282545 /* DefaultFolderRepository.swift */; };
+		5F93492E2B1704D200282545 /* PrivateCheckListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F93492D2B1704D200282545 /* PrivateCheckListUseCase.swift */; };
+		5F9349322B17129400282545 /* AccessTokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F9349312B17129400282545 /* AccessTokenInterceptor.swift */; };
 		5FA1F88E2AFF7DA400869079 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88D2AFF7DA400869079 /* Assets.xcassets */; };
 		5FA1F8912AFF7DA400869079 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA1F88F2AFF7DA400869079 /* LaunchScreen.storyboard */; };
 		5FA1F8A62AFF7E6C00869079 /* AppComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1F8A52AFF7E6C00869079 /* AppComponent.swift */; };
@@ -235,6 +242,13 @@
 		5F93491D2B16DFF300282545 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		5F93491F2B16E03400282545 /* PrivateDetailCheckListAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListAction.swift; sourceTree = "<group>"; };
 		5F9349202B16E03400282545 /* PrivateDetailCheckListRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListRouter.swift; sourceTree = "<group>"; };
+		5F9349232B17014700282545 /* FolderResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderResponseDTO.swift; sourceTree = "<group>"; };
+		5F9349252B17016000282545 /* UserResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResponseDTO.swift; sourceTree = "<group>"; };
+		5F9349272B17028100282545 /* FolderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderRepository.swift; sourceTree = "<group>"; };
+		5F9349292B1702A000282545 /* CheckListFolderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListFolderItem.swift; sourceTree = "<group>"; };
+		5F93492B2B1702CF00282545 /* DefaultFolderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultFolderRepository.swift; sourceTree = "<group>"; };
+		5F93492D2B1704D200282545 /* PrivateCheckListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCheckListUseCase.swift; sourceTree = "<group>"; };
+		5F9349312B17129400282545 /* AccessTokenInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenInterceptor.swift; sourceTree = "<group>"; };
 		5FA1F8812AFF7DA200869079 /* OpenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA1F88D2AFF7DA400869079 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5FA1F8902AFF7DA400869079 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -384,6 +398,7 @@
 				78C2F0482B05C00800E4EC4E /* DefaultCheckListRepository.swift */,
 				78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */,
 				4DDC433D2B0F2A3D00859B28 /* DefaultCRDTRepository.swift */,
+				5F93492B2B1702CF00282545 /* DefaultFolderRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -460,6 +475,7 @@
 				4D696CBA2B0F946100873B3B /* EditText.swift */,
 				4D8AEBD92B122AA400292AF3 /* CRDTRequestDTO.swift */,
 				4D8AEBDB2B122AAD00292AF3 /* CRDTResponseDTO.swift */,
+				5F9349292B1702A000282545 /* CheckListFolderItem.swift */,
 			);
 			path = Entites;
 			sourceTree = "<group>";
@@ -539,6 +555,8 @@
 			children = (
 				78A4C7262B0F5E4300E07492 /* LoginResponseDTO.swift */,
 				5F70C84A2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift */,
+				5F9349232B17014700282545 /* FolderResponseDTO.swift */,
+				5F9349252B17016000282545 /* UserResponseDTO.swift */,
 			);
 			path = DTO;
 			sourceTree = "<group>";
@@ -642,6 +660,7 @@
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
+				5F9349312B17129400282545 /* AccessTokenInterceptor.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -675,6 +694,7 @@
 				78C2F0232B049AF100E4EC4E /* CheckListRepository.swift */,
 				78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */,
 				4DDC43282B0F10EF00859B28 /* CRDTRepository.swift */,
+				5F9349272B17028100282545 /* FolderRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -687,6 +707,7 @@
 				78A4C7242B0F5C6900E07492 /* AuthUseCase.swift */,
 				4DDC43252B0F0FAB00859B28 /* CRDTUseCase.swift */,
 				4DD97D9B2B14D3A600DF73BC /* DetailCheckListUseCase.swift */,
+				5F93492D2B1704D200282545 /* PrivateCheckListUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -973,6 +994,7 @@
 				4DDC433E2B0F2A3D00859B28 /* DefaultCRDTRepository.swift in Sources */,
 				5FA1F8B62AFF7FBB00869079 /* Dependency.swift in Sources */,
 				78A4C72B2B0F5FB100E07492 /* AuthRepository.swift in Sources */,
+				5F93492C2B1702CF00282545 /* DefaultFolderRepository.swift in Sources */,
 				78C2F00F2B048B6C00E4EC4E /* TabBarViewController.swift in Sources */,
 				78C2F0222B049A8A00E4EC4E /* PersistenceUseCase.swift in Sources */,
 				4D8AEBDA2B122AA400292AF3 /* CRDTRequestDTO.swift in Sources */,
@@ -987,10 +1009,12 @@
 				5FA1F8B42AFF7FBB00869079 /* ViewControllable.swift in Sources */,
 				5F93490C2B16DF4D00282545 /* CheckListTopTabView.swift in Sources */,
 				5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */,
+				5F9349282B17028100282545 /* FolderRepository.swift in Sources */,
 				4DDC434B2B0F432900859B28 /* Device.swift in Sources */,
 				5FA1F8A92AFF7F6700869079 /* AppDelegate.swift in Sources */,
 				4D967CF12B05AF940032E0D7 /* CoreDataStorage.swift in Sources */,
 				78A4C7252B0F5C6900E07492 /* AuthUseCase.swift in Sources */,
+				5F9349322B17129400282545 /* AccessTokenInterceptor.swift in Sources */,
 				5F93491E2B16DFF300282545 /* UICollectionView+Extensions.swift in Sources */,
 				5F9349162B16DF5500282545 /* CheckListFolderRouter.swift in Sources */,
 				4DD97D9C2B14D3A600DF73BC /* DetailCheckListUseCase.swift in Sources */,
@@ -1011,6 +1035,7 @@
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
+				5F9349242B17014700282545 /* FolderResponseDTO.swift in Sources */,
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
 				5F70C83D2B04C39F00826B5D /* CheckListItemTextField.swift in Sources */,
 				4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */,
@@ -1019,6 +1044,7 @@
 				5F93491C2B16DFE300282545 /* CALayer+applySketchShadow.swift in Sources */,
 				78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */,
 				4DDC43322B0F16CC00859B28 /* WithDetailCheckListViewFactory.swift in Sources */,
+				5F93492A2B1702A000282545 /* CheckListFolderItem.swift in Sources */,
 				4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
@@ -1028,6 +1054,7 @@
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
 				5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */,
+				5F93492E2B1704D200282545 /* PrivateCheckListUseCase.swift in Sources */,
 				5F70C8392B04BF7A00826B5D /* LocalCheckListItem.swift in Sources */,
 				5F9349022B16DF4600282545 /* SharedCheckListViewController.swift in Sources */,
 				5FA8466B2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift in Sources */,
@@ -1050,6 +1077,7 @@
 				5F9349192B16DF5500282545 /* CheckListFolderAction.swift in Sources */,
 				4DDC43422B0F2AC000859B28 /* CRDTStorage.swift in Sources */,
 				5F70C8402B04C6F000826B5D /* UITableView+Extensions.swift in Sources */,
+				5F9349262B17016000282545 /* UserResponseDTO.swift in Sources */,
 				4D3398172B024FEE00963664 /* GaugeView.swift in Sources */,
 				78A4C71E2B0F2ED900E07492 /* LoginViewModel.swift in Sources */,
 				5FA1F8B32AFF7FBB00869079 /* Component.swift in Sources */,

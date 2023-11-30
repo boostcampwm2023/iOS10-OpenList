@@ -7,9 +7,15 @@
 
 import Foundation
 
-protocol CheckListFolderDependency: Dependency { }
+protocol CheckListFolderDependency: Dependency {
+	var folderRepository: FolderRepository { get }
+}
 
-final class CheckListFolderComponent: Component<CheckListFolderDependency> { }
+final class CheckListFolderComponent: Component<CheckListFolderDependency> {
+	fileprivate var privateCheckListUseCase: PrivateCheckListUseCase {
+		DefaultPrivateCheckListUseCase(folderRepository: parent.folderRepository)
+	}
+}
 
 protocol CheckListFolderFactoryable: Factoryable {
 	func make() -> ViewControllable
@@ -21,8 +27,9 @@ final class CheckListFolderViewFactory: Factory<CheckListFolderDependency>, Chec
 	}
 	
 	func make() -> ViewControllable {
+		let component = CheckListFolderComponent(parent: parent)
 		let router = CheckListFolderRouter()
-		let viewModel = CheckListFolderViewModel()
+		let viewModel = CheckListFolderViewModel(privateCheckListUseCase: component.privateCheckListUseCase)
 		let viewController = CheckListFolderViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController
