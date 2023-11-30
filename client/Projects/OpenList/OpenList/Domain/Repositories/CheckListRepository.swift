@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CheckListRepository {
-	func saveCheckList(id: UUID, title: String) async -> Bool
+	func saveCheckList(id: UUID, title: String, items: [CheckListItem]) async -> Bool
 	func fetchAllCheckList() async throws -> [CheckListTableItem]
 	func fetchCheckList(id: UUID) async throws -> CheckList
 	func removeCheckList(_ checkListId: UUID) -> Bool

@@ -26,9 +26,9 @@ extension DefaultCheckListRepository: CheckListRepository {
 		}
 	}
 	
-	func saveCheckList(id: UUID, title: String) async -> Bool {
+	func saveCheckList(id: UUID, title: String, items: [CheckListItem]) async -> Bool {
 		do {
-			try await checkListStorage.saveCheckList(id: UUID(), title: title)
+			try await checkListStorage.saveCheckList(id: id, title: title, items: items)
 			return true
 		} catch {
 			return false

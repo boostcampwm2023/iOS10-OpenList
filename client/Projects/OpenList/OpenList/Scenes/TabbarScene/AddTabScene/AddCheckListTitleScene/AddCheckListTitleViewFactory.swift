@@ -35,7 +35,7 @@ final class AddCheckListTitleComponent:
 		return parent.validCheckUseCase
 	}
 	
-	fileprivate var persistenceUseCase: PersistenceUseCase {
+	var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
 	}
 	

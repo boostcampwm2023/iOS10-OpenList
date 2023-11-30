@@ -8,7 +8,7 @@
 import Foundation
 
 protocol PersistenceUseCase {
-	func saveCheckList(title: String) async -> Bool
+	func saveCheckList(title: String, items: [CheckListItem]) async -> Bool
 	func fetchAllCheckList() async -> [CheckListTableItem]
 	func removeCheckList(checklistId: UUID) -> Bool
 }
@@ -22,9 +22,13 @@ final class DefaultPersistenceUseCase {
 }
 
 extension DefaultPersistenceUseCase: PersistenceUseCase {
-	func saveCheckList(title: String) async -> Bool {
+	func saveCheckList(title: String, items: [CheckListItem]) async -> Bool {
 		let id = UUID()
-		return await checkListRepository.saveCheckList(id: id, title: title)
+		var unCheckedItems: [CheckListItem] = []
+		for item in items {
+			unCheckedItems.append(.init(itemId: item.id, title: item.title, isChecked: false))
+		}
+		return await checkListRepository.saveCheckList(id: id, title: title, items: unCheckedItems)
 	}
 	
 	func fetchAllCheckList() async -> [CheckListTableItem] {
