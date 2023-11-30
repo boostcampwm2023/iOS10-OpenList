@@ -11,8 +11,11 @@ struct PrivateDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 	let append: PassthroughSubject<CheckListItem, Never>
 	let update: PassthroughSubject<CheckListItem, Never>
+	/// 체크리스트 아이템을 삭제하는 액션
 	let remove: PassthroughSubject<CheckListItem, Never>
 	let transformWith: PassthroughSubject<Void, Never>
+	/// 체크리스트를 삭제하는 액션
+	let removeCheckList: PassthroughSubject<Void, Never>
 }
 
 enum PrivateDetailCheckListState {

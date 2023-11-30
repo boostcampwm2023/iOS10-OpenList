@@ -25,13 +25,16 @@ protocol PrivateDetailCheckListDataSource {
 final class PrivateDetailCheckListViewModel {
 	private var id: UUID
 	private var detailCheckListUseCase: DetailCheckListUseCase
+	private let persistenceUseCase: PersistenceUseCase
 	
 	init(
 		id: UUID,
-		detailCheckListUseCase: DetailCheckListUseCase
+		detailCheckListUseCase: DetailCheckListUseCase,
+		persistenceUseCase: PersistenceUseCase
 	) {
 		self.id = id
 		self.detailCheckListUseCase = detailCheckListUseCase
+		self.persistenceUseCase = persistenceUseCase
 	}
 }
 
@@ -48,7 +51,8 @@ extension PrivateDetailCheckListViewModel: PrivateDetailCheckListViewModelable {
 			append(input),
 			update(input),
 			remove(input),
-			transformWith(input)
+			transformWith(input),
+			removeCheckList(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -134,6 +138,22 @@ private extension PrivateDetailCheckListViewModel {
 					await owner.detailCheckListUseCase.transformWith()
 				})
 				return future.eraseToAnyPublisher()
+			}
+			.map { success in
+				guard success else {
+					return .error(DetailCheckListViewModelError.failedSaveData)
+				}
+				return .dismiss
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func removeCheckList(_ input: Input) -> Output {
+		return input.removeCheckList
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Bool, Never> in
+				return Just(owner.persistenceUseCase.removeCheckList(checklistId: owner.id))
+					.eraseToAnyPublisher()
 			}
 			.map { success in
 				guard success else {

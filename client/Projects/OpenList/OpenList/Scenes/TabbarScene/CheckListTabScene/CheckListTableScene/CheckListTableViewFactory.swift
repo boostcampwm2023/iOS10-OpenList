@@ -28,7 +28,7 @@ final class CheckListTableComponent:
 		return DefaultWithCheckListRepository()
 	}
 	
-	fileprivate var persistenceUseCase: PersistenceUseCase {
+	var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
 	}
 	

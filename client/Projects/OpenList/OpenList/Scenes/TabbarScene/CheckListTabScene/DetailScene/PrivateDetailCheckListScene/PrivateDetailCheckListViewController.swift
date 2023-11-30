@@ -38,7 +38,8 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	private let transformWith: PassthroughSubject<Void, Never> = .init()
 	private let append: PassthroughSubject<CheckListItem, Never> = .init()
 	private let update: PassthroughSubject<CheckListItem, Never> = .init()
-	private let remove: PassthroughSubject<CheckListItem, Never> = .init()
+	private let remove: PassthroughSubject<CheckListItem, Never> = .init() // 체크리스트 아이템을 삭제하는 이벤트
+	private let removeCheckList: PassthroughSubject<Void, Never> = .init() //  체크리스트를 삭제하는 이벤트
 	
 	// MARK: - Initializers
 	init(
@@ -87,7 +88,8 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 			append: append,
 			update: update,
 			remove: remove,
-			transformWith: transformWith
+			transformWith: transformWith,
+			removeCheckList: removeCheckList
 		)
 		let output = viewModel.transform(input)
 		
@@ -125,8 +127,8 @@ private extension PrivateDetailCheckListViewController {
 			self?.transformWith.send()
 		}
 		
-		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			print("didPress delete")
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+			self?.removeCheckList.send()
 		}
 		
 		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
