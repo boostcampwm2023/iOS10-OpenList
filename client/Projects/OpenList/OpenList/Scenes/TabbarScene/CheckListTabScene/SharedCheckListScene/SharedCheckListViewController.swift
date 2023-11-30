@@ -27,6 +27,7 @@ final class SharedCheckListViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
 	private let sharedCheckListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var sharedCheckListViewDataSource: SharedCheckListViewDataSource?
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .sharedTab)
 	
 	// MARK: - Initializers
 	init(
@@ -73,6 +74,7 @@ private extension SharedCheckListViewController {
 	}
 	
 	func setViewAttributes() {
+		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
 		sharedCheckListView.translatesAutoresizingMaskIntoConstraints = false
 		sharedCheckListViewDataSource = makeDataSource()
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
@@ -90,9 +92,15 @@ private extension SharedCheckListViewController {
 	
 	func setViewHierarchies() {
 		view.addSubview(sharedCheckListView)
+		view.addSubview(checkListEmptyView)
 	}
 	
 	func setViewConstraints() {
+		checkListEmptyView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+		checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		
 		sharedCheckListView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 		sharedCheckListView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		sharedCheckListView.bottomAnchor.constraint(
