@@ -25,6 +25,7 @@ public struct URLRequestBuilder {
 		self.url = URL(string: url)
 	}
 	
+	@discardableResult
 	mutating public func setMethod(_ method: HTTPMethod) -> URLRequestBuilder {
 		self.method = method
 		return self
