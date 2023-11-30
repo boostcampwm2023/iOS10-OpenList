@@ -11,13 +11,20 @@ import Foundation
 protocol CheckListTableDependency: Dependency {
 	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
+	var crdtRepository: CRDTRepository { get }
 }
 
 final class CheckListTableComponent:
 	Component<CheckListTableDependency>,
 	PrivateDetailCheckListDependency {
+	var crdtRepository: CRDTRepository { return parent.crdtRepository }
+	
 	var checkListRepository: CheckListRepository {
 		return parent.checkListRepository
+	}
+	
+	var withCheckListRepository: WithCheckListRepository {
+		return DefaultWithCheckListRepository()
 	}
 	
 	fileprivate var persistenceUseCase: PersistenceUseCase {

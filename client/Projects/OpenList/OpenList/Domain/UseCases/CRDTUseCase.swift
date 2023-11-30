@@ -21,6 +21,13 @@ protocol CRDTUseCase {
 	func delete(at editText: EditText) async throws -> CheckListItem
 	func appendDocument(at editText: EditText) async throws -> CheckListItem
 	func removeDocument(at editText: EditText) async throws -> CheckListItem
+	func createDocument(id: UUID) -> RGASDocument<String>
+}
+
+protocol CRDTDocumentUseCase {
+	func createDocument(id: UUID) -> RGASDocument<String>
+	func createOperation(at editText: EditText, type: OpType, argument: Int) -> SequenceOperation<String>
+	func createMerge(id: UUID, document: RGASDocument<String>) -> RGASMerge<String>
 }
 
 final class DefaultCRDTUseCase {
@@ -112,35 +119,6 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 }
 
 private extension DefaultCRDTUseCase {
-	// MARK: RGASDocument
-	func createOperation(
-		at editText: EditText,
-		type: OpType,
-		argument: Int
-	) -> SequenceOperation<String> {
-		let content = editText.content.map { String($0) }
-		let operation = SequenceOperation(
-			type: type,
-			position: editText.range.location,
-			argument: argument,
-			content: content
-		)
-		return operation
-	}
-	
-	func createDocument(id: UUID) -> RGASDocument<String> {
-		let document = RGASDocument<String>()
-		documentsId.append(value: id)
-		documentDictionary[id] = document
-		return document
-	}
-	
-	func createMerge(id: UUID, document: RGASDocument<String>) -> RGASMerge<String> {
-		let merge = RGASMerge(doc: document, siteID: 0)
-		mergeDictionary[id] = merge
-		return merge
-	}
-	
 	// MARK: CheckListItem
 	func appendCheckListItem(to id: UUID, message: CRDTMessage) throws -> CheckListItem {
 		let document = createDocument(id: id)
@@ -200,5 +178,35 @@ private extension DefaultCRDTUseCase {
 	func updateRepository(id: UUID, message: CRDTMessage) async throws {
 		try crdtRepository.send(id: id, message: message)
 		try await crdtRepository.save(message: message)
+	}
+}
+
+extension DefaultCRDTUseCase: CRDTDocumentUseCase {
+	func createDocument(id: UUID) -> RGASDocument<String> {
+		let document = RGASDocument<String>()
+		documentsId.append(value: id)
+		documentDictionary[id] = document
+		return document
+	}
+	
+	func createOperation(
+		at editText: EditText,
+		type: OpType,
+		argument: Int
+	) -> SequenceOperation<String> {
+		let content = editText.content.map { String($0) }
+		let operation = SequenceOperation(
+			type: type,
+			position: editText.range.location,
+			argument: argument,
+			content: content
+		)
+		return operation
+	}
+	
+	func createMerge(id: UUID, document: RGASDocument<String>) -> RGASMerge<String> {
+		let merge = RGASMerge(doc: document, siteID: 0)
+		mergeDictionary[id] = merge
+		return merge
 	}
 }

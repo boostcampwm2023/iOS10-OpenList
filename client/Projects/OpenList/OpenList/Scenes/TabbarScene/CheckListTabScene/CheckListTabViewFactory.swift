@@ -19,6 +19,10 @@ final class CheckListTabComponent:
 	CheckListTableDependency,
 	WithCheckListDependency,
 	SharedCheckListDependency {
+	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
+	
+	var crdtRepository: CRDTRepository { DefaultCRDTRepository(crdtStorage: crdtStorage) }
+	
 	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
 	
 	var checkListRepository: CheckListRepository { parent.checkListRepository }

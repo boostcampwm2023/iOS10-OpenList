@@ -12,6 +12,6 @@ struct WithCheckListInput {
 }
 
 enum WithCheckListState {
-	case reload(_ items: [CheckListTableItem])
+	case reload(_ items: [WithCheckList])
 	case error(_ error: Error)
 }

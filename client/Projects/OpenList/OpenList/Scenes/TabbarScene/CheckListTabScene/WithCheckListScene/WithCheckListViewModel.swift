@@ -12,7 +12,9 @@ where Input == WithCheckListInput,
   State == WithCheckListState,
   Output == AnyPublisher<State, Never> { }
 
-final class WithCheckListViewModel {}
+final class WithCheckListViewModel {
+	private let withCheckListUseCase: DefaultWithCheckListRepository = DefaultWithCheckListRepository()
+}
 
 extension WithCheckListViewModel: WithCheckListViewModelable {
   func transform(_ input: Input) -> Output {
@@ -25,12 +27,9 @@ private extension WithCheckListViewModel {
 	func viewLoad(_ input: Input) -> Output {
 		return input.viewWillAppear
 			.withUnretained(self)
-			.flatMap { (owner, _) -> AnyPublisher<[CheckListTableItem], Never> in
-				let future = Future(asyncFunc: {
-					let item: [CheckListTableItem] = []
-					return item
-				})
-				return future.eraseToAnyPublisher()
+			.flatMap { (owner, _) -> AnyPublisher<[WithCheckList], Never> in
+				return Future(asyncFunc: { return await owner.withCheckListUseCase.fetchAllSharedCheckList() })
+				.eraseToAnyPublisher()
 			}
 			.map { items in
 				return .reload(items)

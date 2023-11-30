@@ -34,4 +34,8 @@ extension DefaultPersistenceUseCase: PersistenceUseCase {
 			return []
 		}
 	}
+	
+	func deleteCheckList(checklistId: UUID) -> Bool {
+		return checkListRepository.removeCheckList(checklistId)
+	}
 }

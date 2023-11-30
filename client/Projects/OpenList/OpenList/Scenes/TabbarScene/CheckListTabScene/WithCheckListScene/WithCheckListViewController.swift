@@ -13,8 +13,8 @@ protocol WithCheckListRoutingLogic: AnyObject {
 }
 
 final class WithCheckListViewController: UIViewController, ViewControllable {
-	typealias CheckListTableDataSource = UICollectionViewDiffableDataSource<CheckListTabType, CheckListTableItem>
-	typealias CheckListTableCellRegistration = UICollectionView.CellRegistration<CheckListTableCell, CheckListTableItem>
+	typealias CheckListTableDataSource = UICollectionViewDiffableDataSource<CheckListTabType, WithCheckList>
+	typealias CheckListTableCellRegistration = UICollectionView.CellRegistration<WithCheckListCell, WithCheckList>
 	
 	// MARK: - Properties
 	private let router: WithCheckListRoutingLogic
@@ -89,7 +89,7 @@ extension WithCheckListViewController: ViewBindable {
 
 // MARK: Helper
 private extension WithCheckListViewController {
-	func reload(items: [CheckListTableItem]) {
+	func reload(items: [WithCheckList]) {
 		checkListEmptyView.isHidden = !items.isEmpty
 		guard var snapshot = dataSource?.snapshot() else { return }
 		let previousProducts = snapshot.itemIdentifiers(inSection: .withTab)
@@ -112,7 +112,13 @@ private extension WithCheckListViewController {
 		
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
-		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
+		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
+			let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+			let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+			section.interGroupSpacing = 24
+			section.contentInsets = .init(top: 0, leading: 20, bottom: 12, trailing: 20)
+			return section
+		}
 		checkListView.collectionViewLayout = layout
 		
 		dataSource = makeDataSource()
@@ -140,14 +146,14 @@ private extension WithCheckListViewController {
 	}
 	
 	func makeInitialSection() {
-		var snapshot = NSDiffableDataSourceSnapshot<CheckListTabType, CheckListTableItem>()
+		var snapshot = NSDiffableDataSourceSnapshot<CheckListTabType, WithCheckList>()
 		snapshot.appendSections([.withTab])
 		dataSource?.apply(snapshot)
 	}
 	
 	func makeDataSource() -> CheckListTableDataSource {
 		let cellRegistration = CheckListTableCellRegistration { cell, _, itemIdentifier in
-			cell.configure(item: itemIdentifier)
+			cell.configure(with: itemIdentifier)
 		}
 		
 		let dataSource = CheckListTableDataSource(
@@ -217,6 +223,6 @@ extension WithCheckListViewController: UIGestureRecognizerDelegate {
 extension WithCheckListViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-		router.routeToDetailScene(with: item.id)
+		router.routeToDetailScene(with: item.sharedCheckListId)
 	}
 }

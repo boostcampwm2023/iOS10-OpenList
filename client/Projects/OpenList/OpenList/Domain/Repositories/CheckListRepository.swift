@@ -11,7 +11,7 @@ protocol CheckListRepository {
 	func saveCheckList(id: UUID, title: String) async -> Bool
 	func fetchAllCheckList() async throws -> [CheckListTableItem]
 	func fetchCheckList(id: UUID) async throws -> CheckList
-	func removeCheckList(_ checkListId: UUID) async -> Bool
+	func removeCheckList(_ checkListId: UUID) -> Bool
 	func appendCheckList(id: UUID, item: CheckListItem) async throws
 	func updateCheckList(id: UUID, item: CheckListItem) async throws
 	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws
