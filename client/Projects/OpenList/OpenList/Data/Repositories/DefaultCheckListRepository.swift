@@ -16,6 +16,16 @@ final class DefaultCheckListRepository {
 }
 
 extension DefaultCheckListRepository: CheckListRepository {
+	// 체크리스트를 삭제합니다.
+	func removeCheckList(_ checklistId: UUID) async -> Bool {
+		do {
+			try await checkListStorage.removeCheckList(id: checklistId)
+			return true
+		} catch {
+			return false
+		}
+	}
+	
 	func saveCheckList(id: UUID, title: String) async -> Bool {
 		do {
 			try await checkListStorage.saveCheckList(id: UUID(), title: title)
