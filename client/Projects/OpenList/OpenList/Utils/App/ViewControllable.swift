@@ -26,6 +26,10 @@ extension ViewControllable {
 	func popToRootViewController(animated: Bool) {
 		self.uiviewController.navigationController?.popToRootViewController(animated: animated)
 	}
+	
+	func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
+		self.uiviewController.dismiss(animated: animated, completion: completion)
+	}
 }
 
 extension ViewControllable where Self: UIViewController {

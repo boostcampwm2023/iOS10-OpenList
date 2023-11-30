@@ -15,20 +15,23 @@ where Input == AddCheckListItemInput,
 final class AddCheckListItemViewModel {
 	private let categoryInfo: CategoryInfo
 	private let categoryUseCase: CategoryUseCase
+	private let persistenceUseCase: PersistenceUseCase
 	
 	init(
 		categoryInfo: CategoryInfo,
-		categoryUseCase: CategoryUseCase
+		categoryUseCase: CategoryUseCase,
+		persistenceUseCase: PersistenceUseCase
 	) {
 		self.categoryInfo = categoryInfo
 		self.categoryUseCase = categoryUseCase
+		self.persistenceUseCase = persistenceUseCase
 	}
 }
 
 extension AddCheckListItemViewModel: AddCheckListItemViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany<Output>(
-      viewDidLoad(input)
+      viewDidLoad(input), nextButtonDidTapped(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -62,5 +65,20 @@ private extension AddCheckListItemViewModel {
 			.map { (owner, _) in
 				return .viewDidLoad([], owner.categoryInfo)
 			}.eraseToAnyPublisher()
+	}
+	
+	func nextButtonDidTapped(_ input: Input) -> Output {
+		return input.nextButtonDidTap
+			.withUnretained(self)
+			.flatMap { owner, items -> AnyPublisher<Bool, Never> in
+				let future = Future(asyncFunc: {
+					await owner.persistenceUseCase.saveCheckList(title: owner.categoryInfo.title, items: items)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { isSuccess -> State in
+				return isSuccess ? .dismiss : .error(nil)
+			}
+			.eraseToAnyPublisher()
 	}
 }

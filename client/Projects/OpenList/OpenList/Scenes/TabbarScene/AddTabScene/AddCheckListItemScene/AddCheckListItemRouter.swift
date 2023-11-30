@@ -12,4 +12,14 @@ final class AddCheckListItemRouter {
 }
 
 // MARK: - RoutingLogic
-extension AddCheckListItemRouter: AddCheckListItemRoutingLogic {}
+extension AddCheckListItemRouter: AddCheckListItemRoutingLogic {
+	func routeToMinorCategoryView() {
+		viewController?.popViewController(animated: true)
+	}
+	
+	func dismiss() {
+		viewController?.dismiss(animated: true, completion: {
+			NotificationCenter.default.post(name: OpenListNotificationName.checkListAdded, object: nil)
+		})
+	}
+}

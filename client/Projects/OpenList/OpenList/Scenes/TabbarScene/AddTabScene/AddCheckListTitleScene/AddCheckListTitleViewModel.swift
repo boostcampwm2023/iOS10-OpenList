@@ -33,11 +33,7 @@ final class AddCheckListTitleViewModel {
 extension AddCheckListTitleViewModel: AddCheckListTitleViewModelable {
   func transform(_ input: Input) -> Output {
 		let textFieldDidChange = textFieldDidChange(input)
-		let nextButtonDidTap = nextButtonDidTap(input)
-    return Publishers.MergeMany([
-			textFieldDidChange,
-			nextButtonDidTap
-    ]).eraseToAnyPublisher()
+    return Publishers.MergeMany([textFieldDidChange]).eraseToAnyPublisher()
   }
 }
 
@@ -49,19 +45,6 @@ private extension AddCheckListTitleViewModel {
 				let state = owner.validCheckUseCase.validateTextLength(text, in: Constant.titleMaxLength)
 				owner.title = text
 				return .valid(state)
-			}
-			.eraseToAnyPublisher()
-	}
-	
-	func nextButtonDidTap(_ input: Input) -> Output {
-		return input.nextButtonDidTap
-			.withUnretained(self)
-			.map { (owner, _) in
-				Task {
-					let result = await owner.persistenceUseCase.saveCheckList(title: owner.title)
-					print(result)
-				}
-				return .dismiss
 			}
 			.eraseToAnyPublisher()
 	}

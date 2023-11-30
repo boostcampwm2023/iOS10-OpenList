@@ -8,7 +8,10 @@
 import Combine
 import UIKit
 
-protocol AddCheckListItemRoutingLogic: AnyObject { }
+protocol AddCheckListItemRoutingLogic: AnyObject {
+	func routeToMinorCategoryView()
+	func dismiss()
+}
 
 final class AddCheckListItemViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
@@ -17,22 +20,27 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		static let topPadding: CGFloat = 10
 		static let horizontalPadding: CGFloat = 20
 		static let spacingBetweenTitleAndCheckList: CGFloat = 32
+		static let navigationBarHeight = 56.0
 	}
 	
 	// MARK: - Properties
-  private let router: AddCheckListItemRoutingLogic
-  private let viewModel: any AddCheckListItemViewModelable
-  private var cancellables: Set<AnyCancellable> = []
+	private let router: AddCheckListItemRoutingLogic
+	private let viewModel: any AddCheckListItemViewModelable
+	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: AddCheckListItemDiffableDataSource?
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
 	private let headerView: AddCheckListItemHeaderView = .init()
+	private let nextButton = ConfirmButton(title: "완료")
+	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false)
 	
 	// Event Properties
 	private var viewLoad: PassthroughSubject<Void, Never> = .init()
-
-  // MARK: - Initializers
+	private var nextButtonDidTappedSubject: PassthroughSubject<[CheckListItem], Never> = .init()
+	private var headerTitle: String?
+	
+	// MARK: - Initializers
 	init(
 		router: AddCheckListItemRoutingLogic,
 		viewModel: some AddCheckListItemViewModelable
@@ -41,8 +49,8 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
 	}
-
-  @available(*, unavailable)
+	
+	@available(*, unavailable)
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -65,10 +73,11 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 extension AddCheckListItemViewController: ViewBindable {
 	typealias State = AddCheckListItemState
 	typealias OutputError = Error
-
+	
 	func bind() {
 		let input = AddCheckListItemInput(
-			viewDidLoad: viewLoad
+			viewDidLoad: viewLoad,
+			nextButtonDidTap: nextButtonDidTappedSubject
 		)
 		let output = viewModel.transform(input)
 		
@@ -78,7 +87,7 @@ extension AddCheckListItemViewController: ViewBindable {
 			.sink { (owner, output) in owner.render(output) }
 			.store(in: &cancellables)
 	}
-
+	
 	func render(_ state: State) {
 		switch state {
 		case .viewDidLoad(let items, let categoryInfo):
@@ -89,11 +98,16 @@ extension AddCheckListItemViewController: ViewBindable {
 				}
 			)
 			LoadingIndicator.hideLoading()
+			
+		case .dismiss:
+			router.dismiss()
+			
 		case .error(let error):
+			guard let error else { return }
 			handleError(error)
 		}
 	}
-
+	
 	func handleError(_ error: OutputError) { }
 }
 
@@ -116,9 +130,10 @@ private extension AddCheckListItemViewController {
 private extension AddCheckListItemViewController {
 	func setViewAttributes() {
 		view.backgroundColor = .systemBackground
-		
+		setNavigationBar()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
+		setNextButtonAttributes()
 	}
 	
 	func setCheckListViewAttributes() {
@@ -136,19 +151,36 @@ private extension AddCheckListItemViewController {
 		checkListView.addGestureRecognizer(tapGesture)
 	}
 	
+	func setNavigationBar() {
+		navigationBar.delegate = self
+		navigationBar.translatesAutoresizingMaskIntoConstraints = false
+	}
+	
 	func setHeaderViewAttributes() {
 		headerView.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
+	func setNextButtonAttributes() {
+		nextButton.translatesAutoresizingMaskIntoConstraints = false
+		nextButton.addTarget(self, action: #selector(nextButtonDidTapped), for: .touchUpInside)
+	}
+	
 	func setViewHierarchies() {
+		view.addSubview(navigationBar)
 		view.addSubview(checkListView)
 		view.addSubview(headerView)
+		view.addSubview(nextButton)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
+			navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
+			navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			navigationBar.heightAnchor.constraint(equalToConstant: LayoutConstant.navigationBarHeight),
+			
 			headerView.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: LayoutConstant.topPadding
 			),
 			headerView.leadingAnchor.constraint(
@@ -164,8 +196,21 @@ private extension AddCheckListItemViewController {
 				constant: LayoutConstant.spacingBetweenTitleAndCheckList
 			),
 			checkListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			checkListView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
-			checkListView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+			checkListView.bottomAnchor.constraint(
+				equalTo: nextButton.topAnchor,
+				constant: -LayoutConstant.spacingBetweenTitleAndCheckList
+			),
+			checkListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			
+			nextButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+			nextButton.leadingAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+				constant: LayoutConstant.horizontalPadding
+			),
+			nextButton.trailingAnchor.constraint(
+				equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+				constant: -LayoutConstant.horizontalPadding
+			)
 		])
 	}
 	
@@ -270,7 +315,7 @@ extension AddCheckListItemViewController: AiCheckListCellDelegate {
 				isChecked: true)
 		])
 	}
-
+	
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
 		cell: AiCheckListCell,
@@ -296,5 +341,28 @@ extension AddCheckListItemViewController: AddCheckListItemPlaceholderDelegate {
 		guard let text = textField.text else { return }
 		dataSource?.updateSelectItem([.init(itemId: UUID(), title: text, isChecked: true)])
 		textField.text = nil
+	}
+}
+
+extension AddCheckListItemViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(
+		_ navigationBar: OpenListNavigationBar,
+		didTapBackButton button: UIButton
+	) {
+		router.routeToMinorCategoryView()
+	}
+	
+	func openListNavigationBar(
+		_ navigationBar: OpenListNavigationBar,
+		didTapBarItem item: OpenListNavigationBarItem
+	) {
+		return
+	}
+}
+
+extension AddCheckListItemViewController {
+	@objc func nextButtonDidTapped() {
+		guard let dataSource else { return }
+		nextButtonDidTappedSubject.send(dataSource.getSelectedCheckListItem())
 	}
 }

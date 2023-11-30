@@ -9,6 +9,7 @@ import Foundation
 
 protocol AddCheckListItemDependency: Dependency {
 	var categoryUseCase: CategoryUseCase { get }
+	var persistenceUseCase: PersistenceUseCase { get }
 }
 
 final class AddCheckListItemComponent: Component<AddCheckListItemDependency> { }
@@ -23,10 +24,12 @@ final class AddCheckListItemViewFactory: Factory<AddCheckListItemDependency>, Ad
 	}
 	
 	func make(with categoryInfo: CategoryInfo) -> ViewControllable {
+		let component = AddCheckListItemComponent(parent: parent)
 		let router = AddCheckListItemRouter()
 		let viewModel = AddCheckListItemViewModel(
 			categoryInfo: categoryInfo,
-			categoryUseCase: parent.categoryUseCase
+			categoryUseCase: component.parent.categoryUseCase,
+			persistenceUseCase: component.parent.persistenceUseCase
 		)
 		let viewController = AddCheckListItemViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

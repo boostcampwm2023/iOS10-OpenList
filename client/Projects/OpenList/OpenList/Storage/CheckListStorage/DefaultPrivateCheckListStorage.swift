@@ -98,14 +98,25 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 		return response
 	}
 	
-	func saveCheckList(id: UUID, title: String) async throws {
+	func saveCheckList(id: UUID, title: String, items: [CheckListItem]) async throws {
 		Task { [weak self] in
 			guard let self else { return }
-			let backgroundContext = coreDataStorage.backgroundViewContext
-			let checkList = PrivateCheckListEntity(context: backgroundContext)
+			let context = coreDataStorage.backgroundViewContext
+			let checkList = PrivateCheckListEntity(context: context)
 			checkList.makeInitialCheckListEntity(title: title)
+			items.forEach { item in
+				let itemEntity = PrivateCheckListItemEntity(context: context)
+				itemEntity.makeInitialCheckListItemEntity(
+					itemId: item.id,
+					content: item.title,
+					isChecked: item.isChecked
+				)
+				checkList.addToItemId(itemEntity)
+				checkList.orderBy?.append(item.id)
+			}
+			
 			do {
-				try backgroundContext.save()
+				try context.save()
 				return
 			} catch {
 				throw CoreDataStorageError.saveError(error)

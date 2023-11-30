@@ -9,7 +9,7 @@ import CoreData
 import Foundation
 
 protocol PrivateCheckListStorage {
-	func saveCheckList(id: UUID, title: String) async throws
+	func saveCheckList(id: UUID, title: String, items: [CheckListItem]) async throws
 	func fetchAllCheckList() async throws -> [PrivateCheckListResponseDTO]
 	func fetchCheckList(id: UUID) async throws -> PrivateCheckListResponseDTO
 	func removeCheckList(id: UUID) throws

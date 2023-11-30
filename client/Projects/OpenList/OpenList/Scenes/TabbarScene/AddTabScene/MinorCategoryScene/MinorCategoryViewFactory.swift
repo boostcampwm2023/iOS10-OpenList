@@ -10,11 +10,14 @@ import Foundation
 protocol MinorCategoryDependency: Dependency {
 	var categoryUseCase: CategoryUseCase { get }
 	var addCheckListItemFactory: AddCheckListItemFactoryable { get }
+	var persistenceUseCase: PersistenceUseCase { get }
 }
 
 final class MinorCategoryComponent:
 	Component<MinorCategoryDependency>,
 	AddCheckListItemDependency {
+	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
+	
 	var categoryUseCase: CategoryUseCase {
 		return parent.categoryUseCase
 	}

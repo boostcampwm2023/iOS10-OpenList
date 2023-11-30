@@ -9,6 +9,7 @@ import Combine
 
 struct AddCheckListItemInput {
 	let viewDidLoad: PassthroughSubject<Void, Never>
+	let nextButtonDidTap: PassthroughSubject<[CheckListItem], Never>
 }
 
 enum AddCheckListItemState {
@@ -16,5 +17,6 @@ enum AddCheckListItemState {
 		_ recommendChecklistItem: [RecommendChecklistItem],
 		_ categoryInfo: CategoryInfo
 	)
-	case error(_ error: Error)
+	case error(_ error: Error?)
+	case dismiss
 }

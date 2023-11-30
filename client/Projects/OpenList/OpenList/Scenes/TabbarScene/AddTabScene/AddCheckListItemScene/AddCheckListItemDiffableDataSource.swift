@@ -76,6 +76,12 @@ extension AddCheckListItemDiffableDataSource {
 			apply(snapshot, animatingDifferences: true)
 		}
 	}
+	
+	func getSelectedCheckListItem() -> [CheckListItem] {
+		let snapshot = snapshot()
+		guard let items = snapshot.itemIdentifiers(inSection: .selectItem) as? [CheckListItem] else { return [] }
+		return items
+	}
 }
 
 private extension AddCheckListItemDiffableDataSource {
