@@ -34,7 +34,7 @@ extension DefaultAuthRepository: AuthRepository {
 				urlRequestBuilder: builder
 			)
 			
-			let data = try await service.repuest()
+			let data = try await service.request()
 			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
 			dump("Login Success: \(loginResponseDTO.accessToken)")
 			return loginResponseDTO

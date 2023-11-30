@@ -34,7 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			tabBarFactoryable: tabBarViewFactory,
 			loginFactoryable: loginViewFactory
 		)
-
+		
 		if
 			KeyChain.shared.read(key: AuthKey.accessToken) != nil,
 			KeyChain.shared.read(key: AuthKey.refreshToken) != nil {

@@ -1,5 +1,5 @@
 //
-//  AddTabViewModel.swift
+//  AddCheckListTitleViewModel.swift
 //  OpenList
 //
 //  Created by Hoon on 11/15/23.
@@ -7,12 +7,12 @@
 
 import Combine
 
-protocol AddTabViewModelable: ViewModelable
-where Input == AddTabInput,
-  State == AddTabState,
+protocol AddCheckListTitleViewModelable: ViewModelable
+where Input == AddCheckListTitleInput,
+  State == AddCheckListTitleState,
   Output == AnyPublisher<State, Never> { }
 
-final class AddTabViewModel {
+final class AddCheckListTitleViewModel {
 	private let validCheckUseCase: ValidCheckUseCase
 	private let persistenceUseCase: PersistenceUseCase
 	private var title: String = ""
@@ -30,7 +30,7 @@ final class AddTabViewModel {
 	}
 }
 
-extension AddTabViewModel: AddTabViewModelable {
+extension AddCheckListTitleViewModel: AddCheckListTitleViewModelable {
   func transform(_ input: Input) -> Output {
 		let textFieldDidChange = textFieldDidChange(input)
 		let nextButtonDidTap = nextButtonDidTap(input)
@@ -41,7 +41,7 @@ extension AddTabViewModel: AddTabViewModelable {
   }
 }
 
-private extension AddTabViewModel {
+private extension AddCheckListTitleViewModel {
 	func textFieldDidChange(_ input: Input) -> Output {
 		return input.textFieldDidChange
 			.withUnretained(self)
