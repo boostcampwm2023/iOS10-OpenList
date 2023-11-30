@@ -15,6 +15,11 @@ protocol SelectCheckListCellDelegate: AnyObject {
 		replacementString string: String,
 		cellId: UUID
 	) -> Bool
+	func checkButtonDidToggled(
+		_ textField: CheckListItemTextField,
+		cell: SelectCheckListCell,
+		cellId: UUID
+	)
 }
 
 final class SelectCheckListCell: UITableViewCell {
@@ -88,6 +93,11 @@ private extension SelectCheckListCell {
 	
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
+		guard
+			let _ = self.indexPath,
+			let cellId = self.cellId
+		else { return }
+		delegate?.checkButtonDidToggled(textField, cell: self, cellId: cellId)
 	}
 }
 

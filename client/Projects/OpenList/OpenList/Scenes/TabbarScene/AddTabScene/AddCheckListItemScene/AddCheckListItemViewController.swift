@@ -58,14 +58,14 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		bind()
 		viewLoad.send()
 		dataSource?.updateSelectItem([
-			.init(itemId: UUID(), title: "Test", isChecked: true),
-			.init(itemId: UUID(), title: "Test", isChecked: true),
-			.init(itemId: UUID(), title: "Test", isChecked: true)
+			.init(itemId: UUID(), title: "선택된 체크리스트1", isChecked: true),
+			.init(itemId: UUID(), title: "선택된 체크리스트2", isChecked: true),
+			.init(itemId: UUID(), title: "선택된 체크리스트3", isChecked: true)
 		])
 		dataSource?.updateAiItem([
-			.init(itemId: UUID(), title: "Test1", isChecked: false),
-			.init(itemId: UUID(), title: "Test2", isChecked: false),
-			.init(itemId: UUID(), title: "Test3", isChecked: false)
+			.init(itemId: UUID(), title: "AI 추천체크리스트1", isChecked: false),
+			.init(itemId: UUID(), title: "AI 추천체크리스트2", isChecked: false),
+			.init(itemId: UUID(), title: "AI 추천체크리스트3", isChecked: false)
 		])
 	}
 }
@@ -209,12 +209,28 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 		_ tableView: UITableView,
 		trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
 	) -> UISwipeActionsConfiguration? {
-		return nil
+		// 사용자가 삭제 액션을 수행하면 호출될 핸들러 함수를 정의합니다.
+		let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, _) in
+			self?.dataSource?.deleteCheckListItem(at: indexPath)
+		}
+		deleteAction.backgroundColor = .red
+		let swipeConfig = UISwipeActionsConfiguration(actions: [deleteAction])
+		return swipeConfig
 	}
 }
 
 // MARK: - SelectCheckListItemDelegate
 extension AddCheckListItemViewController: SelectCheckListCellDelegate {
+	func checkButtonDidToggled(_ textField: CheckListItemTextField, cell: SelectCheckListCell, cellId: UUID) {
+		dataSource?.deleteCheckListItem(with: cellId, section: .selectItem)
+		dataSource?.updateAiItem([
+			CheckListItem(
+				itemId: cellId,
+				title: textField.text!,
+				isChecked: false)
+		])
+	}
+	
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
 		cell: SelectCheckListCell,
@@ -236,6 +252,16 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 
 // MARK: - AiCheckListItemDelegate
 extension AddCheckListItemViewController: AiCheckListCellDelegate {
+	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID) {
+		dataSource?.deleteCheckListItem(with: cellId, section: .aiItem)
+		dataSource?.updateSelectItem([
+			CheckListItem(
+				itemId: cellId,
+				title: textField.text!,
+				isChecked: true)
+		])
+	}
+
 	func textFieldDidEndEditing(
 		_ textField: CheckListItemTextField,
 		cell: AiCheckListCell,
@@ -259,6 +285,7 @@ extension AddCheckListItemViewController: AddCheckListItemPlaceholderDelegate {
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
+		dataSource?.updateSelectItem([.init(itemId: UUID(), title: text, isChecked: true)])
 		textField.text = nil
 	}
 }
