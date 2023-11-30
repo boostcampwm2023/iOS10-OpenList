@@ -12,5 +12,9 @@ struct AddCheckListItemInput {
 }
 
 enum AddCheckListItemState {
-	case viewDidLoad
+	case viewDidLoad(
+		_ recommendChecklistItem: [RecommendChecklistItem],
+		_ categoryInfo: CategoryInfo
+	)
+	case error(_ error: Error)
 }
