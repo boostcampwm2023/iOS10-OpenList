@@ -51,6 +51,7 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		LoadingIndicator.showLoading()
 		makeDataSource()
 		setViewAttributes()
 		setViewHierarchies()
@@ -87,6 +88,7 @@ extension AddCheckListItemViewController: ViewBindable {
 					return CheckListItem(itemId: UUID(), title: $0.content, isChecked: false)
 				}
 			)
+			LoadingIndicator.hideLoading()
 		case .error(let error):
 			handleError(error)
 		}
