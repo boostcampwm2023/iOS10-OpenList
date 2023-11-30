@@ -46,10 +46,11 @@ private extension AddCheckListItemViewModel {
 					})
 					return future.eraseToAnyPublisher()
 				}
-				.map { [weak self] result in
+				.withUnretained(self)
+				.map { (owner, result) in
 					switch result {
 					case let .success(items):
-						return .viewDidLoad(items, self!.categoryInfo)
+						return .viewDidLoad(items, owner.categoryInfo)
 					case let .failure(error):
 						return .error(error)
 					}

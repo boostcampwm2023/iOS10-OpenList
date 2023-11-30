@@ -229,11 +229,12 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 // MARK: - SelectCheckListItemDelegate
 extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 	func checkButtonDidToggled(_ textField: CheckListItemTextField, cell: SelectCheckListCell, cellId: UUID) {
+		guard let text = textField.text else { return }
 		dataSource?.deleteCheckListItem(with: cellId, section: .selectItem)
 		dataSource?.updateAiItem([
 			CheckListItem(
 				itemId: cellId,
-				title: textField.text!,
+				title: text,
 				isChecked: false)
 		])
 	}
@@ -260,11 +261,12 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 // MARK: - AiCheckListItemDelegate
 extension AddCheckListItemViewController: AiCheckListCellDelegate {
 	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID) {
+		guard let text = textField.text else { return }
 		dataSource?.deleteCheckListItem(with: cellId, section: .aiItem)
 		dataSource?.updateSelectItem([
 			CheckListItem(
 				itemId: cellId,
-				title: textField.text!,
+				title: text,
 				isChecked: true)
 		])
 	}
