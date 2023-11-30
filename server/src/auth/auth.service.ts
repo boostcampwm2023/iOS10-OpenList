@@ -149,9 +149,11 @@ export class AuthService {
       userId: user.userId,
       tokenType,
     };
+    const ONE_WEEK = 7 * 24 * 60 * 60;
     return this.jwtService.sign(payload, {
       secret: process.env['JWT_SECRET'],
-      expiresIn: tokenType === 'access' ? 300 : 3600,
+      // expiresIn: tokenType === 'access' ? 300 : 3600,
+      expiresIn: tokenType === 'access' ? ONE_WEEK : ONE_WEEK,
     });
   }
 
