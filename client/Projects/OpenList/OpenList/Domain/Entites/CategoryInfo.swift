@@ -8,13 +8,13 @@
 import Foundation
 
 struct CategoryInfo {
-	var title: String?
+	var title: String
 	var mainCategory: String?
 	var subCategory: String?
 	var minorCategory: String?
 	
 	init(
-		title: String? = nil,
+		title: String,
 		mainCategory: String? = nil,
 		subCategory: String? = nil,
 		minorCategory: String? = nil

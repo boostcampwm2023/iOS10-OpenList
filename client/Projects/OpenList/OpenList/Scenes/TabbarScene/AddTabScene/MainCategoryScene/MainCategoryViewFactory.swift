@@ -13,9 +13,14 @@ protocol MainCategoryDependency: Dependency {
 
 final class MainCategoryComponent:
 	Component<MainCategoryDependency>,
-	SubCategoryDependency {
+	SubCategoryDependency,
+	AddCheckListItemDependency {
 	var categoryUseCase: CategoryUseCase {
 		return parent.categoryUseCase
+	}
+	
+	var addCheckListItemFactory: AddCheckListItemFactoryable {
+		return AddCheckListItemViewFactory(parent: self)
 	}
 	
 	fileprivate var subCategoryFactory: SubCategoryFactoryable {
@@ -34,7 +39,10 @@ final class MainCategoryViewFactory: Factory<MainCategoryDependency>, MainCatego
 	
 	func make(with title: String) -> ViewControllable {
 		let component = MainCategoryComponent(parent: parent)
-		let router = MainCategoryRouter(subCategoryFactory: component.subCategoryFactory)
+		let router = MainCategoryRouter(
+			subCategoryFactory: component.subCategoryFactory,
+			addCheckListItemFactory: component.addCheckListItemFactory
+		)
 		let viewModel = MainCategoryViewModel(
 			title: title,
 			categoryUseCase: parent.categoryUseCase

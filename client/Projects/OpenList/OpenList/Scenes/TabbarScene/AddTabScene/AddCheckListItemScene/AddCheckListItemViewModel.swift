@@ -12,7 +12,18 @@ where Input == AddCheckListItemInput,
   State == AddCheckListItemState,
   Output == AnyPublisher<State, Never> { }
 
-final class AddCheckListItemViewModel { }
+final class AddCheckListItemViewModel { 
+	private let categoryInfo: CategoryInfo
+	private let categoryUseCase: CategoryUseCase
+	
+	init(
+		categoryInfo: CategoryInfo,
+		categoryUseCase: CategoryUseCase
+	) {
+		self.categoryInfo = categoryInfo
+		self.categoryUseCase = categoryUseCase
+	}
+}
 
 extension AddCheckListItemViewModel: AddCheckListItemViewModelable {
   func transform(_ input: Input) -> Output {
