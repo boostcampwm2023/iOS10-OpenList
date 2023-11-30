@@ -2,7 +2,7 @@
 //  AccessTokenInterceptor.swift
 //  OpenList
 //
-//  Created by Hoon on 11/30/23.
+//  Created by 김영균 on 11/30/23.
 //
 
 import CustomNetwork

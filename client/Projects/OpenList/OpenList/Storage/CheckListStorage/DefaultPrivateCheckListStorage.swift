@@ -113,6 +113,20 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 		}
 	}
 	
+	// 체크리스트를 삭제합니다.
+	func removeCheckList(id: UUID) throws {
+		let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PrivateCheckListEntity")
+		fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(PrivateCheckListEntity.checklistId), id as CVarArg)
+		do {
+			let entities = try coreDataStorage.viewContext.fetch(fetchRequest)
+			guard let checkList = entities.first as? NSManagedObject else { return }
+			coreDataStorage.viewContext.delete(checkList)
+			try coreDataStorage.viewContext.save()
+		} catch {
+			throw CoreDataStorageError.saveError(error)
+		}
+	}
+	
 	func appendCheckListItem(id: UUID, item: CheckListItem) async throws {
 		Task { [weak self] in
 			guard let self else { return }
@@ -175,6 +189,10 @@ extension DefaultPrivateCheckListStorage: PrivateCheckListStorage {
 			try context.save()
 			return
 		}
+	}
+	
+	func transfromToWith(id: UUID) async throws {
+		throw CoreDataStorageError.noData
 	}
 }
 

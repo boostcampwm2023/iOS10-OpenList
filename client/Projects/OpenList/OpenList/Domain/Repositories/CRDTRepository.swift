@@ -11,6 +11,6 @@ import Foundation
 protocol CRDTRepository {
 	@discardableResult
 	func save(message: CRDTMessage) async throws -> CRDTMessage
-	func send(documentNode: LinkedListNode<UUID>, message: CRDTMessage) throws
-	func fetchAll() async throws -> [CRDTMessage]
+	func send(id: UUID, message: CRDTMessage) throws
+	func fetchCheckListItems(id: UUID) async throws -> [CRDTMessageResponseDTO]
 }

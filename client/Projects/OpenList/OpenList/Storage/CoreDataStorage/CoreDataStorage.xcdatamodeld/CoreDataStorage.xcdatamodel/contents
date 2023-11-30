@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23C5030f" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CRDTMessageEntity" representedClassName="CRDTMessageEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="messageId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="checklistId" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WithCheckListEntity" inverseName="messages" inverseEntity="WithCheckListEntity"/>
+    </entity>
     <entity name="PrivateCheckListEntity" representedClassName="PrivateCheckListEntity" syncable="YES" codeGenerationType="class">
         <attribute name="checklistId" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -7,7 +11,7 @@
         <attribute name="progress" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="itemId" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PrivateCheckListItemEntity" inverseName="checklistId" inverseEntity="PrivateCheckListItemEntity"/>
+        <relationship name="itemId" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PrivateCheckListItemEntity" inverseName="checklistId" inverseEntity="PrivateCheckListItemEntity"/>
     </entity>
     <entity name="PrivateCheckListItemEntity" representedClassName="PrivateCheckListItemEntity" syncable="YES" codeGenerationType="class">
         <attribute name="content" attributeType="String"/>
@@ -15,5 +19,15 @@
         <attribute name="isChecked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="itemId" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="checklistId" maxCount="1" deletionRule="Nullify" destinationEntity="PrivateCheckListEntity" inverseName="itemId" inverseEntity="PrivateCheckListEntity"/>
+    </entity>
+    <entity name="WithCheckListEntity" representedClassName="WithCheckListEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="checklistId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="orderBy" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
+        <attribute name="progress" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="users" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="messages" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CRDTMessageEntity" inverseName="checklistId" inverseEntity="CRDTMessageEntity"/>
     </entity>
 </model>

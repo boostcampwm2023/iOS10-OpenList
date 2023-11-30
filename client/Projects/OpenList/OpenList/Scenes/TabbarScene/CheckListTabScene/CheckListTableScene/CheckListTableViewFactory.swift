@@ -6,31 +6,34 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol CheckListTableDependency: Dependency {
-	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
-	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
+	var crdtRepository: CRDTRepository { get }
+	var persistenceUseCase: PersistenceUseCase { get }
 }
 
 final class CheckListTableComponent:
 	Component<CheckListTableDependency>,
 	PrivateDetailCheckListDependency {
+	var crdtRepository: CRDTRepository { return parent.crdtRepository }
+	
 	var checkListRepository: CheckListRepository {
 		return parent.checkListRepository
 	}
 	
-	fileprivate var persistenceUseCase: PersistenceUseCase {
+	var withCheckListRepository: WithCheckListRepository {
+		return DefaultWithCheckListRepository()
+	}
+	
+	var persistenceUseCase: PersistenceUseCase {
 		return parent.persistenceUseCase
 	}
 	
-	fileprivate var detailCheckListFactoryable: PrivateDetailCheckListFactoryable {
+	fileprivate var privateCheckListDetailFactoryable: PrivateDetailCheckListFactoryable {
 		return PrivateDetailCheckListViewFactory(parent: self)
-	}
-	
-	fileprivate var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
-		return parent.deepLinkSubject
 	}
 }
 
@@ -45,10 +48,7 @@ final class CheckListTableViewFactory: Factory<CheckListTableDependency>, CheckL
 	
 	func make() -> ViewControllable {
 		let component = CheckListTableComponent(parent: parent)
-		let router = CheckListTableRouter(
-			detailCheckListViewFactory: component.detailCheckListFactoryable,
-			deepLinkSubject: component.deepLinkSubject
-		)
+		let router = CheckListTableRouter(privateCheckListDetailFactory: component.privateCheckListDetailFactoryable)
 		let viewModel = CheckListTableViewModel(persistenceUseCase: component.persistenceUseCase)
 		let viewController = CheckListTableViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

@@ -26,8 +26,9 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
 	private var cancellables: Set<AnyCancellable> = []
+	private let removeCheckList: PassthroughSubject<UUID, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -37,7 +38,6 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		self.router = router
 		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
-		self.bind()
 	}
 	
 	@available(*, unavailable)
@@ -53,6 +53,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewAttributes()
 		setViewHierarchies()
 		setConstraints()
+		bind()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -67,7 +68,7 @@ extension CheckListTableViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = CheckListTableInput(viewAppear: viewAppear)
+		let input = CheckListTableInput(viewAppear: viewAppear, removeCheckList: removeCheckList)
 		
 		let output = viewModel.transform(input)
 		
@@ -76,6 +77,14 @@ extension CheckListTableViewController: ViewBindable {
 			.withUnretained(self)
 			.sink { (owner, output) in owner.render(output) }
 			.store(in: &cancellables)
+		
+		/*
+		NotificationCenter.default.publisher(for: OpenListNotificationName.checkListAdded)
+			.receive(on: DispatchQueue.main)
+			.withUnretained(self)
+			.sink { (owner, _) in owner.viewAppear.send() }
+			.store(in: &cancellables)
+	*/
 	}
 	
 	func render(_ state: State) {
@@ -182,13 +191,14 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		
 		let point = gestureRecognizer.location(in: collectionView)
 		
-		if let indexPath = collectionView.indexPathForItem(at: point) {
-			showActionSheet()
+		if let indexPath = collectionView.indexPathForItem(at: point),
+			let checkList = dataSource?.itemIdentifier(for: indexPath) {
+			showActionSheet(with: checkList.id)
 			print("Long press at item: \(indexPath.row)")
 		}
 	}
 	
-	func showActionSheet() {
+	func showActionSheet(with checkListId: UUID) {
 		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		
 		let moveFolderAction = UIAlertAction(title: "폴더 이동", style: .default) { _ in
@@ -199,8 +209,8 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 			print("didPress share")
 		}
 		
-		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			print("didPress delete")
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+			self?.removeCheckList.send(checkListId)
 		}
 		
 		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in

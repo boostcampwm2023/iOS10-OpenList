@@ -13,6 +13,7 @@ protocol WithCheckListItemDelegate: AnyObject {
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
+		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
 }
@@ -29,8 +30,12 @@ final class WithCheckListItem: UITableViewCell {
 	private let checkButton: CheckListItemButton = .init()
 	private let textField: CheckListItemTextField = .init()
 	private var indexPath: IndexPath?
-	private var cellId: UUID?
+	private(set) var cellId: UUID?
 	weak var delegate: WithCheckListItemDelegate?
+	
+	var content: String {
+		textField.text ?? ""
+	}
 	
 	// MARK: - Initializers
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -113,12 +118,14 @@ extension WithCheckListItem: UITextFieldDelegate {
 	) -> Bool {
 		guard
 			let delegate,
+			let indexPath,
 			let cellId
 		else { return true }
 		return delegate.textField(
 			self.textField,
 			shouldChangeCharactersIn: range,
 			replacementString: string,
+			indexPath: indexPath,
 			cellId: cellId
 		)
 	}

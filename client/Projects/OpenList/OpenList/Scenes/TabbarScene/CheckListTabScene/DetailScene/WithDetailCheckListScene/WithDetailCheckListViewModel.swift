@@ -13,16 +13,31 @@ where Input == WithDetailCheckListInput,
 	State == WithDetailCheckListState,
 	Output == AnyPublisher<State, Never> { }
 
+protocol WithDetailCheckListDataSource {
+	var inviteLinkUrlString: String { get }
+	var webSocketUrl: URL? { get }
+}
+
 final class WithDetailCheckListViewModel {
-	private var title: String
+	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
 	
 	init(
-		title: String,
+		id: UUID,
 		crdtUseCase: CRDTUseCase
 	) {
-		self.title = title
+		self.id = id
 		self.crdtUseCase = crdtUseCase
+	}
+}
+
+extension WithDetailCheckListViewModel: WithDetailCheckListDataSource {
+	var inviteLinkUrlString: String {
+		"openlist://shared-checklists?shared-checklistId=\(id)"
+	}
+	
+	var webSocketUrl: URL? {
+		URL(string: "wss://openlist.kro.kr/share-checklist?cid=\(id)")
 	}
 }
 
@@ -43,11 +58,14 @@ private extension WithDetailCheckListViewModel {
 	func updateTitle(_ input: Input) -> Output {
 		return input.viewWillAppear
 			.withUnretained(self)
-			.flatMap { (owner, _) -> AnyPublisher<String?, Never> in
-				return Just(owner.title).eraseToAnyPublisher()
+			.flatMap { (owner, _) -> AnyPublisher<CheckList, Never> in
+				let future = Future(asyncFunc: {
+					try await owner.crdtUseCase.fetchCheckList(id: owner.id)
+				})
+				return future.eraseToAnyPublisher()
 			}
-			.map { title in
-				return .title(title)
+			.map { checkList in
+				return .viewWillAppear(checkList)
 			}
 			.eraseToAnyPublisher()
 	}
@@ -115,14 +133,14 @@ private extension WithDetailCheckListViewModel {
 	func receive(_ input: Input) -> Output {
 		return input.receive
 			.withUnretained(self)
-			.flatMap { (owner, data) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, jsonString) -> AnyPublisher<[CheckListItem], Never>  in
 				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.receive(data: data)
+					try await owner.crdtUseCase.receive(jsonString)
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { item in
-				return .updateItem(item)
+			.map { items in
+				return .updateItem(items)
 			}
 			.eraseToAnyPublisher()
 	}

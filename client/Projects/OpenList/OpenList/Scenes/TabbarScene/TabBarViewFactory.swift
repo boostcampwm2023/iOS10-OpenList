@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CustomNetwork
 import Foundation
 
 protocol TabBarDependency: Dependency {
@@ -36,6 +37,10 @@ final class TabBarComponent:
 	var checkListStorage: PrivateCheckListStorage {
 		return DefaultPrivateCheckListStorage()
 	}
+	
+	var session: CustomSession = .init(
+		interceptor: AuthRequestInterceptor(token: KeyChain.shared.read(key: AuthKey.accessToken) ?? "")
+	)
 	
 	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {
 		return AddCheckListTitleViewFactory(parent: self)

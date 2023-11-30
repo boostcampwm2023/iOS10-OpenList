@@ -38,8 +38,8 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 		options: nil
 	)
 	// 상단 탭의 컨텐츠 뷰 컨트롤러
-	private let checkListFolderFactory: CheckListFolderFactoryable
-	private let checkListTableFactory: CheckListTableFactoryable
+	private let privateCheckListTableFactory: CheckListTableFactoryable
+	private let withCheckListFactoryable: WithCheckListFactoryable
 	private let sharedCheckListFactory: SharedCheckListFactoryable
 	private var childCheckListViewControllers: [UIViewController] = []
 	/// 인디케이터 뷰 센터 레이아웃
@@ -47,12 +47,12 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 	
 	// MARK: - Initializers
 	init(
-		checkListFolderFactory: CheckListFolderFactoryable,
-		checkListTableFactory: CheckListTableFactoryable,
+		privateCheckListTableFactory: CheckListTableFactoryable,
+		withCheckListFactoryable: WithCheckListFactoryable,
 		sharedCheckListFactory: SharedCheckListFactoryable
 	) {
-		self.checkListFolderFactory = checkListFolderFactory
-		self.checkListTableFactory = checkListTableFactory
+		self.privateCheckListTableFactory = privateCheckListTableFactory
+		self.withCheckListFactoryable = withCheckListFactoryable
 		self.sharedCheckListFactory = sharedCheckListFactory
 		super.init(nibName: nil, bundle: nil)
 	}
@@ -75,11 +75,11 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 // MARK: - View Methods
 private extension CheckListTabViewController {
 	func setChildViewControllers() {
-		let checkListFolderViewControllable = checkListFolderFactory.make()
-		let checkListTableViewControllable = checkListTableFactory.make()
+		let privateCheckListTableViewControllable = privateCheckListTableFactory.make()
+		let withCheckListViewControllable = withCheckListFactoryable.make()
 		let sharedCheckListViewControllable = sharedCheckListFactory.make()
-		childCheckListViewControllers.append(checkListFolderViewControllable.uiviewController)
-		childCheckListViewControllers.append(checkListTableViewControllable.uiviewController)
+		childCheckListViewControllers.append(privateCheckListTableViewControllable.uiviewController)
+		childCheckListViewControllers.append(withCheckListViewControllable.uiviewController)
 		childCheckListViewControllers.append(sharedCheckListViewControllable.uiviewController)
 	}
 	

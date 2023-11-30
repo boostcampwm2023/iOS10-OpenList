@@ -9,7 +9,9 @@ import Combine
 import CustomSocket
 import UIKit
 
-protocol WithDetailCheckListRoutingLogic: AnyObject {}
+protocol WithDetailCheckListRoutingLogic: AnyObject {
+	func dismissDetailScene()
+}
 
 final class WithDetailCheckListViewController: UIViewController, ViewControllable {
 	enum LayoutConstant {
@@ -22,10 +24,11 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	
 	// MARK: - Properties
 	private let router: WithDetailCheckListRoutingLogic
-	private let viewModel: any WithDetailCheckListViewModelable
+	private let viewModel: any WithDetailCheckListViewModelable & WithDetailCheckListDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	private var dataSource: WithDetailCheckListDiffableDataSource?
 	private var isOpenSocket: Bool = false
+	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -38,12 +41,12 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private var delete: PassthroughSubject<EditText, Never> = .init()
 	private var appendDocument: PassthroughSubject<EditText, Never> = .init()
 	private var removeDocument: PassthroughSubject<EditText, Never> = .init()
-	private var receive: PassthroughSubject<Data, Never> = .init()
+	private var receive: PassthroughSubject<String, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
 		router: WithDetailCheckListRoutingLogic,
-		viewModel: some WithDetailCheckListViewModelable
+		viewModel: some WithDetailCheckListViewModelable & WithDetailCheckListDataSource
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -63,6 +66,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		print(UUID())
 		makeDataSource()
 		setViewAttributes()
 		setViewHierarchies()
@@ -110,10 +114,10 @@ extension WithDetailCheckListViewController: ViewBindable {
 		switch state {
 		case .none:
 			break
-		case let .title(title):
-			headerView.configure(title: title!, isLocked: true)
-		case let .updateItem(item):
-			updateTextField(to: item)
+		case let .viewWillAppear(checkList):
+			viewAppear(checkList)
+		case let .updateItem(items):
+			updateTextField(to: items)
 		case let .appendItem(item):
 			appendItem(item)
 		case let .removeItem(content):
@@ -128,8 +132,50 @@ extension WithDetailCheckListViewController: ViewBindable {
 
 // MARK: - Helper
 private extension WithDetailCheckListViewController {
-	func updateTextField(to item: CheckListItem) {
-		dataSource?.receiveCheckListItem(with: item)
+	@IBAction func showMenu() {
+		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let inviteAction = UIAlertAction(title: "초대하기", style: .default) { [weak self] _ in
+			self?.invite()
+		}
+		
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+			print("didPress delete")
+		}
+		
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+			print("didPress cancel")
+		}
+		
+		actionSheet.addAction(inviteAction)
+		actionSheet.addAction(deleteAction)
+		actionSheet.addAction(cancelAction)
+		
+		self.present(actionSheet, animated: true, completion: nil)
+	}
+	
+	func invite() {
+		var objectsToShare = [String]()
+		let inviteLink = viewModel.inviteLinkUrlString
+		objectsToShare.append(inviteLink)
+		
+		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+		activityVC.popoverPresentationController?.sourceView = self.view
+		
+		self.present(activityVC, animated: true, completion: nil)
+	}
+	
+	func viewAppear(_ checkList: CheckList) {
+		headerView.configure(title: checkList.title, isLocked: false)
+		checkList.items.forEach { [weak self] in
+			self?.dataSource?.receiveCheckListItem(with: $0)
+		}
+	}
+	
+	func updateTextField(to items: [CheckListItem]) {
+		items.forEach { [weak self] in
+			self?.dataSource?.receiveCheckListItem(with: $0)
+		}
 	}
 	
 	func appendItem(_ item: CheckListItem) {
@@ -142,8 +188,14 @@ private extension WithDetailCheckListViewController {
 private extension WithDetailCheckListViewController {
 	func setViewAttributes() {
 		view.backgroundColor = UIColor.background
+		
+		setNavigationAttributes()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
+	}
+	
+	func setNavigationAttributes() {
+		navigationBar.delegate = self
 	}
 	
 	func setCheckListViewAttributes() {
@@ -167,12 +219,13 @@ private extension WithDetailCheckListViewController {
 	func setViewHierarchies() {
 		view.addSubview(checkListView)
 		view.addSubview(headerView)
+		view.addSubview(navigationBar)
 	}
 	
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			headerView.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: LayoutConstant.topPadding
 			),
 			headerView.leadingAnchor.constraint(
@@ -196,9 +249,8 @@ private extension WithDetailCheckListViewController {
 	func setWebSocket() {
 		do {
 			WebSocket.shared.delegate = self
-			WebSocket.shared.url = URL(string: "ws://localhost:1337/")
+			WebSocket.shared.url = viewModel.webSocketUrl
 			try WebSocket.shared.openWebSocket()
-			WebSocket.shared.send(message: Device.id)
 		} catch {
 			print(error)
 		}
@@ -210,9 +262,9 @@ private extension WithDetailCheckListViewController {
 		}
 		
 		DispatchQueue.global().async {
-			WebSocket.shared.receive { [weak self] _, data in
-				guard let data else { return }
-				self?.receive.send(data)
+			WebSocket.shared.receive { [weak self] jsonString, _ in
+				guard let jsonString else { return }
+				self?.receive.send(jsonString)
 				self?.webSocketReceive()
 			}
 		}
@@ -270,7 +322,15 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
+		let item = checkListView.cellForRow(WithCheckListItem.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
+			self?.removeDocument.send(
+				.init(
+					id: item.cellId ?? UUID(),
+					content: item.content,
+					range: .init(location: 0, length: item.content.count)
+				)
+			)
 			self?.dataSource?.deleteCheckListItem(at: indexPath)
 			completion(true)
 		}
@@ -299,6 +359,7 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		_ textField: CheckListItemTextField,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
+		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool {
 		guard let text = textField.text else { return true }
@@ -309,8 +370,10 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		switch range.length {
 		case 0:
 			insert.send(.init(id: cellId, content: string, range: range))
+			
 		case 1:
 			delete.send(.init(id: cellId, content: string, range: range))
+			
 		default:
 			return false
 		}
@@ -357,5 +420,15 @@ extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 		guard let text = textField.text else { return }
 		textField.text = nil
 		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
+	}
+}
+
+extension WithDetailCheckListViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) {
+		router.dismissDetailScene()
+	}
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		showMenu()
 	}
 }

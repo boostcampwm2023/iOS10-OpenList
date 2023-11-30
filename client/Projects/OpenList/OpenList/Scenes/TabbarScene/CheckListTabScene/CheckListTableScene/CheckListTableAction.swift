@@ -6,9 +6,11 @@
 //
 
 import Combine
+import Foundation
 
 struct CheckListTableInput {
 	let viewAppear: PassthroughSubject<Void, Never>
+	let removeCheckList: PassthroughSubject<UUID, Never>
 }
 
 enum CheckListTableState {

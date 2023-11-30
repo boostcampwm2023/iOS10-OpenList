@@ -5,9 +5,12 @@
 //  Created by wi_seong on 11/23/23.
 //
 
+import CustomNetwork
 import Foundation
 
-protocol WithDetailCheckListDependency: Dependency {}
+protocol WithDetailCheckListDependency: Dependency {
+	var session: CustomSession { get }
+}
 
 final class WithDetailCheckListComponent: Component<WithDetailCheckListDependency> {
 	fileprivate var crdtUseCase: CRDTUseCase {
@@ -15,7 +18,7 @@ final class WithDetailCheckListComponent: Component<WithDetailCheckListDependenc
 	}
 	
 	fileprivate var crdtRepository: CRDTRepository {
-		return DefaultCRDTRepository(crdtStorage: crdtStorage)
+		return DefaultCRDTRepository(session: parent.session, crdtStorage: crdtStorage)
 	}
 	
 	fileprivate var crdtStorage: CRDTStorage {
@@ -24,7 +27,7 @@ final class WithDetailCheckListComponent: Component<WithDetailCheckListDependenc
 }
 
 protocol WithDetailCheckListFactoryable: Factoryable {
-	func make(with title: String) -> ViewControllable
+	func make(with id: UUID) -> ViewControllable
 }
 
 final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependency>, WithDetailCheckListFactoryable {
@@ -32,11 +35,11 @@ final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependenc
 		super.init(parent: parent)
 	}
 	
-	func make(with title: String) -> ViewControllable {
+	func make(with id: UUID) -> ViewControllable {
 		let component = WithDetailCheckListComponent(parent: parent)
 		let router = WithDetailCheckListRouter()
 		let viewModel = WithDetailCheckListViewModel(
-			title: title,
+			id: id,
 			crdtUseCase: component.crdtUseCase
 		)
 		let viewController = WithDetailCheckListViewController(router: router, viewModel: viewModel)

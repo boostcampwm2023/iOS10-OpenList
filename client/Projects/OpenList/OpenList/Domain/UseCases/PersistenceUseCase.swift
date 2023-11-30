@@ -10,6 +10,7 @@ import Foundation
 protocol PersistenceUseCase {
 	func saveCheckList(title: String) async -> Bool
 	func fetchAllCheckList() async -> [CheckListTableItem]
+	func removeCheckList(checklistId: UUID) -> Bool
 }
 
 final class DefaultPersistenceUseCase {
@@ -33,5 +34,9 @@ extension DefaultPersistenceUseCase: PersistenceUseCase {
 		} catch {
 			return []
 		}
+	}
+	
+	func removeCheckList(checklistId: UUID) -> Bool {
+		return checkListRepository.removeCheckList(checklistId)
 	}
 }

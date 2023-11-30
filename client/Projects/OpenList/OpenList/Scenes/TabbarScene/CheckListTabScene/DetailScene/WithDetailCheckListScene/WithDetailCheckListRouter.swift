@@ -12,4 +12,8 @@ final class WithDetailCheckListRouter {
 }
 
 // MARK: - RoutingLogic
-extension WithDetailCheckListRouter: WithDetailCheckListRoutingLogic {}
+extension WithDetailCheckListRouter: WithDetailCheckListRoutingLogic {
+	func dismissDetailScene() {
+		viewController?.popViewController(animated: true)
+	}
+}

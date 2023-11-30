@@ -7,6 +7,7 @@
 
 import AuthenticationServices
 import Combine
+import CustomNetwork
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -72,6 +73,27 @@ private extension SceneDelegate {
 		)?.value
 		else { return }
 		guard let id = UUID(uuidString: idString) else { return }
-		deepLinkSubject.send(.routeToSharedCheckList(id: id))
+		Task {
+			let canParticipate = await canParticipateRoom(at: idString)
+			if canParticipate {
+				deepLinkSubject.send(.routeToSharedCheckList(id: id))
+			}
+		}
+	}
+	
+	func canParticipateRoom(at cid: String) async -> Bool {
+		print(cid)
+		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/shared-checklists/\(cid)/editors")
+		builder.setMethod(.post)
+		builder.addHeader(field: "Content-Type", value: "application/json")
+		let session = CustomSession(interceptor: AccessTokenInterceptor())
+		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
+		do {
+			let data = try await service.request()
+			print(try JSONSerialization.jsonObject(with: data))
+			return true
+		} catch {
+			return false
+		}
 	}
 }

@@ -22,11 +22,9 @@ final class CheckListTableViewModel {
 
 extension CheckListTableViewModel: CheckListTableViewModelable {
   func transform(_ input: Input) -> Output {
-		let viewLoad = viewLoad(input)
     return Publishers.MergeMany(
-			[
-				viewLoad
-			]
+			viewLoad(input),
+			remove(input)
 		).eraseToAnyPublisher()
   }
 }
@@ -39,6 +37,20 @@ private extension CheckListTableViewModel {
 				let future = Future(asyncFunc: {
 					await owner.persistenceUseCase.fetchAllCheckList()
 				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { items in
+				return .reload(items)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func remove(_ input: Input) -> Output {
+		return input.removeCheckList
+			.withUnretained(self)
+			.flatMap { owner, uuid -> AnyPublisher<[CheckListTableItem], Never> in
+				_ = owner.persistenceUseCase.removeCheckList(checklistId: uuid)
+				let future = Future(asyncFunc: { await owner.persistenceUseCase.fetchAllCheckList() })
 				return future.eraseToAnyPublisher()
 			}
 			.map { items in

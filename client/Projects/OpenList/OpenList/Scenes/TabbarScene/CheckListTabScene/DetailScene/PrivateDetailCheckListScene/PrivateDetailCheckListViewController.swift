@@ -35,9 +35,11 @@ final class PrivateDetailCheckListViewController: UIViewController, ViewControll
 	
 	// Event Properties
 	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let transformWith: PassthroughSubject<Void, Never> = .init()
 	private let append: PassthroughSubject<CheckListItem, Never> = .init()
 	private let update: PassthroughSubject<CheckListItem, Never> = .init()
-	private let remove: PassthroughSubject<CheckListItem, Never> = .init()
+	private let remove: PassthroughSubject<CheckListItem, Never> = .init() // 체크리스트 아이템을 삭제하는 이벤트
+	private let removeCheckList: PassthroughSubject<Void, Never> = .init() //  체크리스트를 삭제하는 이벤트
 	
 	// MARK: - Initializers
 	init(
@@ -85,7 +87,9 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 			viewWillAppear: viewWillAppear,
 			append: append,
 			update: update,
-			remove: remove
+			remove: remove,
+			transformWith: transformWith,
+			removeCheckList: removeCheckList
 		)
 		let output = viewModel.transform(input)
 		
@@ -104,6 +108,8 @@ extension PrivateDetailCheckListViewController: ViewBindable {
 			viewLoad(checkList)
 		case let .updateItem(item):
 			updateItem(item)
+		case .dismiss:
+			router.dismissDetailScene()
 		}
 	}
 	
@@ -117,12 +123,12 @@ private extension PrivateDetailCheckListViewController {
 	@IBAction func showMenu() {
 		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		
-		let inviteAction = UIAlertAction(title: "초대하기", style: .default) { [weak self] _ in
-			self?.invite()
+		let inviteAction = UIAlertAction(title: "함께 작성하기", style: .default) { [weak self] _ in
+			self?.transformWith.send()
 		}
 		
-		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			print("didPress delete")
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+			self?.removeCheckList.send()
 		}
 		
 		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
@@ -134,17 +140,6 @@ private extension PrivateDetailCheckListViewController {
 		actionSheet.addAction(cancelAction)
 		
 		self.present(actionSheet, animated: true, completion: nil)
-	}
-	
-	func invite() {
-		var objectsToShare = [String]()
-		let inviteLink = "openlist://shared-checklists?shared-checklistId=\(viewModel.checkListId)"
-		objectsToShare.append(inviteLink)
-		
-		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-		activityVC.popoverPresentationController?.sourceView = self.view
-		
-		self.present(activityVC, animated: true, completion: nil)
 	}
 	
 	func viewLoad(_ checkList: CheckList) {
