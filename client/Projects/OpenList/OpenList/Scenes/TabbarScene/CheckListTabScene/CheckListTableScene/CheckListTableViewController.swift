@@ -26,7 +26,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
 	private var cancellables: Set<AnyCancellable> = []
 	
 	// MARK: - Initializers
@@ -37,7 +37,6 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		self.router = router
 		self.viewModel = viewModel
 		super.init(nibName: nil, bundle: nil)
-		self.bind()
 	}
 	
 	@available(*, unavailable)
@@ -53,6 +52,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 		setViewAttributes()
 		setViewHierarchies()
 		setConstraints()
+		bind()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
