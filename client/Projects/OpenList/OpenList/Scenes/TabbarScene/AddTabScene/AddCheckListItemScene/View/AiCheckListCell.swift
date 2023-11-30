@@ -15,6 +15,7 @@ protocol AiCheckListCellDelegate: AnyObject {
 		replacementString string: String,
 		cellId: UUID
 	) -> Bool
+	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID)
 }
 
 final class AiCheckListCell: UITableViewCell {
@@ -88,6 +89,11 @@ private extension AiCheckListCell {
 	
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
+		guard
+			let _ = self.indexPath,
+			let cellId = self.cellId
+		else { return }
+		delegate?.checklistButtonDidToggle(textField, cell: self, cellId: cellId)
 	}
 }
 

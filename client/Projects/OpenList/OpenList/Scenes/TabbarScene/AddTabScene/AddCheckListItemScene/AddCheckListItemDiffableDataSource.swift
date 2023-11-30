@@ -62,17 +62,17 @@ extension AddCheckListItemDiffableDataSource {
 		}
 	}
 	
-	func deleteCheckListItem(at item: CheckListItem) {
+	func deleteCheckListItem(with id: UUID, section: Section) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = snapshot()
 			guard
-				var items = snapshot.itemIdentifiers(inSection: .selectItem) as? [CheckListItem],
-				let removeIndex = items.firstIndex(where: {$0.id == item.id})
+				var items = snapshot.itemIdentifiers(inSection: section) as? [CheckListItem],
+				let removeIndex = items.firstIndex(where: {$0.id == id})
 			else { return }
 			snapshot.deleteItems(items)
 			items.remove(at: removeIndex)
-			snapshot.appendItems(items, toSection: .selectItem)
+			snapshot.appendItems(items, toSection: section)
 			apply(snapshot, animatingDifferences: true)
 		}
 	}
@@ -94,7 +94,6 @@ private extension AddCheckListItemDiffableDataSource {
 			guard let self else { return }
 			var snapshot = snapshot()
 			let previousProducts = snapshot.itemIdentifiers(inSection: section)
-			snapshot.deleteItems(previousProducts)
 			snapshot.appendItems(items, toSection: section)
 			apply(snapshot, animatingDifferences: false)
 		}
