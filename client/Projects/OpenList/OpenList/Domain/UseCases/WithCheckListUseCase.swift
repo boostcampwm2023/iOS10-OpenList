@@ -24,7 +24,7 @@ extension DefaultWithCheckListUseCase: WithCheckListUseCase {
 		do {
 			return try await withCheckListRepository.fetchAllCheckList()
 		} catch {
-			print(error)
+			dump(error)
 			return []
 		}
 	}

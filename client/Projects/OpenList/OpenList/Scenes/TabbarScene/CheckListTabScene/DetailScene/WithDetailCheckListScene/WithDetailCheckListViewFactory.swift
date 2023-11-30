@@ -5,9 +5,12 @@
 //  Created by wi_seong on 11/23/23.
 //
 
+import CustomNetwork
 import Foundation
 
-protocol WithDetailCheckListDependency: Dependency {}
+protocol WithDetailCheckListDependency: Dependency {
+	var session: CustomSession { get }
+}
 
 final class WithDetailCheckListComponent: Component<WithDetailCheckListDependency> {
 	fileprivate var crdtUseCase: CRDTUseCase {
@@ -15,7 +18,7 @@ final class WithDetailCheckListComponent: Component<WithDetailCheckListDependenc
 	}
 	
 	fileprivate var crdtRepository: CRDTRepository {
-		return DefaultCRDTRepository(crdtStorage: crdtStorage)
+		return DefaultCRDTRepository(session: parent.session, crdtStorage: crdtStorage)
 	}
 	
 	fileprivate var crdtStorage: CRDTStorage {

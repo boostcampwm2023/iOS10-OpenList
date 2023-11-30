@@ -41,7 +41,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private var delete: PassthroughSubject<EditText, Never> = .init()
 	private var appendDocument: PassthroughSubject<EditText, Never> = .init()
 	private var removeDocument: PassthroughSubject<EditText, Never> = .init()
-	private var receive: PassthroughSubject<Data, Never> = .init()
+	private var receive: PassthroughSubject<String, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -66,6 +66,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		print(UUID())
 		makeDataSource()
 		setViewAttributes()
 		setViewHierarchies()
@@ -113,10 +114,10 @@ extension WithDetailCheckListViewController: ViewBindable {
 		switch state {
 		case .none:
 			break
-		case let .title(title):
-			headerView.configure(title: title ?? "", isLocked: false)
-		case let .updateItem(item):
-			updateTextField(to: item)
+		case let .viewWillAppear(checkList):
+			viewAppear(checkList)
+		case let .updateItem(items):
+			updateTextField(to: items)
 		case let .appendItem(item):
 			appendItem(item)
 		case let .removeItem(content):
@@ -155,7 +156,7 @@ private extension WithDetailCheckListViewController {
 	
 	func invite() {
 		var objectsToShare = [String]()
-		let inviteLink = "openlist://shared-checklists?shared-checklistId=\(viewModel.checkListId)"
+		let inviteLink = viewModel.inviteLinkUrlString
 		objectsToShare.append(inviteLink)
 		
 		let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
@@ -164,8 +165,17 @@ private extension WithDetailCheckListViewController {
 		self.present(activityVC, animated: true, completion: nil)
 	}
 	
-	func updateTextField(to item: CheckListItem) {
-		dataSource?.receiveCheckListItem(with: item)
+	func viewAppear(_ checkList: CheckList) {
+		headerView.configure(title: checkList.title, isLocked: false)
+		checkList.items.forEach { [weak self] in
+			self?.dataSource?.receiveCheckListItem(with: $0)
+		}
+	}
+	
+	func updateTextField(to items: [CheckListItem]) {
+		items.forEach { [weak self] in
+			self?.dataSource?.receiveCheckListItem(with: $0)
+		}
 	}
 	
 	func appendItem(_ item: CheckListItem) {
@@ -239,9 +249,8 @@ private extension WithDetailCheckListViewController {
 	func setWebSocket() {
 		do {
 			WebSocket.shared.delegate = self
-			WebSocket.shared.url = URL(string: "ws://localhost:1337/")
+			WebSocket.shared.url = viewModel.webSocketUrl
 			try WebSocket.shared.openWebSocket()
-			WebSocket.shared.send(message: Device.id)
 		} catch {
 			print(error)
 		}
@@ -253,9 +262,9 @@ private extension WithDetailCheckListViewController {
 		}
 		
 		DispatchQueue.global().async {
-			WebSocket.shared.receive { [weak self] _, data in
-				guard let data else { return }
-				self?.receive.send(data)
+			WebSocket.shared.receive { [weak self] jsonString, _ in
+				guard let jsonString else { return }
+				self?.receive.send(jsonString)
 				self?.webSocketReceive()
 			}
 		}
@@ -361,11 +370,10 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		switch range.length {
 		case 0:
 			insert.send(.init(id: cellId, content: string, range: range))
+			
 		case 1:
 			delete.send(.init(id: cellId, content: string, range: range))
-			if updatedText.isEmpty {
-				dataSource?.deleteCheckListItem(at: indexPath)
-			}
+			
 		default:
 			return false
 		}

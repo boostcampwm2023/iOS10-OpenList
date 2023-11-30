@@ -15,13 +15,13 @@ struct WithDetailCheckListInput {
 	let delete: PassthroughSubject<EditText, Never>
 	let appendDocument: PassthroughSubject<EditText, Never>
 	let removeDocument: PassthroughSubject<EditText, Never>
-	let receive: PassthroughSubject<Data, Never>
+	let receive: PassthroughSubject<String, Never>
 }
 
 enum WithDetailCheckListState {
 	case none
-	case title(String?)
-	case updateItem(CheckListItem)
+	case viewWillAppear(CheckList)
+	case updateItem([CheckListItem])
 	case appendItem(CheckListItem)
 	case removeItem(CheckListItem)
 	case socketConnet(Bool)

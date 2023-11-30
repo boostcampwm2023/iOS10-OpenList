@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum OpType: Codable {
+public enum OpType: String, Codable {
 	case insert
 	case delete
 	case replace
