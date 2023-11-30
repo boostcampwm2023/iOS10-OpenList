@@ -16,7 +16,7 @@ protocol TabBarDependency: Dependency {
 final class TabBarComponent:
 	Component<TabBarDependency>,
 	CheckListTabDependency,
-	AddTabDependency,
+	AddCheckListTitleDependency,
 	RecommendTabDependency {
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
 		return parent.deepLinkSubject
@@ -42,8 +42,8 @@ final class TabBarComponent:
 		interceptor: AuthRequestInterceptor(token: KeyChain.shared.read(key: AuthKey.accessToken) ?? "")
 	)
 	
-	fileprivate var addTabFactoryable: AddTabFactoryable {
-		return AddTabViewFactory(parent: self)
+	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {
+		return AddCheckListTitleViewFactory(parent: self)
 	}
 	
 	fileprivate var checklistTabFactoryable: CheckListTabFactoryable {

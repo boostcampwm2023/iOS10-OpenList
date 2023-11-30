@@ -78,11 +78,13 @@ extension CheckListTableViewController: ViewBindable {
 			.sink { (owner, output) in owner.render(output) }
 			.store(in: &cancellables)
 		
+		/*
 		NotificationCenter.default.publisher(for: OpenListNotificationName.checkListAdded)
 			.receive(on: DispatchQueue.main)
 			.withUnretained(self)
 			.sink { (owner, _) in owner.viewAppear.send() }
 			.store(in: &cancellables)
+	*/
 	}
 	
 	func render(_ state: State) {
