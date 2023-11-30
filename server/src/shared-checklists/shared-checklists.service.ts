@@ -42,7 +42,7 @@ export class SharedChecklistsService {
     const newChecklist = this.SharedChecklistsrepository.create({
       title: dto.title,
       sharedChecklistId: dto.sharedChecklistId,
-      editors: [user],
+      editors: [{ userId }],
     });
     // Checklist 저장
     return this.SharedChecklistsrepository.save(newChecklist);
@@ -128,18 +128,13 @@ export class SharedChecklistsService {
     const sharedChecklist =
       await this.findSharedChecklistById(sharedChecklistId);
 
-    const isEditor = sharedChecklist.editors.some(
-      (editor) => editor.userId === userId,
-    );
-    if (!isEditor) {
+    if (!sharedChecklist.editors.some((editor) => editor.userId === userId)) {
       throw new BadRequestException('권한이 없습니다.');
     }
-
     delete sharedChecklist.editors;
 
     const items = await this.findSharedChecklistItemsById(
       sharedChecklistId,
-      userId,
       date,
     );
     return { sharedChecklist, items };
@@ -168,18 +163,7 @@ export class SharedChecklistsService {
    * @param date 선택적 날짜 필터링 (이 날짜 이후의 아이템만 조회)
    * @returns 조회된 체크리스트 아이템 배열
    */
-  async findSharedChecklistItemsById(
-    sharedChecklistId: string,
-    userId: number,
-    date?: string,
-  ) {
-    // 체크리스트가 존재하는지, 권한이 있는지 확인
-    const sharedChecklist =
-      await this.findSharedChecklistById(sharedChecklistId);
-    if (!sharedChecklist.editors.some((editor) => editor.userId === userId)) {
-      throw new BadRequestException('권한이 없습니다.');
-    }
-
+  async findSharedChecklistItemsById(sharedChecklistId: string, date?: string) {
     const queryOptions = {
       where: { sharedChecklist: { sharedChecklistId } },
     };
