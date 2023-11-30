@@ -5,19 +5,30 @@
 //  Created by Hoon on 11/15/23.
 //
 
+import CustomNetwork
 import Foundation
 
 protocol AddCheckListTitleDependency: Dependency {
 	var validCheckUseCase: ValidCheckUseCase { get }
 	var persistenceUseCase: PersistenceUseCase { get }
-	var categoryUseCase: CategoryUseCase { get }
 }
 
 final class AddCheckListTitleComponent:
 	Component<AddCheckListTitleDependency>,
 	MainCategoryDependency {
 	var categoryUseCase: CategoryUseCase {
-		return parent.categoryUseCase
+		return DefaultCategoryUseCase(categoryRepository: categoryRepository)
+	}
+	
+	var categoryRepository: CategoryRepository {
+		return DefaultCategoryRepository(session: categorySession)
+	}
+	
+	var categorySession: CustomSession {
+		return CustomSession(
+			configuration: .default,
+			interceptor: AccessTokenInterceptor()
+		)
 	}
 	
 	fileprivate var validCheckUseCase: ValidCheckUseCase {
@@ -54,5 +65,17 @@ final class AddCheckListTitleViewFactory: Factory<AddCheckListTitleDependency>, 
 		let viewController = AddCheckListTitleViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController
+	}
+}
+
+final class AccessTokenInterceptor: RequestInterceptor {
+	public func intercept(_ request: URLRequest) -> URLRequest {
+		var request = request
+		if let accessToken = KeyChain.shared.read(key: AuthKey.accessToken) {
+			request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+			return request
+		} else {
+			return request
+		}
 	}
 }

@@ -28,6 +28,8 @@ public final class NetworkService {
 		guard let httpResponse = response as? HTTPURLResponse else {
 			throw NetworkError.invalidResponse
 		}
+		print(String(data: data, encoding: .utf8))
+		print(response)
 		guard (200...299).contains(httpResponse.statusCode) else {
 			throw NetworkError.serverError(statusCode: httpResponse.statusCode)
 		}

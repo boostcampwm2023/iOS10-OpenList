@@ -6,7 +6,6 @@
 //
 
 import Combine
-import CustomNetwork
 import Foundation
 
 protocol TabBarDependency: Dependency {
@@ -30,27 +29,12 @@ final class TabBarComponent:
 		return DefaultPersistenceUseCase(checkListRepository: checkListRepository)
 	}
 	
-	var categoryUseCase: CategoryUseCase {
-		return DefaultCategoryUseCase(categoryRepository: categoryRepository)
-	}
-	
-	var categoryRepository: CategoryRepository {
-		return DefaultCategoryRepository(session: customSession)
-	}
-	
 	var checkListRepository: CheckListRepository {
 		return DefaultCheckListRepository(checkListStorage: checkListStorage)
 	}
 	
 	var checkListStorage: PrivateCheckListStorage {
 		return DefaultPrivateCheckListStorage()
-	}
-	
-	var customSession: CustomSession {
-		return CustomSession(
-			configuration: .default,
-			interceptor: AccessTokenInterceptor()
-		)
 	}
 	
 	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {
@@ -83,17 +67,5 @@ final class TabBarViewFactory: Factory<TabBarDependency>, TabBarFactoryable {
 			recommendTabFactoryable: component.recommendTabFactoryable
 		)
 		return tabBarViewController
-	}
-}
-
-final class AccessTokenInterceptor: RequestInterceptor {
-	public func intercept(_ request: URLRequest) -> URLRequest {
-		var request = request
-		if let accessToken = KeyChain.shared.read(key: AuthKey.accessToken) {
-			request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-			return request
-		} else {
-			return request
-		}
 	}
 }
