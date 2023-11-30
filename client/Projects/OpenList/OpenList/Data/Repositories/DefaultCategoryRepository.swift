@@ -29,7 +29,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 			value: "application/json"
 		)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
-		let data = try await service.getData()
+		let data = try await service.request()
 		let mainCategoryResponseDTO = try JSONDecoder().decode([MainCategoryResponseDTO].self, from: data)
 		let mainCategories = mainCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
 		return mainCategories
@@ -42,7 +42,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 			value: "application/json"
 		)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
-		let data = try await service.getData()
+		let data = try await service.request()
 		let subCategoryResponseDTO = try JSONDecoder().decode([SubCategoryResponseDTO].self, from: data)
 		let subCategories = subCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
 		return subCategories
@@ -57,7 +57,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 			value: "application/json"
 		)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
-		let data = try await service.getData()
+		let data = try await service.request()
 		let minorCategoryResponseDTO = try JSONDecoder().decode([MinorCategoryResponseDTO].self, from: data)
 		let minorCategories = minorCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
 		return minorCategories
@@ -74,7 +74,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 		let body = try JSONEncoder().encode(categoryRequestDTO)
 		builder.setBody(body)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
-		let data = try await service.postData()
+		let data = try await service.request()
 		let recommendChecklistResponseDTO = try JSONDecoder().decode([RecommendChecklistResponseDTO].self, from: data)
 		let recommendChecklist = recommendChecklistResponseDTO.map { RecommendChecklistItem(id: $0.id, content: $0.content)}
 		return recommendChecklist
