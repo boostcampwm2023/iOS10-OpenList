@@ -10,13 +10,16 @@ import Foundation
 final class MainCategoryRouter {
 	weak var viewController: ViewControllable?
 	private var subCategoryFactory: SubCategoryFactoryable
+	private var addCheckListItemFactory: AddCheckListItemFactoryable
 	
 	init(
 		viewController: ViewControllable? = nil,
-		subCategoryFactory: SubCategoryFactoryable
+		subCategoryFactory: SubCategoryFactoryable,
+		addCheckListItemFactory: AddCheckListItemFactoryable
 	) {
 		self.viewController = viewController
 		self.subCategoryFactory = subCategoryFactory
+		self.addCheckListItemFactory = addCheckListItemFactory
 	}
 }
 
@@ -32,7 +35,7 @@ extension MainCategoryRouter: MainCategoryRoutingLogic {
 	}
 	
 	func routeToConfirmView(_ categoryInfo: CategoryInfo) {
-		dump(categoryInfo.title!)
-		dump("AI 추천 마지막 뷰로 이동")
+		let addCheckListItemViewControllable = addCheckListItemFactory.make()
+		viewController?.pushViewController(addCheckListItemViewControllable, animated: true)
 	}
 }
