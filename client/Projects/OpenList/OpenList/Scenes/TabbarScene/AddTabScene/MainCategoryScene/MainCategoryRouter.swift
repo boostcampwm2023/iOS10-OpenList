@@ -9,16 +9,13 @@ import Foundation
 
 final class MainCategoryRouter {
 	weak var viewController: ViewControllable?
-	weak var subCategoryViewControllable: ViewControllable?
 	private var subCategoryFactory: SubCategoryFactoryable
 	
 	init(
 		viewController: ViewControllable? = nil,
-		subCategoryViewControllable: ViewControllable? = nil,
 		subCategoryFactory: SubCategoryFactoryable
 	) {
 		self.viewController = viewController
-		self.subCategoryViewControllable = subCategoryViewControllable
 		self.subCategoryFactory = subCategoryFactory
 	}
 }

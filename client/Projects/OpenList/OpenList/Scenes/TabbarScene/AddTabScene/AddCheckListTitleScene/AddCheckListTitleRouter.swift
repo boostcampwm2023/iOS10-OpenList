@@ -9,17 +9,14 @@ import Foundation
 
 final class AddCheckListTitleRouter {
 	weak var viewController: ViewControllable?
-	weak var mainCategoryViewControllable: ViewControllable?
 	private var mainCategoryViewFactory: MainCategoryFactoryable
 	
 	init(
 		viewController: ViewControllable? = nil,
-		mainCategoryViewFactory: MainCategoryFactoryable,
-		mainCategoryViewControllable: ViewControllable? = nil
+		mainCategoryViewFactory: MainCategoryFactoryable
 	) {
 		self.viewController = viewController
 		self.mainCategoryViewFactory = mainCategoryViewFactory
-		self.mainCategoryViewControllable = mainCategoryViewControllable
 	}
 }
 
