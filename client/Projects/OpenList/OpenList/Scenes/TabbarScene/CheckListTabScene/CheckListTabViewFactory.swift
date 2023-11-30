@@ -16,8 +16,8 @@ protocol CheckListTabDependency: Dependency {
 
 final class CheckListTabComponent:
 	Component<CheckListTabDependency>,
-	CheckListFolderDependency,
 	CheckListTableDependency,
+	WithCheckListDependency,
 	SharedCheckListDependency {
 	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
 	
@@ -25,12 +25,12 @@ final class CheckListTabComponent:
 	
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { parent.deepLinkSubject }
 	
-	fileprivate var checkListFolderFactoryable: CheckListFolderFactoryable {
-		return CheckListFolderViewFactory(parent: self)
+	fileprivate var privateCheckListTableFactoryable: CheckListTableFactoryable {
+		return CheckListTableViewFactory(parent: self)
 	}
 	
-	fileprivate var checkListTableFactoryable: CheckListTableFactoryable {
-		return CheckListTableViewFactory(parent: self)
+	fileprivate var withCheckListFactoryable: WithCheckListFactoryable {
+		return WithCheckListViewFactory(parent: self)
 	}
 	
 	fileprivate var sharedCheckListFactoryable: SharedCheckListFactoryable {
@@ -50,8 +50,8 @@ final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListT
 	func make() -> ViewControllable {
 		let component = CheckListTabComponent(parent: parent)
 		let viewController = CheckListTabViewController(
-			checkListFolderFactory: component.checkListFolderFactoryable,
-			checkListTableFactory: component.checkListTableFactoryable,
+			privateCheckListTableFactory: component.privateCheckListTableFactoryable,
+			withCheckListFactoryable: component.withCheckListFactoryable,
 			sharedCheckListFactory: component.sharedCheckListFactoryable
 		)
 		return viewController
