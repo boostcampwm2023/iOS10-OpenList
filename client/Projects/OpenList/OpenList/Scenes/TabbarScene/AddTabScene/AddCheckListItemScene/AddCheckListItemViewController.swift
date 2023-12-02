@@ -142,8 +142,9 @@ private extension AddCheckListItemViewController {
 		checkListView.registerCell(SelectCheckListCell.self)
 		checkListView.registerCell(AiCheckListCell.self)
 		checkListView.registerCell(AddCheckListItemPlaceholder.self)
+		checkListView.registerHeaderFooter(AddCheckListItemTableViewHeader.self)
 		checkListView.delegate = self
-		checkListView.allowsSelection = false
+		checkListView.allowsSelection = true
 		checkListView.separatorStyle = .none
 		/// 테이블 뷰 영역 터치 시 키보드를 내린다.
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -256,6 +257,25 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return LayoutConstant.checkListItemHeight
 	}
+
+	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return 18
+	}
+	
+	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		let header = tableView.dequeueHeaderFooter(AddCheckListItemTableViewHeader.self)
+		if section == 0 {
+			header.delegate = self
+			header.configure(section: .selected)
+		}
+		
+		if section == 1 {
+			header.delegate = self
+			header.configure(section: .unselected)
+		}
+		
+		return header
+	}
 	
 	func tableView(
 		_ tableView: UITableView,
@@ -275,6 +295,7 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 	func checkButtonDidToggled(_ textField: CheckListItemTextField, cell: SelectCheckListCell, cellId: UUID) {
 		guard let text = textField.text else { return }
+		dataSource?.deletePlaceHolder()
 		dataSource?.deleteCheckListItem(with: cellId, section: .selectItem)
 		dataSource?.updateAiItem([
 			CheckListItem(
@@ -282,6 +303,7 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 				title: text,
 				isChecked: false)
 		])
+		dataSource?.appendPlaceHolder()
 	}
 	
 	func textFieldDidEndEditing(
@@ -307,6 +329,7 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 extension AddCheckListItemViewController: AiCheckListCellDelegate {
 	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID) {
 		guard let text = textField.text else { return }
+		dataSource?.deletePlaceHolder()
 		dataSource?.deleteCheckListItem(with: cellId, section: .aiItem)
 		dataSource?.updateSelectItem([
 			CheckListItem(
@@ -314,6 +337,7 @@ extension AddCheckListItemViewController: AiCheckListCellDelegate {
 				title: text,
 				isChecked: true)
 		])
+		dataSource?.appendPlaceHolder()
 	}
 	
 	func textFieldDidEndEditing(
@@ -339,8 +363,10 @@ extension AddCheckListItemViewController: AddCheckListItemPlaceholderDelegate {
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
 		guard let text = textField.text else { return }
+		dataSource?.deletePlaceHolder()
 		dataSource?.updateSelectItem([.init(itemId: UUID(), title: text, isChecked: true)])
 		textField.text = nil
+		dataSource?.appendPlaceHolder()
 	}
 }
 
@@ -364,5 +390,15 @@ extension AddCheckListItemViewController {
 	@objc func nextButtonDidTapped() {
 		guard let dataSource else { return }
 		nextButtonDidTappedSubject.send(dataSource.getSelectedCheckListItem())
+	}
+}
+
+extension AddCheckListItemViewController: AddCheckListItemTableViewHeaderDelegate {
+	func selectAll() {
+		
+	}
+	
+	func deselectAll() {
+		
 	}
 }

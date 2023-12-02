@@ -22,7 +22,6 @@ final class AddCheckListItemDiffableDataSource: AddCheckListItemDataSource {
 	enum Section: CaseIterable {
 		case selectItem
 		case aiItem
-		case placeholder
 	}
 	
 	override init(
@@ -66,6 +65,9 @@ extension AddCheckListItemDiffableDataSource {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = snapshot()
+			if let placeholderIndex = snapshot.indexOfItem(AddCheckListItemPlaceholderItem()) {
+				snapshot.deleteItems([AddCheckListItemPlaceholderItem()])
+			}
 			guard
 				var items = snapshot.itemIdentifiers(inSection: section) as? [CheckListItem],
 				let removeIndex = items.firstIndex(where: {$0.id == id})
@@ -82,6 +84,22 @@ extension AddCheckListItemDiffableDataSource {
 		guard let items = snapshot.itemIdentifiers(inSection: .selectItem) as? [CheckListItem] else { return [] }
 		return items
 	}
+	
+	func deletePlaceHolder() {
+		DispatchQueue.main.async { [weak self] in
+			guard let self else { return }
+			var snapshot = self.snapshot()
+			// Placeholder를 삭제합니다
+			if let placeholderIndex = snapshot.indexOfItem(AddCheckListItemPlaceholderItem()) {
+				snapshot.deleteItems([AddCheckListItemPlaceholderItem()])
+			}
+			self.apply(snapshot, animatingDifferences: false)
+		}
+	}
+	
+	func appendPlaceHolder() {
+		updateSection(with: [AddCheckListItemPlaceholderItem()], to: .selectItem)
+	}
 }
 
 private extension AddCheckListItemDiffableDataSource {
@@ -89,8 +107,8 @@ private extension AddCheckListItemDiffableDataSource {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = AddCheckListItemSnapshot()
-			snapshot.appendSections([.selectItem, .placeholder, .aiItem])
-			snapshot.appendItems([AddCheckListItemPlaceholderItem()], toSection: .placeholder)
+			snapshot.appendSections([.selectItem, .aiItem])
+			snapshot.appendItems([AddCheckListItemPlaceholderItem()], toSection: .selectItem)
 			apply(snapshot, animatingDifferences: false)
 		}
 	}
