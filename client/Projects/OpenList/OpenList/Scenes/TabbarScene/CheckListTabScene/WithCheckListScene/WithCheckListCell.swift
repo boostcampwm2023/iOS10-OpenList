@@ -13,7 +13,7 @@ final class WithCheckListCell: UICollectionViewCell {
 	private let titleLabel: UILabel = .init()
 	private let profileImagesOverlapedView: UIStackView = .init()
 	private let profileImagesCountLabel: UILabel = .init()
-	private var profileImages: [UIImage] = []
+	private var profileImageViews: [UIImageView] = .init()
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -29,12 +29,16 @@ final class WithCheckListCell: UICollectionViewCell {
 	
 	override func prepareForReuse() {
 		super.prepareForReuse()
+		profileImageViews.forEach { $0.cancelLoadImage() }
 		profileImagesOverlapedView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 	}
 	
 	func configure(with item: WithCheckList) {
 		titleLabel.text = item.title
 		profileImagesCountLabel.text = "+\(item.users.count)"
+		let profileImageUrls = Array(item.users.compactMap(\.profileImage).prefix(3))
+		profileImageViews = makeProfileImagesView(with: profileImageUrls)
+		addReverseArrangedSubview(profileImageViews)
 	}
 }
 
@@ -81,6 +85,7 @@ private extension WithCheckListCell {
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 		titleLabel.textColor = .black
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
+		titleLabel.backgroundColor = .green
 	}
 	
 	func setProfileImagesOverlapedViewAttributes() {
@@ -88,12 +93,14 @@ private extension WithCheckListCell {
 		profileImagesOverlapedView.alignment = .center
 		profileImagesOverlapedView.distribution = .fillProportionally
 		profileImagesOverlapedView.spacing = -6
+		profileImagesOverlapedView.backgroundColor = .red
 	}
 	
 	func setProfileImagesCountLabelAttributes() {
 		profileImagesCountLabel.translatesAutoresizingMaskIntoConstraints = false
 		profileImagesCountLabel.textColor = .gray3
 		profileImagesCountLabel.font = UIFont.notoSansCJKkr(type: .regular, size: .small)
+		profileImagesCountLabel.backgroundColor = .blue
 	}
 	
 	func setViewHierarchies() {
@@ -135,7 +142,7 @@ private extension WithCheckListCell {
 				constant: -LayoutConstant.contentInsets.bottom
 			)
 		])
-		titleLabel.setContentHuggingPriority(UILayoutPriority(500), for: .horizontal)
+		titleLabel.setContentCompressionResistancePriority(UILayoutPriority(500), for: .horizontal)
 	}
 	
 	func setProfileImagesOverlapedViewConstraints() {
@@ -148,17 +155,8 @@ private extension WithCheckListCell {
 			profileImagesOverlapedView.trailingAnchor.constraint(
 				equalTo: profileImagesCountLabel.leadingAnchor,
 				constant: -LayoutConstant.spacing
-			),
-			profileImagesOverlapedView.topAnchor.constraint(
-				equalTo: containerView.topAnchor,
-				constant: LayoutConstant.contentInsets.top
-			),
-			profileImagesOverlapedView.bottomAnchor.constraint(
-				equalTo: containerView.bottomAnchor,
-				constant: -LayoutConstant.contentInsets.bottom
 			)
 		])
-		profileImagesOverlapedView.setContentHuggingPriority(UILayoutPriority(750), for: .horizontal)
 	}
 	
 	func setProfileImagesCountLabelConstraints() {
@@ -177,5 +175,30 @@ private extension WithCheckListCell {
 				constant: -LayoutConstant.contentInsets.bottom
 			)
 		])
+		profileImagesCountLabel.setContentCompressionResistancePriority(UILayoutPriority(750), for: .horizontal)
+	}
+}
+
+private extension WithCheckListCell {
+	func makeProfileImagesView(with profileImages: [String]) -> [UIImageView] {
+		profileImages.map { profileImage in
+			let imageView = UIImageView()
+			imageView.translatesAutoresizingMaskIntoConstraints = false
+			imageView.widthAnchor.constraint(equalToConstant: LayoutConstant.profileImageSize.width).isActive = true
+			imageView.heightAnchor.constraint(equalToConstant: LayoutConstant.profileImageSize.height).isActive = true
+			imageView.contentMode = .scaleAspectFill
+			imageView.layer.masksToBounds = true
+			imageView.layer.borderWidth = 1
+			imageView.layer.borderColor = UIColor.white.cgColor
+			imageView.clipsToBounds = true
+			imageView.layer.cornerRadius = LayoutConstant.profileImageSize.width / 2
+			imageView.loadImage(urlString: profileImage)
+			return imageView
+		}
+	}
+	
+	func addReverseArrangedSubview(_ subViews: [UIView]) {
+		subViews.forEach { profileImagesOverlapedView.addArrangedSubview($0) }
+		profileImagesOverlapedView.arrangedSubviews.forEach { profileImagesOverlapedView.sendSubviewToBack($0) }
 	}
 }
