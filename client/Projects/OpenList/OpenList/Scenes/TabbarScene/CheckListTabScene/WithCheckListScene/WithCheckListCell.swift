@@ -76,7 +76,6 @@ private extension WithCheckListCell {
 	
 	func setContainerViewAttributes() {
 		containerView.translatesAutoresizingMaskIntoConstraints = false
-		containerView.backgroundColor = .white
 		containerView.layer.masksToBounds = true
 		containerView.layer.cornerRadius = LayoutConstant.containerViewCornerRadius
 	}
@@ -85,7 +84,6 @@ private extension WithCheckListCell {
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 		titleLabel.textColor = .black
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
-		titleLabel.backgroundColor = .green
 	}
 	
 	func setProfileImagesOverlapedViewAttributes() {
@@ -93,14 +91,12 @@ private extension WithCheckListCell {
 		profileImagesOverlapedView.alignment = .center
 		profileImagesOverlapedView.distribution = .fillProportionally
 		profileImagesOverlapedView.spacing = -6
-		profileImagesOverlapedView.backgroundColor = .red
 	}
 	
 	func setProfileImagesCountLabelAttributes() {
 		profileImagesCountLabel.translatesAutoresizingMaskIntoConstraints = false
 		profileImagesCountLabel.textColor = .gray3
 		profileImagesCountLabel.font = UIFont.notoSansCJKkr(type: .regular, size: .small)
-		profileImagesCountLabel.backgroundColor = .blue
 	}
 	
 	func setViewHierarchies() {
