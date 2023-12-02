@@ -77,6 +77,9 @@
 		5F70C8462B05DC5100826B5D /* CheckListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C8452B05DC5100826B5D /* CheckListHeaderView.swift */; };
 		5F70C84B2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84A2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift */; };
 		5F70C84F2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C84E2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift */; };
+		5F7979A92B1B0CF20057532D /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7979A82B1B0CF20057532D /* Cache.swift */; };
+		5F7979AB2B1B106F0057532D /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7979AA2B1B106F0057532D /* ImageLoader.swift */; };
+		5F7979AD2B1B18750057532D /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7979AC2B1B18750057532D /* UIImageView+Cache.swift */; };
 		5F8615E02B02249C00CF2686 /* ViewModelable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615DF2B02249C00CF2686 /* ViewModelable.swift */; };
 		5F8615E22B0224E100CF2686 /* ViewBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8615E12B0224E100CF2686 /* ViewBindable.swift */; };
 		5F8F5FC22B1772CA001F7978 /* CheckListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */; };
@@ -283,6 +286,9 @@
 		5F70C8452B05DC5100826B5D /* CheckListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListHeaderView.swift; sourceTree = "<group>"; };
 		5F70C84A2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCheckListResponseDTO.swift; sourceTree = "<group>"; };
 		5F70C84E2B0600B800826B5D /* DefaultPrivateCheckListStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPrivateCheckListStorage.swift; sourceTree = "<group>"; };
+		5F7979A82B1B0CF20057532D /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
+		5F7979AA2B1B106F0057532D /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		5F7979AC2B1B18750057532D /* UIImageView+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		5F833AFB2B0E075C007EDD45 /* CRDT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CRDT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8615DF2B02249C00CF2686 /* ViewModelable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelable.swift; sourceTree = "<group>"; };
 		5F8615E12B0224E100CF2686 /* ViewBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBindable.swift; sourceTree = "<group>"; };
@@ -675,6 +681,7 @@
 				4DD97D992B14C9AD00DF73BC /* UIImage+Resize.swift */,
 				4D967CD32B050EA60032E0D7 /* UIFont+.swift */,
 				5FA8466A2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift */,
+				5F7979AC2B1B18750057532D /* UIImageView+Cache.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -693,6 +700,15 @@
 				4D3415592B186ABA004C3FC9 /* WithCheckListItemResponseDTO.swift */,
 			);
 			path = DTO;
+			sourceTree = "<group>";
+		};
+		5F7979A72B1B0CDB0057532D /* ImageCache */ = {
+			isa = PBXGroup;
+			children = (
+				5F7979A82B1B0CF20057532D /* Cache.swift */,
+				5F7979AA2B1B106F0057532D /* ImageLoader.swift */,
+			);
+			path = ImageCache;
 			sourceTree = "<group>";
 		};
 		5F8F5FD52B1844C2001F7978 /* WithCheckListScene */ = {
@@ -812,6 +828,7 @@
 		5FA1F89B2AFF7E1D00869079 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				5F7979A72B1B0CDB0057532D /* ImageCache */,
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
@@ -1272,8 +1289,10 @@
 				4DD97D9E2B14D56B00DF73BC /* CheckList.swift in Sources */,
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
+				5F7979AB2B1B106F0057532D /* ImageLoader.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
+				5F7979AD2B1B18750057532D /* UIImageView+Cache.swift in Sources */,
 				78E956002B16FC23005CF5D3 /* CategoryHeaderView.swift in Sources */,
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,
 				5F8F5FDE2B1844D7001F7978 /* WithCheckListViewFactory.swift in Sources */,
@@ -1301,6 +1320,7 @@
 				5F8F5FE32B184DBF001F7978 /* UserResponseDTO.swift in Sources */,
 				4D36A3912B177167009AA063 /* AddCheckListItemViewFactory.swift in Sources */,
 				4D36A38E2B177167009AA063 /* AddCheckListItemAction.swift in Sources */,
+				5F7979A92B1B0CF20057532D /* Cache.swift in Sources */,
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
 				78E956052B16FC23005CF5D3 /* SubCategoryViewController.swift in Sources */,
