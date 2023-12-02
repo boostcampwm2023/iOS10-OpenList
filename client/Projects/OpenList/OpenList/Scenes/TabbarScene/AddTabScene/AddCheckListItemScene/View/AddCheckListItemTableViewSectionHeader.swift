@@ -1,5 +1,5 @@
 //
-//  AddCheckListItemTableViewHeader.swift
+//  AddCheckListItemTableViewSectionHeader.swift
 //  OpenList
 //
 //  Created by Hoon on 12/2/23.
@@ -8,11 +8,11 @@
 import UIKit
 
 protocol AddCheckListItemTableViewHeaderDelegate: AnyObject {
-	func selectAll()
-	func deselectAll()
+	func toggleAllSelected(at section: Int?)
+	func toggleAllUnSelected(at section: Int?)
 }
 
-final class AddCheckListItemTableViewHeader: UITableViewHeaderFooterView {
+final class AddCheckListItemTableViewSectionHeader: UITableViewHeaderFooterView {
 	enum AddCheckListItemTableViewSection {
 		case selected
 		case unselected
@@ -21,11 +21,12 @@ final class AddCheckListItemTableViewHeader: UITableViewHeaderFooterView {
 	// MARK: - UI Component
 	private let sectionLabel: UILabel = .init()
 	private let sectionButton: UIButton = .init()
+	private var section: Int?
 	weak var delegate: AddCheckListItemTableViewHeaderDelegate?
 	
 	convenience init(
 		reuseIdentifier: String?,
-		section: AddCheckListItemTableViewSection
+		section: Int
 	) {
 		self.init(reuseIdentifier: reuseIdentifier)
 		configure(section: section)
@@ -46,32 +47,37 @@ final class AddCheckListItemTableViewHeader: UITableViewHeaderFooterView {
 }
 
 // MARK: - Helper
-extension AddCheckListItemTableViewHeader {
-	func configure(section: AddCheckListItemTableViewSection) {
-		switch section {
-		case .selected:
+extension AddCheckListItemTableViewSectionHeader {
+	func configure(section: Int) {
+		if section == 0 {
 			sectionLabel.text = "선택 항목"
 			sectionButton.configureAsUnderlineTextButton(title: "모두 선택해제", color: .primary1)
-		case .unselected:
+			sectionButton.addTarget(self, action: #selector(toggleSelectedÅll), for: .touchUpInside)
+			self.section = section
+		}
+		
+		if section == 2 {
 			sectionLabel.text = "추천 목록"
 			sectionButton.configureAsUnderlineTextButton(title: "모두 선택", color: .primary1)
+			sectionButton.addTarget(self, action: #selector(toggleUnSelectedÅll), for: .touchUpInside)
+			self.section = section
 		}
 	}
 }
 
 // MARK: - Button Method
-private extension AddCheckListItemTableViewHeader {
-	@objc func selectAll() {
-		delegate?.selectAll()
+private extension AddCheckListItemTableViewSectionHeader {
+	@objc func toggleSelectedÅll() {
+		delegate?.toggleAllSelected(at: section)
 	}
 	
-	@objc func deselectAll() {
-		delegate?.deselectAll()
+	@objc func toggleUnSelectedÅll() {
+		delegate?.toggleAllUnSelected(at: section)
 	}
 }
 
 // MARK: - UI Configure
-private extension AddCheckListItemTableViewHeader {
+private extension AddCheckListItemTableViewSectionHeader {
 	enum LayoutConstant {
 		static let horizontalPadding: CGFloat = 20
 		static let componentHeight: CGFloat = 18

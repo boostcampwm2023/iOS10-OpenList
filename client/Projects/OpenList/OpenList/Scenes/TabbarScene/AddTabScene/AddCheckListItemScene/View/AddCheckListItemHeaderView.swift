@@ -31,9 +31,10 @@ final class AddCheckListItemHeaderView: UIView {
 }
 
 extension AddCheckListItemHeaderView {
-	func configure(title: String, tags: [String]) {
+	func configure(title: String, tags: [String]?) {
 		backgroundColor = UIColor.background
 		titleLabel.text = title
+		guard let tags = tags else { return }
 		tagLabel.text = tags
 			.map { "#\($0)" }
 			.joined(separator: " ")
@@ -46,7 +47,7 @@ private extension AddCheckListItemHeaderView {
 		titleLabel.textColor = .label
 		titleLabel.numberOfLines = 2
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		tagLabel.font = UIFont.notoSansCJKkr(type: .regular, size: .small)
 		tagLabel.textColor = .gray1
 		tagLabel.numberOfLines = 2
@@ -67,12 +68,12 @@ private extension AddCheckListItemHeaderView {
 				constant: -LayoutConstant.spacing
 			),
 			
-			tagLabel.bottomAnchor.constraint(
-				equalTo: bottomAnchor,
-				constant: -LayoutConstant.spacing
-			),
 			tagLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-			tagLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+			tagLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+			tagLabel.topAnchor.constraint(
+				equalTo: titleLabel.bottomAnchor,
+				constant: LayoutConstant.spacing
+			)
 		])
 	}
 }
