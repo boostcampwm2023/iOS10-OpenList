@@ -59,6 +59,7 @@ extension AiCheckListCell {
 private extension AiCheckListCell {
 	func setViewAttributes() {
 		backgroundColor = .background
+		contentView.backgroundColor = .background
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)

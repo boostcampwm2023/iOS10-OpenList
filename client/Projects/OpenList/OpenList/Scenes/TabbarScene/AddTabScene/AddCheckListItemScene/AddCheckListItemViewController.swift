@@ -133,7 +133,7 @@ private extension AddCheckListItemViewController {
 // MARK: - View Methods
 private extension AddCheckListItemViewController {
 	func setViewAttributes() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		setNavigationBar()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
@@ -141,6 +141,7 @@ private extension AddCheckListItemViewController {
 	}
 	
 	func setCheckListViewAttributes() {
+		checkListView.backgroundColor = .background
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
 		checkListView.registerCell(SelectCheckListCell.self)

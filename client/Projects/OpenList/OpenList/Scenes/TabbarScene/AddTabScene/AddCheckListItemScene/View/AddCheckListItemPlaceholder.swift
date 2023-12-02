@@ -57,6 +57,7 @@ extension AddCheckListItemPlaceholder {
 private extension AddCheckListItemPlaceholder {
 	func setViewAttributes() {
 		backgroundColor = .background
+		contentView.backgroundColor = .background
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.isEnabled = false

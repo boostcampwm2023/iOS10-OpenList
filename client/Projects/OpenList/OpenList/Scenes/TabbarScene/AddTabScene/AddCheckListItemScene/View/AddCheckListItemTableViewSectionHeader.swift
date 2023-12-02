@@ -84,6 +84,9 @@ private extension AddCheckListItemTableViewSectionHeader {
 	}
 	
 	func setAttributes() {
+		backgroundColor = .background
+		contentView.backgroundColor = .background
+		
 		sectionLabel.font = UIFont.notoSansCJKkr(type: .regular, size: .small)
 		sectionLabel.textColor = .gray2
 		sectionLabel.translatesAutoresizingMaskIntoConstraints = false
