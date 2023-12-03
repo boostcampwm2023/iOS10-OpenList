@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -7,6 +8,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { RedisClientType } from 'redis';
 import { parse } from 'url';
 import * as WebSocket from 'ws';
 import { SharedChecklistsService } from './shared-checklists.service';
@@ -20,6 +22,11 @@ export class SharedChecklistsGateway
 {
   constructor(
     private readonly sharedChecklistsService: SharedChecklistsService,
+    @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
+    @Inject('REDIS_PUB_CLIENT')
+    private readonly redisPublisher: RedisClientType,
+    @Inject('REDIS_SUB_CLIENT')
+    private readonly redisSubscriber: RedisClientType,
   ) {}
   @WebSocketServer() server: WebSocket.Server;
 
