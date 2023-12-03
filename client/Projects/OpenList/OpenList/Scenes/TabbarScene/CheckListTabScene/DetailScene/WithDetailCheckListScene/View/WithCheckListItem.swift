@@ -16,6 +16,7 @@ protocol WithCheckListItemDelegate: AnyObject {
 		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
+	func textFieldDidChange(_ text: String)
 }
 
 final class WithCheckListItem: UITableViewCell {
@@ -72,6 +73,7 @@ private extension WithCheckListItem {
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
 		textField.translatesAutoresizingMaskIntoConstraints = false
 		textField.delegate = self
+		textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 	}
 	
 	func setViewHierarchies() {
@@ -128,5 +130,10 @@ extension WithCheckListItem: UITextFieldDelegate {
 			indexPath: indexPath,
 			cellId: cellId
 		)
+	}
+	
+	@objc func textFieldDidChange(_ sender: CheckListItemTextField?) {
+		guard let text = sender?.text else { return }
+		delegate?.textFieldDidChange(text)
 	}
 }

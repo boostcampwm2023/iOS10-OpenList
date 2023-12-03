@@ -35,13 +35,13 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let headerView: CheckListHeaderView = .init()
 	
 	// Event Properties
-	private var viewWillAppear: PassthroughSubject<Void, Never> = .init()
-	private var socketConnet: PassthroughSubject<Void, Never> = .init()
-	private var insert: PassthroughSubject<EditText, Never> = .init()
-	private var delete: PassthroughSubject<EditText, Never> = .init()
-	private var appendDocument: PassthroughSubject<EditText, Never> = .init()
-	private var removeDocument: PassthroughSubject<EditText, Never> = .init()
-	private var receive: PassthroughSubject<String, Never> = .init()
+	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let socketConnet: PassthroughSubject<Void, Never> = .init()
+	private let textShouldChange: PassthroughSubject<TextChange, Never> = .init()
+	private let textDidChange: PassthroughSubject<String, Never> = .init()
+	private let appendDocument: PassthroughSubject<EditText, Never> = .init()
+	private let removeDocument: PassthroughSubject<EditText, Never> = .init()
+	private let receive: PassthroughSubject<String, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -66,7 +66,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		print(UUID())
+		
 		makeDataSource()
 		setViewAttributes()
 		setViewHierarchies()
@@ -95,8 +95,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 		let input = WithDetailCheckListInput(
 			viewWillAppear: viewWillAppear,
 			socketConnet: socketConnet,
-			insert: insert,
-			delete: delete,
+			textShouldChange: textShouldChange,
+			textDidChange: textDidChange,
 			appendDocument: appendDocument,
 			removeDocument: removeDocument,
 			receive: receive
@@ -121,9 +121,9 @@ extension WithDetailCheckListViewController: ViewBindable {
 		case let .appendItem(item):
 			appendItem(item)
 		case let .removeItem(content):
-			print(content)
+			dump(content)
 		case let .socketConnet(isConnect):
-			print(isConnect)
+			dump(isConnect)
 		}
 	}
 	
@@ -140,11 +140,11 @@ private extension WithDetailCheckListViewController {
 		}
 		
 		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			print("didPress delete")
+			dump("didPress delete")
 		}
 		
 		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
-			print("didPress cancel")
+			dump("didPress cancel")
 		}
 		
 		actionSheet.addAction(inviteAction)
@@ -252,7 +252,7 @@ private extension WithDetailCheckListViewController {
 			WebSocket.shared.url = viewModel.webSocketUrl
 			try WebSocket.shared.openWebSocket()
 		} catch {
-			print(error)
+			dump(error)
 		}
 	}
 	
@@ -262,10 +262,15 @@ private extension WithDetailCheckListViewController {
 		}
 		
 		DispatchQueue.global().async {
-			WebSocket.shared.receive { [weak self] jsonString, _ in
-				guard let jsonString else { return }
-				self?.receive.send(jsonString)
-				self?.webSocketReceive()
+			WebSocket.shared.receive { [weak self] jsonString, data in
+				if let jsonString {
+					self?.receive.send(jsonString)
+					self?.webSocketReceive()
+				} else if let data {
+					guard let jsonString = String(data: data, encoding: .utf8) else { return }
+					self?.receive.send(jsonString)
+					self?.webSocketReceive()
+				}
 			}
 		}
 	}
@@ -365,20 +370,15 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		guard let text = textField.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
-		guard updatedText.count <= 30 else { return false }
-		
-		switch range.length {
-		case 0:
-			insert.send(.init(id: cellId, content: string, range: range))
-			
-		case 1:
-			delete.send(.init(id: cellId, content: string, range: range))
-			
-		default:
-			return false
-		}
-		
+		guard updatedText.count <= 30 && range.length < 2 else { return false }
+		textShouldChange.send(
+			.init(id: cellId, range: range, oldString: text, replacementString: string)
+		)
 		return true
+	}
+	
+	func textFieldDidChange(_ text: String) {
+		textDidChange.send(text)
 	}
 }
 
