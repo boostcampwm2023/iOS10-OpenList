@@ -56,71 +56,113 @@ public final class RGASMerge<T: Codable & Equatable>: MergeAlgorithm<T> {
 		return lop
 	}
 	
-	override func localDelete(
-		_ sequenceOperation: SequenceOperation<T>
-	) throws -> [any Operation] {
+	override func localDelete(_ sequenceOperation: SequenceOperation<T>) throws -> [any Operation] {
 		var lop = [any Operation]()
-		guard let rgadoc = self.getDoc() as? RGASDocument<T> else {
-			fatalError()
-		}
-		
+		let rgadoc = try fetchDocument()
 		let positionStart = rgadoc.findPosInLocalTree(position: sequenceOperation.position + 1)
 		let positionEnd = rgadoc.findPosInLocalTree(
 			position: sequenceOperation.position + sequenceOperation.getLengthOfADel()
 		)
 		
-		let node = positionStart.node
+		let node = try fetchNode(position: positionStart)
 		let target = positionEnd.node
-		
 		let offsetStart = positionStart.offset - 1
 		let offsetEnd = positionEnd.offset
 		
-		guard
-			let node,
-			let nodeKey = node.key?.clone()
-		else {
-			throw CRDTError.typeIsNil(from: node, .init(debugDescription: "\(self) node is nil"))
-		}
-		
 		if node === target {
-			let rgaop = RGASDeletion<T>(s3vpos: nodeKey, off1: offsetStart, off2: offsetEnd)
+			let key = try fetchKey(at: node)
+			let rgaop = RGASDeletion<T>(s3vpos: key, off1: offsetStart, off2: offsetEnd)
 			try rgadoc.delete(node: node, offset1: offsetStart, offset2: offsetEnd)
 			lop.append(rgaop)
 		} else {
-			var rgaop = RGASDeletion<T>(s3vpos: nodeKey, off1: positionStart.offset - 1, off2: (node.size + node.offset))
-			try rgadoc.delete(node: node, offset1: positionStart.offset - 1, offset2: (node.size + node.offset))
+			let rgaop = try deleteOperation(
+				rgaDoc: rgadoc,
+				node: node,
+				offset1: positionStart.offset - 1
+			)
 			lop.append(rgaop)
-			let node = node.getNextVisible()
+			var nextNode = node.getNextVisible()
 			
-			while node != nil && !(node === target) {
-				guard
-					var node = node,
-					let nextNodeKey = node.key?.clone()
-				else {
-					throw CRDTError.typeIsNil(from: node?.key?.clone(), .init(debugDescription: "\(self) nodeKey is nil"))
-				}
-				rgaop = RGASDeletion(s3vpos: nextNodeKey, off1: 0, off2: (node.size + node.offset))
-				try rgadoc.delete(node: node, offset1: 0, offset2: (node.size + node.offset))
+			while nextNode != nil && !(nextNode === target) {
+				let currentNode = try fetchNode(node: nextNode)
+				let rgaop = try deleteOperation(
+					rgaDoc: rgadoc,
+					node: currentNode
+				)
 				lop.append(rgaop)
-				guard let nextNode = node.getNextVisible() else {
-					throw CRDTError.typeIsNil(from: node.getNextVisible(), .init(debugDescription: "\(self) nextnode is nil"))
-				}
-				node = nextNode
+				nextNode = currentNode.getNextVisible()
 			}
 			
 			if positionEnd.offset != 0 {
-				guard
-					let node,
-					let targetKey = target?.key?.clone()
-				else {
-					throw CRDTError.typeIsNil(from: target?.key?.clone(), .init(debugDescription: "\(self) target is nil"))
-				}
-				rgaop = RGASDeletion(s3vpos: targetKey, off1: 0, off2: offsetEnd)
-				try rgadoc.delete(node: node, offset1: 0, offset2: offsetEnd)
+				let nextNode = try fetchNode(node: nextNode)
+				let target = try fetchNode(node: target)
+				let key = try fetchKey(at: target)
+				let rgaop = RGASDeletion<T>(s3vpos: key, off1: 0, off2: offsetEnd)
+				try rgadoc.delete(node: nextNode, offset1: 0, offset2: offsetEnd)
 				lop.append(rgaop)
 			}
 		}
 		
 		return lop
+	}
+}
+
+private extension RGASMerge {
+	func deleteOperation(
+		rgaDoc: RGASDocument<T>,
+		node: RGASNode<T>,
+		offset1: Int = 0
+	) throws -> RGASDeletion<T> {
+		let key = try fetchKey(at: node)
+		let rgaop = RGASDeletion<T>(
+			s3vpos: key,
+			off1: offset1,
+			off2: node.size + node.offset
+		)
+		try rgaDoc.delete(
+			node: node,
+			offset1: offset1,
+			offset2: node.size + node.offset
+		)
+		return rgaop
+	}
+	
+	func fetchNode(position: Position<T>) throws -> RGASNode<T> {
+		guard let node = position.node else {
+			throw CRDTError.typeIsNil(
+				from: position.node,
+				.init(debugDescription: "position start node is nil")
+			)
+		}
+		return node
+	}
+	
+	func fetchNode(node: RGASNode<T>?) throws -> RGASNode<T> {
+		guard let node else {
+			throw CRDTError.typeIsNil(
+				from: node,
+				.init(debugDescription: "node is nil")
+			)
+		}
+		return node
+	}
+	
+	func fetchKey(at node: RGASNode<T>) throws -> RGASS3Vector {
+		guard let key = node.key?.clone() else {
+			throw CRDTError.typeIsNil(
+				from: node.key,
+				.init(debugDescription: "node key is nil")
+			)
+		}
+		return key
+	}
+	
+	func fetchDocument() throws -> RGASDocument<T> {
+		guard let document = getDoc() as? RGASDocument<T> else {
+			throw CRDTError.documentCastFailure(
+				.init(debugDescription: "\(getDoc()) is not RGASDocument")
+			)
+		}
+		return document
 	}
 }

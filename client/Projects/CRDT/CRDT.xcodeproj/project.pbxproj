@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4D47868E2B0E3D3C00A16F22 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AD92B0E071A007EDD45 /* CRDT.framework */; };
 		4D47868F2B0E3D3C00A16F22 /* CRDT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AD92B0E071A007EDD45 /* CRDT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4DEFD4452B1CA6850072F115 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEFD4442B1CA6850072F115 /* String+.swift */; };
+		4DEFD4492B1CA6D60072F115 /* Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEFD4482B1CA6D60072F115 /* Comparison.swift */; };
 		5F833ADD2B0E071A007EDD45 /* CRDT.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F833ADC2B0E071A007EDD45 /* CRDT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F833AEA2B0E0739007EDD45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833AE92B0E0739007EDD45 /* AppDelegate.swift */; };
 		5F833AEC2B0E0739007EDD45 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F833AEB2B0E0739007EDD45 /* SceneDelegate.swift */; };
@@ -67,6 +69,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4DEFD4442B1CA6850072F115 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
+		4DEFD4482B1CA6D60072F115 /* Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparison.swift; sourceTree = "<group>"; };
 		5F833AD92B0E071A007EDD45 /* CRDT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CRDT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F833ADC2B0E071A007EDD45 /* CRDT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CRDT.h; sourceTree = "<group>"; };
 		5F833AE72B0E0739007EDD45 /* CRDTApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CRDTApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +128,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4DEFD4462B1CA68B0072F115 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4DEFD4442B1CA6850072F115 /* String+.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		4DEFD4472B1CA6CD0072F115 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				4DEFD4482B1CA6D60072F115 /* Comparison.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		5F833ACF2B0E071A007EDD45 = {
 			isa = PBXGroup;
 			children = (
@@ -157,6 +177,8 @@
 		5F833AE82B0E0739007EDD45 /* CRDTApp */ = {
 			isa = PBXGroup;
 			children = (
+				4DEFD4472B1CA6CD0072F115 /* Entity */,
+				4DEFD4462B1CA68B0072F115 /* Extension */,
 				5F833B0A2B0E0848007EDD45 /* WebSocket.swift */,
 				5F833AF72B0E073B007EDD45 /* Info.plist */,
 				5F833AE92B0E0739007EDD45 /* AppDelegate.swift */,
@@ -390,7 +412,9 @@
 			files = (
 				5F833AEE2B0E0739007EDD45 /* ViewController.swift in Sources */,
 				5F833B432B0E0B7C007EDD45 /* WebSocket.swift in Sources */,
+				4DEFD4452B1CA6850072F115 /* String+.swift in Sources */,
 				5F833AEA2B0E0739007EDD45 /* AppDelegate.swift in Sources */,
+				4DEFD4492B1CA6D60072F115 /* Comparison.swift in Sources */,
 				5F833AEC2B0E0739007EDD45 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
