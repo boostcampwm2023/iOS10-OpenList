@@ -11,8 +11,8 @@ import Foundation
 struct WithDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 	let socketConnet: PassthroughSubject<Void, Never>
-	let insert: PassthroughSubject<EditText, Never>
-	let delete: PassthroughSubject<EditText, Never>
+	let textShouldChange: PassthroughSubject<TextChange, Never>
+	let textDidChange: PassthroughSubject<String, Never>
 	let appendDocument: PassthroughSubject<EditText, Never>
 	let removeDocument: PassthroughSubject<EditText, Never>
 	let receive: PassthroughSubject<String, Never>
