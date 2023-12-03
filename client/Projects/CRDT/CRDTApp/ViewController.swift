@@ -180,7 +180,7 @@ extension OperationBasedViewController: UITextFieldDelegate {
 		guard let currentText = inputTextField.text else { return }
 		
 		do {
-			let lengthChange = Comparison(oldString.count, currentText.count)
+			let lengthChange = Comparison(currentText.count, oldString.count)
 			switch lengthChange {
 			case .less:
 				try lengthChangeLess(currentText)
@@ -197,29 +197,6 @@ extension OperationBasedViewController: UITextFieldDelegate {
 
 private extension OperationBasedViewController {
 	func lengthChangeLess(_ currentText: String) throws {
-		var string = currentText.subString(offsetBy: range.location)
-		guard let value2 = UnicodeScalar(String(string))?.value else { return }
-		
-		if value2 < 0xac00 {
-			let content = string.map { String($0) }
-			try insertOperation(range: range, content: content)
-		} else {
-			let location = range.location - 1
-			let prevString = currentText.subString(offsetBy: location)
-			string = prevString + string
-			let content = string.map { String($0) }
-			try replaceOperation(range: .init(location: location, length: range.length + 1), content: content)
-		}
-	}
-	
-	func lengthChangeEqual(_ currentText: String) throws {
-		let location: Int = (range.length == 0) ? range.location - 1 : range.location
-		let string = currentText.subString(offsetBy: location)
-		let content = string.map { String($0) }
-		try replaceOperation(range: .init(location: location, length: range.length), content: content)
-	}
-	
-	func lengthChangeMore(_ currentText: String) throws {
 		if range.location == 0 {
 			try deleteOperation(range: range, content: replacementString)
 		} else {
@@ -237,6 +214,29 @@ private extension OperationBasedViewController {
 					argument: 2
 				)
 			}
+		}
+	}
+	
+	func lengthChangeEqual(_ currentText: String) throws {
+		let location: Int = (range.length == 0) ? range.location - 1 : range.location
+		let string = currentText.subString(offsetBy: location)
+		let content = string.map { String($0) }
+		try replaceOperation(range: .init(location: location, length: range.length), content: content)
+	}
+	
+	func lengthChangeMore(_ currentText: String) throws {
+		var string = currentText.subString(offsetBy: range.location)
+		guard let value2 = UnicodeScalar(String(string))?.value else { return }
+		
+		if value2 < 0xac00 {
+			let content = string.map { String($0) }
+			try insertOperation(range: range, content: content)
+		} else {
+			let location = range.location - 1
+			let prevString = currentText.subString(offsetBy: location)
+			string = prevString + string
+			let content = string.map { String($0) }
+			try replaceOperation(range: .init(location: location, length: range.length + 1), content: content)
 		}
 	}
 }
