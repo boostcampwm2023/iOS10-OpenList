@@ -30,19 +30,15 @@ export class SharedChecklistsGateway
     @Inject('REDIS_SUB_CLIENT')
     private readonly redisSubscriber: RedisClientType,
   ) {
+    // 서버 식별자 생성
     this.serverUuid = uuid();
-    this.redisSubscriber.subscribe('sharedChecklist', (message) =>
-      this.handleRedisSubscribe(message),
-    );
+    // Redis 구독 초기화
+    this.initializeRedisSubscriber();
   }
   @WebSocketServer() server: WebSocket.Server;
 
   // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
   private clients: Map<string, Set<WebSocket>> = new Map();
-  // // 각 checklist ID별로 전송된 데이터를 저장하기 위한 맵
-  // private checklistData: Map<string, string[]> = new Map();
-  // // 각 checklist ID별로 마지막 데이터 저장 시간을 추적하기 위한 맵
-  // private checklistItemDate: Map<string, Date> = new Map();
   // 서버 식별자
   private serverUuid: string;
 
@@ -52,39 +48,14 @@ export class SharedChecklistsGateway
    * @param client 연결된 클라이언트의 웹소켓 객체
    */
   async handleConnection(@ConnectedSocket() client: WebSocket, ...args: any[]) {
-    const request = args[0];
-    const { query } = parse(request.url, true);
-    const sharedChecklistId = query.cid as string;
-
-    // 클라이언트에 할당된 sharedChecklistId를 바탕으로 클라이언트 관리
+    const sharedChecklistId = this.getSharedChecklistId(args[0]);
     if (!sharedChecklistId)
       return { event: 'error', data: 'No sharedChecklistId provided' };
     client['sharedChecklistId'] = sharedChecklistId;
 
-    if (!this.clients.has(sharedChecklistId)) {
-      this.clients.set(sharedChecklistId, new Set());
-    }
-    this.clients.get(sharedChecklistId)?.add(client);
-
-    const redisCountKey = `checklist:${sharedChecklistId}:count`;
-    await this.redisClient.INCR(redisCountKey);
-    const count = await this.redisClient.GET(redisCountKey);
-    console.log('count:', count);
-
-    const redisArrayKey = `array:${sharedChecklistId}`;
-    const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
-    if (history.length > 0) {
-      this.sendToClient(client, 'history', history);
-    }
-    // // 해당 방에 소켓 통신 중 데베에 저장된 데이터가 있는 경우 해당 데이터의 버전(시간)을 전송
-    // const lastSavedDate = this.checklistItemDate.get(sharedChecklistId);
-    // const dataForThisChecklist = this.checklistData.get(sharedChecklistId);
-    // if (lastSavedDate) {
-    //   this.sendToClient(client, 'lastDate', lastSavedDate.toISOString());
-    // }
-    // if (dataForThisChecklist) {
-    //   this.sendToClient(client, 'history', dataForThisChecklist);
-    // }
+    this.addClientToMap(client, sharedChecklistId);
+    await this.updateRedisCount(sharedChecklistId, true);
+    await this.sendHistoryToClient(client, sharedChecklistId);
   }
 
   /**
@@ -94,54 +65,125 @@ export class SharedChecklistsGateway
    */
   async handleDisconnect(@ConnectedSocket() client: WebSocket) {
     const sharedChecklistId = client['sharedChecklistId'];
-    if (!(sharedChecklistId && this.clients.has(sharedChecklistId))) {
-      return { event: 'error', data: 'No sharedChecklistId provided' };
-    }
-    const clientsSet = this.clients.get(sharedChecklistId);
-    clientsSet?.delete(client);
+    if (!(sharedChecklistId && this.clients.has(sharedChecklistId))) return;
 
-    const redisCountKey = `checklist:${sharedChecklistId}:count`;
-    await this.redisClient.DECR(redisCountKey);
-    const count = await this.redisClient.GET(redisCountKey);
-    console.log('count:', count);
-
-    // 더 이상 해당 sharedChecklistId에 연결된 클라이언트가 없으면 맵에서 제거
-    // 해당 sharedChecklistId에 저장된 데이터를 DB에 저장하고 맵에서 제거
-    // 해당 sharedChecklistId에 저장된 마지막 데이터 저장 시간을 맵에서 제거
-    if (clientsSet?.size === 0) {
-      // this.saveAndBroadcastData(
-      //   sharedChecklistId,
-      //   this.checklistData.get(sharedChecklistId),
-      // );
-      // this.checklistData.delete(sharedChecklistId);
-      // this.checklistItemDate.delete(sharedChecklistId);
-      this.clients.delete(sharedChecklistId);
-    }
-    if (count === '0') {
-      const redisArrayKey = `array:${sharedChecklistId}`;
-      const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
-      if (history.length > 0) {
-        this.saveAndBroadcastData(sharedChecklistId, history);
-      }
-      this.redisClient.del(redisArrayKey);
+    this.removeClientFromMap(client, sharedChecklistId);
+    const count = await this.updateRedisCount(sharedChecklistId, false);
+    if (count === 0) {
+      await this.handleNoClientsConnected(sharedChecklistId);
     }
   }
 
-  private async handleRedisSubscribe(message: string) {
-    const { serverUuid, sharedChecklistId, data } = JSON.parse(message);
-    if (serverUuid !== this.serverUuid) {
-      this.broadcastToChecklist(sharedChecklistId, 'listen', data);
+  /**
+   * 더 이상 연결된 클라이언트가 없을 때 처리하는 메서드이다.
+   * 레디스의 sharedChecklistHistory를 postgres DB에 저장 후, Redis에서 해당 키를 삭제한다.
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   */
+  private async handleNoClientsConnected(sharedChecklistId: string) {
+    const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
+    const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    if (history.length > 0) {
+      await this.saveToDatabase(sharedChecklistId, history);
+      await this.redisClient.del(redisArrayKey);
     }
   }
   /**
-   * 특정 sharedChecklistId를 가진 클라이언트들에게 이벤트와 데이터를 브로드캐스트한다.
+   * 요청으로부터 sharedChecklistId를 추출하는 메서드이다.
+   * 클라이언트의 요청 URL에서 sharedChecklistId를 파싱하여 반환한다.
+   * @param request 클라이언트의 요청 객체
+   * @returns 추출된 sharedChecklistId
+   */
+  private getSharedChecklistId(request: { url: string }) {
+    const { query } = parse(request.url, true);
+    const sharedChecklistId = query.cid as string;
+    return sharedChecklistId;
+  }
+
+  /**
+   * 클라이언트를 로컬 관리 맵에 추가하는 메서드이다.
+   * sharedChecklistId에 해당하는 클라이언트 집합이 없으면 새로 생성하고, 클라이언트를 추가한다.
+   * @param client 추가할 클라이언트의 웹소켓 객체
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   */ private addClientToMap(client: WebSocket, sharedChecklistId: string) {
+    if (!this.clients.has(sharedChecklistId)) {
+      this.clients.set(sharedChecklistId, new Set());
+    }
+    this.clients.get(sharedChecklistId)?.add(client);
+  }
+
+  /**
+   * 클라이언트를 로컬 관리 맵에서 제거하는 메서드이다.
+   * sharedChecklistId에 해당하는 클라이언트 집합에서 클라이언트를 제거한다.
+   * 해당 집합의 크기가 0이 되면, 집합 자체를 맵에서 제거한다.
+   * @param client 제거할 클라이언트의 웹소켓 객체
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   */
+  private removeClientFromMap(client: WebSocket, sharedChecklistId: string) {
+    const clientsSet = this.clients.get(sharedChecklistId);
+    clientsSet?.delete(client);
+    if (clientsSet?.size === 0) {
+      this.clients.delete(sharedChecklistId);
+    }
+  }
+
+  /**
+   * Redis에 sharedChecklistId 클라이언트 수를 업데이트하는 메서드이다.
+   * 클라이언트가 연결되면 카운트를 증가시키고, 연결이 해제되면 감소시킨다.
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   * @param isConnecting 클라이언트가 연결 중인지 여부 (연결 중이면 true, 연결 해제 중이면 false)
+   * @returns 업데이트된 클라이언트 수
+   */
+  private async updateRedisCount(
+    sharedChecklistId: string,
+    isConnecting: boolean,
+  ) {
+    const redisCountKey = `sharedChecklistCount:${sharedChecklistId}`;
+    if (isConnecting) {
+      await this.redisClient.INCR(redisCountKey);
+    } else {
+      await this.redisClient.DECR(redisCountKey);
+    }
+    return parseInt(await this.redisClient.GET(redisCountKey), 10);
+  }
+
+  /**
+   * sharedChecklistId 클라이언트에 누적 데이터값을 전송하는 메서드이다.
+   * sharedChecklistId에 해당하는 누적 데이터값을 Redis에서 조회하여 클라이언트에 전송한다.
+   * @param client 이력을 전송할 클라이언트의 웹소켓 객체
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   */
+  private async sendHistoryToClient(
+    client: WebSocket,
+    sharedChecklistId: string,
+  ) {
+    const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
+    const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    if (history.length > 0) {
+      this.sendToClient(client, 'history', history);
+    }
+  }
+
+  /**
+   * Redis 구독을 초기화하는 메서드이다.
+   * 'sharedChecklist' 채널로부터 메시지를 받으면 해당 메시지를 로컬 클라이언트들에게 브로드캐스트한다.
+   */
+  private initializeRedisSubscriber() {
+    this.redisSubscriber.subscribe('sharedChecklist', (message) => {
+      const { serverUuid, sharedChecklistId, data } = JSON.parse(message);
+      if (serverUuid !== this.serverUuid) {
+        this.broadcastToLocal(sharedChecklistId, 'listen', data);
+      }
+    });
+  }
+  /**
+   * 특정 sharedChecklistId를 가진 클라이언트들에게 이벤트와 데이터를 브로드캐스트하는 메서드이다.
    * 메시지를 보낸 클라이언트는 브로드캐스트에서 제외한다.
    * @param sharedChecklistId 브로드캐스트 대상의 checklist ID
    * @param event 브로드캐스트할 이벤트 이름
    * @param data 전송할 데이터
    * @param excludeClient 브로드캐스트에서 제외할 클라이언트
    */
-  private broadcastToChecklist(
+  private broadcastToLocal(
     sharedChecklistId: string,
     event: string,
     data: any,
@@ -151,7 +193,6 @@ export class SharedChecklistsGateway
     if (clients) {
       clients.forEach((client) => {
         if (client !== excludeClient && client.readyState === WebSocket.OPEN) {
-          // client.send(JSON.stringify({ event, data }));
           this.sendToClient(client, event, data);
         }
       });
@@ -159,8 +200,8 @@ export class SharedChecklistsGateway
   }
 
   /**
-   * 'send' 이벤트에 대한 요청을 처리하고, 해당 sharedChecklistId를 가진 다른 클라이언트들에게 'listen' 이벤트를 브로드캐스트한다.
-   * 데이터가 20개 누적될 때마다 데이터베이스에 저장하고, 'saved' 이벤트를 브로드캐스트한다.
+   * 'send' 이벤트에 대한 요청을 처리하고, 해당 sharedChecklistId를 가진 다른 클라이언트들에게 'listen' 이벤트를 브로드캐스트하는 메서드이다.
+   * 또한, Redis 채널에 게시하여 다른 서버에도 'listen' 이벤트를 브로드캐스트한다.
    * @param client 메시지를 보낸 클라이언트의 웹소켓 객체
    * @param data 클라이언트로부터 받은 데이터
    * @returns 이벤트 처리 결과를 나타내는 객체
@@ -169,31 +210,13 @@ export class SharedChecklistsGateway
   async handleSendChecklist(
     @ConnectedSocket() client: WebSocket,
     @MessageBody() data: string,
+    sharedChecklistId: string = client['sharedChecklistId'],
   ) {
-    const sharedChecklistId = client['sharedChecklistId'];
-
-    if (!sharedChecklistId)
-      return { event: 'error', data: 'No sharedChecklistId provided' };
-
-    // // 현재 sharedChecklistId에 해당하는 데이터 배열을 가져오거나 새로 생성
-    // const dataForThisChecklist =
-    //   this.checklistData.get(sharedChecklistId) || [];
-    // dataForThisChecklist.push(data);
-
-    // // 데이터 저장 및 브로드캐스트
-    // if (dataForThisChecklist.length >= 20) {
-    //   this.saveAndBroadcastData(sharedChecklistId, dataForThisChecklist, true);
-    // } else {
-    //   this.checklistData.set(sharedChecklistId, dataForThisChecklist);
-    // }
-
-    this.broadcastToChecklist(sharedChecklistId, 'listen', data, client);
-
+    this.broadcastToLocal(sharedChecklistId, 'listen', data, client);
     const serverUuid = this.serverUuid;
     const message = JSON.stringify({ serverUuid, sharedChecklistId, data });
     this.redisPublisher.publish('sharedChecklist', message);
-
-    const redisArrayKey = `checklist:${sharedChecklistId}:array`;
+    const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     this.redisClient.rPush(redisArrayKey, data);
   }
 
@@ -212,27 +235,17 @@ export class SharedChecklistsGateway
   }
 
   /**
-   * 데이터를 데이터베이스에 저장하고 관련 클라이언트들에게 'saved' 이벤트를 브로드캐스트한다.
-   * 마지막 저장 시간을 기록한다.
-   * @param sharedChecklistId 데이터를 저장할 체크리스트 ID
-   * @param dataForThisChecklist 저장할 데이터 배열
-   * @param broadcast 브로드캐스트 여부. 기본값은 false
+   * sharedChecklistId에 해당하는 데이터를 데이터베이스에 저장하는 메서드이다.
+   * 데이터가 누적되면 sharedChecklistsService를 통해 데이터베이스에 저장한다.
+   * @param sharedChecklistId 공유 체크리스트의 식별자
+   * @param dataForThisChecklist 저장할 데이터 목록
    */
-  private async saveAndBroadcastData(
-    sharedChecklistId: string,
-    dataForThisChecklist: string[],
-    broadcast?: boolean,
-  ) {
+  private async saveToDatabase(sharedChecklistId: string, history: string[]) {
     const now = new Date();
-    if (broadcast) {
-      // this.checklistItemDate.set(sharedChecklistId, now); // 마지막 데이터 저장 시간 업데이트
-      this.broadcastToChecklist(sharedChecklistId, 'saved', now.toISOString());
-    }
     await this.sharedChecklistsService.createSharedChecklistItem(
-      dataForThisChecklist,
+      history,
       sharedChecklistId,
       now,
     );
-    // this.checklistData.set(sharedChecklistId, []);
   }
 }
