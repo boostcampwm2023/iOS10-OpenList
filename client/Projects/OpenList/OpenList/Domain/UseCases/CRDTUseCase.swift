@@ -119,7 +119,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		#endif
 		
 		let oldString = textChange.oldString
-		let lengthChange = Comparison(oldString.count, currentText.count)
+		let lengthChange = Comparison(currentText.count, oldString.count)
 		
 		switch lengthChange {
 		case .less:
@@ -155,44 +155,6 @@ private extension DefaultCRDTUseCase {
 	// MARK: LengthChange
 	func lengthChangeLess(textChange: TextChange, currentText: String) async throws -> CheckListItem {
 		let range = textChange.range
-		let id = textChange.id
-		
-		var string = currentText.subString(offsetBy: range.location)
-		guard let value2 = UnicodeScalar(String(string))?.value else {
-			throw CRDTUseCaseError.typeIsNil
-		}
-		if value2 < 0xac00 {
-			return try await insert(at: .init(id: id, content: string, range: range))
-		} else {
-			let location = range.location - 1
-			let prevString = currentText.subString(offsetBy: location)
-			string = prevString + string
-			return try await replace(
-				at: .init(
-					id: id,
-					content: string,
-					range: .init(location: location, length: range.length + 1)
-				)
-			)
-		}
-	}
-	
-	func lengthChangeEqual(textChange: TextChange, currentText: String) async throws -> CheckListItem {
-		let range = textChange.range
-		let id = textChange.id
-		let location: Int = (range.length == 0) ? range.location - 1 : range.location
-		let string = currentText.subString(offsetBy: location)
-		return try await replace(
-			at: .init(
-				id: id,
-				content: string,
-				range: .init(location: location, length: range.length)
-			)
-		)
-	}
-	
-	func lengthChangeMore(textChange: TextChange, currentText: String) async throws -> CheckListItem {
-		let range = textChange.range
 		let oldString = textChange.oldString
 		let id = textChange.id
 		let replacementString = textChange.replacementString
@@ -216,6 +178,44 @@ private extension DefaultCRDTUseCase {
 					argument: 2
 				)
 			}
+		}
+	}
+	
+	func lengthChangeEqual(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		let range = textChange.range
+		let id = textChange.id
+		let location: Int = (range.length == 0) ? range.location - 1 : range.location
+		let string = currentText.subString(offsetBy: location)
+		return try await replace(
+			at: .init(
+				id: id,
+				content: string,
+				range: .init(location: location, length: range.length)
+			)
+		)
+	}
+	
+	func lengthChangeMore(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		let range = textChange.range
+		let id = textChange.id
+		
+		var string = currentText.subString(offsetBy: range.location)
+		guard let value2 = UnicodeScalar(String(string))?.value else {
+			throw CRDTUseCaseError.typeIsNil
+		}
+		if value2 < 0xac00 {
+			return try await insert(at: .init(id: id, content: string, range: range))
+		} else {
+			let location = range.location - 1
+			let prevString = currentText.subString(offsetBy: location)
+			string = prevString + string
+			return try await replace(
+				at: .init(
+					id: id,
+					content: string,
+					range: .init(location: location, length: range.length + 1)
+				)
+			)
 		}
 	}
 	
