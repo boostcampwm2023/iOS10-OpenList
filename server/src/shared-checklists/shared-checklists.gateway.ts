@@ -10,6 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { RedisClientType } from 'redis';
 import { parse } from 'url';
+import { v1 as uuid } from 'uuid';
 import * as WebSocket from 'ws';
 import { SharedChecklistsService } from './shared-checklists.service';
 
@@ -27,7 +28,12 @@ export class SharedChecklistsGateway
     private readonly redisPublisher: RedisClientType,
     @Inject('REDIS_SUB_CLIENT')
     private readonly redisSubscriber: RedisClientType,
-  ) {}
+  ) {
+    this.serverUuid = uuid();
+    this.redisSubscriber.subscribe('sharedChecklist', (message) =>
+      this.handleRedisSubscribe(message),
+    );
+  }
   @WebSocketServer() server: WebSocket.Server;
 
   // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
@@ -36,6 +42,8 @@ export class SharedChecklistsGateway
   private checklistData: Map<string, string[]> = new Map();
   // 각 checklist ID별로 마지막 데이터 저장 시간을 추적하기 위한 맵
   private checklistItemDate: Map<string, Date> = new Map();
+  // 서버 식별자
+  private serverUuid: string;
 
   /**
    * 클라이언트가 연결을 시도할 때 호출되는 메서드.
@@ -91,6 +99,12 @@ export class SharedChecklistsGateway
     }
   }
 
+  private async handleRedisSubscribe(message: string) {
+    const { serverUuid, sharedChecklistId, data } = JSON.parse(message);
+    if (serverUuid !== this.serverUuid) {
+      this.broadcastToChecklist(sharedChecklistId, 'listen', data);
+    }
+  }
   /**
    * 특정 sharedChecklistId를 가진 클라이언트들에게 이벤트와 데이터를 브로드캐스트한다.
    * 메시지를 보낸 클라이언트는 브로드캐스트에서 제외한다.
@@ -146,7 +160,10 @@ export class SharedChecklistsGateway
     }
 
     this.broadcastToChecklist(sharedChecklistId, 'listen', data, client);
-    return { event: 'sendChecklist', data: data };
+
+    const serverUuid = this.serverUuid;
+    const message = JSON.stringify({ serverUuid, sharedChecklistId, data });
+    this.redisPublisher.publish('sharedChecklist', message);
   }
 
   /**
