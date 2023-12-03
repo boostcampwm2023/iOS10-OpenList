@@ -23,7 +23,8 @@ export class SharedChecklistsGateway
 {
   constructor(
     private readonly sharedChecklistsService: SharedChecklistsService,
-    @Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType,
+    @Inject('REDIS_CLIENT')
+    private readonly redisClient: RedisClientType,
     @Inject('REDIS_PUB_CLIENT')
     private readonly redisPublisher: RedisClientType,
     @Inject('REDIS_SUB_CLIENT')
@@ -58,24 +59,31 @@ export class SharedChecklistsGateway
     // 클라이언트에 할당된 sharedChecklistId를 바탕으로 클라이언트 관리
     if (!sharedChecklistId)
       return { event: 'error', data: 'No sharedChecklistId provided' };
+    client['sharedChecklistId'] = sharedChecklistId;
 
     if (!this.clients.has(sharedChecklistId)) {
       this.clients.set(sharedChecklistId, new Set());
     }
     this.clients.get(sharedChecklistId)?.add(client);
 
-    const redisCountKey = `count:${sharedChecklistId}`;
+    const redisCountKey = `checklist:${sharedChecklistId}:count`;
     await this.redisClient.INCR(redisCountKey);
     const count = await this.redisClient.GET(redisCountKey);
     console.log('count:', count);
+
+    const redisArrayKey = `array:${sharedChecklistId}`;
+    const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    if (history.length > 0) {
+      this.sendToClient(client, 'history', history);
+    }
     // // 해당 방에 소켓 통신 중 데베에 저장된 데이터가 있는 경우 해당 데이터의 버전(시간)을 전송
     // const lastSavedDate = this.checklistItemDate.get(sharedChecklistId);
     // const dataForThisChecklist = this.checklistData.get(sharedChecklistId);
     // if (lastSavedDate) {
-    //   this.sendDateToClient(client, 'lastDate', lastSavedDate.toISOString());
+    //   this.sendToClient(client, 'lastDate', lastSavedDate.toISOString());
     // }
     // if (dataForThisChecklist) {
-    //   this.sendDateToClient(client, 'history', dataForThisChecklist);
+    //   this.sendToClient(client, 'history', dataForThisChecklist);
     // }
   }
 
@@ -92,7 +100,7 @@ export class SharedChecklistsGateway
     const clientsSet = this.clients.get(sharedChecklistId);
     clientsSet?.delete(client);
 
-    const redisCountKey = `count:${sharedChecklistId}`;
+    const redisCountKey = `checklist:${sharedChecklistId}:count`;
     await this.redisClient.DECR(redisCountKey);
     const count = await this.redisClient.GET(redisCountKey);
     console.log('count:', count);
@@ -110,7 +118,12 @@ export class SharedChecklistsGateway
       this.clients.delete(sharedChecklistId);
     }
     if (count === '0') {
-      console.log('delete');
+      const redisArrayKey = `array:${sharedChecklistId}`;
+      const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+      if (history.length > 0) {
+        this.saveAndBroadcastData(sharedChecklistId, history);
+      }
+      this.redisClient.del(redisArrayKey);
     }
   }
 
@@ -139,7 +152,7 @@ export class SharedChecklistsGateway
       clients.forEach((client) => {
         if (client !== excludeClient && client.readyState === WebSocket.OPEN) {
           // client.send(JSON.stringify({ event, data }));
-          this.sendDateToClient(client, event, data);
+          this.sendToClient(client, event, data);
         }
       });
     }
@@ -179,25 +192,9 @@ export class SharedChecklistsGateway
     const serverUuid = this.serverUuid;
     const message = JSON.stringify({ serverUuid, sharedChecklistId, data });
     this.redisPublisher.publish('sharedChecklist', message);
-  }
 
-  /**
-   * 'history' 이벤트에 대한 요청을 처리하고, 해당 sharedChecklistId에 대한 이전 메시지 기록을 클라이언트에 전송한다.
-   * @param client 요청한 클라이언트의 웹소켓 객체
-   * @param data 클라이언트로부터 받은 데이터
-   * @returns 이벤트 처리 결과를 나타내는 객체
-   */
-  @SubscribeMessage('history')
-  async handleHistoryRequest(
-    @ConnectedSocket() client: WebSocket,
-    @MessageBody() data: string,
-  ) {
-    const sharedChecklistId = client['sharedChecklistId'];
-    // const dataForThisChecklist =
-    //   this.checklistData.get(sharedChecklistId) || [];
-    // this.sendDateToClient(client, 'history', dataForThisChecklist);
-
-    return { event: 'history', data: data };
+    const redisArrayKey = `checklist:${sharedChecklistId}:array`;
+    this.redisClient.rPush(redisArrayKey, data);
   }
 
   /**
@@ -206,7 +203,7 @@ export class SharedChecklistsGateway
    * @param event 전송할 이벤트 이름
    * @param data 전송할 데이터
    */
-  private sendDateToClient(
+  private sendToClient(
     client: WebSocket,
     event: string,
     data: string[] | string,
