@@ -38,10 +38,10 @@ export class SharedChecklistsGateway
 
   // 각 checklist ID별로 연결된 클라이언트들을 추적하기 위한 맵
   private clients: Map<string, Set<WebSocket>> = new Map();
-  // 각 checklist ID별로 전송된 데이터를 저장하기 위한 맵
-  private checklistData: Map<string, string[]> = new Map();
-  // 각 checklist ID별로 마지막 데이터 저장 시간을 추적하기 위한 맵
-  private checklistItemDate: Map<string, Date> = new Map();
+  // // 각 checklist ID별로 전송된 데이터를 저장하기 위한 맵
+  // private checklistData: Map<string, string[]> = new Map();
+  // // 각 checklist ID별로 마지막 데이터 저장 시간을 추적하기 위한 맵
+  // private checklistItemDate: Map<string, Date> = new Map();
   // 서버 식별자
   private serverUuid: string;
 
@@ -50,28 +50,33 @@ export class SharedChecklistsGateway
    * 연결된 클라이언트에 sharedChecklistId를 할당하고 관리한다.
    * @param client 연결된 클라이언트의 웹소켓 객체
    */
-  handleConnection(@ConnectedSocket() client: WebSocket, ...args: any[]) {
+  async handleConnection(@ConnectedSocket() client: WebSocket, ...args: any[]) {
     const request = args[0];
     const { query } = parse(request.url, true);
     const sharedChecklistId = query.cid as string;
 
     // 클라이언트에 할당된 sharedChecklistId를 바탕으로 클라이언트 관리
-    if (sharedChecklistId) {
-      client['sharedChecklistId'] = sharedChecklistId;
-      if (!this.clients.has(sharedChecklistId)) {
-        this.clients.set(sharedChecklistId, new Set());
-      }
-      this.clients.get(sharedChecklistId)?.add(client);
-      // 해당 방에 소켓 통신 중 데베에 저장된 데이터가 있는 경우 해당 데이터의 버전(시간)을 전송
-      const lastSavedDate = this.checklistItemDate.get(sharedChecklistId);
-      const dataForThisChecklist = this.checklistData.get(sharedChecklistId);
-      if (lastSavedDate) {
-        this.sendDateToClient(client, 'lastDate', lastSavedDate.toISOString());
-      }
-      if (dataForThisChecklist) {
-        this.sendDateToClient(client, 'history', dataForThisChecklist);
-      }
+    if (!sharedChecklistId)
+      return { event: 'error', data: 'No sharedChecklistId provided' };
+
+    if (!this.clients.has(sharedChecklistId)) {
+      this.clients.set(sharedChecklistId, new Set());
     }
+    this.clients.get(sharedChecklistId)?.add(client);
+
+    const redisCountKey = `count:${sharedChecklistId}`;
+    await this.redisClient.INCR(redisCountKey);
+    const count = await this.redisClient.GET(redisCountKey);
+    console.log('count:', count);
+    // // 해당 방에 소켓 통신 중 데베에 저장된 데이터가 있는 경우 해당 데이터의 버전(시간)을 전송
+    // const lastSavedDate = this.checklistItemDate.get(sharedChecklistId);
+    // const dataForThisChecklist = this.checklistData.get(sharedChecklistId);
+    // if (lastSavedDate) {
+    //   this.sendDateToClient(client, 'lastDate', lastSavedDate.toISOString());
+    // }
+    // if (dataForThisChecklist) {
+    //   this.sendDateToClient(client, 'history', dataForThisChecklist);
+    // }
   }
 
   /**
@@ -79,23 +84,33 @@ export class SharedChecklistsGateway
    * 해당 클라이언트를 관리 목록에서 제거한다.
    * @param client 연결 해제된 클라이언트의 웹소켓 객체
    */
-  handleDisconnect(@ConnectedSocket() client: WebSocket) {
+  async handleDisconnect(@ConnectedSocket() client: WebSocket) {
     const sharedChecklistId = client['sharedChecklistId'];
-    if (sharedChecklistId && this.clients.has(sharedChecklistId)) {
-      const clientsSet = this.clients.get(sharedChecklistId);
-      clientsSet?.delete(client);
-      // 더 이상 해당 sharedChecklistId에 연결된 클라이언트가 없으면 맵에서 제거
-      // 해당 sharedChecklistId에 저장된 데이터를 DB에 저장하고 맵에서 제거
-      // 해당 sharedChecklistId에 저장된 마지막 데이터 저장 시간을 맵에서 제거
-      if (clientsSet?.size === 0) {
-        this.saveAndBroadcastData(
-          sharedChecklistId,
-          this.checklistData.get(sharedChecklistId),
-        );
-        this.checklistData.delete(sharedChecklistId);
-        this.checklistItemDate.delete(sharedChecklistId);
-        this.clients.delete(sharedChecklistId);
-      }
+    if (!(sharedChecklistId && this.clients.has(sharedChecklistId))) {
+      return { event: 'error', data: 'No sharedChecklistId provided' };
+    }
+    const clientsSet = this.clients.get(sharedChecklistId);
+    clientsSet?.delete(client);
+
+    const redisCountKey = `count:${sharedChecklistId}`;
+    await this.redisClient.DECR(redisCountKey);
+    const count = await this.redisClient.GET(redisCountKey);
+    console.log('count:', count);
+
+    // 더 이상 해당 sharedChecklistId에 연결된 클라이언트가 없으면 맵에서 제거
+    // 해당 sharedChecklistId에 저장된 데이터를 DB에 저장하고 맵에서 제거
+    // 해당 sharedChecklistId에 저장된 마지막 데이터 저장 시간을 맵에서 제거
+    if (clientsSet?.size === 0) {
+      // this.saveAndBroadcastData(
+      //   sharedChecklistId,
+      //   this.checklistData.get(sharedChecklistId),
+      // );
+      // this.checklistData.delete(sharedChecklistId);
+      // this.checklistItemDate.delete(sharedChecklistId);
+      this.clients.delete(sharedChecklistId);
+    }
+    if (count === '0') {
+      console.log('delete');
     }
   }
 
@@ -147,17 +162,17 @@ export class SharedChecklistsGateway
     if (!sharedChecklistId)
       return { event: 'error', data: 'No sharedChecklistId provided' };
 
-    // 현재 sharedChecklistId에 해당하는 데이터 배열을 가져오거나 새로 생성
-    const dataForThisChecklist =
-      this.checklistData.get(sharedChecklistId) || [];
-    dataForThisChecklist.push(data);
+    // // 현재 sharedChecklistId에 해당하는 데이터 배열을 가져오거나 새로 생성
+    // const dataForThisChecklist =
+    //   this.checklistData.get(sharedChecklistId) || [];
+    // dataForThisChecklist.push(data);
 
-    // 데이터 저장 및 브로드캐스트
-    if (dataForThisChecklist.length >= 20) {
-      this.saveAndBroadcastData(sharedChecklistId, dataForThisChecklist, true);
-    } else {
-      this.checklistData.set(sharedChecklistId, dataForThisChecklist);
-    }
+    // // 데이터 저장 및 브로드캐스트
+    // if (dataForThisChecklist.length >= 20) {
+    //   this.saveAndBroadcastData(sharedChecklistId, dataForThisChecklist, true);
+    // } else {
+    //   this.checklistData.set(sharedChecklistId, dataForThisChecklist);
+    // }
 
     this.broadcastToChecklist(sharedChecklistId, 'listen', data, client);
 
@@ -178,9 +193,9 @@ export class SharedChecklistsGateway
     @MessageBody() data: string,
   ) {
     const sharedChecklistId = client['sharedChecklistId'];
-    const dataForThisChecklist =
-      this.checklistData.get(sharedChecklistId) || [];
-    this.sendDateToClient(client, 'history', dataForThisChecklist);
+    // const dataForThisChecklist =
+    //   this.checklistData.get(sharedChecklistId) || [];
+    // this.sendDateToClient(client, 'history', dataForThisChecklist);
 
     return { event: 'history', data: data };
   }
@@ -213,7 +228,7 @@ export class SharedChecklistsGateway
   ) {
     const now = new Date();
     if (broadcast) {
-      this.checklistItemDate.set(sharedChecklistId, now); // 마지막 데이터 저장 시간 업데이트
+      // this.checklistItemDate.set(sharedChecklistId, now); // 마지막 데이터 저장 시간 업데이트
       this.broadcastToChecklist(sharedChecklistId, 'saved', now.toISOString());
     }
     await this.sharedChecklistsService.createSharedChecklistItem(
@@ -221,6 +236,6 @@ export class SharedChecklistsGateway
       sharedChecklistId,
       now,
     );
-    this.checklistData.set(sharedChecklistId, []);
+    // this.checklistData.set(sharedChecklistId, []);
   }
 }
