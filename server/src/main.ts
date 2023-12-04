@@ -23,6 +23,9 @@ async function bootstrap() {
   );
   app.useWebSocketAdapter(new WsAdapter(app));
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000; // 환경 변수에서 포트를 가져오거나 기본값으로 3000 사용
+  await app.listen(port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();

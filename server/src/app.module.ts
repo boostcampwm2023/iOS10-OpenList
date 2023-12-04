@@ -7,6 +7,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
+import { RedisModule } from 'redis/redis.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -31,6 +32,7 @@ import { winstonConfig } from './utils/winston.config';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    RedisModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env['DB_HOST'],
