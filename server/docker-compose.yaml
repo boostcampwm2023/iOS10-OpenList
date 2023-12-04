@@ -16,9 +16,6 @@ services:
     restart: always
     ports:
       - 6379:6379
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-    command: redis-server --requirepass ${REDIS_PASSWORD}
 
   # nestjs_server:
   #   build: .
