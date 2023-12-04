@@ -47,7 +47,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList {
 		self.id = id
 		let response = try await crdtRepository.fetchCheckListItems(id: id)
-		let items = response.compactMap { item in
+		response.compactMap { item in
 			if let item = item as? CRDTDocumentResponseDTO {
 				return removeCheckList(to: item.id)
 			} else if let item = item as? CRDTMessageResponseDTO {
@@ -60,6 +60,16 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				return nil
 			}
 		}
+		
+		// 기록 하나로 합치기.
+		let documentIds = documentsId.values()
+		let items = documentIds.map { uuid in
+			let currentDocument = documentDictionary[uuid]
+			let view = currentDocument!.view()
+			let items = CheckListItem(itemId: uuid, title: view, isChecked: false)
+			return items
+		}
+		
 		documentDictionary.forEach {
 			print($0)
 		}

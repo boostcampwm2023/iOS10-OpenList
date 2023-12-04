@@ -86,4 +86,14 @@ final class LinkedList<T: Codable & Equatable> {
 		if node?.value != value { return nil }
 		return node
 	}
+	
+	func values() -> [T] {
+		var values: [T] = []
+		var node = head
+		while node != nil {
+			values.append(node!.value)
+			node = node?.next
+		}
+		return values
+	}
 }
