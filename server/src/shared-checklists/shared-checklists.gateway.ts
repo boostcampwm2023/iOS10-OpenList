@@ -158,8 +158,11 @@ export class SharedChecklistsGateway
   ) {
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    const historyArray = history.map((item) => JSON.parse(item));
+    const flattenedArray = historyArray.flat();
+
     if (history.length > 0) {
-      this.sendToClient(client, 'history', history);
+      this.sendToClient(client, 'history', flattenedArray);
     }
   }
 
