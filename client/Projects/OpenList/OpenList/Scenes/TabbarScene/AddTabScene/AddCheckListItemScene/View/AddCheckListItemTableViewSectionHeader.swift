@@ -35,9 +35,9 @@ final class AddCheckListItemTableViewSectionHeader: UITableViewHeaderFooterView 
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
 		
-		setAttributes()
-		setHeirachies()
-		setConstraints()
+		setViewAttributes()
+		setViewHeirachies()
+		setViewConstraints()
 	}
 	
 	@available(*, unavailable)
@@ -83,7 +83,7 @@ private extension AddCheckListItemTableViewSectionHeader {
 		static let componentHeight: CGFloat = 18
 	}
 	
-	func setAttributes() {
+	func setViewAttributes() {
 		backgroundColor = .background
 		contentView.backgroundColor = .background
 		
@@ -94,12 +94,12 @@ private extension AddCheckListItemTableViewSectionHeader {
 		sectionButton.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func setHeirachies() {
+	func setViewHeirachies() {
 		contentView.addSubview(sectionLabel)
 		contentView.addSubview(sectionButton)
 	}
 	
-	func setConstraints() {
+	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			sectionLabel.leadingAnchor.constraint(
 				equalTo: contentView.leadingAnchor,
