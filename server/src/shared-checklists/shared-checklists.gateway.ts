@@ -223,7 +223,8 @@ export class SharedChecklistsGateway
     });
     this.redisPublisher.publish('sharedChecklist', message);
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
-    this.redisClient.rPush(redisArrayKey, data);
+    const dataToJson = JSON.stringify(data[0]);
+    this.redisClient.rPush(redisArrayKey, dataToJson);
   }
 
   @SubscribeMessage('editing')
