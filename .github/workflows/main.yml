@@ -40,6 +40,9 @@ jobs:
           X_NCP_CLOVASTUDIO_API_KEY=${{ secrets.X_NCP_CLOVASTUDIO_API_KEY }}
           X_NCP_APIGW_API_KEY=${{ secrets.X_NCP_APIGW_API_KEY }}
           X_NCP_CLOVASTUDIO_REQUEST_ID=${{ secrets.X_NCP_CLOVASTUDIO_REQUEST_ID }}
+          REDIS_URL=${{ secrets.REDIS_URL }}
+          REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
           EOF
       # .p8 파일 생성
       - name: Generate .p8 file
