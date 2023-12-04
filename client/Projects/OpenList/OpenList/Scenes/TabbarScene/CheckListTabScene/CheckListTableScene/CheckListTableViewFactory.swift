@@ -13,6 +13,7 @@ protocol CheckListTableDependency: Dependency {
 	var checkListRepository: CheckListRepository { get }
 	var crdtRepository: CRDTRepository { get }
 	var persistenceUseCase: PersistenceUseCase { get }
+	var session: CustomSession { get }
 }
 
 final class CheckListTableComponent:
@@ -20,12 +21,16 @@ final class CheckListTableComponent:
 	PrivateDetailCheckListDependency {
 	var crdtRepository: CRDTRepository { return parent.crdtRepository }
 	
+	var session: CustomSession {
+		parent.session
+	}
+	
 	var checkListRepository: CheckListRepository {
 		return parent.checkListRepository
 	}
 	
 	var withCheckListRepository: WithCheckListRepository {
-		return DefaultWithCheckListRepository()
+		return DefaultWithCheckListRepository(session: session)
 	}
 	
 	var persistenceUseCase: PersistenceUseCase {

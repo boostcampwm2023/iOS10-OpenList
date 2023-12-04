@@ -21,6 +21,7 @@ protocol WithDetailCheckListDataSource {
 final class WithDetailCheckListViewModel {
 	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
+	private var textChange: TextChange = .init()
 	
 	init(
 		id: UUID,
@@ -45,8 +46,8 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 	func transform(_ input: Input) -> Output {
 		return Publishers.MergeMany<Output>(
 			updateTitle(input),
-			insert(input),
-			delete(input),
+			textShouldChange(input),
+			textDidChange(input),
 			appendDocument(input),
 			removeDocument(input),
 			receive(input)
@@ -70,27 +71,25 @@ private extension WithDetailCheckListViewModel {
 			.eraseToAnyPublisher()
 	}
 	
-	func insert(_ input: Input) -> Output {
-		return input.insert
+	func textShouldChange(_ input: Input) -> Output {
+		return input.textShouldChange
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
-				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.insert(at: editText)
-				})
-				return future.eraseToAnyPublisher()
-			}
-			.map { _ in
+			.map { owner, textChange in
+				owner.textChange = textChange
 				return .none
 			}
 			.eraseToAnyPublisher()
 	}
 	
-	func delete(_ input: Input) -> Output {
-		return input.delete
+	func textDidChange(_ input: Input) -> Output {
+		return input.textDidChange
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, currentText) -> AnyPublisher<CheckListItem, Never> in
 				let future = Future(asyncFunc: {
-					try await owner.crdtUseCase.delete(at: editText)
+					try await owner.crdtUseCase.update(
+						textChange: owner.textChange,
+						currentText: currentText
+					)
 				})
 				return future.eraseToAnyPublisher()
 			}

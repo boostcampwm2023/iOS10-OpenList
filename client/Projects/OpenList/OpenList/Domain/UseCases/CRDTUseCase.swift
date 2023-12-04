@@ -10,6 +10,7 @@ import CRDT
 enum CRDTUseCaseError: Error {
 	case docmuentNotFound
 	case decodeFailed
+	case typeIsNil
 }
 
 protocol CRDTUseCase {
@@ -17,8 +18,7 @@ protocol CRDTUseCase {
 	func receive(_ jsonString: String) async throws -> [CheckListItem]
 	func itemChecked(at id: UUID) async throws -> CheckListItem
 	func begingEdit(at id: UUID) async throws -> CheckListItem
-	func insert(at editText: EditText) async throws -> CheckListItem
-	func delete(at editText: EditText) async throws -> CheckListItem
+	func update(textChange: TextChange, currentText: String) async throws -> CheckListItem
 	func appendDocument(at editText: EditText) async throws -> CheckListItem
 	func removeDocument(at editText: EditText) async throws -> CheckListItem
 	func createDocument(id: UUID) -> RGASDocument<String>
@@ -66,16 +66,15 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	}
 	
 	func receive(_ jsonString: String) async throws -> [CheckListItem] {
-		dump(Data(jsonString.utf8).prettyPrintedJSONString)
 		guard let response = CRDTResponseDTO.map(jsonString: jsonString) else {
 			throw CRDTUseCaseError.decodeFailed
 		}
-		
 		switch response.event {
 		case .listen:
 			guard let data = response.data.first as? CRDTMessageResponseDTO else {
 				throw CRDTUseCaseError.decodeFailed
 			}
+			dump("Message Number: \(data.number)")
 			if documentsId.searchNode(from: data.id) == nil {
 				return [try appendCheckListItem(to: data.id, message: data.message)]
 			} else {
@@ -97,17 +96,6 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			
 		case .lastDate:
 			throw CRDTUseCaseError.decodeFailed
-//			guard let id, let data = response.data.first as? String else {
-//				throw CRDTUseCaseError.decodeFailed
-//			}
-//			let response = try await crdtRepository.fetchCheckListItems(id: id)
-//			return try response.map {
-//				if documentsId.searchNode(from: $0.id) == nil {
-//					try appendCheckListItem(to: $0.id, message: $0.message)
-//				} else {
-//					try updateCheckListItem(to: $0.id, message: $0.message)
-//				}
-//			}
 			
 		default:
 			dump(response)
@@ -123,25 +111,24 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		fatalError()
 	}
 	
-	func insert(at editText: EditText) async throws -> CheckListItem {
-		let operation = createOperation(at: editText, type: .insert, argument: 0)
-		let id = editText.id
-		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
-		return item
-	}
-	
-	func delete(at editText: EditText) async throws -> CheckListItem {
-		let operation = createOperation(at: editText, type: .delete, argument: 1)
-		let id = editText.id
-		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
-		if item.title.isEmpty {
-			documentsId.remove(value: id)
-			documentDictionary.removeValue(forKey: id)
-			mergeDictionary.removeValue(forKey: id)
+	func update(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		#if DEBUG
+		defer {
+			printDocument(text: currentText, id: textChange.id)
 		}
-		return item
+		#endif
+		
+		let oldString = textChange.oldString
+		let lengthChange = Comparison(currentText.count, oldString.count)
+		
+		switch lengthChange {
+		case .less:
+			return try await lengthChangeLess(textChange: textChange, currentText: currentText)
+		case .equal:
+			return try await lengthChangeEqual(textChange: textChange, currentText: currentText)
+		case .more:
+			return try await lengthChangeMore(textChange: textChange, currentText: currentText)
+		}
 	}
 	
 	func appendDocument(at editText: EditText) async throws -> CheckListItem {
@@ -165,6 +152,103 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 }
 
 private extension DefaultCRDTUseCase {
+	// MARK: LengthChange
+	func lengthChangeLess(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		let range = textChange.range
+		let oldString = textChange.oldString
+		let id = textChange.id
+		let replacementString = textChange.replacementString
+		
+		if range.location == 0 {
+			return try await delete(at: .init(id: id, content: replacementString, range: range))
+		} else {
+			let location = range.location - 1
+			let currentString = currentText.subString(offsetBy: location)
+			let prevString = oldString.subString(offsetBy: location)
+			
+			if currentString == prevString {
+				return try await delete(at: .init(id: id, content: replacementString, range: range))
+			} else {
+				return try await replace(
+					at: .init(
+						id: id,
+						content: currentString,
+						range: .init(location: location, length: range.length)
+					),
+					argument: 2
+				)
+			}
+		}
+	}
+	
+	func lengthChangeEqual(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		let range = textChange.range
+		let id = textChange.id
+		let location: Int = (range.length == 0) ? range.location - 1 : range.location
+		let string = currentText.subString(offsetBy: location)
+		return try await replace(
+			at: .init(
+				id: id,
+				content: string,
+				range: .init(location: location, length: range.length)
+			)
+		)
+	}
+	
+	func lengthChangeMore(textChange: TextChange, currentText: String) async throws -> CheckListItem {
+		let range = textChange.range
+		let id = textChange.id
+		
+		var string = currentText.subString(offsetBy: range.location)
+		guard let value2 = UnicodeScalar(String(string))?.value else {
+			throw CRDTUseCaseError.typeIsNil
+		}
+		if value2 < 0xac00 {
+			return try await insert(at: .init(id: id, content: string, range: range))
+		} else {
+			let location = range.location - 1
+			let prevString = currentText.subString(offsetBy: location)
+			string = prevString + string
+			return try await replace(
+				at: .init(
+					id: id,
+					content: string,
+					range: .init(location: location, length: range.length + 1)
+				)
+			)
+		}
+	}
+	
+	// MARK: Operation
+	func insert(at editText: EditText) async throws -> CheckListItem {
+		let operation = createOperation(at: editText, type: .insert, argument: 0)
+		let id = editText.id
+		let (item, message) = try updateCheckListItem(to: id, operation: operation)
+		try await updateRepository(id: id, message: message)
+		return item
+	}
+	
+	func delete(at editText: EditText) async throws -> CheckListItem {
+		let operation = createOperation(at: editText, type: .delete, argument: 1)
+		let id = editText.id
+		let (item, message) = try updateCheckListItem(to: id, operation: operation)
+		try await updateRepository(id: id, message: message)
+		if item.title.isEmpty {
+			documentsId.remove(value: id)
+			documentDictionary.removeValue(forKey: id)
+			mergeDictionary.removeValue(forKey: id)
+		}
+		return item
+	}
+	
+	func replace(at editText: EditText, argument: Int = 1) async throws -> CheckListItem {
+		let operation = createOperation(at: editText, type: .replace, argument: argument)
+		let id = editText.id
+		let (item, message) = try updateCheckListItem(to: id, operation: operation)
+		try await updateRepository(id: id, message: message)
+		return item
+	}
+	
 	// MARK: CheckListItem
 	func appendCheckListItem(to id: UUID, message: CRDTMessage) throws -> CheckListItem {
 		let document = createDocument(id: id)
@@ -213,7 +297,6 @@ private extension DefaultCRDTUseCase {
 			throw CRDTUseCaseError.docmuentNotFound
 		}
 		let message = try merge.applyLocal(to: operation)
-		dump(message)
 		let title = document.view()
 		return (
 			item: CheckListItem(itemId: id, title: title, isChecked: false),
@@ -257,15 +340,20 @@ extension DefaultCRDTUseCase: CRDTDocumentUseCase {
 	}
 }
 
-extension Decodable {
-	static func map(jsonString: String) -> Self? {
-		do {
-			let decoder = JSONDecoder()
-			decoder.keyDecodingStrategy = .convertFromSnakeCase
-			return try decoder.decode(Self.self, from: Data(jsonString.utf8))
-		} catch let error {
-			print(error)
-			return nil
+#if DEBUG
+extension DefaultCRDTUseCase {
+	func printDocument(text: String, id: UUID) {
+		guard let document = documentDictionary[id] else {
+			return
+		}
+		if text != document.view() {
+			dump("ListedChain with sep: \(document.viewWithSeparator())")
+			dump("Size of doc: \(document.viewLength())")
+			dump("ListedChain view: \(document.view())")
+			print(document.treeViewWithSeparator(tree: document.root, depth: 0))
+		} else {
+			dump("Text and document are the same")
 		}
 	}
 }
+#endif

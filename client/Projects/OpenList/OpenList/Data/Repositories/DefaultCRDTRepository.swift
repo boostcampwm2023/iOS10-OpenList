@@ -12,6 +12,7 @@ import CustomSocket
 final class DefaultCRDTRepository {
 	private let session: CustomSession
 	private let crdtStorage: CRDTStorage
+	private var number: Int = 0
 	
 	init(session: CustomSession = .init(), crdtStorage: CRDTStorage) {
 		self.session = session
@@ -26,12 +27,12 @@ extension DefaultCRDTRepository: CRDTRepository {
 	}
 	
 	func send(id: UUID, message: CRDTMessage) throws {
+		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: .init(id: id, data: message)
+			data: .init(id: id, number: number, data: message)
 		)
 		let data = try JSONEncoder().encode(request)
-		dump(data.prettyPrintedJSONString ?? "Couldn't create a .json string.")
 		WebSocket.shared.send(data: data)
 	}
 	
@@ -50,7 +51,6 @@ extension DefaultCRDTRepository: CRDTRepository {
 		)
 		
 		let responseData = try await service.request()
-		dump(responseData.prettyPrintedJSONString)
 		let response = try JSONDecoder().decode(WithCheckListItemResponseDTO.self, from: responseData)
 		var messages = [CRDTMessageResponseDTO]()
 		response.items.forEach { item in

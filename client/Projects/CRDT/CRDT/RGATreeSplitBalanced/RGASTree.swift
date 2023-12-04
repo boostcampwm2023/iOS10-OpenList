@@ -20,10 +20,10 @@ public final class RGASTree<T: Codable & Equatable>: Codable {
 	var parent: RGASTree<T>?
 	
 	/// 왼쪽 자식 트리를 가르키는 idNode
-	var leftChild: RGASTree<T>?
+	private(set) var leftChild: RGASTree<T>?
 	
 	/// 오른쪽 자식 트리를 가르키는 idNode
-	var rightChild: RGASTree<T>?
+	private(set) var rightChild: RGASTree<T>?
 	
 	/// 트리의 총 크기(서브 트리의 가중치 합)
 	/// size 값을 사용해서 주어진 위치에 있는 노드를 찾을 수 있다.

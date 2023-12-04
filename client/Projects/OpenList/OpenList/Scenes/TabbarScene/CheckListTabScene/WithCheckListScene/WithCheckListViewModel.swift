@@ -32,8 +32,9 @@ private extension WithCheckListViewModel {
 		return input.viewWillAppear
 			.withUnretained(self)
 			.flatMap { (owner, _) -> AnyPublisher<[WithCheckList], Never> in
-				return Future(asyncFunc: { return await owner.withCheckListUseCase.fetchAllCheckList() })
-				.eraseToAnyPublisher()
+				return Future(asyncFunc: {
+					return await owner.withCheckListUseCase.fetchAllCheckList()
+				}).eraseToAnyPublisher()
 			}
 			.map { items in
 				return .reload(items)

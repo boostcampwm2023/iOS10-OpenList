@@ -333,7 +333,7 @@ extension RGASDocument {
 			if node.isVisible {
 				size -= node.size
 				tombstoneNumber += 1
-				deleteInLocalTree(node: node)
+				try deleteInLocalTree(node: node)
 				node.makeTombstone()
 			}
 			guard let linkNode = node.link else {
@@ -351,7 +351,7 @@ extension RGASDocument {
 		remoteSplit(node: node, offsetAbs: operation.offset2)
 		guard node.isVisible else { return }
 		size -= node.size
-		deleteInLocalTree(node: node)
+		try deleteInLocalTree(node: node)
 		tombstoneNumber += 1
 		node.makeTombstone()
 	}
@@ -370,12 +370,17 @@ extension RGASDocument {
 		
 		size -= currentNode.size
 		tombstoneNumber += 1
-		deleteInLocalTree(node: currentNode)
+		try deleteInLocalTree(node: currentNode)
 		currentNode.makeTombstone()
 	}
 	
-	func deleteInLocalTree(node: RGASNode<T>) {
-		guard let tree = node.tree else { return }
+	func deleteInLocalTree(node: RGASNode<T>) throws {
+		guard let tree = node.tree else {
+			throw CRDTError.typeIsNil(
+				from: node.tree,
+				.init(debugDescription: "\(String(describing: node.tree)) is nil")
+			)
+		}
 		let isRoot = tree === root
 		let hasrightChild = tree.getrightChild() != nil
 		let hasleftChild = tree.getleftChild() != nil
@@ -385,7 +390,7 @@ extension RGASDocument {
 		var parent: RGASTree<T>?
 		if !isRoot {
 			parent = tree.getparent()
-			if let parent = parent, parent.getleftChild() === tree {
+			if let parent, parent.getleftChild() === tree {
 				isleftChild = true
 			}
 		}
@@ -394,42 +399,60 @@ extension RGASDocument {
 			if isLeaf {
 				root = nil
 			} else if hasleftChild && !hasrightChild {
-				root = root?.getleftChild()
+				root = root!.getleftChild()
 			} else if !hasleftChild && hasrightChild {
-				root = root?.getrightChild()
+				root = root!.getrightChild()
 			} else if let rightChild = tree.getrightChild() {
 				let tree2 = findMostLeft(tree: rightChild, increment: root?.getleftChild()?.size ?? 0)
-				tree2.leftChild = root?.getleftChild()
+				tree2.setleftChild(root?.getleftChild())
 				root = rightChild
+			} else {
+				throw CRDTError.typeIsNil(
+					from: tree.getrightChild(),
+					.init(debugDescription: "\(String(describing: tree.getrightChild())) is nil")
+				)
 			}
 		} else if isLeaf {
 			if isleftChild {
-				parent?.leftChild = nil
+				parent!.setleftChild(nil)
 			} else {
-				parent?.rightChild = nil
+				parent!.setrightChild(nil)
 			}
 		} else {
 			if !hasrightChild {
 				if isleftChild {
-					parent?.leftChild = tree.getleftChild()
+					parent!.setleftChild(tree.getleftChild())
 				} else {
-					parent?.rightChild = tree.getleftChild()
+					parent!.setrightChild(tree.getleftChild())
 				}
 			} else if !hasleftChild {
 				if isleftChild {
-					parent?.leftChild = tree.getrightChild()
+					parent!.setleftChild(tree.getrightChild())
 				} else {
-					parent?.rightChild = tree.getrightChild()
+					parent!.setrightChild(tree.getrightChild())
 				}
 			} else if let rightChild = tree.getrightChild() {
-				let tree2 = findMostLeft(tree: rightChild, increment: tree.getleftChild()?.size ?? 0)
-				tree2.leftChild = tree.getleftChild()
+				let tree2 = findMostLeft(tree: rightChild, increment: tree.getleftChild()!.size)
+				tree2.setleftChild(tree.getleftChild())
 				if isleftChild {
-					parent?.leftChild = rightChild
+					parent!.setleftChild(rightChild)
 				} else {
-					parent?.rightChild = rightChild
+					parent!.setrightChild(rightChild)
 				}
+			} else {
+				throw CRDTError.typeIsNil(
+					from: tree.getrightChild(),
+					.init(debugDescription: "\(String(describing: tree.getrightChild())) is nil")
+				)
 			}
+		}
+		
+		node.tree = nil
+		nodeNumberInTree -= 1
+		
+		while parent != nil {
+			parent!.setSize(parent!.size - node.size)
+			parent = parent!.parent
 		}
 	}
 }
@@ -476,9 +499,7 @@ extension RGASDocument {
 // MARK: Balance
 extension RGASDocument {
 	func balanceTree() {
-		// TODO: 크기가 너무 커서 balancing 이 안일어남 테스트 결과 밸런스는 잘 되는 듯
 		if (
-//			true
 			nodeNumberInTree > 3000 &&
 			nbIns > Int(Double(nodeNumberInTree) / (0.14 * log(Double(nodeNumberInTree)) / log(2)))
 		) {

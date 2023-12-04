@@ -14,7 +14,9 @@ extension Future where Failure == Never {
 				do {
 					let result = try await asyncFunc()
 					promise(.success(result))
-				} catch { }
+				} catch {
+//					dump(error)
+				}
 			}
 		}
 	}

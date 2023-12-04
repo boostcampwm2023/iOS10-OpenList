@@ -12,3 +12,10 @@ extension String? {
 		self == nil ? "" : self!
 	}
 }
+
+extension String {
+	func subString(offsetBy: Int) -> String {
+		let index = self.index(self.startIndex, offsetBy: offsetBy)
+		return String(self[index])
+	}
+}

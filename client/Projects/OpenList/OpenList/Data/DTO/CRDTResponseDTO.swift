@@ -13,7 +13,7 @@ struct CRDTResponseDTO: Decodable {
 	let data: [Any]
 	
 	enum CodingKeys: CodingKey {
-		case event, data
+		case number, event, data
 	}
 	
 	init(from decoder: Decoder) throws {
@@ -34,15 +34,17 @@ struct CRDTResponseDTO: Decodable {
 
 struct CRDTMessageResponseDTO: Decodable {
 	let id: UUID
+	let number: Int
 	let message: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case id, message
+		case id, number, message
 	}
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.id = try container.decode(UUID.self, forKey: .id)
+		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
 		
 		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
 			self.message = message

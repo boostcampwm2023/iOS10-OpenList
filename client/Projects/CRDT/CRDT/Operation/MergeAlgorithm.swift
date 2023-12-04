@@ -62,16 +62,15 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 			return try localInsert(opt)
 		case .delete:
 			return try localDelete(opt)
-//		case .replace:
-//			return try localReplace(opt)
-//		case .update:
-//			return try localUpdate(opt)
-//		case .move:
-//			return try localMove(opt)
+		case .replace:
+			return try localReplace(opt)
 		case .noop:
 			return nil
 		default:
-			return nil  // or throw IncorrectTraceException
+			throw CRDTError.typeIsNil(
+				from: opt.type,
+				.init(debugDescription: "\(opt.type) is nil")
+			)
 		}
 	}
 	
@@ -102,5 +101,11 @@ public class MergeAlgorithm<T: Codable>: CRDT<T> {
 	
 	func localDelete(_ opt: SequenceOperation<T>) throws -> [any Operation] {
 		fatalError("localDelete(opt:) must be overridden")
+	}
+	
+	func localReplace(_ opt: SequenceOperation<T>) throws -> [any Operation] {
+		var lop = try localDelete(opt)
+		lop.append(contentsOf: try localInsert(opt))
+		return lop
 	}
 }

@@ -39,7 +39,7 @@ final class TabBarComponent:
 	}
 	
 	var session: CustomSession = .init(
-		interceptor: AuthRequestInterceptor(token: KeyChain.shared.read(key: AuthKey.accessToken) ?? "")
+		interceptor: AccessTokenInterceptor()
 	)
 	
 	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {

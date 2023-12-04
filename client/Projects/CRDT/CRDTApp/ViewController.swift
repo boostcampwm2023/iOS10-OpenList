@@ -13,6 +13,9 @@ final class OperationBasedViewController: UIViewController {
 	private let inputTextField: UITextField = .init()
 	private let rgaSDocument: RGASDocument<String> = .init()
 	private lazy var merge0: RGASMerge<String> = .init(doc: rgaSDocument, siteID: 0)
+	private var oldString: String = ""
+	private var replacementString: [String] = []
+	private var range: NSRange = .init()
 	
 	private let decoder: JSONDecoder = .init()
 	private let encoder: JSONEncoder = .init()
@@ -60,10 +63,29 @@ private extension OperationBasedViewController {
 		try sendMessage(to: message)
 	}
 	
+	func replaceOperation(range: NSRange, content: [String], argument: Int = 1) throws {
+		let sequenceOperation = SequenceOperation<String>(
+			type: .replace,
+			position: range.location,
+			argument: argument,
+			content: content
+		)
+		let message = try merge0.applyLocal(to: sequenceOperation)
+		try sendMessage(to: message)
+	}
+	
 	func sendMessage(to message: CRDTMessage) throws {
 		let node = Node(event: deviceId, data: message)
 		let data = try encoder.encode(node)
-		printDocument(document: rgaSDocument)
+		if
+			let text = inputTextField.text,
+			rgaSDocument.view() != text
+		{
+			DispatchQueue.main.async { [weak self] in
+				self?.inputTextField.text = self?.rgaSDocument.view()
+			}
+			printDocument(document: rgaSDocument)
+		}
 		WebSocket.shared.send(data: data)
 	}
 	
@@ -97,6 +119,7 @@ private extension OperationBasedViewController {
 	}
 	
 	func setInputTextFieldAttributes() {
+		inputTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 		inputTextField.translatesAutoresizingMaskIntoConstraints = false
 		inputTextField.borderStyle = .line
 		inputTextField.delegate = self
@@ -144,21 +167,77 @@ extension OperationBasedViewController: UITextFieldDelegate {
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
+		guard let oldString = textField.text else { return false }
 		let content = string.map { String($0) }
+		self.range = range
+		self.oldString = oldString
+		self.replacementString = content
+		
+		return range.length < 2
+	}
+	
+	@objc func textFieldDidChange(_ sender: Any?) {
+		guard let currentText = inputTextField.text else { return }
 		
 		do {
-			switch range.length {
-			case 0:
-				try insertOperation(range: range, content: content)
-			case 1:
-				try deleteOperation(range: range, content: content)
-			default:
-				try deleteOperation(range: range, content: content)
+			let lengthChange = Comparison(currentText.count, oldString.count)
+			switch lengthChange {
+			case .less:
+				try lengthChangeLess(currentText)
+			case .equal:
+				try lengthChangeEqual(currentText)
+			case .more:
+				try lengthChangeMore(currentText)
 			}
 		} catch {
 			print(error)
 		}
-		return true
+	}
+}
+
+private extension OperationBasedViewController {
+	func lengthChangeLess(_ currentText: String) throws {
+		if range.location == 0 {
+			try deleteOperation(range: range, content: replacementString)
+		} else {
+			let location = range.location - 1
+			let currentString = currentText.subString(offsetBy: location)
+			let prevString = oldString.subString(offsetBy: location)
+			
+			if currentString == prevString {
+				try deleteOperation(range: range, content: replacementString)
+			} else {
+				let content = currentString.map { String($0) }
+				try replaceOperation(
+					range: .init(location: location, length: range.length),
+					content: content,
+					argument: 2
+				)
+			}
+		}
+	}
+	
+	func lengthChangeEqual(_ currentText: String) throws {
+		let location: Int = (range.length == 0) ? range.location - 1 : range.location
+		let string = currentText.subString(offsetBy: location)
+		let content = string.map { String($0) }
+		try replaceOperation(range: .init(location: location, length: range.length), content: content)
+	}
+	
+	func lengthChangeMore(_ currentText: String) throws {
+		var string = currentText.subString(offsetBy: range.location)
+		guard let value2 = UnicodeScalar(String(string))?.value else { return }
+		
+		if value2 < 0xac00 {
+			let content = string.map { String($0) }
+			try insertOperation(range: range, content: content)
+		} else {
+			let location = range.location - 1
+			let prevString = currentText.subString(offsetBy: location)
+			string = prevString + string
+			let content = string.map { String($0) }
+			try replaceOperation(range: .init(location: location, length: range.length + 1), content: content)
+		}
 	}
 }
 

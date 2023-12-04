@@ -33,6 +33,9 @@
 		4D36A39F2B178B65009AA063 /* AddCheckListItemPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D36A39E2B178B65009AA063 /* AddCheckListItemPlaceholder.swift */; };
 		4D4241A12B0F06D500E4F049 /* CRDT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; };
 		4D4241A22B0F06D500E4F049 /* CRDT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F833AFB2B0E075C007EDD45 /* CRDT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4D42B8A82B1C42D900ACE359 /* TextChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42B8A72B1C42D900ACE359 /* TextChange.swift */; };
+		4D42B8AB2B1C96B800ACE359 /* Decodable+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42B8AA2B1C96B800ACE359 /* Decodable+.swift */; };
+		4D42B8AD2B1C9A3B00ACE359 /* Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */; };
 		4D696CBB2B0F946100873B3B /* EditText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D696CBA2B0F946100873B3B /* EditText.swift */; };
 		4D8AEBD82B121F3A00292AF3 /* WithCheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */; };
 		4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CD32B050EA60032E0D7 /* UIFont+.swift */; };
@@ -241,6 +244,9 @@
 		4D36A39A2B177B73009AA063 /* AddCheckListItemHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemHeaderView.swift; sourceTree = "<group>"; };
 		4D36A39C2B1788E5009AA063 /* AddCheckListItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemButton.swift; sourceTree = "<group>"; };
 		4D36A39E2B178B65009AA063 /* AddCheckListItemPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemPlaceholder.swift; sourceTree = "<group>"; };
+		4D42B8A72B1C42D900ACE359 /* TextChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextChange.swift; sourceTree = "<group>"; };
+		4D42B8AA2B1C96B800ACE359 /* Decodable+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decodable+.swift"; sourceTree = "<group>"; };
+		4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparison.swift; sourceTree = "<group>"; };
 		4D696CBA2B0F946100873B3B /* EditText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditText.swift; sourceTree = "<group>"; };
 		4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItem.swift; sourceTree = "<group>"; };
 		4D967CD32B050EA60032E0D7 /* UIFont+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+.swift"; sourceTree = "<group>"; };
@@ -428,11 +434,9 @@
 		4D3397F92B02396800963664 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				4D42B8A92B1C96AB00ACE359 /* Foundation+ */,
 				78C2F0082B04879F00E4EC4E /* Combine+ */,
 				5F70C83E2B04C6CA00826B5D /* UIKit */,
-				4D3397FB2B02399300963664 /* Publisher+Operator.swift */,
-				78C2F01D2B04943E00E4EC4E /* String+.swift */,
-				4D967D162B0617260032E0D7 /* Future+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -484,6 +488,15 @@
 				78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		4D42B8A92B1C96AB00ACE359 /* Foundation+ */ = {
+			isa = PBXGroup;
+			children = (
+				78C2F01D2B04943E00E4EC4E /* String+.swift */,
+				4D42B8AA2B1C96B800ACE359 /* Decodable+.swift */,
+			);
+			path = "Foundation+";
 			sourceTree = "<group>";
 		};
 		4D8AEBD52B121F0F00292AF3 /* View */ = {
@@ -608,6 +621,8 @@
 				4D696CBA2B0F946100873B3B /* EditText.swift */,
 				5F8F5FE82B186D35001F7978 /* WithCheckList.swift */,
 				5F8F5FEA2B186D58001F7978 /* User.swift */,
+				4D42B8A72B1C42D900ACE359 /* TextChange.swift */,
+				4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */,
 			);
 			path = Entites;
 			sourceTree = "<group>";
@@ -986,9 +1001,11 @@
 		78C2F0082B04879F00E4EC4E /* Combine+ */ = {
 			isa = PBXGroup;
 			children = (
+				4D967D162B0617260032E0D7 /* Future+.swift */,
 				78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */,
 				78C2F01F2B04990E00E4EC4E /* UIButton+Combine.swift */,
 				78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */,
+				4D3397FB2B02399300963664 /* Publisher+Operator.swift */,
 			);
 			path = "Combine+";
 			sourceTree = "<group>";
@@ -1300,6 +1317,7 @@
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
 				78E9561C2B177DAB005CF5D3 /* CategoryUseCase.swift in Sources */,
+				4D42B8A82B1C42D900ACE359 /* TextChange.swift in Sources */,
 				4D696CBB2B0F946100873B3B /* EditText.swift in Sources */,
 				5F70C84B2B05FE9100826B5D /* PrivateCheckListResponseDTO.swift in Sources */,
 				5F8F5FE32B184DBF001F7978 /* UserResponseDTO.swift in Sources */,
@@ -1362,6 +1380,7 @@
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
 				78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
+				4D42B8AD2B1C9A3B00ACE359 /* Comparison.swift in Sources */,
 				78A4C7272B0F5E4300E07492 /* LoginResponseDTO.swift in Sources */,
 				78E956032B16FC23005CF5D3 /* MainCategoryRouter.swift in Sources */,
 				78C2F01E2B04943E00E4EC4E /* String+.swift in Sources */,
@@ -1372,6 +1391,7 @@
 				4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */,
 				78E956082B16FC23005CF5D3 /* SubCategoryViewModel.swift in Sources */,
 				78E956202B178365005CF5D3 /* DefaultCategoryRepository.swift in Sources */,
+				4D42B8AB2B1C96B800ACE359 /* Decodable+.swift in Sources */,
 				78E955FC2B16FC23005CF5D3 /* MainCategoryViewController.swift in Sources */,
 				78F747732B148C2E003ED6DA /* LoginInfo.swift in Sources */,
 			);
