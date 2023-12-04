@@ -19,8 +19,8 @@ export class RedisModule {
       useFactory: async (): Promise<RedisClientType> => {
         const client = createClient({
           url: process.env.REDIS_URL, // Redis 서버의 URL
-          username: process.env.REDIS_USERNAME, // Redis 사용자 이름
-          password: process.env.REDIS_PASSWORD, // Redis 비밀번호
+          // username: process.env.REDIS_USERNAME, // Redis 사용자 이름
+          // password: process.env.REDIS_PASSWORD, // Redis 비밀번호
         }) as RedisClientType;
         await client.connect(); // 클라이언트 연결
         return client; // 연결된 클라이언트 반환
@@ -35,8 +35,8 @@ export class RedisModule {
       useFactory: async (): Promise<RedisClientType> => {
         const client = createClient({
           url: process.env.REDIS_URL,
-          username: process.env.REDIS_USERNAME,
-          password: process.env.REDIS_PASSWORD,
+          // username: process.env.REDIS_USERNAME,
+          // password: process.env.REDIS_PASSWORD,
         }) as RedisClientType;
         await client.connect();
         return client;
@@ -51,8 +51,8 @@ export class RedisModule {
       useFactory: async (): Promise<RedisClientType> => {
         const client = createClient({
           url: process.env.REDIS_URL,
-          username: process.env.REDIS_USERNAME,
-          password: process.env.REDIS_PASSWORD,
+          // username: process.env.REDIS_USERNAME,
+          // password: process.env.REDIS_PASSWORD,
         }) as RedisClientType;
         await client.connect();
         return client;
