@@ -100,8 +100,10 @@ export class SharedChecklistsGateway
   private async handleNoClientsConnected(sharedChecklistId: string) {
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    const historyArray = history.map((item) => JSON.parse(item));
+    const flattenedArray = historyArray.flat();
     if (history.length > 0) {
-      await this.saveToDatabase(sharedChecklistId, history);
+      await this.saveToDatabase(sharedChecklistId, flattenedArray);
       await this.redisClient.del(redisArrayKey);
     }
   }
