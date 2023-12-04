@@ -52,10 +52,21 @@ export class SharedChecklistsGateway
     if (!sharedChecklistId)
       return { event: 'error', data: 'No sharedChecklistId provided' };
     client['sharedChecklistId'] = sharedChecklistId;
+    // 고유 식별자 생성
+    const clientId = uuid();
+
+    // WebSocket 객체에 식별자 첨부
+    client['id'] = clientId;
 
     this.addClientToMap(client, sharedChecklistId);
-    await this.updateRedisCount(sharedChecklistId, true);
+    const count = await this.updateRedisCount(sharedChecklistId, true);
+
+    console.log(
+      `CONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`,
+    );
     await this.sendHistoryToClient(client, sharedChecklistId);
+
+    console.log(``);
   }
 
   /**
@@ -65,10 +76,17 @@ export class SharedChecklistsGateway
    */
   async handleDisconnect(@ConnectedSocket() client: WebSocket) {
     const sharedChecklistId = client['sharedChecklistId'];
+    const clientId = client['id'];
     if (!(sharedChecklistId && this.clients.has(sharedChecklistId))) return;
 
     this.removeClientFromMap(client, sharedChecklistId);
     const count = await this.updateRedisCount(sharedChecklistId, false);
+
+    console.log(
+      `DISCONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`,
+    );
+    console.log(``);
+
     if (count === 0) {
       await this.handleNoClientsConnected(sharedChecklistId);
     }
@@ -224,6 +242,13 @@ export class SharedChecklistsGateway
       event: 'listen',
       data,
     });
+
+    const clientId = client['id'];
+    console.log(
+      `POST send ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId}`,
+    );
+    console.log(`data: ${JSON.stringify(data)}`);
+    console.log(``);
     this.redisPublisher.publish('sharedChecklist', message);
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     const dataToJson = JSON.stringify(data);
@@ -245,6 +270,9 @@ export class SharedChecklistsGateway
       data,
     });
     this.redisPublisher.publish('sharedChecklist', message);
+    console.log(`POST editing ::: CHECKLIST:${sharedChecklistId}`);
+    console.log(`data: ${JSON.stringify(data)}`);
+    console.log(``);
   }
   /**
    * 특정 클라이언트에 이벤트와 데이터를 전송한다.
@@ -257,6 +285,11 @@ export class SharedChecklistsGateway
     event: string,
     data: string[] | string,
   ) {
+    console.log(
+      `GET ${event} ::: CLIENT:${client['id']} CHECKLIST:${client['sharedChecklistId']}`,
+    );
+    console.log(`data: ${JSON.stringify(data)}`);
+    console.log(``);
     client.send(JSON.stringify({ event, data }));
   }
 
@@ -268,10 +301,15 @@ export class SharedChecklistsGateway
    */
   private async saveToDatabase(sharedChecklistId: string, history: string[]) {
     const now = new Date();
-    await this.sharedChecklistsService.createSharedChecklistItem(
+    const result = await this.sharedChecklistsService.createSharedChecklistItem(
       history,
       sharedChecklistId,
       now,
+    );
+    console.log(
+      `saveToDatabase CHECKLIST: ${sharedChecklistId}: ${JSON.stringify(
+        result,
+      )}`,
     );
   }
 }
