@@ -169,9 +169,10 @@ export class SharedChecklistsGateway
    */
   private initializeRedisSubscriber() {
     this.redisSubscriber.subscribe('sharedChecklist', (message) => {
-      const { serverUuid, sharedChecklistId, data } = JSON.parse(message);
+      const { serverUuid, sharedChecklistId, event, data } =
+        JSON.parse(message);
       if (serverUuid !== this.serverUuid) {
-        this.broadcastToLocal(sharedChecklistId, 'listen', data);
+        this.broadcastToLocal(sharedChecklistId, event, data);
       }
     });
   }
@@ -214,12 +215,33 @@ export class SharedChecklistsGateway
   ) {
     this.broadcastToLocal(sharedChecklistId, 'listen', data, client);
     const serverUuid = this.serverUuid;
-    const message = JSON.stringify({ serverUuid, sharedChecklistId, data });
+    const message = JSON.stringify({
+      serverUuid,
+      sharedChecklistId,
+      event: 'listen',
+      data,
+    });
     this.redisPublisher.publish('sharedChecklist', message);
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     this.redisClient.rPush(redisArrayKey, data);
   }
 
+  @SubscribeMessage('editing')
+  async handleEditingChecklist(
+    @ConnectedSocket() client: WebSocket,
+    @MessageBody() data: string,
+    sharedChecklistId: string = client['sharedChecklistId'],
+  ) {
+    this.broadcastToLocal(sharedChecklistId, 'editing', data, client);
+    const serverUuid = this.serverUuid;
+    const message = JSON.stringify({
+      serverUuid,
+      sharedChecklistId,
+      event: 'editing',
+      data,
+    });
+    this.redisPublisher.publish('sharedChecklist', message);
+  }
   /**
    * 특정 클라이언트에 이벤트와 데이터를 전송한다.
    * @param client 데이터를 전송할 클라이언트의 웹소켓 객체
