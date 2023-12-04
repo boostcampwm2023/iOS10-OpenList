@@ -25,6 +25,8 @@ import { SharedChecklistsModule } from './shared-checklists/shared-checklists.mo
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
+import { LoggingInterceptor } from './common/interceptor/log.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -60,7 +62,13 @@ import { winstonConfig } from './utils/winston.config';
     CategoriesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
