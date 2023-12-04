@@ -179,6 +179,7 @@
 		78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */; };
 		78A4C72B2B0F5FB100E07492 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */; };
 		78AC63072B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */; };
+		78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */; };
 		78C2F0072B04657600E4EC4E /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0062B04657600E4EC4E /* ConfirmButton.swift */; };
 		78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */; };
 		78C2F00D2B04882700E4EC4E /* UIControl+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */; };
@@ -428,6 +429,7 @@
 		78A4C7282B0F5F9300E07492 /* DefaultAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthRepository.swift; sourceTree = "<group>"; };
 		78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemTableViewSectionHeader.swift; sourceTree = "<group>"; };
+		78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		78C2F0062B04657600E4EC4E /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
 		78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Combine.swift"; sourceTree = "<group>"; };
 		78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Combine.swift"; sourceTree = "<group>"; };
@@ -964,6 +966,7 @@
 			isa = PBXGroup;
 			children = (
 				4DF0D5622B1F411E00EC68CA /* UserDefaults */,
+				78B9F1442B1DE75000B903E7 /* UserDefualts */,
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
@@ -1131,6 +1134,14 @@
 				78A4C7192B0F2ED900E07492 /* LoginViewModel.swift */,
 			);
 			path = LoginScene;
+			sourceTree = "<group>";
+		};
+		78B9F1442B1DE75000B903E7 /* UserDefualts */ = {
+			isa = PBXGroup;
+			children = (
+				78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */,
+			);
+			path = UserDefualts;
 			sourceTree = "<group>";
 		};
 		78C2F0042B04653B00E4EC4E /* DesignSystem */ = {
@@ -1450,6 +1461,7 @@
 				4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */,
 				4D8AEBD82B121F3A00292AF3 /* WithCheckListItem.swift in Sources */,
 				78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */,
+				78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */,
 				5F9349042B16DF4600282545 /* SharedCheckListCell.swift in Sources */,
 				4DF0D53B2B1E0F1000EC68CA /* SettingViewController.swift in Sources */,
 				5F70C83B2B04BF9A00826B5D /* CheckListItemButton.swift in Sources */,

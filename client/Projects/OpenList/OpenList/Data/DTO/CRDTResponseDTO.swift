@@ -54,16 +54,18 @@ struct CRDTDocumentResponseDTO: CRDTData, Decodable {
 struct CRDTMessageResponseDTO: CRDTData, Decodable {
 	let id: UUID
 	let number: Int
+	let name: String
 	let message: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case id, number, message
+		case id, number, name, message
 	}
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.id = try container.decode(UUID.self, forKey: .id)
 		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
+		self.name = try container.decode(String.self, forKey: .name)
 		
 		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
 			self.message = message

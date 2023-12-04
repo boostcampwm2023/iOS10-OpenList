@@ -69,16 +69,18 @@ enum DocumentEvent: String, Codable {
 struct CRDTMessageRequestDTO: CRDTData, Encodable {
 	let id: UUID
 	let number: Int
+	let name: String
 	let data: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case id, number, message
+		case id, number, name, message
 	}
 	
 	func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(id, forKey: .id)
 		try container.encode(number, forKey: .number)
+		try container.encode(name, forKey: .name)
 		if let myMessage = data as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)
 		} else if let myMessages = data as? OperationBasedMessagesBag {

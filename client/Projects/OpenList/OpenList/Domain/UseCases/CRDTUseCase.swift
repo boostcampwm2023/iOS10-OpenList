@@ -91,6 +91,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		switch response.event {
 		case .listen:
 			if let data = response.data.first as? CRDTMessageResponseDTO {
+				dump("Message Name: \(data.name)")
 				dump("Message Number: \(data.number)")
 				if documentsId.searchNode(from: data.id) == nil {
 					return [try appendCheckListItem(to: data.id, message: data.message)]

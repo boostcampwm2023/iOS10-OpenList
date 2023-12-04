@@ -13,6 +13,7 @@ final class DefaultCRDTRepository {
 	private let session: CustomSession
 	private let crdtStorage: CRDTStorage
 	private var number: Int = 0
+	private let name = UserDefaultsManager.load(forKey: "Username", type: String.self) ?? "Unknown"
 	
 	init(session: CustomSession = .init(), crdtStorage: CRDTStorage) {
 		self.session = session
@@ -30,7 +31,7 @@ extension DefaultCRDTRepository: CRDTRepository {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: CRDTMessageRequestDTO(id: id, number: number, data: message)
+			data: CRDTMessageRequestDTO(id: id, number: number, name: name, data: message)
 		)
 		let data = try JSONEncoder().encode(request)
 		WebSocket.shared.send(data: data)
