@@ -20,7 +20,8 @@ final class CheckListTabComponent:
 	Component<CheckListTabDependency>,
 	CheckListTableDependency,
 	WithCheckListDependency,
-	SharedCheckListDependency {
+	SharedCheckListDependency,
+	SettingDependency {
 	var session: CustomSession { parent.session }
 	
 	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
@@ -44,6 +45,10 @@ final class CheckListTabComponent:
 	fileprivate var sharedCheckListFactoryable: SharedCheckListFactoryable {
 		return SharedCheckListViewFactory(parent: self)
 	}
+	
+	fileprivate var settingFactoryable: SettingFactoryable {
+		return SettingViewFactory(parent: self)
+	}
 }
 
 protocol CheckListTabFactoryable: Factoryable {
@@ -57,11 +62,14 @@ final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListT
 	
 	func make() -> ViewControllable {
 		let component = CheckListTabComponent(parent: parent)
+		let router = CheckListTabRouter(settingFactory: component.settingFactoryable)
 		let viewController = CheckListTabViewController(
+			router: router,
 			privateCheckListTableFactory: component.privateCheckListTableFactoryable,
 			withCheckListFactoryable: component.withCheckListFactoryable,
 			sharedCheckListFactory: component.sharedCheckListFactoryable
 		)
+		router.viewController = viewController
 		return viewController
 	}
 }
