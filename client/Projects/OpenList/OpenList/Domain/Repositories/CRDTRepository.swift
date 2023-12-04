@@ -12,5 +12,6 @@ protocol CRDTRepository {
 	@discardableResult
 	func save(message: CRDTMessage) async throws -> CRDTMessage
 	func send(id: UUID, message: CRDTMessage) throws
-	func fetchCheckListItems(id: UUID) async throws -> [CRDTMessageResponseDTO]
+	func documentDelete(id: UUID) throws
+	func fetchCheckListItems(id: UUID) async throws -> [CRDTData]
 }

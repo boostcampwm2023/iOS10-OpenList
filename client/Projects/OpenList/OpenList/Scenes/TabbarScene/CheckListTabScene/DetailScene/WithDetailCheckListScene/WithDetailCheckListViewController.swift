@@ -182,6 +182,17 @@ private extension WithDetailCheckListViewController {
 		dataSource?.appendCheckListItem(item)
 		dataSource?.updatePlaceholder()
 	}
+	
+	func removeItem(id: UUID, indexPath: IndexPath) {
+		removeDocument.send(
+			.init(
+				id: id,
+				content: "",
+				range: .init(location: 0, length: 0)
+			)
+		)
+		dataSource?.deleteCheckListItem(at: indexPath)
+	}
 }
 
 // MARK: - View Methods
@@ -329,14 +340,8 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
 		let item = checkListView.cellForRow(WithCheckListItem.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
-			self?.removeDocument.send(
-				.init(
-					id: item.cellId ?? UUID(),
-					content: item.content,
-					range: .init(location: 0, length: item.content.count)
-				)
-			)
-			self?.dataSource?.deleteCheckListItem(at: indexPath)
+			let id = item.cellId ?? UUID()
+			self?.removeItem(id: id, indexPath: indexPath)
 			completion(true)
 		}
 		action.image = UIImage(systemName: "trash")
@@ -371,6 +376,10 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
+		guard !updatedText.isEmpty else {
+			removeItem(id: cellId, indexPath: indexPath)
+			return false
+		}
 		textShouldChange.send(
 			.init(id: cellId, range: range, oldString: text, replacementString: string)
 		)

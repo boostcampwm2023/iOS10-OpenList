@@ -24,6 +24,8 @@ struct CRDTResponseDTO: Decodable {
 			self.data = [message]
 		} else if let messages = try? container.decode([CRDTMessageResponseDTO].self, forKey: .data) {
 			self.data = messages
+		} else if let deleteDocument = try? container.decode(CRDTDocumentResponseDTO.self, forKey: .data) {
+			self.data = [deleteDocument]
 		} else if let lastDate = try? container.decode(String.self, forKey: .data) {
 			self.data = [lastDate]
 		} else {
@@ -32,7 +34,24 @@ struct CRDTResponseDTO: Decodable {
 	}
 }
 
-struct CRDTMessageResponseDTO: Decodable {
+struct CRDTDocumentResponseDTO: CRDTData, Decodable {
+	let id: UUID
+	let number: Int
+	let event: DocumentEvent
+	
+	enum CodingKeys: CodingKey {
+		case id, number, event
+	}
+	
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		self.id = try container.decode(UUID.self, forKey: .id)
+		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
+		self.event = try container.decode(DocumentEvent.self, forKey: .event)
+	}
+}
+
+struct CRDTMessageResponseDTO: CRDTData, Decodable {
 	let id: UUID
 	let number: Int
 	let message: CRDTMessage

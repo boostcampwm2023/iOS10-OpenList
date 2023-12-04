@@ -30,13 +30,23 @@ extension DefaultCRDTRepository: CRDTRepository {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: .init(id: id, number: number, data: message)
+			data: CRDTMessageRequestDTO(id: id, number: number, data: message)
 		)
 		let data = try JSONEncoder().encode(request)
 		WebSocket.shared.send(data: data)
 	}
 	
-	func fetchCheckListItems(id: UUID) async throws -> [CRDTMessageResponseDTO] {
+	func documentDelete(id: UUID) throws {
+		self.number += 1
+		let request = CRDTRequestDTO(
+			event: .send,
+			data: CRDTDocumentRequestDTO(id: id, number: number, event: .delete)
+		)
+		let data = try JSONEncoder().encode(request)
+		WebSocket.shared.send(data: data)
+	}
+	
+	func fetchCheckListItems(id: UUID) async throws -> [CRDTData] {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/shared-checklists/\(id.uuidString)")
 		builder.addHeader(
 			field: "Content-Type",
@@ -51,8 +61,9 @@ extension DefaultCRDTRepository: CRDTRepository {
 		)
 		
 		let responseData = try await service.request()
+		print(responseData.prettyPrintedJSONString)
 		let response = try JSONDecoder().decode(WithCheckListItemResponseDTO.self, from: responseData)
-		var messages = [CRDTMessageResponseDTO]()
+		var messages = [CRDTData]()
 		response.items.forEach { item in
 			item.messages.forEach {
 				messages.append($0)

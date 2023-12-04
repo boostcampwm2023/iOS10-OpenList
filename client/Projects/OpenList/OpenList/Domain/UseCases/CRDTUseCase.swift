@@ -47,12 +47,21 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList {
 		self.id = id
 		let response = try await crdtRepository.fetchCheckListItems(id: id)
-		let items = response.compactMap {
-			if documentsId.searchNode(from: $0.id) == nil {
-				try? appendCheckListItem(to: $0.id, message: $0.message)
+		let items = response.compactMap { item in
+			if let item = item as? CRDTDocumentResponseDTO {
+				return removeCheckList(to: item.id)
+			} else if let item = item as? CRDTMessageResponseDTO {
+				if documentsId.searchNode(from: item.id) == nil {
+					return try? appendCheckListItem(to: item.id, message: item.message)
+				} else {
+					return try? updateCheckListItem(to: item.id, message: item.message)
+				}
 			} else {
-				try? updateCheckListItem(to: $0.id, message: $0.message)
+				return nil
 			}
+		}
+		documentDictionary.forEach {
+			print($0)
 		}
 		return .init(
 			id: id,
@@ -71,14 +80,23 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		}
 		switch response.event {
 		case .listen:
-			guard let data = response.data.first as? CRDTMessageResponseDTO else {
-				throw CRDTUseCaseError.decodeFailed
-			}
-			dump("Message Number: \(data.number)")
-			if documentsId.searchNode(from: data.id) == nil {
-				return [try appendCheckListItem(to: data.id, message: data.message)]
+			if let data = response.data.first as? CRDTMessageResponseDTO {
+				dump("Message Number: \(data.number)")
+				if documentsId.searchNode(from: data.id) == nil {
+					return [try appendCheckListItem(to: data.id, message: data.message)]
+				} else {
+					return [try updateCheckListItem(to: data.id, message: data.message)]
+				}
+			} else if let data = response.data.first as? CRDTDocumentResponseDTO {
+				dump("Message Number: \(data.number)")
+				switch data.event {
+				case .delete:
+					return [removeCheckList(to: data.id)]
+				case .append:
+					return []
+				}
 			} else {
-				return [try updateCheckListItem(to: data.id, message: data.message)]
+				throw CRDTUseCaseError.decodeFailed
 			}
 			
 		case .history:
@@ -140,13 +158,9 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	}
 	
 	func removeDocument(at editText: EditText) async throws -> CheckListItem {
-		let operation = createOperation(at: editText, type: .delete, argument: editText.range.length)
 		let id = editText.id
-		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
-		documentsId.remove(value: id)
-		documentDictionary.removeValue(forKey: id)
-		mergeDictionary.removeValue(forKey: id)
+		try await removeRepository(id: id)
+		let item = removeCheckList(to: id)
 		return item
 	}
 }
@@ -302,6 +316,17 @@ private extension DefaultCRDTUseCase {
 			item: CheckListItem(itemId: id, title: title, isChecked: false),
 			message: message
 		)
+	}
+	
+	func removeCheckList(to id: UUID) -> CheckListItem {
+		documentsId.remove(value: id)
+		documentDictionary.removeValue(forKey: id)
+		mergeDictionary.removeValue(forKey: id)
+		return .init(itemId: id, title: "", isChecked: false)
+	}
+	
+	func removeRepository(id: UUID) async throws {
+		try crdtRepository.documentDelete(id: id)
 	}
 	
 	func updateRepository(id: UUID, message: CRDTMessage) async throws {
