@@ -30,11 +30,13 @@ final class WithCheckListItem: UITableViewCell {
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
 		static let cellSpacing: CGFloat = 24
+		static let imageSize: CGFloat = 30
 	}
 	
 	// MARK: - Properties
 	private let checkButton: CheckListItemButton = .init()
 	private let textView: OpenListTextView = .init()
+	private let userImageView: UserImageView = .init()
 	private var indexPath: IndexPath?
 	private(set) var cellId: UUID?
 	weak var delegate: WithCheckListItemDelegate?
@@ -78,11 +80,19 @@ private extension WithCheckListItem {
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
 		textView.translatesAutoresizingMaskIntoConstraints = false
 		textView.delegate = self
+
+		userImageView.translatesAutoresizingMaskIntoConstraints = false
+		userImageView.layer.cornerRadius = LayoutConstant.imageSize / 2
+		userImageView.layer.borderColor = UIColor.primary1.cgColor
+		userImageView.layer.borderWidth = 1.0
+		userImageView.configure(name: "김")
+		userImageView.isHidden = true
 	}
 	
 	func setViewHierarchies() {
 		contentView.addSubview(checkButton)
 		contentView.addSubview(textView)
+		contentView.addSubview(userImageView)
 	}
 	
 	func setViewConstraints() {
@@ -102,6 +112,16 @@ private extension WithCheckListItem {
 				equalTo: contentView.bottomAnchor,
 				constant: -LayoutConstant.cellSpacing
 			)
+			checkButton.trailingAnchor.constraint(equalTo: textView.leadingAnchor, constant: -LayoutConstant.spacing),
+			checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+			
+			userImageView.trailingAnchor.constraint(
+				equalTo: contentView.trailingAnchor,
+				constant: -LayoutConstant.horizontalPadding
+			),
+			userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+			userImageView.heightAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
+			userImageView.widthAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
 		])
 	}
 	

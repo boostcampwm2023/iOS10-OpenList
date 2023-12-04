@@ -180,6 +180,7 @@
 		78A4C72B2B0F5FB100E07492 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */; };
 		78AC63072B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */; };
 		78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */; };
+		78B9F1482B1DF7DA00B903E7 /* UserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */; };
 		78C2F0072B04657600E4EC4E /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0062B04657600E4EC4E /* ConfirmButton.swift */; };
 		78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */; };
 		78C2F00D2B04882700E4EC4E /* UIControl+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */; };
@@ -430,6 +431,7 @@
 		78A4C72A2B0F5FB100E07492 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
+		78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageView.swift; sourceTree = "<group>"; };
 		78C2F0062B04657600E4EC4E /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
 		78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Combine.swift"; sourceTree = "<group>"; };
 		78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Combine.swift"; sourceTree = "<group>"; };
@@ -581,6 +583,7 @@
 			isa = PBXGroup;
 			children = (
 				4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */,
+				78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1520,6 +1523,7 @@
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
 				4DF0D5612B1EFFB200EC68CA /* CustomAlertViewController.swift in Sources */,
 				78E956052B16FC23005CF5D3 /* SubCategoryViewController.swift in Sources */,
+				78B9F1482B1DF7DA00B903E7 /* UserImageView.swift in Sources */,
 				5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */,
 				5F8F5FEB2B186D58001F7978 /* User.swift in Sources */,
 				4DF0D53A2B1E0F1000EC68CA /* SettingRouter.swift in Sources */,
