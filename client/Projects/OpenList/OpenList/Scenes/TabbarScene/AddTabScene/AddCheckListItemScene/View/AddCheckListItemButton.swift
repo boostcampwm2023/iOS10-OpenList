@@ -45,6 +45,7 @@ final class AddCheckListItemButton: UIButton {
 
 extension AddCheckListItemButton {
 	func setViewAttributes() {
+		backgroundColor = .background
 		setImage(Image.disabled, for: .disabled)
 		setImage(Image.unchecked, for: .normal)
 	}

@@ -8,11 +8,11 @@
 import UIKit
 
 extension UIButton {
-	func configureAsSkipButton(title: String) {
+	func configureAsUnderlineTextButton(title: String, color: UIColor) {
 		let text = title
 		let attributeString = NSMutableAttributedString(string: text)
 		let underline = NSUnderlineStyle.thick.rawValue
-		let textColor = UIColor.gray3
+		let textColor = color
 		
 		attributeString.addAttribute(
 			NSAttributedString.Key.foregroundColor,

@@ -36,9 +36,9 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 	private var navigationBar: OpenListNavigationBar = .init(isBackButtonHidden: false)
 	
 	// Event Properties
+	private var configureHeaderView: PassthroughSubject<Void, Never> = .init()
 	private var viewLoad: PassthroughSubject<Void, Never> = .init()
 	private var nextButtonDidTappedSubject: PassthroughSubject<[CheckListItem], Never> = .init()
-	private var headerTitle: String?
 	
 	// MARK: - Initializers
 	init(
@@ -59,12 +59,12 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		LoadingIndicator.showLoading()
 		makeDataSource()
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
 		bind()
+		configureHeaderView.send()
 		viewLoad.send()
 	}
 }
@@ -76,6 +76,7 @@ extension AddCheckListItemViewController: ViewBindable {
 	
 	func bind() {
 		let input = AddCheckListItemInput(
+			configureHeaderView: configureHeaderView,
 			viewDidLoad: viewLoad,
 			nextButtonDidTap: nextButtonDidTappedSubject
 		)
@@ -90,8 +91,11 @@ extension AddCheckListItemViewController: ViewBindable {
 	
 	func render(_ state: State) {
 		switch state {
-		case .viewDidLoad(let items, let categoryInfo):
+		case .configureHeader(let categoryInfo):
 			updateView(categoryInfo: categoryInfo)
+				
+		case .viewDidLoad(let items):
+			LoadingIndicator.showLoading()
 			dataSource?.updateAiItem(
 				items.map {
 					return CheckListItem(itemId: UUID(), title: $0.content, isChecked: false)
@@ -119,7 +123,7 @@ private extension AddCheckListItemViewController {
 			let subCategory = categoryInfo.subCategory,
 			let minorCategory = categoryInfo.minorCategory
 		else {
-			headerView.configure(title: categoryInfo.title, tags: ["", "", ""])
+			headerView.configure(title: categoryInfo.title, tags: nil)
 			return
 		}
 		headerView.configure(title: categoryInfo.title, tags: [mainCategory, subCategory, minorCategory])
@@ -129,7 +133,7 @@ private extension AddCheckListItemViewController {
 // MARK: - View Methods
 private extension AddCheckListItemViewController {
 	func setViewAttributes() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		setNavigationBar()
 		setCheckListViewAttributes()
 		setHeaderViewAttributes()
@@ -137,13 +141,16 @@ private extension AddCheckListItemViewController {
 	}
 	
 	func setCheckListViewAttributes() {
+		checkListView.backgroundColor = .background
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
 		checkListView.registerCell(SelectCheckListCell.self)
 		checkListView.registerCell(AiCheckListCell.self)
 		checkListView.registerCell(AddCheckListItemPlaceholder.self)
+		checkListView.registerHeaderFooter(AddCheckListItemTableViewSectionHeader.self)
+		checkListView.sectionHeaderTopPadding = 0
 		checkListView.delegate = self
-		checkListView.allowsSelection = false
+		checkListView.allowsSelection = true
 		checkListView.separatorStyle = .none
 		/// 테이블 뷰 영역 터치 시 키보드를 내린다.
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -191,6 +198,7 @@ private extension AddCheckListItemViewController {
 				lessThanOrEqualTo: view.trailingAnchor,
 				constant: -LayoutConstant.horizontalPadding
 			),
+			headerView.heightAnchor.constraint(equalToConstant: 50),
 			checkListView.topAnchor.constraint(
 				equalTo: headerView.bottomAnchor,
 				constant: LayoutConstant.spacingBetweenTitleAndCheckList
@@ -255,6 +263,19 @@ private extension AddCheckListItemViewController {
 extension AddCheckListItemViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return LayoutConstant.checkListItemHeight
+	}
+
+	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if section == 1 { return 0 }
+		return 18
+	}
+	
+	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		if section == 1 { return nil }
+		let header = tableView.dequeueHeaderFooter(AddCheckListItemTableViewSectionHeader.self)
+		header.delegate = self
+		header.configure(section: section)
+		return header
 	}
 	
 	func tableView(
@@ -363,6 +384,44 @@ extension AddCheckListItemViewController: OpenListNavigationBarDelegate {
 extension AddCheckListItemViewController {
 	@objc func nextButtonDidTapped() {
 		guard let dataSource else { return }
-		nextButtonDidTappedSubject.send(dataSource.getSelectedCheckListItem())
+		nextButtonDidTappedSubject.send(dataSource.getCheckListItem(section: .selectItem))
+	}
+}
+
+extension AddCheckListItemViewController: AddCheckListItemTableViewHeaderDelegate {
+	func toggleAllSelected(at section: Int?) {
+		guard let section = section else { return }
+		if section == 0 {
+			guard let selectedItems = dataSource?.getCheckListItem(section: .selectItem) else { return }
+			dataSource?.deleteItems(selectedItems)
+			selectedItems.forEach {
+				dataSource?.updateAiItem([
+					CheckListItem(
+						itemId: $0.id,
+						title: $0.title,
+						isChecked: false
+					)
+				])
+			}
+			return
+		}
+	}
+	
+	func toggleAllUnSelected(at section: Int?) {
+		guard let section = section else { return }
+		if section == 2 {
+			guard let unselectedItems = dataSource?.getCheckListItem(section: .aiItem) else { return }
+			dataSource?.deleteItems(unselectedItems)
+			unselectedItems.forEach {
+				dataSource?.updateSelectItem([
+					CheckListItem(
+						itemId: $0.id,
+						title: $0.title,
+						isChecked: true
+					)
+				])
+			}
+			return
+		}
 	}
 }

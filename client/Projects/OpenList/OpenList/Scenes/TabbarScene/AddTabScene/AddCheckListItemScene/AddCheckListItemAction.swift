@@ -8,15 +8,14 @@
 import Combine
 
 struct AddCheckListItemInput {
+	let configureHeaderView: PassthroughSubject<Void, Never>
 	let viewDidLoad: PassthroughSubject<Void, Never>
 	let nextButtonDidTap: PassthroughSubject<[CheckListItem], Never>
 }
 
 enum AddCheckListItemState {
-	case viewDidLoad(
-		_ recommendChecklistItem: [RecommendChecklistItem],
-		_ categoryInfo: CategoryInfo
-	)
+	case configureHeader(_ categoryInfo: CategoryInfo)
+	case viewDidLoad(_ recommendChecklistItem: [RecommendChecklistItem])
 	case error(_ error: Error?)
 	case dismiss
 }

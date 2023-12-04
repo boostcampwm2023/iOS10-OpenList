@@ -31,12 +31,22 @@ final class AddCheckListItemViewModel {
 extension AddCheckListItemViewModel: AddCheckListItemViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany<Output>(
-      viewDidLoad(input), nextButtonDidTapped(input)
+			configureHeader(input),
+			viewDidLoad(input),
+			nextButtonDidTapped(input)
 		).eraseToAnyPublisher()
   }
 }
 
 private extension AddCheckListItemViewModel {
+	func configureHeader(_ input: Input) -> Output {
+		return input.configureHeaderView
+			.withUnretained(self)
+			.map { (owner, _) in
+				return .configureHeader(owner.categoryInfo)
+			}.eraseToAnyPublisher()
+	}
+	
 	func viewDidLoad(_ input: Input) -> Output {
 		if categoryInfo.mainCategory != nil &&
 			categoryInfo.subCategory != nil &&
@@ -50,10 +60,10 @@ private extension AddCheckListItemViewModel {
 					return future.eraseToAnyPublisher()
 				}
 				.withUnretained(self)
-				.map { (owner, result) in
+				.map { (_, result) in
 					switch result {
 					case let .success(items):
-						return .viewDidLoad(items, owner.categoryInfo)
+						return .viewDidLoad(items)
 					case let .failure(error):
 						return .error(error)
 					}
@@ -61,9 +71,8 @@ private extension AddCheckListItemViewModel {
 		}
 
 		return input.viewDidLoad
-			.withUnretained(self)
-			.map { (owner, _) in
-				return .viewDidLoad([], owner.categoryInfo)
+			.map {
+				return .viewDidLoad([])
 			}.eraseToAnyPublisher()
 	}
 	

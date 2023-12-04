@@ -211,7 +211,7 @@ private extension MinorCategoryViewController {
 	}
 	
 	func setSkipButton() {
-		skipButton.configureAsSkipButton(title: "건너뛰기")
+		skipButton.configureAsUnderlineTextButton(title: "건너뛰기", color: .gray3)
 	}
 	
 	func setNextButton() {
