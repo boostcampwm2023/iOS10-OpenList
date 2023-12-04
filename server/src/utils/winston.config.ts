@@ -3,7 +3,7 @@ import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 
 const env = process.env.NODE_ENV;
-const logDir = __dirname + '/../../logs'; // log 파일을 관리할 폴더
+const logDir = __dirname + '/../../../logs'; // log 파일을 관리할 폴더
 
 const dailyOptions = (level: string) => {
   return {
