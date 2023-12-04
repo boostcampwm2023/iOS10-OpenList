@@ -8,21 +8,9 @@ export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = WinstonModule.createLogger(winstonConfig);
 
   use(req: Request, res: Response, next: NextFunction) {
-    const startTime = new Date(); // 현재 시간을 Date 객체로 얻기
-    const startTimeString = startTime.toLocaleString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-    }); // 한국 시간대로 변환
-    const { ip, method, originalUrl } = req;
-    const userAgent = req.get('user-agent');
-
-    res.on('finish', () => {
-      const duration = Date.now() - startTime.getTime(); // 요청 처리 시간 계산
-      const { statusCode } = res;
-      this.logger.log({
-        level: 'info',
-        message: `${startTimeString} - ${method} ${originalUrl} ${statusCode} ${ip} ${userAgent} - ${duration}ms`,
-      });
-    });
+    const startTime = Date.now(); // 요청 시작 시간을 현재 시간으로 설정
+    req['startTime'] = startTime; // startTime을 req 객체에 저장
+    req['reqBody'] = req.body; // 요청 본문을 req 객체에 저장
 
     next();
   }
