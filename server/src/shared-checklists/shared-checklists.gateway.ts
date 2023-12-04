@@ -158,8 +158,11 @@ export class SharedChecklistsGateway
   ) {
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
     const history = await this.redisClient.lRange(redisArrayKey, 0, -1);
+    const historyArray = history.map((item) => JSON.parse(item));
+    const flattenedArray = historyArray.flat();
+
     if (history.length > 0) {
-      this.sendToClient(client, 'history', history);
+      this.sendToClient(client, 'history', flattenedArray);
     }
   }
 
@@ -223,7 +226,8 @@ export class SharedChecklistsGateway
     });
     this.redisPublisher.publish('sharedChecklist', message);
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
-    this.redisClient.rPush(redisArrayKey, data);
+    const dataToJson = JSON.stringify(data);
+    this.redisClient.rPush(redisArrayKey, dataToJson);
   }
 
   @SubscribeMessage('editing')
