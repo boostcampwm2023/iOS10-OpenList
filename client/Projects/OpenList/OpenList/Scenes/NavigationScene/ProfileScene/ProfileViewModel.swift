@@ -28,7 +28,7 @@ private extension ProfileViewModel {
 	func viewDidLoad(_ input: Input) -> Output {
 		return input.viewDidLoad
 			.map {
-				let user = User(userId: 1, email: "", fullName: "", nickname: "", profileImage: "")
+				let user = User(userId: 1, email: "", fullName: "", nickname: "Test", profileImage: "")
 				return .viewDidLoad(user)
 			}
 			.eraseToAnyPublisher()

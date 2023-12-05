@@ -5,8 +5,8 @@
 //  Created by wi_seong on 12/5/23.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 protocol ProfileRoutingLogic: AnyObject {
 	func dismissProfileScene()
@@ -16,9 +16,14 @@ final class ProfileViewController: UIViewController, ViewControllable {
 	enum Constant {
 		static let title: String = "프로필"
 		static let previousTitle: String = "카테고리"
-		static let settingItemHeight: CGFloat = 60
 		static let horizontalPadding: CGFloat = 20
+		static let profileImageWidthHeight: CGFloat = 100
+		static let inputViewWidth: CGFloat = 200
+		static let inputViewHeight: CGFloat = 28
+		static let editImageWidthHeight: CGFloat = 24
 		static let spacingBetweenTitleAndSetting: CGFloat = 24
+		static let spacingBetweenProfileAndNickname: CGFloat = 40
+		static let spacingBetweenNicknameAndLine: CGFloat = 8
 	}
 	
 	// MARK: - Properties
@@ -29,6 +34,11 @@ final class ProfileViewController: UIViewController, ViewControllable {
 	// UI Components
 	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, backButtonTitle: Constant.previousTitle)
 	private let titleHaederView: TitleHeaderView = .init()
+	private let profileImageView: UIImageView = .init()
+	private let nicknameInputView: UIView = .init()
+	private let nicknameLabel: UILabel = .init()
+	private let editImageView: UIImageView = .init()
+	private let lineView: UIView = .init()
 	
 	// Event Properties
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
@@ -78,7 +88,7 @@ extension ProfileViewController: ViewBindable {
 	func render(_ state: State) {
 		switch state {
 		case .viewDidLoad(let user):
-			dump(user)
+			nicknameLabel.text = user.nickname
 		}
 	}
 
@@ -94,6 +104,11 @@ private extension ProfileViewController {
 		
 		setNavigationAttributes()
 		setHeaderViewAttributes()
+		setProfileImageViewAttributes()
+		setNicknameInputViewAttributes()
+		setNicknameLabelAttributes()
+		setLineViewAttributes()
+		setEditImageViewAttributes()
 	}
 	
 	func setNavigationAttributes() {
@@ -105,9 +120,41 @@ private extension ProfileViewController {
 		titleHaederView.configure(title: Constant.title)
 	}
 	
+	func setProfileImageViewAttributes() {
+		profileImageView.translatesAutoresizingMaskIntoConstraints = false
+		profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
+		profileImageView.image = .circle
+	}
+	
+	func setNicknameInputViewAttributes() {
+		nicknameInputView.translatesAutoresizingMaskIntoConstraints = false
+	}
+	
+	func setNicknameLabelAttributes() {
+		nicknameLabel.translatesAutoresizingMaskIntoConstraints = false
+		nicknameLabel.font = .notoSansCJKkr(type: .regular, size: .small)
+		nicknameLabel.textAlignment = .center
+	}
+	
+	func setLineViewAttributes() {
+		lineView.translatesAutoresizingMaskIntoConstraints = false
+		lineView.backgroundColor = .gray1
+	}
+	
+	func setEditImageViewAttributes() {
+		editImageView.translatesAutoresizingMaskIntoConstraints = false
+		editImageView.image = .edit
+		editImageView.image?.withTintColor(.gray1)
+	}
+	
 	func setViewHierarchies() {
 		view.addSubview(navigationBar)
 		view.addSubview(titleHaederView)
+		view.addSubview(profileImageView)
+		view.addSubview(nicknameInputView)
+		nicknameInputView.addSubview(nicknameLabel)
+		nicknameInputView.addSubview(lineView)
+		nicknameInputView.addSubview(editImageView)
 	}
 	
 	func setViewConstraints() {
@@ -115,7 +162,44 @@ private extension ProfileViewController {
 		NSLayoutConstraint.activate([
 			titleHaederView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
 			titleHaederView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-			titleHaederView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+			titleHaederView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+			
+			profileImageView.widthAnchor.constraint(equalToConstant: Constant.profileImageWidthHeight),
+			profileImageView.heightAnchor.constraint(equalToConstant: Constant.profileImageWidthHeight),
+			profileImageView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+			
+			nicknameInputView.widthAnchor.constraint(equalToConstant: Constant.inputViewWidth),
+			nicknameInputView.heightAnchor.constraint(equalToConstant: Constant.inputViewHeight),
+			nicknameInputView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+			nicknameInputView.centerYAnchor.constraint(
+				equalTo: safeArea.centerYAnchor,
+				constant: Constant.spacingBetweenProfileAndNickname
+			),
+			nicknameInputView.topAnchor.constraint(
+				equalTo: profileImageView.bottomAnchor,
+				constant: Constant.spacingBetweenProfileAndNickname
+			),
+			
+			nicknameLabel.leadingAnchor.constraint(
+				equalTo: nicknameInputView.leadingAnchor,
+				constant: Constant.editImageWidthHeight
+			),
+			nicknameLabel.topAnchor.constraint(equalTo: nicknameInputView.topAnchor),
+			nicknameLabel.bottomAnchor.constraint(
+				equalTo: lineView.topAnchor,
+				constant: -Constant.spacingBetweenNicknameAndLine
+			),
+			
+			lineView.heightAnchor.constraint(equalToConstant: 1),
+			lineView.leadingAnchor.constraint(equalTo: nicknameInputView.leadingAnchor),
+			lineView.trailingAnchor.constraint(equalTo: nicknameInputView.trailingAnchor),
+			lineView.bottomAnchor.constraint(equalTo: nicknameInputView.bottomAnchor),
+			
+			editImageView.topAnchor.constraint(equalTo: nicknameInputView.topAnchor),
+			editImageView.widthAnchor.constraint(equalToConstant: Constant.editImageWidthHeight),
+			editImageView.heightAnchor.constraint(equalToConstant: Constant.editImageWidthHeight),
+			editImageView.leadingAnchor.constraint(equalTo: nicknameLabel.trailingAnchor),
+			editImageView.trailingAnchor.constraint(equalTo: nicknameInputView.trailingAnchor)
 		])
 	}
 }
