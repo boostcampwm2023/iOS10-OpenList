@@ -10,7 +10,8 @@ const organization = process.env.OPENAI_ORGANIZATION;
 
 const openai = new OpenAI({ apiKey, organization });
 
-async function generateGptData(major, sub, minor, count = 20) {
+export const generateGptData = async (category, count = 20) => {
+  const [main, sub, minor] = category;
   const completion = await openai.chat.completions.create({
     messages: [
       {
@@ -38,24 +39,16 @@ async function generateGptData(major, sub, minor, count = 20) {
                   }
                 `,
       },
-      { role: 'user', content: `${major}/${sub}/${minor}` },
+      { role: 'user', content: `${main}/${sub}/${minor}` },
     ],
-    model: 'gpt-3.5-turbo-1106',
+    // model: 'gpt-3.5-turbo-1106',
+    model: 'gpt-4-1106-preview',
     response_format: { type: 'json_object' },
   });
-
-  console.log(completion.choices[0]);
-
-  return completion.choices[0];
-}
-
-async function saveData(data) {
-  //postgresql에 저장
-}
-
-async function main() {
-  const data = await generateGptData('건강관리', '신체건강', '20대 남');
-  await saveData(data);
-}
-
-await main();
+  const response = completion.choices[0];
+  const checklistItems = JSON.parse(
+    response.message.content.replace(/\\n/g, ''),
+  );
+  console.log(checklistItems);
+  return checklistItems;
+};
