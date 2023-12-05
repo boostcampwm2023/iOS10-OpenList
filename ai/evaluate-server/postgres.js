@@ -11,10 +11,17 @@ const pool = new Pool({
 
 // 쿼리 실행 예시
 pool.query("SELECT * FROM test_table", (err, res) => {
-  console.log(err, res);
   console.log(res.rows);
+  console.log(arrayToObj(res.rows));
   pool.end();
 });
+
+const arrayToObj = (array) => {
+  return array.reduce((obj, item) => {
+    obj[item.id] = item.name;
+    return obj;
+  }, {});
+};
 
 // INSERT, UPDATE, DELETE 쿼리 실행 예시
 const text = "INSERT INTO your_table(name, email) VALUES($1, $2) RETURNING *";
