@@ -8,14 +8,23 @@
 import UIKit
 
 protocol AiCheckListCellDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: AiCheckListCell, indexPath: IndexPath)
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
+		cell: AiCheckListCell,
+		indexPath: IndexPath
+	)
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
 		cellId: UUID
 	) -> Bool
-	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID)
+	func checklistButtonDidToggle(
+		_ textView: OpenListTextView,
+		cell: AiCheckListCell,
+		cellId: UUID
+	)
+	func textViewDidChange(_ textView: OpenListTextView)
 }
 
 final class AiCheckListCell: UITableViewCell {
@@ -24,11 +33,12 @@ final class AiCheckListCell: UITableViewCell {
 		static let verticalPadding: CGFloat = 12
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
+		static let cellSpacing: CGFloat = 24
 	}
 	
 	// MARK: - Properties
 	private let checkButton: AddCheckListItemButton = .init()
-	private let textField: CheckListItemTextField = .init()
+	private let textView: OpenListTextView = .init()
 	private var indexPath: IndexPath?
 	private var cellId: UUID?
 	weak var delegate: AiCheckListCellDelegate?
@@ -51,7 +61,7 @@ extension AiCheckListCell {
 	func configure(with checkListItem: CheckListItem, indexPath: IndexPath) {
 		self.indexPath = indexPath
 		self.cellId = checkListItem.id
-		textField.text = checkListItem.title
+		textView.text = checkListItem.title
 		checkButton.setChecked()
 	}
 }
@@ -63,13 +73,13 @@ private extension AiCheckListCell {
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
-		textField.translatesAutoresizingMaskIntoConstraints = false
-		textField.delegate = self
+		textView.translatesAutoresizingMaskIntoConstraints = false
+		textView.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		contentView.addSubview(checkButton)
-		contentView.addSubview(textField)
+		contentView.addSubview(textView)
 	}
 	
 	func setViewConstraints() {
@@ -77,14 +87,18 @@ private extension AiCheckListCell {
 			checkButton.widthAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.width),
 			checkButton.heightAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.height),
 			checkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstant.horizontalPadding),
-			checkButton.trailingAnchor.constraint(equalTo: textField.leadingAnchor, constant: -LayoutConstant.spacing),
-			checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			textField.topAnchor.constraint(equalTo: checkButton.topAnchor),
-			textField.trailingAnchor.constraint(
+			checkButton.trailingAnchor.constraint(equalTo: textView.leadingAnchor, constant: -LayoutConstant.spacing),
+			checkButton.topAnchor.constraint(equalTo: textView.topAnchor),
+			
+			textView.topAnchor.constraint(equalTo: contentView.topAnchor),
+			textView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
 				constant: -LayoutConstant.horizontalPadding
 			),
-			textField.bottomAnchor.constraint(equalTo: checkButton.bottomAnchor)
+			textView.bottomAnchor.constraint(
+				equalTo: contentView.bottomAnchor,
+				constant: -LayoutConstant.cellSpacing
+			)
 		])
 	}
 	
@@ -93,35 +107,38 @@ private extension AiCheckListCell {
 		guard
 			let cellId = self.cellId
 		else { return }
-		delegate?.checklistButtonDidToggle(textField, cell: self, cellId: cellId)
+		delegate?.checklistButtonDidToggle(textView, cell: self, cellId: cellId)
 	}
 }
 
-extension AiCheckListCell: UITextFieldDelegate {
-	func textFieldDidEndEditing(_ textField: UITextField) {
+extension AiCheckListCell: UITextViewDelegate {
+	func textViewDidEndEditing(_ textView: UITextView) {
 		guard let indexPath = indexPath else { return }
-		delegate?.textFieldDidEndEditing(self.textField, cell: self, indexPath: indexPath)
+		delegate?.textViewDidEndEditing(self.textView, cell: self, indexPath: indexPath)
 	}
 	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
-	}
-	
-	func textField(
-		_ textField: UITextField,
-		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+	func textView(
+		_ textView: UITextView,
+		shouldChangeTextIn range: NSRange,
+		replacementText text: String
 	) -> Bool {
+		guard text != "\n" else {
+			textView.resignFirstResponder()
+			return false
+		}
 		guard
 			let delegate,
 			let cellId
 		else { return true }
-		return delegate.textField(
-			self.textField,
+		return delegate.textView(
+			self.textView,
 			shouldChangeCharactersIn: range,
-			replacementString: string,
+			replacementString: text,
 			cellId: cellId
 		)
+	}
+	
+	func textViewDidChange(_ textView: UITextView) {
+		delegate?.textViewDidChange(self.textView)
 	}
 }
