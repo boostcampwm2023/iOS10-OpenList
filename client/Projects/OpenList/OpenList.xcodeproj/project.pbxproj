@@ -80,6 +80,11 @@
 		4DF0D54D2B1EBBF200EC68CA /* SettingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D54C2B1EBBF200EC68CA /* SettingUseCase.swift */; };
 		4DF0D54F2B1EBC1700EC68CA /* SettingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D54E2B1EBC1700EC68CA /* SettingRepository.swift */; };
 		4DF0D5512B1EBC3A00EC68CA /* DefaultSettingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5502B1EBC3A00EC68CA /* DefaultSettingRepository.swift */; };
+		4DF0D5582B1EE54700EC68CA /* ProfileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5532B1EE54700EC68CA /* ProfileAction.swift */; };
+		4DF0D5592B1EE54700EC68CA /* ProfileRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5542B1EE54700EC68CA /* ProfileRouter.swift */; };
+		4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5552B1EE54700EC68CA /* ProfileViewController.swift */; };
+		4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5562B1EE54700EC68CA /* ProfileViewFactory.swift */; };
+		4DF0D55C2B1EE54700EC68CA /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */; };
 		5F70C8302B04A96E00826B5D /* PrivateDetailCheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82B2B04A96E00826B5D /* PrivateDetailCheckListViewController.swift */; };
 		5F70C8312B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82C2B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift */; };
 		5F70C8322B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82D2B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift */; };
@@ -302,6 +307,11 @@
 		4DF0D54C2B1EBBF200EC68CA /* SettingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingUseCase.swift; sourceTree = "<group>"; };
 		4DF0D54E2B1EBC1700EC68CA /* SettingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingRepository.swift; sourceTree = "<group>"; };
 		4DF0D5502B1EBC3A00EC68CA /* DefaultSettingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSettingRepository.swift; sourceTree = "<group>"; };
+		4DF0D5532B1EE54700EC68CA /* ProfileAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAction.swift; sourceTree = "<group>"; };
+		4DF0D5542B1EE54700EC68CA /* ProfileRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRouter.swift; sourceTree = "<group>"; };
+		4DF0D5552B1EE54700EC68CA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		4DF0D5562B1EE54700EC68CA /* ProfileViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewFactory.swift; sourceTree = "<group>"; };
+		4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		5F70C82B2B04A96E00826B5D /* PrivateDetailCheckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewController.swift; sourceTree = "<group>"; };
 		5F70C82C2B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewFactory.swift; sourceTree = "<group>"; };
 		5F70C82D2B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewModel.swift; sourceTree = "<group>"; };
@@ -689,6 +699,7 @@
 			isa = PBXGroup;
 			children = (
 				4DF0D5492B1E232800EC68CA /* Common */,
+				4DF0D5522B1EE4DC00EC68CA /* ProfileScene */,
 				4DF0D5322B1E0ED500EC68CA /* SettingScene */,
 			);
 			path = NavigationScene;
@@ -721,6 +732,18 @@
 				4DF0D54A2B1E233100EC68CA /* TitleHeaderView.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		4DF0D5522B1EE4DC00EC68CA /* ProfileScene */ = {
+			isa = PBXGroup;
+			children = (
+				4DF0D5532B1EE54700EC68CA /* ProfileAction.swift */,
+				4DF0D5542B1EE54700EC68CA /* ProfileRouter.swift */,
+				4DF0D5552B1EE54700EC68CA /* ProfileViewController.swift */,
+				4DF0D5562B1EE54700EC68CA /* ProfileViewFactory.swift */,
+				4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */,
+			);
+			path = ProfileScene;
 			sourceTree = "<group>";
 		};
 		5F70C8282B04A93A00826B5D /* PrivateDetailCheckListScene */ = {
@@ -1348,6 +1371,8 @@
 				4DD97D9C2B14D3A600DF73BC /* DetailCheckListUseCase.swift in Sources */,
 				5F927CF02B18BEA9009C7DD2 /* OpenListNotificationName.swift in Sources */,
 				4DDC43492B0F39EB00859B28 /* DefaultCRDTStorage.swift in Sources */,
+				4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */,
+				4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */,
 				4D8AEBD82B121F3A00292AF3 /* WithCheckListItem.swift in Sources */,
 				78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */,
 				5F9349042B16DF4600282545 /* SharedCheckListCell.swift in Sources */,
@@ -1388,6 +1413,7 @@
 				5F8F5FE72B18512D001F7978 /* DefaultWithCheckListRepository.swift in Sources */,
 				4D34155E2B188395004C3FC9 /* CRDTRequestDTO.swift in Sources */,
 				78E955FF2B16FC23005CF5D3 /* SkipButton.swift in Sources */,
+				4DF0D55C2B1EE54700EC68CA /* ProfileViewModel.swift in Sources */,
 				4DDC43322B0F16CC00859B28 /* WithDetailCheckListViewFactory.swift in Sources */,
 				4D967CF42B05AF9F0032E0D7 /* CoreDataStorage.xcdatamodeld in Sources */,
 				78E955FA2B16FC23005CF5D3 /* MainCategoryViewFactory.swift in Sources */,
@@ -1409,6 +1435,7 @@
 				4DF0D5402B1E0FFC00EC68CA /* SettingItem.swift in Sources */,
 				5F70C8392B04BF7A00826B5D /* LocalCheckListItem.swift in Sources */,
 				5F9349022B16DF4600282545 /* SharedCheckListViewController.swift in Sources */,
+				4DF0D5582B1EE54700EC68CA /* ProfileAction.swift in Sources */,
 				5FA8466B2B10A08B00B90F85 /* UIDevice+safeAreaHeight.swift in Sources */,
 				5F9349052B16DF4600282545 /* SharedCheckListViewFactory.swift in Sources */,
 				78E956022B16FC23005CF5D3 /* GradientStageCircle.swift in Sources */,
@@ -1427,6 +1454,7 @@
 				4DD97D982B14934000DF73BC /* DeepLinkTarget.swift in Sources */,
 				4D36A3972B1777C3009AA063 /* AiCheckListCell.swift in Sources */,
 				4D36A38F2B177167009AA063 /* AddCheckListItemRouter.swift in Sources */,
+				4DF0D5592B1EE54700EC68CA /* ProfileRouter.swift in Sources */,
 				4DF0D54F2B1EBC1700EC68CA /* SettingRepository.swift in Sources */,
 				4D967D152B0601870032E0D7 /* PrivateCheckListStorage.swift in Sources */,
 				5F9349012B16DF4600282545 /* SharedCheckListAction.swift in Sources */,

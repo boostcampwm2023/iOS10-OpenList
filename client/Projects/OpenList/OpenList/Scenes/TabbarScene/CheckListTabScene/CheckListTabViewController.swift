@@ -18,6 +18,7 @@ enum CheckListTabType: Int, Comparable {
 }
 
 protocol CheckListTabRoutingLogic: AnyObject {
+	func showProfile()
 	func showSetting()
 }
 
@@ -32,7 +33,7 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 	
 	// MARK: - UI Components
 	/// 네비게이션 뷰 컨트롤러
-	private let navigationBar: OpenListNavigationBar = .init(rightItems: [.more])
+	private let navigationBar: OpenListNavigationBar = .init(leftItems: [.profile], rightItems: [.more])
 	/// 상단 탭 뷰
 	private let checkListTopTabView: CheckListTopTabView = .init()
 	/// 상단 탭의 인디케이터 뷰
@@ -276,6 +277,8 @@ extension CheckListTabViewController: OpenListNavigationBarDelegate {
 	
 	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
 		switch item.type {
+		case .profile:
+			router.showProfile()
 		case .more:
 			router.showSetting()
 		default: return

@@ -22,6 +22,7 @@ final class CheckListTabComponent:
 	CheckListTableDependency,
 	WithCheckListDependency,
 	SharedCheckListDependency,
+	ProfileDependency,
 	SettingDependency {
 	var session: CustomSession { parent.session }
 	
@@ -49,6 +50,10 @@ final class CheckListTabComponent:
 		return SharedCheckListViewFactory(parent: self)
 	}
 	
+	fileprivate var profileFactoryable: ProfileFactoryable {
+		return ProfileViewFactory(parent: self)
+	}
+	
 	fileprivate var settingFactoryable: SettingFactoryable {
 		return SettingViewFactory(parent: self)
 	}
@@ -67,6 +72,7 @@ final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListT
 		let component = CheckListTabComponent(parent: parent)
 		let router = CheckListTabRouter(
 			appRouter: appRouter,
+			profileFactory: component.profileFactoryable,
 			settingFactory: component.settingFactoryable
 		)
 		let viewController = CheckListTabViewController(

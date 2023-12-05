@@ -11,7 +11,7 @@ enum OpenListNavigationItemType {
 	case bell
 	case search
 	case more
-	case logo(_ image: UIImage)
+	case profile
 }
 
 extension OpenListNavigationItemType {
@@ -23,7 +23,8 @@ extension OpenListNavigationItemType {
 			return .search.withRenderingMode(.alwaysTemplate)
 		case .more:
 			return .more.withRenderingMode(.alwaysTemplate)
-		case .logo(let image):
+		case .profile:
+			let image = UIImage(systemName: "person.crop.circle") ?? UIImage()
 			return image.withRenderingMode(.alwaysOriginal)
 		}
 	}
