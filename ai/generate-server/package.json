@@ -1,0 +1,12 @@
+{
+  "name": "generate-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "typeorm": "^0.3.17"
+  }
+}

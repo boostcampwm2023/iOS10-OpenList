@@ -1,4 +1,5 @@
 /.idea
 
+/ai/generate-server/node_modules
 
 .env
