@@ -30,6 +30,21 @@ final class TabBarComponent:
 		return DefaultPersistenceUseCase(checkListRepository: checkListRepository)
 	}
 	
+	var categoryUseCase: CategoryUseCase {
+		return DefaultCategoryUseCase(categoryRepository: categoryRepository)
+	}
+	
+	var categorySession: CustomSession {
+		return CustomSession(
+			configuration: .default,
+			interceptor: AccessTokenInterceptor()
+		)
+	}
+		
+	var categoryRepository: CategoryRepository {
+		return DefaultCategoryRepository(session: categorySession)
+	}
+	
 	var checkListRepository: CheckListRepository {
 		return DefaultCheckListRepository(checkListStorage: checkListStorage)
 	}
