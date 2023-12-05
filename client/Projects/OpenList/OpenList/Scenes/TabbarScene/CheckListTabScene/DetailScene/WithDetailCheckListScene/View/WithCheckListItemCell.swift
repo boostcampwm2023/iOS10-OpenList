@@ -72,6 +72,10 @@ extension WithCheckListItemCell {
 		else { return }
 		userImageView.configure(name: String(firstChar))
 	}
+	
+	func resetUserPosition() {
+		userImageView.isHidden = true
+	}
 }
 
 private extension WithCheckListItemCell {

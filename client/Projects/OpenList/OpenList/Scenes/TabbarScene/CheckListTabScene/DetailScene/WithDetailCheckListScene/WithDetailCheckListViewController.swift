@@ -29,6 +29,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private var dataSource: WithDetailCheckListDiffableDataSource?
 	private var isOpenSocket: Bool = false
 	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
+	private var userIndicatingDictionary: [String: IndexPath] = [:]
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -300,6 +301,9 @@ private extension WithDetailCheckListViewController {
 				case is WithCheckListItem:
 					let cell = tableView.dequeueCell(WithCheckListItemCell.self, for: indexPath)
 					guard let item = itemIdentifier as? WithCheckListItem else { return cell }
+					let name = item.name ?? "Unknown"
+					self?.handleNewData(name: name)
+					self?.userIndicatingDictionary[name] = indexPath
 					cell.configure(with: item, indexPath: indexPath)
 					cell.delegate = self
 					return cell
@@ -315,6 +319,13 @@ private extension WithDetailCheckListViewController {
 				}
 			}
 		)
+	}
+	
+	func handleNewData(name: String) {
+		if let previousIndexpath = self.userIndicatingDictionary[name] {
+			guard let cell = checkListView.cellForRow(at: previousIndexpath) as? WithCheckListItemCell else { return }
+			cell.resetUserPosition()
+		}
 	}
 }
 
