@@ -28,7 +28,7 @@ final class ProfileViewController: UIViewController, ViewControllable {
 	
 	// MARK: - Properties
 	private let router: ProfileRoutingLogic
-	private let viewModel: any ProfileViewModelable
+	private let viewModel: any ProfileViewModelable & ProfileViewModelDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	
 	// UI Components
@@ -42,11 +42,12 @@ final class ProfileViewController: UIViewController, ViewControllable {
 	
 	// Event Properties
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
+	private let updateNickname: PassthroughSubject<String, Never> = .init()
 
 	// MARK: - Initializers
 	init(
 		router: ProfileRoutingLogic,
-		viewModel: some ProfileViewModelable
+		viewModel: some ProfileViewModelable & ProfileViewModelDataSource
 	) {
 		self.router = router
 		self.viewModel = viewModel
@@ -76,7 +77,10 @@ extension ProfileViewController: ViewBindable {
 	typealias OutputError = Error
 
 	func bind() {
-		let input = ProfileInput(viewDidLoad: viewLoad)
+		let input = ProfileInput(
+			viewDidLoad: viewLoad,
+			updateNickname: updateNickname
+		)
 		let state = viewModel.transform(input)
 		state
 			.receive(on: DispatchQueue.main)
@@ -89,11 +93,27 @@ extension ProfileViewController: ViewBindable {
 		switch state {
 		case .viewDidLoad(let user):
 			nicknameLabel.text = user.nickname
+		case .updateNickname(let nickname):
+			nicknameLabel.text = nickname
 		}
 	}
 
 	func handleError(_ error: OutputError) {
 		dump(error)
+	}
+}
+
+private extension ProfileViewController {
+	@objc func inputNickname() {
+		AlertBuilder(viewController: self)
+			.setTitle("이름")
+			.setPlaceholder("이름을 입력해주세요.")
+			.setTextFieldText(viewModel.nickname)
+			.addActionConfirm("확인") { [weak self] text in
+				self?.updateNickname.send(text)
+			}
+			.addActionCancel("취소")
+			.show()
 	}
 }
 
@@ -123,11 +143,16 @@ private extension ProfileViewController {
 	func setProfileImageViewAttributes() {
 		profileImageView.translatesAutoresizingMaskIntoConstraints = false
 		profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
-		profileImageView.image = .circle
+		profileImageView.image = .profile
+		profileImageView.tintColor = .primary1
 	}
 	
 	func setNicknameInputViewAttributes() {
 		nicknameInputView.translatesAutoresizingMaskIntoConstraints = false
+		let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(inputNickname))
+		tapGesture.numberOfTapsRequired = 1
+		nicknameInputView.isUserInteractionEnabled = true
+		nicknameInputView.addGestureRecognizer(tapGesture)
 	}
 	
 	func setNicknameLabelAttributes() {

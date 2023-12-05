@@ -24,8 +24,13 @@ extension OpenListNavigationItemType {
 		case .more:
 			return .more.withRenderingMode(.alwaysTemplate)
 		case .profile:
-			let image = UIImage(systemName: "person.crop.circle") ?? UIImage()
-			return image.withRenderingMode(.alwaysOriginal)
+			var image: UIImage {
+				guard let profile = Storage.shared.fetch(key: .profile) as? UIImage else {
+					return UIImage.profile
+				}
+				return profile
+			}
+			return image.withRenderingMode(.alwaysTemplate)
 		}
 	}
 }
