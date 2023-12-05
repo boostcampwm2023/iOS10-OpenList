@@ -119,8 +119,6 @@ extension WithDetailCheckListViewController: ViewBindable {
 			viewAppear(checkList)
 		case let .updateItems(items):
 			updateTextField(to: items)
-		case let .updateOneItem((item, name)):
-			dataSource?.receiveCheckListItemWithName(with: item, name: name)
 		case let .appendItem(item):
 			appendItem(item)
 		case let .removeItem(content):

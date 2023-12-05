@@ -21,8 +21,7 @@ struct WithDetailCheckListInput {
 enum WithDetailCheckListState {
 	case none
 	case viewWillAppear(CheckList)
-	case updateItems(([any ListItem]))
-	case updateOneItem((any ListItem, String))
+	case updateItems([any ListItem])
 	case appendItem(any ListItem)
 	case removeItem(any ListItem)
 	case socketConnet(Bool)
