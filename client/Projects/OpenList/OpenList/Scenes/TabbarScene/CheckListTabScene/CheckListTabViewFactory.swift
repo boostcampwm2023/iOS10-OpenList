@@ -11,6 +11,7 @@ import Foundation
 
 protocol CheckListTabDependency: Dependency {
 	var session: CustomSession { get }
+	var checkListStorage: PrivateCheckListStorage { get }
 	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
@@ -20,7 +21,8 @@ final class CheckListTabComponent:
 	Component<CheckListTabDependency>,
 	CheckListTableDependency,
 	WithCheckListDependency,
-	SharedCheckListDependency {
+	SharedCheckListDependency,
+	SettingDependency {
 	var session: CustomSession { parent.session }
 	
 	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
@@ -28,6 +30,8 @@ final class CheckListTabComponent:
 	var crdtRepository: CRDTRepository { DefaultCRDTRepository(crdtStorage: crdtStorage) }
 	
 	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
+	
+	var checkListStorage: PrivateCheckListStorage { parent.checkListStorage }
 	
 	var checkListRepository: CheckListRepository { parent.checkListRepository }
 	
@@ -44,10 +48,14 @@ final class CheckListTabComponent:
 	fileprivate var sharedCheckListFactoryable: SharedCheckListFactoryable {
 		return SharedCheckListViewFactory(parent: self)
 	}
+	
+	fileprivate var settingFactoryable: SettingFactoryable {
+		return SettingViewFactory(parent: self)
+	}
 }
 
 protocol CheckListTabFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable
 }
 
 final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListTabFactoryable {
@@ -55,13 +63,19 @@ final class CheckListTabViewFactory: Factory<CheckListTabDependency>, CheckListT
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable {
 		let component = CheckListTabComponent(parent: parent)
+		let router = CheckListTabRouter(
+			appRouter: appRouter,
+			settingFactory: component.settingFactoryable
+		)
 		let viewController = CheckListTabViewController(
+			router: router,
 			privateCheckListTableFactory: component.privateCheckListTableFactoryable,
 			withCheckListFactoryable: component.withCheckListFactoryable,
 			sharedCheckListFactory: component.sharedCheckListFactoryable
 		)
+		router.viewController = viewController
 		return viewController
 	}
 }
