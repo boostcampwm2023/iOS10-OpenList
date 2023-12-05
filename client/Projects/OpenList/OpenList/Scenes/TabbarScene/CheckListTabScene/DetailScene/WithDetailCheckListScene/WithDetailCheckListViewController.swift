@@ -43,6 +43,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let appendDocument: PassthroughSubject<EditText, Never> = .init()
 	private let removeDocument: PassthroughSubject<EditText, Never> = .init()
 	private let receive: PassthroughSubject<String, Never> = .init()
+	private let checklistDidToggle: PassthroughSubject<CheckToggle, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -100,7 +101,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			textDidChange: textDidChange,
 			appendDocument: appendDocument,
 			removeDocument: removeDocument,
-			receive: receive
+			receive: receive,
+			checklistDidTap: checklistDidToggle
 		)
 		let output = viewModel.transform(input)
 		
@@ -401,6 +403,10 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		textDidChange.send(textView.text)
 		checkListView.beginUpdates()
 		checkListView.endUpdates()
+	}
+	
+	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool) {
+		checklistDidToggle.send(CheckToggle(id: cellId, state: isChecked))
 	}
 }
 

@@ -13,5 +13,6 @@ protocol CRDTRepository {
 	func save(message: CRDTMessage) async throws -> CRDTMessage
 	func send(id: UUID, message: CRDTMessage) throws
 	func documentDelete(id: UUID) throws
+	func checkListStateUpdate(id: UUID, message: CRDTMessage, isChecked: Bool) throws
 	func fetchCheckListItems(id: UUID) async throws -> [CRDTData]
 }

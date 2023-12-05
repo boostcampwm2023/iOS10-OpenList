@@ -51,7 +51,8 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 			textDidChange(input),
 			appendDocument(input),
 			removeDocument(input),
-			receive(input)
+			receive(input),
+			checklistToggle(input)
 		).eraseToAnyPublisher()
 	}
 }
@@ -127,6 +128,19 @@ private extension WithDetailCheckListViewModel {
 			.map { item in
 				return .removeItem(item)
 			}
+			.eraseToAnyPublisher()
+	}
+	
+	func checklistToggle(_ input: Input) -> Output {
+		return input.checklistDidTap
+			.withUnretained(self)
+			.flatMap { (owner, checkToggle) -> AnyPublisher<Void, Never> in
+				let future = Future(asyncFunc: {
+					try await owner.crdtUseCase.updateCheckListState(to: checkToggle.id, isChecked: checkToggle.state)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { _ in return .none }
 			.eraseToAnyPublisher()
 	}
 	

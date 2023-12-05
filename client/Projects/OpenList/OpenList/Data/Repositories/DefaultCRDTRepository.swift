@@ -47,6 +47,16 @@ extension DefaultCRDTRepository: CRDTRepository {
 		WebSocket.shared.send(data: data)
 	}
 	
+	func checkListStateUpdate(id: UUID, message: CRDTMessage, isChecked: Bool) throws {
+		self.number += 1
+		let request = CRDTRequestDTO(
+			event: .send,
+			data: CRDTCheckListToggleRequestDTO(id: id, number: number, name: name, state: isChecked, data: message)
+		)
+		let data = try JSONEncoder().encode(request)
+		WebSocket.shared.send(data: data)
+	}
+	
 	func fetchCheckListItems(id: UUID) async throws -> [CRDTData] {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/shared-checklists/\(id.uuidString)")
 		builder.addHeader(

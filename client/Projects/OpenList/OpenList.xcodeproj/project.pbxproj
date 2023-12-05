@@ -182,6 +182,7 @@
 		78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */; };
 		78B9F1482B1DF7DA00B903E7 /* UserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */; };
 		78B9F14A2B1EB56C00B903E7 /* WithCheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1492B1EB56C00B903E7 /* WithCheckListItem.swift */; };
+		78B9F14C2B1F826D00B903E7 /* CheckToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F14B2B1F826D00B903E7 /* CheckToggle.swift */; };
 		78C2F0072B04657600E4EC4E /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0062B04657600E4EC4E /* ConfirmButton.swift */; };
 		78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */; };
 		78C2F00D2B04882700E4EC4E /* UIControl+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */; };
@@ -434,6 +435,7 @@
 		78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageView.swift; sourceTree = "<group>"; };
 		78B9F1492B1EB56C00B903E7 /* WithCheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItem.swift; sourceTree = "<group>"; };
+		78B9F14B2B1F826D00B903E7 /* CheckToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckToggle.swift; sourceTree = "<group>"; };
 		78C2F0062B04657600E4EC4E /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
 		78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Combine.swift"; sourceTree = "<group>"; };
 		78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Combine.swift"; sourceTree = "<group>"; };
@@ -691,6 +693,7 @@
 				78F747722B148C2E003ED6DA /* LoginInfo.swift */,
 				78E956192B171F4D005CF5D3 /* CategoryInfo.swift */,
 				78E956232B178E3A005CF5D3 /* CategoryItem.swift */,
+				78B9F14B2B1F826D00B903E7 /* CheckToggle.swift */,
 				78E956272B1795CC005CF5D3 /* RecommendChecklistItem.swift */,
 				4DD97D9D2B14D56B00DF73BC /* CheckList.swift */,
 				4DDC43372B0F214300859B28 /* CheckListItem.swift */,
@@ -1487,6 +1490,7 @@
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
+				78B9F14C2B1F826D00B903E7 /* CheckToggle.swift in Sources */,
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
 				78E956002B16FC23005CF5D3 /* CategoryHeaderView.swift in Sources */,
 				4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */,

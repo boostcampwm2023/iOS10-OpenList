@@ -82,3 +82,38 @@ struct CRDTMessageResponseDTO: CRDTData, Decodable {
 		}
 	}
 }
+
+struct CRDTCheckListToggleResponseDTO: CRDTData, Decodable {
+	let id: UUID
+	let number: Int
+	let name: String
+	let state: Bool
+	let message: CRDTMessage
+	
+	enum CodingKeys: CodingKey {
+		case id, number, name, state, message
+	}
+	
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		self.id = try container.decode(UUID.self, forKey: .id)
+		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
+		self.name = try container.decode(String.self, forKey: .name)
+		self.state = try container.decode(Bool.self, forKey: .state)
+		
+		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
+			self.message = message
+		} else if let messages = try? container.decode(OperationBasedMessagesBag.self, forKey: .message) {
+			self.message = messages
+		} else {
+			throw DecodingError.valueNotFound(
+				CRDTMessage.self,
+				.init(
+					codingPath: [CodingKeys.message],
+					debugDescription: "Unknown CRDTMessage type"
+				)
+			)
+		}
+	}
+}
+

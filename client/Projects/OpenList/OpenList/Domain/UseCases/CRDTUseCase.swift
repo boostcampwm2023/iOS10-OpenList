@@ -22,6 +22,7 @@ protocol CRDTUseCase {
 	func appendDocument(at editText: EditText) async throws -> any ListItem
 	func removeDocument(at editText: EditText) async throws -> any ListItem
 	func createDocument(id: UUID) -> RGASDocument<String>
+	func updateCheckListState(to id: UUID, isChecked: Bool) async throws
 }
 
 protocol CRDTDocumentUseCase {
@@ -37,6 +38,7 @@ final class DefaultCRDTUseCase {
 	private var documentsId: LinkedList<UUID> = .init()
 	private var historyData: [any ListItem] = []
 	private var id: UUID?
+	private var crdtMessageDictionay: [UUID: CRDTMessage] = [:]
 	
 	init(crdtRepository: CRDTRepository) {
 		self.crdtRepository = crdtRepository
@@ -106,6 +108,13 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				case .append:
 					return []
 				}
+			} else if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
+				dump("Message Number: \(data.number)")
+				if documentsId.searchNode(from: data.id) != nil {
+					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name)]
+				} else {
+					return []
+				}
 			} else {
 				throw CRDTUseCaseError.decodeFailed
 			}
@@ -130,6 +139,11 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			dump(response)
 			throw CRDTUseCaseError.docmuentNotFound
 		}
+	}
+	
+	func updateCheckListState(to id: UUID, isChecked: Bool) async throws {
+		guard let message = crdtMessageDictionay[id] else { return }
+		try crdtRepository.checkListStateUpdate(id: id, message: message, isChecked: isChecked)
 	}
 	
 	func itemChecked(at id: UUID) async throws -> any ListItem {
@@ -280,6 +294,7 @@ private extension DefaultCRDTUseCase {
 		let merge = createMerge(id: id, document: document)
 		try message.execute(on: merge)
 		let title = document.view()
+		crdtMessageDictionay[id] = message
 		
 		return WithCheckListItem(itemId: id, title: title, isChecked: false, name: name)
 	}
@@ -292,6 +307,7 @@ private extension DefaultCRDTUseCase {
 		let merge = createMerge(id: id, document: document)
 		let message = try merge.applyLocal(to: operation)
 		let title = document.view()
+		crdtMessageDictionay[id] = message
 		
 		return (
 			item: WithCheckListItem(itemId: id, title: title, isChecked: false, name: nil),
@@ -308,6 +324,8 @@ private extension DefaultCRDTUseCase {
 		}
 		try message.execute(on: merge)
 		let title = document.view()
+		crdtMessageDictionay[id] = message
+		
 		return WithCheckListItem(itemId: id, title: title, isChecked: false, name: name)
 	}
 	
@@ -323,6 +341,8 @@ private extension DefaultCRDTUseCase {
 		}
 		let message = try merge.applyLocal(to: operation)
 		let title = document.view()
+		crdtMessageDictionay[id] = message
+		
 		return (
 			item: WithCheckListItem(itemId: id, title: title, isChecked: false, name: nil),
 			message: message
@@ -333,6 +353,8 @@ private extension DefaultCRDTUseCase {
 		documentsId.remove(value: id)
 		documentDictionary.removeValue(forKey: id)
 		mergeDictionary.removeValue(forKey: id)
+		crdtMessageDictionay[id] = nil
+		
 		return WithCheckListItem(itemId: id, title: "", isChecked: false, name: nil)
 	}
 	

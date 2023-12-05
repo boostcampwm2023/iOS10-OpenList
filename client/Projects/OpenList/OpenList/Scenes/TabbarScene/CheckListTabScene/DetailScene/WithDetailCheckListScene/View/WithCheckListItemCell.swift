@@ -17,6 +17,7 @@ protocol WithCheckListItemDelegate: AnyObject {
 		cellId: UUID
 	) -> Bool
 	func textFieldDidChange(_ text: String)
+	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool)
 }
 
 final class WithCheckListItemCell: UITableViewCell {
@@ -129,6 +130,10 @@ private extension WithCheckListItemCell {
 	
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
+		guard let indexPath = indexPath,
+					let cellId = cellId
+		else { return }
+		delegate?.checklistDidTap(indexPath, cellId: cellId, isChecked: checkButton.isChecked)
 	}
 }
 

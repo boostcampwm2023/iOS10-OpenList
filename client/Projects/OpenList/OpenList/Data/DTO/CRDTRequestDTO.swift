@@ -28,6 +28,8 @@ struct CRDTRequestDTO: Encodable {
 			try container.encode(data, forKey: .data)
 		} else if let data = data as? CRDTMessageRequestDTO {
 			try container.encode(data, forKey: .data)
+		} else if let data = data as? CRDTCheckListToggleRequestDTO {
+			try container.encode(data, forKey: .data)
 		} else {
 			throw EncodingError.invalidValue(
 				data,
@@ -81,6 +83,38 @@ struct CRDTMessageRequestDTO: CRDTData, Encodable {
 		try container.encode(id, forKey: .id)
 		try container.encode(number, forKey: .number)
 		try container.encode(name, forKey: .name)
+		if let myMessage = data as? OperationBasedOneMessage {
+			try container.encode(myMessage, forKey: .message)
+		} else if let myMessages = data as? OperationBasedMessagesBag {
+			try container.encode(myMessages, forKey: .message)
+		} else {
+			throw EncodingError.invalidValue(
+				data,
+				EncodingError.Context(
+					codingPath: [CodingKeys.message],
+					debugDescription: "Unknown CRDTMessage type")
+			)
+		}
+	}
+}
+
+struct CRDTCheckListToggleRequestDTO: CRDTData, Encodable {
+	let id: UUID
+	let number: Int
+	let name: String
+	let state: Bool
+	let data: CRDTMessage
+	
+	enum CodingKeys: CodingKey {
+		case id, number, name, state, message
+	}
+	
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(id, forKey: .id)
+		try container.encode(number, forKey: .number)
+		try container.encode(name, forKey: .name)
+		try container.encode(state, forKey: .state)
 		if let myMessage = data as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)
 		} else if let myMessages = data as? OperationBasedMessagesBag {
