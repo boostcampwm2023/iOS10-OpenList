@@ -2,4 +2,4 @@
 
 /ai/generate-server/node_modules
 
-.env
+ai/generate-server/.env
