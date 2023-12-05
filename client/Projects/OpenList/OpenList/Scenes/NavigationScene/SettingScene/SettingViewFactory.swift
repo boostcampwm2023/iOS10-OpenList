@@ -5,14 +5,30 @@
 //  Created by wi_seong on 12/4/23.
 //
 
+import CustomNetwork
 import Foundation
 
-protocol SettingDependency: Dependency { }
+protocol SettingDependency: Dependency {
+	var session: CustomSession { get }
+	var checkListStorage: PrivateCheckListStorage { get }
+}
 
-final class SettingComponent: Component<SettingDependency> { }
+final class SettingComponent: Component<SettingDependency> {
+	var session: CustomSession { parent.session }
+	
+	var checkListStorage: PrivateCheckListStorage { parent.checkListStorage }
+	
+	fileprivate var settingRepository: SettingRepository {
+		return DefaultSettingRepository(checkListStorage: checkListStorage, session: session)
+	}
+	
+	fileprivate var settingUseCase: SettingUseCase {
+		return DefaultSettingUseCase(settingRepository: settingRepository)
+	}
+}
 
 protocol SettingFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with parentRouter: AppRouterProtocol) -> ViewControllable
 }
 
 final class SettingViewFactory: Factory<SettingDependency>, SettingFactoryable {
@@ -20,9 +36,10 @@ final class SettingViewFactory: Factory<SettingDependency>, SettingFactoryable {
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
-		let router = SettingRouter()
-		let viewModel = SettingViewModel()
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable {
+		let component = SettingComponent(parent: parent)
+		let router = SettingRouter(appRouter: appRouter)
+		let viewModel = SettingViewModel(settingUseCase: component.settingUseCase)
 		let viewController = SettingViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController
 		return viewController

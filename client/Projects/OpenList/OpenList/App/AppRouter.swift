@@ -28,7 +28,7 @@ final class AppRouter: AppRouterProtocol {
 	}
 	
 	func showTapFlow() {
-		let tabBarController = tabBarFactoryable.make()
+		let tabBarController = tabBarFactoryable.make(with: self)
 		self.window?.rootViewController = tabBarController.uiviewController
 	}
 	

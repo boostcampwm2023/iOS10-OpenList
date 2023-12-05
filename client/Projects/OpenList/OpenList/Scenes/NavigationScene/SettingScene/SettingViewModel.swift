@@ -16,12 +16,20 @@ final class SettingViewModel {
 	enum Constant {
 		static let titles = ["로그아웃", "회원탈퇴"]
 	}
+	
+	private let settingUseCase: SettingUseCase
+	
+	init(settingUseCase: SettingUseCase) {
+		self.settingUseCase = settingUseCase
+	}
 }
 
 extension SettingViewModel: SettingViewModelable {
   func transform(_ input: Input) -> Output {
     return Publishers.MergeMany([
-			viewDidLoad(input)
+			viewDidLoad(input),
+			logOut(input),
+			deleteAccount(input)
     ]).eraseToAnyPublisher()
   }
 }
@@ -34,6 +42,36 @@ private extension SettingViewModel {
 					SettingItem(title: $0)
 				}
 				return .reload(items)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func logOut(_ input: Input) -> Output {
+		return input.logOut
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Void, Never>  in
+				let future = Future(asyncFunc: {
+					try await owner.settingUseCase.logOut()
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map {
+				return .showLogin
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func deleteAccount(_ input: Input) -> Output {
+		return input.deleteAccount
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Void, Never>  in
+				let future = Future(asyncFunc: {
+					try await owner.settingUseCase.deleteAccount()
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map {
+				return .showLogin
 			}
 			.eraseToAnyPublisher()
 	}

@@ -9,6 +9,7 @@ import Combine
 import UIKit
 
 protocol SettingRoutingLogic: AnyObject {
+	func routeToLoginScene()
 	func dismissSettingScene()
 }
 
@@ -34,6 +35,8 @@ final class SettingViewController: UIViewController, ViewControllable {
 	
 	// Event Properties
 	private let viewLoad: PassthroughSubject<Void, Never> = .init()
+	private let logOut: PassthroughSubject<Void, Never> = .init()
+	private let deleteAccount: PassthroughSubject<Void, Never> = .init()
 
   // MARK: - Initializers
 	init(
@@ -68,7 +71,11 @@ extension SettingViewController: ViewBindable {
 	typealias OutputError = Error
 
 	func bind() {
-		let input = SettingInput(viewDidLoad: viewLoad)
+		let input = SettingInput(
+			viewDidLoad: viewLoad,
+			logOut: logOut,
+			deleteAccount: deleteAccount
+		)
 		let state = viewModel.transform(input)
 		state
 			.receive(on: DispatchQueue.main)
@@ -82,6 +89,8 @@ extension SettingViewController: ViewBindable {
 		case .reload(let items):
 			dataSource = items
 			settingView.reloadData()
+		case .showLogin:
+			router.routeToLoginScene()
 		}
 	}
 
@@ -171,9 +180,9 @@ extension SettingViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch indexPath.row {
 		case 0:
-			dump("로그아웃")
+			logOut.send()
 		case 1:
-			dump("회원탈퇴")
+			deleteAccount.send()
 		default: return
 		}
 	}

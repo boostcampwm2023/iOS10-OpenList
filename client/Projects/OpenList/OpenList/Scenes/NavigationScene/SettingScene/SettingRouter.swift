@@ -9,10 +9,19 @@ import Foundation
 
 final class SettingRouter {
 	weak var viewController: ViewControllable?
+	private var appRouter: AppRouterProtocol
+	
+	init(appRouter: AppRouterProtocol) {
+		self.appRouter = appRouter
+	}
 }
 
 // MARK: - RoutingLogic
 extension SettingRouter: SettingRoutingLogic {
+	func routeToLoginScene() {
+		appRouter.showLoginFlow()
+	}
+	
 	func dismissSettingScene() {
 		viewController?.popViewController(animated: true)
 	}
