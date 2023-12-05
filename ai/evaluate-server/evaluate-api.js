@@ -1,7 +1,5 @@
 require("dotenv").config();
 const axios = require("axios");
-const { get } = require("http");
-const process = require("process");
 
 const AI_OPTIONS = {
   topP: 0.8,
@@ -103,7 +101,7 @@ function getUserRoleWithDto(dto) {
   };
 }
 
-async function generateChecklistItemWithAi(dto) {
+async function evaluateChecklistItem(dto) {
   const requestData = {
     messages: [SYSTEM_ROLE, getUserRoleWithDto(dto)],
     ...AI_OPTIONS,
@@ -124,19 +122,44 @@ const dtoExample = {
 //   .then((result) => console.log("Generated checklist:", result))
 //   .catch((error) => console.error("Error:", error));
 
-async function getResult() {
-  const result = await generateChecklistItemWithAi(dtoExample);
+async function aiResultParser(result) {
   const content = result?.result?.message?.content;
+  const parsedContent = JSON.parse(content);
+  const { select, reason } = parsedContent;
 
-  console.log("content", content);
-  console.log("content type", typeof content);
+  return { select, reason };
+}
 
-  if (content) {
-    const parsedContent = JSON.parse(content);
-    console.log("Parsed content", parsedContent);
-    console.log("select", parsedContent["select"]);
-    console.log("reason", parsedContent["reason"]);
+async function checkValidResult(select, reason) {
+  if (select.length !== 3) {
+    throw new Error("select 항목이 3개가 아닙니다.");
+  }
+  if (Object.keys(reason).length !== 3) {
+    throw new Error("reason 항목이 3개가 아닙니다.");
+  }
+  if (select.some((item) => !reason[item])) {
+    throw new Error("select 항목에 reason 항목이 없습니다.");
+  }
+  if (select.some((item) => isNaN(item))) {
+    throw new Error("select 항목이 숫자가 아닙니다.");
   }
 }
 
-getResult();
+async function processAiResult(retryCount = 0) {
+  try {
+    const result = await evaluateChecklistItem(dtoExample);
+    const { select, reason } = await aiResultParser(result);
+    await checkValidResult(select, reason);
+    console.log("select:", select);
+    console.log("reason:", reason);
+  } catch (error) {
+    if (retryCount < 3) {
+      console.log("retryCount:", retryCount + 1);
+      processAiResult(retryCount + 1);
+    } else {
+      console.error("Error:", error);
+    }
+  }
+}
+
+processAiResult();
