@@ -162,4 +162,8 @@ async function processAiResult(retryCount = 0) {
   }
 }
 
-processAiResult();
+// processAiResult();
+
+module.exports = {
+  processAiResult,
+};

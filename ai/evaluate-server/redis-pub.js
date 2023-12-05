@@ -11,7 +11,7 @@ async function init() {
     console.log("Redis publisher connected");
 
     // 메시지 발행
-    await publisher.publish("channel", "hello asdfasfdddworld!");
+    await publisher.publish("channel", "processAiResult");
 
     // 발행 후 연결 닫기
     await publisher.quit();

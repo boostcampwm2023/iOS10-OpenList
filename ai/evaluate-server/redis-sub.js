@@ -1,4 +1,5 @@
 const redis = require("redis");
+const { processAiResult } = require("./evaluate-api");
 
 const subscriber = redis.createClient({
   host: "localhost",
@@ -7,10 +8,13 @@ const subscriber = redis.createClient({
 
 async function init() {
   const redisSub = await subscriber.connect();
-  redisSub.subscribe("channel", function (err, message) {
-    console.log("message", message);
-    if (err) {
-      console.log(err);
+  redisSub.subscribe("channel", async function (message) {
+    console.log("message:", message);
+
+    if (message === "processAiResult") {
+      console.log("start");
+      await processAiResult();
+      console.log("finished");
     }
   });
 }
