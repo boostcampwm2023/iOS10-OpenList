@@ -42,10 +42,12 @@ extension WithDetailCheckListDiffableDataSource {
 				return
 			}
 			var snapshot = snapshot()
+			guard let item = item as? WithCheckListItem else { return }
 			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [WithCheckListItem] else { return }
 			snapshot.deleteItems(items)
 			if let index = items.firstIndex(where: { $0.id == item.id }) {
 				items[index].title = item.title
+				items[index].name = item.name
 			} else {
 				guard let item = item as? WithCheckListItem else { return }
 				items.append(item)

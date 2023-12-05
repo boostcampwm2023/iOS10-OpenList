@@ -301,7 +301,7 @@ private extension WithDetailCheckListViewController {
 				case is WithCheckListItem:
 					let cell = tableView.dequeueCell(WithCheckListItemCell.self, for: indexPath)
 					guard let item = itemIdentifier as? WithCheckListItem else { return cell }
-					let name = item.name ?? "Unknown"
+					let name = item.name ?? ""
 					self?.handleNewData(name: name)
 					self?.userIndicatingDictionary[name] = indexPath
 					cell.configure(with: item, indexPath: indexPath)

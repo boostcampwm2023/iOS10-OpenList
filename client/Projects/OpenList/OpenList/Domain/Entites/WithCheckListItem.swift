@@ -24,5 +24,5 @@ struct WithCheckListItem: ListItem {
 	var itemId: UUID
 	var title: String
 	var isChecked: Bool
-	let name: String?
+	var name: String?
 }
