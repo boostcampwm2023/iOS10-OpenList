@@ -34,7 +34,7 @@ final class WithDetailCheckListDiffableDataSource: WithCheckListDataSource {
 }
 
 extension WithDetailCheckListDiffableDataSource {
-	func receiveCheckListItem(with item: CheckListItem) {
+	func receiveCheckListItem(with item: any ListItem) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			if item.title.isEmpty {
@@ -42,11 +42,12 @@ extension WithDetailCheckListDiffableDataSource {
 				return
 			}
 			var snapshot = snapshot()
-			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [CheckListItem] else { return }
+			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [WithCheckListItem] else { return }
 			snapshot.deleteItems(items)
 			if let index = items.firstIndex(where: { $0.id == item.id }) {
 				items[index].title = item.title
 			} else {
+				guard let item = item as? WithCheckListItem else { return }
 				items.append(item)
 			}
 			snapshot.appendItems(items, toSection: .checkList)
@@ -54,17 +55,61 @@ extension WithDetailCheckListDiffableDataSource {
 		}
 	}
 	
-	func appendCheckListItem(_ checkListItem: CheckListItem) {
+	func receiveCheckListItemWithName(with item: any ListItem, name: String) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
+			if item.title.isEmpty {
+				guard let item = item as? WithCheckListItem else { return }
+				self.deleteCheckListItem(at: item)
+				return
+			}
 			var snapshot = snapshot()
-			snapshot.appendItems([checkListItem], toSection: .checkList)
+			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [WithCheckListItem] else { return }
+			snapshot.deleteItems(items)
+			if let index = items.firstIndex(where: { $0.id == item.id }) {
+				items[index].title = item.title
+			} else {
+				guard let item = item as? WithCheckListItem else { return }
+				items.append(item)
+			}
+			snapshot.appendItems(items, toSection: .checkList)
 			apply(snapshot, animatingDifferences: false)
 		}
 	}
 	
-	func updateCheckList(_ checkList: [CheckListItem]) {
-		updateSection(with: checkList, to: .checkList)
+	func appendCheckListItem(_ checkListItem: any ListItem) {
+		DispatchQueue.main.async { [weak self] in
+			guard let self else { return }
+			var snapshot = snapshot()
+			switch checkListItem {
+//			case is CheckListItem:
+//				guard let item = checkListItem as? CheckListItem else { return }
+//				snapshot.appendItems([item], toSection: .checkList)
+//				
+			case is WithCheckListItem:
+				guard let item = checkListItem as? WithCheckListItem else { return }
+				snapshot.appendItems([item], toSection: .checkList)
+				
+			default:
+				return
+			}
+			apply(snapshot, animatingDifferences: false)
+		}
+	}
+	
+	func updateCheckList(_ checkList: [any ListItem]) {
+		switch checkList {
+			case is [CheckListItem]:
+				guard let items = checkList as? [CheckListItem] else { return }
+				updateSection(with: items, to: .checkList)
+				
+			case is [WithCheckListItem]:
+				guard let items = checkList as? [WithCheckListItem] else { return }
+				updateSection(with: items, to: .checkList)
+				
+			default:
+				return
+		}
 	}
 	
 	func updateCheckListItemString(at indexPath: IndexPath, with text: String) {
@@ -89,7 +134,7 @@ extension WithDetailCheckListDiffableDataSource {
 		}
 	}
 	
-	func deleteCheckListItem(at item: CheckListItem) {
+	func deleteCheckListItem(at item: any ListItem) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			var snapshot = snapshot()

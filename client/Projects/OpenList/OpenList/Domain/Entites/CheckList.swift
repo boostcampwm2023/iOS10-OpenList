@@ -14,5 +14,5 @@ struct CheckList: Hashable {
 	let updatedAt: Date
 	let progress: Int
 	let orderBy: [UUID]
-	var items: [CheckListItem]
+	var items: [any ListItem]
 }

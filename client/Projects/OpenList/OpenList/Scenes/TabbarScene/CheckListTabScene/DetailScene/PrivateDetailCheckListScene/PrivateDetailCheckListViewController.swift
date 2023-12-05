@@ -144,7 +144,8 @@ private extension PrivateDetailCheckListViewController {
 	
 	func viewLoad(_ checkList: CheckList) {
 		headerView.configure(title: checkList.title, isLocked: true)
-		dataSource?.updateCheckList(checkList.items)
+		guard let items = checkList.items as? [CheckListItem] else { return }
+		dataSource?.updateCheckList(items)
 	}
 	
 	func updateItem(_ item: CheckListItem) {

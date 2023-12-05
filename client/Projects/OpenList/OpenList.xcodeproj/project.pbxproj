@@ -38,7 +38,7 @@
 		4D42B8AB2B1C96B800ACE359 /* Decodable+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42B8AA2B1C96B800ACE359 /* Decodable+.swift */; };
 		4D42B8AD2B1C9A3B00ACE359 /* Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */; };
 		4D696CBB2B0F946100873B3B /* EditText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D696CBA2B0F946100873B3B /* EditText.swift */; };
-		4D8AEBD82B121F3A00292AF3 /* WithCheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */; };
+		4D8AEBD82B121F3A00292AF3 /* WithCheckListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8AEBD72B121F3A00292AF3 /* WithCheckListItemCell.swift */; };
 		4D967CD42B050EA60032E0D7 /* UIFont+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D967CD32B050EA60032E0D7 /* UIFont+.swift */; };
 		4D967CDA2B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D967CD82B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf */; };
 		4D967CDB2B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D967CD92B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf */; };
@@ -181,6 +181,7 @@
 		78AC63072B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */; };
 		78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */; };
 		78B9F1482B1DF7DA00B903E7 /* UserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */; };
+		78B9F14A2B1EB56C00B903E7 /* WithCheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B9F1492B1EB56C00B903E7 /* WithCheckListItem.swift */; };
 		78C2F0072B04657600E4EC4E /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0062B04657600E4EC4E /* ConfirmButton.swift */; };
 		78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */; };
 		78C2F00D2B04882700E4EC4E /* UIControl+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */; };
@@ -285,7 +286,7 @@
 		4D42B8AA2B1C96B800ACE359 /* Decodable+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decodable+.swift"; sourceTree = "<group>"; };
 		4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparison.swift; sourceTree = "<group>"; };
 		4D696CBA2B0F946100873B3B /* EditText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditText.swift; sourceTree = "<group>"; };
-		4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItem.swift; sourceTree = "<group>"; };
+		4D8AEBD72B121F3A00292AF3 /* WithCheckListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItemCell.swift; sourceTree = "<group>"; };
 		4D967CD32B050EA60032E0D7 /* UIFont+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+.swift"; sourceTree = "<group>"; };
 		4D967CD82B05147D0032E0D7 /* NotoSansCJKkr-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansCJKkr-Medium.otf"; sourceTree = "<group>"; };
 		4D967CD92B05147D0032E0D7 /* NotoSansCJKkr-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansCJKkr-Regular.otf"; sourceTree = "<group>"; };
@@ -432,6 +433,7 @@
 		78AC63062B1AE4CD002F71B9 /* AddCheckListItemTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheckListItemTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		78B9F1452B1DE77000B903E7 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageView.swift; sourceTree = "<group>"; };
+		78B9F1492B1EB56C00B903E7 /* WithCheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItem.swift; sourceTree = "<group>"; };
 		78C2F0062B04657600E4EC4E /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
 		78C2F0092B0487B400E4EC4E /* UITextField+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Combine.swift"; sourceTree = "<group>"; };
 		78C2F00C2B04882700E4EC4E /* UIControl+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+Combine.swift"; sourceTree = "<group>"; };
@@ -582,7 +584,7 @@
 		4D8AEBD62B121F2D00292AF3 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4D8AEBD72B121F3A00292AF3 /* WithCheckListItem.swift */,
+				4D8AEBD72B121F3A00292AF3 /* WithCheckListItemCell.swift */,
 				78B9F1472B1DF7DA00B903E7 /* UserImageView.swift */,
 			);
 			path = View;
@@ -700,6 +702,7 @@
 				4D42B8AC2B1C9A3B00ACE359 /* Comparison.swift */,
 				4DF0D53F2B1E0FFC00EC68CA /* SettingItem.swift */,
 				5FDA02A42B2156DA00F28960 /* FeedCheckList.swift */,
+				78B9F1492B1EB56C00B903E7 /* WithCheckListItem.swift */,
 			);
 			path = Entites;
 			sourceTree = "<group>";
@@ -1463,6 +1466,7 @@
 				4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */,
 				4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */,
 				4D8AEBD82B121F3A00292AF3 /* WithCheckListItem.swift in Sources */,
+				4D8AEBD82B121F3A00292AF3 /* WithCheckListItemCell.swift in Sources */,
 				78C2F00A2B0487B400E4EC4E /* UITextField+Combine.swift in Sources */,
 				78B9F1462B1DE77000B903E7 /* UserDefaultsManager.swift in Sources */,
 				5F9349042B16DF4600282545 /* SharedCheckListCell.swift in Sources */,
@@ -1512,6 +1516,7 @@
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
 				4DF0D55F2B1EFF4C00EC68CA /* AlertBuilder.swift in Sources */,
+				78B9F14A2B1EB56C00B903E7 /* WithCheckListItem.swift in Sources */,
 				78E9561C2B177DAB005CF5D3 /* CategoryUseCase.swift in Sources */,
 				4D42B8A82B1C42D900ACE359 /* TextChange.swift in Sources */,
 				4D696CBB2B0F946100873B3B /* EditText.swift in Sources */,

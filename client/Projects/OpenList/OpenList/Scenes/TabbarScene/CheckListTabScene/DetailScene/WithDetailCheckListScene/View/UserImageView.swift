@@ -25,6 +25,7 @@ final class UserImageView: UIImageView {
 extension UserImageView {
 	func configure(name: String) {
 		nameLabel.text = name
+		isHidden = false
 	}
 }
 

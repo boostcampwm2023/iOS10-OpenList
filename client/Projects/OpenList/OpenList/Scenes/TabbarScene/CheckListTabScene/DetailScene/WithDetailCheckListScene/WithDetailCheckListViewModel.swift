@@ -22,6 +22,7 @@ final class WithDetailCheckListViewModel {
 	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
 	private var textChange: TextChange = .init()
+	var userNamesForCheckListItems: [UUID: String] = [:]
 	
 	init(
 		id: UUID,
@@ -84,7 +85,7 @@ private extension WithDetailCheckListViewModel {
 	func textDidChange(_ input: Input) -> Output {
 		return input.textDidChange
 			.withUnretained(self)
-			.flatMap { (owner, currentText) -> AnyPublisher<CheckListItem, Never> in
+			.flatMap { (owner, currentText) -> AnyPublisher<any ListItem, Never> in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.update(
 						textChange: owner.textChange,
@@ -102,7 +103,7 @@ private extension WithDetailCheckListViewModel {
 	func appendDocument(_ input: Input) -> Output {
 		return input.appendDocument
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<any ListItem, Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.appendDocument(at: editText)
 				})
@@ -117,7 +118,7 @@ private extension WithDetailCheckListViewModel {
 	func removeDocument(_ input: Input) -> Output {
 		return input.removeDocument
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<any ListItem, Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.removeDocument(at: editText)
 				})
@@ -132,14 +133,14 @@ private extension WithDetailCheckListViewModel {
 	func receive(_ input: Input) -> Output {
 		return input.receive
 			.withUnretained(self)
-			.flatMap { (owner, jsonString) -> AnyPublisher<[CheckListItem], Never>  in
+			.flatMap { (owner, jsonString) -> AnyPublisher<[any ListItem], Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.receive(jsonString)
 				})
 				return future.eraseToAnyPublisher()
 			}
 			.map { items in
-				return .updateItem(items)
+				return .updateItems(items)
 			}
 			.eraseToAnyPublisher()
 	}

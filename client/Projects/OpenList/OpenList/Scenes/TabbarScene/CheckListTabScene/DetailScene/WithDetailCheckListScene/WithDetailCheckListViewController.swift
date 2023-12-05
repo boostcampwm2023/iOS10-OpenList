@@ -116,8 +116,10 @@ extension WithDetailCheckListViewController: ViewBindable {
 			break
 		case let .viewWillAppear(checkList):
 			viewAppear(checkList)
-		case let .updateItem(items):
+		case let .updateItems(items):
 			updateTextField(to: items)
+		case let .updateOneItem((item, name)):
+			dataSource?.receiveCheckListItemWithName(with: item, name: name)
 		case let .appendItem(item):
 			appendItem(item)
 		case let .removeItem(content):
@@ -172,13 +174,13 @@ private extension WithDetailCheckListViewController {
 		}
 	}
 	
-	func updateTextField(to items: [CheckListItem]) {
+	func updateTextField(to items: [any ListItem]) {
 		items.forEach { [weak self] in
 			self?.dataSource?.receiveCheckListItem(with: $0)
 		}
 	}
 	
-	func appendItem(_ item: CheckListItem) {
+	func appendItem(_ item: any ListItem) {
 		dataSource?.appendCheckListItem(item)
 		dataSource?.updatePlaceholder()
 	}
@@ -212,7 +214,7 @@ private extension WithDetailCheckListViewController {
 	func setCheckListViewAttributes() {
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
-		checkListView.registerCell(WithCheckListItem.self)
+		checkListView.registerCell(WithCheckListItemCell.self)
 		checkListView.registerCell(CheckListItemPlaceholder.self)
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
@@ -295,9 +297,9 @@ private extension WithDetailCheckListViewController {
 			tableView: checkListView,
 			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
-				case is CheckListItem:
-					let cell = tableView.dequeueCell(WithCheckListItem.self, for: indexPath)
-					guard let item = itemIdentifier as? CheckListItem else { return cell }
+				case is WithCheckListItem:
+					let cell = tableView.dequeueCell(WithCheckListItemCell.self, for: indexPath)
+					guard let item = itemIdentifier as? WithCheckListItem else { return cell }
 					cell.configure(with: item, indexPath: indexPath)
 					cell.delegate = self
 					return cell
@@ -338,7 +340,7 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
-		let item = checkListView.cellForRow(WithCheckListItem.self, at: indexPath)
+		let item = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
 			let id = item.cellId ?? UUID()
 			self?.removeItem(id: id, indexPath: indexPath)
