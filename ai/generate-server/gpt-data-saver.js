@@ -27,7 +27,7 @@ export const saveData = async (checklistItems, category) => {
   } catch (error) {
     console.error('Error during database query execution:', error);
   } finally {
-    console.log('Data saved successfully');
     client.release();
+    console.log('Data saved successfully');
   }
 };
