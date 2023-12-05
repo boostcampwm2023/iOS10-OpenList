@@ -10,11 +10,17 @@ const pool = new Pool({
 });
 
 // 쿼리 실행 예시
-pool.query("SELECT * FROM test_table", (err, res) => {
-  console.log(res.rows);
-  console.log(arrayToObj(res.rows));
-  pool.end();
-});
+// pool.query("SELECT * FROM test_table", (err, res) => {
+//   console.log(res.rows);
+//   console.log(arrayToObj(res.rows));
+//   pool.end();
+// });
+
+async function getAllChecklistItems() {
+  const result = await pool.query("SELECT * FROM test_table");
+  const checklistItems = arrayToObj(result.rows);
+  return checklistItems;
+}
 
 const arrayToObj = (array) => {
   return array.reduce((obj, item) => {
@@ -34,3 +40,7 @@ const values = ["brianc", "brian.m.carlson@gmail.com"];
 //     console.log(res.rows[0]);
 //   }
 // });
+
+module.exports = {
+  getAllChecklistItems,
+};
