@@ -85,6 +85,12 @@
 		4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5552B1EE54700EC68CA /* ProfileViewController.swift */; };
 		4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5562B1EE54700EC68CA /* ProfileViewFactory.swift */; };
 		4DF0D55C2B1EE54700EC68CA /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */; };
+		4DF0D55F2B1EFF4C00EC68CA /* AlertBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D55E2B1EFF4C00EC68CA /* AlertBuilder.swift */; };
+		4DF0D5612B1EFFB200EC68CA /* CustomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5602B1EFFB200EC68CA /* CustomAlertViewController.swift */; };
+		4DF0D5642B1F412900EC68CA /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5632B1F412900EC68CA /* Storage.swift */; };
+		4DF0D5662B1F4F7100EC68CA /* ProfileUserCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5652B1F4F7100EC68CA /* ProfileUserCase.swift */; };
+		4DF0D5682B1F560C00EC68CA /* DefaultProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5672B1F560C00EC68CA /* DefaultProfileRepository.swift */; };
+		4DF0D56A2B1F561C00EC68CA /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5692B1F561C00EC68CA /* ProfileRepository.swift */; };
 		5F70C8302B04A96E00826B5D /* PrivateDetailCheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82B2B04A96E00826B5D /* PrivateDetailCheckListViewController.swift */; };
 		5F70C8312B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82C2B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift */; };
 		5F70C8322B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70C82D2B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift */; };
@@ -312,6 +318,12 @@
 		4DF0D5552B1EE54700EC68CA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		4DF0D5562B1EE54700EC68CA /* ProfileViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewFactory.swift; sourceTree = "<group>"; };
 		4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		4DF0D55E2B1EFF4C00EC68CA /* AlertBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuilder.swift; sourceTree = "<group>"; };
+		4DF0D5602B1EFFB200EC68CA /* CustomAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertViewController.swift; sourceTree = "<group>"; };
+		4DF0D5632B1F412900EC68CA /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		4DF0D5652B1F4F7100EC68CA /* ProfileUserCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUserCase.swift; sourceTree = "<group>"; };
+		4DF0D5672B1F560C00EC68CA /* DefaultProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultProfileRepository.swift; sourceTree = "<group>"; };
+		4DF0D5692B1F561C00EC68CA /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		5F70C82B2B04A96E00826B5D /* PrivateDetailCheckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewController.swift; sourceTree = "<group>"; };
 		5F70C82C2B04A96E00826B5D /* PrivateDetailCheckListViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewFactory.swift; sourceTree = "<group>"; };
 		5F70C82D2B04A96E00826B5D /* PrivateDetailCheckListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateDetailCheckListViewModel.swift; sourceTree = "<group>"; };
@@ -577,6 +589,7 @@
 				5F8F5FE62B18512D001F7978 /* DefaultWithCheckListRepository.swift */,
 				78E9561F2B178365005CF5D3 /* DefaultCategoryRepository.swift */,
 				4DF0D5502B1EBC3A00EC68CA /* DefaultSettingRepository.swift */,
+				4DF0D5672B1F560C00EC68CA /* DefaultProfileRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -744,6 +757,14 @@
 				4DF0D5572B1EE54700EC68CA /* ProfileViewModel.swift */,
 			);
 			path = ProfileScene;
+			sourceTree = "<group>";
+		};
+		4DF0D5622B1F411E00EC68CA /* UserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				4DF0D5632B1F412900EC68CA /* Storage.swift */,
+			);
+			path = UserDefaults;
 			sourceTree = "<group>";
 		};
 		5F70C8282B04A93A00826B5D /* PrivateDetailCheckListScene */ = {
@@ -918,6 +939,7 @@
 		5FA1F89B2AFF7E1D00869079 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				4DF0D5622B1F411E00EC68CA /* UserDefaults */,
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
@@ -959,6 +981,7 @@
 				5F8F5FE02B184D1D001F7978 /* WithCheckListRepository.swift */,
 				78E9561D2B17810C005CF5D3 /* CategoryRepository.swift */,
 				4DF0D54E2B1EBC1700EC68CA /* SettingRepository.swift */,
+				4DF0D5692B1F561C00EC68CA /* ProfileRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -974,6 +997,7 @@
 				4D34154F2B182F5D004C3FC9 /* WithCheckListUseCase.swift */,
 				78E9561B2B177DAB005CF5D3 /* CategoryUseCase.swift */,
 				4DF0D54C2B1EBBF200EC68CA /* SettingUseCase.swift */,
+				4DF0D5652B1F4F7100EC68CA /* ProfileUserCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -1085,6 +1109,8 @@
 				5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */,
 				5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */,
 				5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */,
+				4DF0D55E2B1EFF4C00EC68CA /* AlertBuilder.swift */,
+				4DF0D5602B1EFFB200EC68CA /* CustomAlertViewController.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1370,6 +1396,7 @@
 				5F9349162B16DF5500282545 /* CheckListFolderRouter.swift in Sources */,
 				4DD97D9C2B14D3A600DF73BC /* DetailCheckListUseCase.swift in Sources */,
 				5F927CF02B18BEA9009C7DD2 /* OpenListNotificationName.swift in Sources */,
+				4DF0D56A2B1F561C00EC68CA /* ProfileRepository.swift in Sources */,
 				4DDC43492B0F39EB00859B28 /* DefaultCRDTStorage.swift in Sources */,
 				4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */,
 				4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */,
@@ -1411,6 +1438,7 @@
 				78E956262B17945A005CF5D3 /* RecommendChecklistResponseDTO.swift in Sources */,
 				78A4C7292B0F5F9300E07492 /* DefaultAuthRepository.swift in Sources */,
 				5F8F5FE72B18512D001F7978 /* DefaultWithCheckListRepository.swift in Sources */,
+				4DF0D5662B1F4F7100EC68CA /* ProfileUserCase.swift in Sources */,
 				4D34155E2B188395004C3FC9 /* CRDTRequestDTO.swift in Sources */,
 				78E955FF2B16FC23005CF5D3 /* SkipButton.swift in Sources */,
 				4DF0D55C2B1EE54700EC68CA /* ProfileViewModel.swift in Sources */,
@@ -1419,6 +1447,7 @@
 				78E955FA2B16FC23005CF5D3 /* MainCategoryViewFactory.swift in Sources */,
 				5F93490B2B16DF4D00282545 /* CheckListTabViewFactory.swift in Sources */,
 				5FA1F8D22AFF802900869079 /* RecommendTabRouter.swift in Sources */,
+				4DF0D55F2B1EFF4C00EC68CA /* AlertBuilder.swift in Sources */,
 				78E9561C2B177DAB005CF5D3 /* CategoryUseCase.swift in Sources */,
 				4D42B8A82B1C42D900ACE359 /* TextChange.swift in Sources */,
 				4D696CBB2B0F946100873B3B /* EditText.swift in Sources */,
@@ -1428,6 +1457,7 @@
 				4D36A38E2B177167009AA063 /* AddCheckListItemAction.swift in Sources */,
 				4DDC43292B0F10EF00859B28 /* CRDTRepository.swift in Sources */,
 				5FA1F8D12AFF802900869079 /* RecommendTabViewController.swift in Sources */,
+				4DF0D5612B1EFFB200EC68CA /* CustomAlertViewController.swift in Sources */,
 				78E956052B16FC23005CF5D3 /* SubCategoryViewController.swift in Sources */,
 				5FCCA3C12B104ABF00496EB2 /* OpenListNavigationBar.swift in Sources */,
 				5F8F5FEB2B186D58001F7978 /* User.swift in Sources */,
@@ -1465,6 +1495,7 @@
 				5F70C8422B04C7F800826B5D /* PrivateDetailCheckListDiffableDataSource.swift in Sources */,
 				4D34155D2B188395004C3FC9 /* CRDTResponseDTO.swift in Sources */,
 				4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */,
+				4DF0D5642B1F412900EC68CA /* Storage.swift in Sources */,
 				5F9349192B16DF5500282545 /* CheckListFolderAction.swift in Sources */,
 				4DDC43422B0F2AC000859B28 /* CRDTStorage.swift in Sources */,
 				5F70C8402B04C6F000826B5D /* UITableView+Extensions.swift in Sources */,
@@ -1486,6 +1517,7 @@
 				78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */,
 				4D36A3992B1777DA009AA063 /* SelectCheckListCell.swift in Sources */,
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
+				4DF0D5682B1F560C00EC68CA /* DefaultProfileRepository.swift in Sources */,
 				78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */,
 				78C2F01C2B0490D300E4EC4E /* ValidCheckUseCase.swift in Sources */,
 				4D42B8AD2B1C9A3B00ACE359 /* Comparison.swift in Sources */,
