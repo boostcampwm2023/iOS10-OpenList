@@ -17,6 +17,11 @@ enum CheckListTabType: Int, Comparable {
 	}
 }
 
+protocol CheckListTabRoutingLogic: AnyObject {
+	func showProfile()
+	func showSetting()
+}
+
 final class CheckListTabViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
 	private var currentTab: CheckListTabType = .privateTab {
@@ -24,9 +29,11 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 			paging(from: oldValue, to: currentTab)
 		}
 	}
+	private let router: CheckListTabRoutingLogic
 	
 	// MARK: - UI Components
-	private let navigationBar: OpenListNavigationBar = .init(rightItems: [.bell, .search, .more])
+	/// 네비게이션 뷰 컨트롤러
+	private let navigationBar: OpenListNavigationBar = .init(leftItems: [.profile], rightItems: [.more])
 	/// 상단 탭 뷰
 	private let checkListTopTabView: CheckListTopTabView = .init()
 	/// 상단 탭의 인디케이터 뷰
@@ -47,10 +54,12 @@ final class CheckListTabViewController: UIViewController, ViewControllable {
 	
 	// MARK: - Initializers
 	init(
+		router: CheckListTabRoutingLogic,
 		privateCheckListTableFactory: CheckListTableFactoryable,
 		withCheckListFactoryable: WithCheckListFactoryable,
 		sharedCheckListFactory: SharedCheckListFactoryable
 	) {
+		self.router = router
 		self.privateCheckListTableFactory = privateCheckListTableFactory
 		self.withCheckListFactoryable = withCheckListFactoryable
 		self.sharedCheckListFactory = sharedCheckListFactory
@@ -88,6 +97,7 @@ private extension CheckListTabViewController {
 		setCheckListTopViewAttributes()
 		setPageViewControllerAttributes()
 		setIndicatorViewAttributes()
+		setNavigationBarAttributes()
 	}
 	
 	func setCheckListTopViewAttributes() {
@@ -107,6 +117,10 @@ private extension CheckListTabViewController {
 		indicatorView.translatesAutoresizingMaskIntoConstraints = false
 		indicatorView.backgroundColor = .green
 		indicatorView.layer.cornerRadius = 1
+	}
+	
+	func setNavigationBarAttributes() {
+		navigationBar.delegate = self
 	}
 	
 	func setViewHierarchies() {
@@ -254,6 +268,20 @@ private extension CheckListTabViewController {
 			self.indicatorViewCenterConstraint = newIndicatorViewCenterconstraint
 			self.indicatorViewCenterConstraint?.isActive = true
 			self.view.layoutIfNeeded()
+		}
+	}
+}
+
+extension CheckListTabViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) { }
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		switch item.type {
+		case .profile:
+			router.showProfile()
+		case .more:
+			router.showSetting()
+		default: return
 		}
 	}
 }

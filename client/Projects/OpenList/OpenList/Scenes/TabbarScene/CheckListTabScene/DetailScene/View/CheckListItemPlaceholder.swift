@@ -8,12 +8,16 @@
 import UIKit
 
 protocol CheckListItemPlaceholderDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath)
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
+		indexPath: IndexPath
+	)
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool
+	func textViewDidChange(_ textView: OpenListTextView)
 }
 
 final class CheckListItemPlaceholder: UITableViewCell {
@@ -22,6 +26,7 @@ final class CheckListItemPlaceholder: UITableViewCell {
 		static let verticalPadding: CGFloat = 12
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
+		static let cellSpacing: CGFloat = 24
 	}
 	
 	enum Text {
@@ -30,7 +35,7 @@ final class CheckListItemPlaceholder: UITableViewCell {
 	
 	// MARK: - Properties
 	private let checkButton: CheckListItemButton = .init()
-	private let textField: CheckListItemTextField = .init()
+	private let textView: OpenListTextView = .init()
 	private var indexPath: IndexPath?
 	weak var delegate: CheckListItemPlaceholderDelegate?
 	
@@ -60,14 +65,15 @@ private extension CheckListItemPlaceholder {
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.isEnabled = false
-		textField.translatesAutoresizingMaskIntoConstraints = false
-		textField.placeholder = Text.deactivatedPlaceholder
-		textField.delegate = self
+		textView.translatesAutoresizingMaskIntoConstraints = false
+		textView.text = Text.deactivatedPlaceholder
+		textView.textColor = .lightGray
+		textView.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		contentView.addSubview(checkButton)
-		contentView.addSubview(textField)
+		contentView.addSubview(textView)
 	}
 	
 	func setViewConstraints() {
@@ -75,45 +81,61 @@ private extension CheckListItemPlaceholder {
 			checkButton.widthAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.width),
 			checkButton.heightAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.height),
 			checkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstant.horizontalPadding),
-			checkButton.trailingAnchor.constraint(equalTo: textField.leadingAnchor, constant: -LayoutConstant.spacing),
-			checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			textField.topAnchor.constraint(equalTo: checkButton.topAnchor),
-			textField.trailingAnchor.constraint(
+			checkButton.trailingAnchor.constraint(equalTo: textView.leadingAnchor, constant: -LayoutConstant.spacing),
+			checkButton.topAnchor.constraint(equalTo: textView.topAnchor),
+			
+			textView.topAnchor.constraint(equalTo: contentView.topAnchor),
+			textView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
 				constant: -LayoutConstant.horizontalPadding
 			),
-			textField.bottomAnchor.constraint(equalTo: checkButton.bottomAnchor)
+			textView.bottomAnchor.constraint(
+				equalTo: contentView.bottomAnchor,
+				constant: -LayoutConstant.cellSpacing
+			)
 		])
 	}
 }
 
-extension CheckListItemPlaceholder: UITextFieldDelegate {
-	func textFieldDidBeginEditing(_ textField: UITextField) {
+extension CheckListItemPlaceholder: UITextViewDelegate {
+	func textViewDidBeginEditing(_ textView: UITextView) {
 		// 플레이스 홀더에 작성 중일 때 버튼을 활성화시킵니다.
+		if textView.text == Text.deactivatedPlaceholder {
+			textView.text = nil
+			textView.textColor = .gray1
+		}
 		checkButton.isEnabled = true
 	}
 	
-	func textFieldDidEndEditing(_ textField: UITextField) {
+	func textViewDidEndEditing(_ textView: UITextView) {
 		guard let indexPath = indexPath else { return }
-		// 플레이스 홀더에 작성한 텍스트가 있을 경우 뷰컨에 전달하여 체크리스트에 추가합니다.
-		if let text = textField.text, !text.isEmpty {
-			delegate?.textFieldDidEndEditing(self.textField, indexPath: indexPath)
-		}
 		// 플레이스 홀더 작성이 완료되었으면 체크 버튼을 비활성화시킵니다.
 		checkButton.isEnabled = false
+		if let text = textView.text, !text.isEmpty {
+			delegate?.textViewDidEndEditing(self.textView, indexPath: indexPath)
+		}
+		textView.text = Text.deactivatedPlaceholder
+		textView.textColor = .lightGray
 	}
 	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
-	}
-	
-	func textField(
-		_ textField: UITextField,
-		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+	func textView(
+		_ textView: UITextView,
+		shouldChangeTextIn range: NSRange,
+		replacementText text: String
 	) -> Bool {
+		guard text != "\n" else {
+			textView.resignFirstResponder()
+			return false
+		}
 		guard let delegate else { return true }
-		return delegate.textField(self.textField, shouldChangeCharactersIn: range, replacementString: string)
+		return delegate.textView(
+			self.textView,
+			shouldChangeCharactersIn: range,
+			replacementString: text
+		)
+	}
+	
+	func textViewDidChange(_ textView: UITextView) {
+		delegate?.textViewDidChange(self.textView)
 	}
 }

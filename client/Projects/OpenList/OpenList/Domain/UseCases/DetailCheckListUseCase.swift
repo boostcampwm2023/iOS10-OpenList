@@ -55,6 +55,7 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 		do {
 			guard let checkList else { return nil }
 			self.checkList?.items.append(item)
+			self.orderBy.append(item.id)
 			try await checkListRepository.appendCheckList(id: checkList.id, item: item)
 			return item
 		} catch {

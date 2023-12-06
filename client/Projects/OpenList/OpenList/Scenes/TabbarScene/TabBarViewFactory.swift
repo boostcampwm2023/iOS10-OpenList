@@ -71,7 +71,7 @@ final class TabBarComponent:
 }
 
 protocol TabBarFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable
 }
 
 final class TabBarViewFactory: Factory<TabBarDependency>, TabBarFactoryable {
@@ -79,9 +79,10 @@ final class TabBarViewFactory: Factory<TabBarDependency>, TabBarFactoryable {
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable {
 		let component = TabBarComponent(parent: parent)
 		let tabBarViewController = TabBarViewController(
+			appRouter: appRouter,
 			checkListTabFactoryable: component.checklistTabFactoryable,
 			addTabFactoryable: component.addTabFactoryable,
 			recommendTabFactoryable: component.recommendTabFactoryable

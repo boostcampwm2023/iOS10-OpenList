@@ -8,15 +8,19 @@
 import UIKit
 
 protocol WithCheckListItemDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: WithCheckListItem, indexPath: IndexPath)
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
+		cell: WithCheckListItem,
+		indexPath: IndexPath
+	)
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
 		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
-	func textFieldDidChange(_ text: String)
+	func textViewDidChange(_ textView: OpenListTextView)
 }
 
 final class WithCheckListItem: UITableViewCell {
@@ -25,17 +29,18 @@ final class WithCheckListItem: UITableViewCell {
 		static let verticalPadding: CGFloat = 12
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
+		static let cellSpacing: CGFloat = 24
 	}
 	
 	// MARK: - Properties
 	private let checkButton: CheckListItemButton = .init()
-	private let textField: CheckListItemTextField = .init()
+	private let textView: OpenListTextView = .init()
 	private var indexPath: IndexPath?
 	private(set) var cellId: UUID?
 	weak var delegate: WithCheckListItemDelegate?
 	
 	var content: String {
-		textField.text ?? ""
+		textView.text ?? ""
 	}
 	
 	// MARK: - Initializers
@@ -56,7 +61,7 @@ extension WithCheckListItem {
 	func configure(with checkListItem: CheckListItem, indexPath: IndexPath) {
 		self.indexPath = indexPath
 		self.cellId = checkListItem.id
-		textField.text = checkListItem.title
+		textView.text = checkListItem.title
 		if checkListItem.isChecked {
 			checkButton.setChecked()
 		} else {
@@ -71,14 +76,13 @@ private extension WithCheckListItem {
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
-		textField.translatesAutoresizingMaskIntoConstraints = false
-		textField.delegate = self
-		textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+		textView.translatesAutoresizingMaskIntoConstraints = false
+		textView.delegate = self
 	}
 	
 	func setViewHierarchies() {
 		contentView.addSubview(checkButton)
-		contentView.addSubview(textField)
+		contentView.addSubview(textView)
 	}
 	
 	func setViewConstraints() {
@@ -86,14 +90,18 @@ private extension WithCheckListItem {
 			checkButton.widthAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.width),
 			checkButton.heightAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.height),
 			checkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstant.horizontalPadding),
-			checkButton.trailingAnchor.constraint(equalTo: textField.leadingAnchor, constant: -LayoutConstant.spacing),
-			checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			textField.topAnchor.constraint(equalTo: checkButton.topAnchor),
-			textField.trailingAnchor.constraint(
+			checkButton.trailingAnchor.constraint(equalTo: textView.leadingAnchor, constant: -LayoutConstant.spacing),
+			checkButton.topAnchor.constraint(equalTo: textView.topAnchor),
+			
+			textView.topAnchor.constraint(equalTo: contentView.topAnchor),
+			textView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
 				constant: -LayoutConstant.horizontalPadding
 			),
-			textField.bottomAnchor.constraint(equalTo: checkButton.bottomAnchor)
+			textView.bottomAnchor.constraint(
+				equalTo: contentView.bottomAnchor,
+				constant: -LayoutConstant.cellSpacing
+			)
 		])
 	}
 	
@@ -102,38 +110,36 @@ private extension WithCheckListItem {
 	}
 }
 
-extension WithCheckListItem: UITextFieldDelegate {
-	func textFieldDidEndEditing(_ textField: UITextField) {
+extension WithCheckListItem: UITextViewDelegate {
+	func textViewDidEndEditing(_ textView: UITextView) {
 		guard let indexPath = indexPath else { return }
-		delegate?.textFieldDidEndEditing(self.textField, cell: self, indexPath: indexPath)
+		delegate?.textViewDidEndEditing(self.textView, cell: self, indexPath: indexPath)
 	}
 	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
-	}
-	
-	func textField(
-		_ textField: UITextField,
-		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+	func textView(
+		_ textView: UITextView,
+		shouldChangeTextIn range: NSRange,
+		replacementText text: String
 	) -> Bool {
+		guard text != "\n" else {
+			textView.resignFirstResponder()
+			return false
+		}
 		guard
 			let delegate,
 			let indexPath,
 			let cellId
 		else { return true }
-		return delegate.textField(
-			self.textField,
+		return delegate.textView(
+			self.textView,
 			shouldChangeCharactersIn: range,
-			replacementString: string,
+			replacementString: text,
 			indexPath: indexPath,
 			cellId: cellId
 		)
 	}
 	
-	@objc func textFieldDidChange(_ sender: CheckListItemTextField?) {
-		guard let text = sender?.text else { return }
-		delegate?.textFieldDidChange(text)
+	func textViewDidChange(_ textView: UITextView) {
+		delegate?.textViewDidChange(self.textView)
 	}
 }

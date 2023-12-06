@@ -8,15 +8,18 @@
 import UIKit
 
 final class TabBarViewController: UITabBarController, ViewControllable {
+	private let appRouter: AppRouterProtocol
 	private let checkListTabFactoryable: CheckListTabFactoryable
 	private let addTabFactoryable: AddCheckListTitleFactoryable
 	private let recommendTabFactoryable: RecommendTabFactoryable
 	
 	init(
+		appRouter: AppRouterProtocol,
 		checkListTabFactoryable: CheckListTabFactoryable,
 		addTabFactoryable: AddCheckListTitleFactoryable,
 		recommendTabFactoryable: RecommendTabFactoryable
 	) {
+		self.appRouter = appRouter
 		self.checkListTabFactoryable = checkListTabFactoryable
 		self.addTabFactoryable = addTabFactoryable
 		self.recommendTabFactoryable = recommendTabFactoryable
@@ -36,7 +39,7 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 		emptyViewController.view.backgroundColor = .systemBackground
 		emptyViewController.tabBarItem = makeTabBarItem(of: .addTab)
 		
-		let checkListTabViewControllable = checkListTabFactoryable.make()
+		let checkListTabViewControllable = checkListTabFactoryable.make(with: appRouter)
 		let checkListTabNavigationController = makeTabNavigationController(of: checkListTabViewControllable)
 		checkListTabNavigationController.navigationController.tabBarItem = makeTabBarItem(of: .checklistTab)
 		

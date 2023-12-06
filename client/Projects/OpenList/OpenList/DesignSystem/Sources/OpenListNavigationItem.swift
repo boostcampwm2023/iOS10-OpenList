@@ -11,7 +11,7 @@ enum OpenListNavigationItemType {
 	case bell
 	case search
 	case more
-	case logo(_ image: UIImage)
+	case profile
 }
 
 extension OpenListNavigationItemType {
@@ -23,8 +23,14 @@ extension OpenListNavigationItemType {
 			return .search.withRenderingMode(.alwaysTemplate)
 		case .more:
 			return .more.withRenderingMode(.alwaysTemplate)
-		case .logo(let image):
-			return image.withRenderingMode(.alwaysOriginal)
+		case .profile:
+			var image: UIImage {
+				guard let profile = Storage.shared.fetch(key: .profile) as? UIImage else {
+					return UIImage.profile
+				}
+				return profile
+			}
+			return image.withRenderingMode(.alwaysTemplate)
 		}
 	}
 }

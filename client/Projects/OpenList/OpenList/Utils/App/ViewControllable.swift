@@ -52,6 +52,17 @@ final class NavigationControllable: ViewControllable {
 	}
 }
 
+extension UINavigationController: UIGestureRecognizerDelegate {
+	override open func viewDidLoad() {
+		super.viewDidLoad()
+		interactivePopGestureRecognizer?.delegate = self
+	}
+	
+	public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		return viewControllers.count > 1
+	}
+}
+
 final class TabBarControllable: ViewControllable {
 	var uiviewController: UIViewController { return self.tabBarController }
 	var tabBarController: UITabBarController
