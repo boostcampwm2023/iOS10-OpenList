@@ -7,6 +7,11 @@ import { AccessTokenGuard } from './auth/guard/access-token.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  //cors 설정
+  app.enableCors({
+    origin: ['http://127.0.0.1:5500'],
+  });
   // AccessTokenGuard 전역 Guard로 설정
   const authService = app.get(AuthService);
   app.useGlobalGuards(new AccessTokenGuard(authService));
