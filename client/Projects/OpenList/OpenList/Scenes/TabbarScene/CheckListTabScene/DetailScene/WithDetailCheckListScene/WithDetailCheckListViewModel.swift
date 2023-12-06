@@ -85,11 +85,12 @@ private extension WithDetailCheckListViewModel {
 	func textDidChange(_ input: Input) -> Output {
 		return input.textDidChange
 			.withUnretained(self)
-			.flatMap { (owner, currentText) -> AnyPublisher<any ListItem, Never> in
+			.flatMap { (owner, item) -> AnyPublisher<any ListItem, Never> in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.update(
 						textChange: owner.textChange,
-						currentText: currentText
+						currentText: item.text,
+						isChecked: item.isChecked
 					)
 				})
 				return future.eraseToAnyPublisher()

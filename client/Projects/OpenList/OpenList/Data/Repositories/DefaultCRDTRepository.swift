@@ -27,11 +27,11 @@ extension DefaultCRDTRepository: CRDTRepository {
 		return message
 	}
 	
-	func send(id: UUID, message: CRDTMessage) throws {
+	func send(id: UUID, isChecked: Bool, message: CRDTMessage) throws {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: CRDTMessageRequestDTO(id: id, number: number, name: name, data: message)
+			data: CRDTMessageRequestDTO(id: id, number: number, name: name, state: isChecked, data: message)
 		)
 		let data = try JSONEncoder().encode(request)
 		WebSocket.shared.send(data: data)

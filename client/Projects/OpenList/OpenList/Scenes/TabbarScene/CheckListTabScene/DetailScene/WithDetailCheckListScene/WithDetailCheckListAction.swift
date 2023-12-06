@@ -12,7 +12,7 @@ struct WithDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 	let socketConnet: PassthroughSubject<Void, Never>
 	let textShouldChange: PassthroughSubject<TextChange, Never>
-	let textDidChange: PassthroughSubject<String, Never>
+	let textDidChange: PassthroughSubject<WithCheckListItemChange, Never>
 	let appendDocument: PassthroughSubject<EditText, Never>
 	let removeDocument: PassthroughSubject<EditText, Never>
 	let receive: PassthroughSubject<String, Never>

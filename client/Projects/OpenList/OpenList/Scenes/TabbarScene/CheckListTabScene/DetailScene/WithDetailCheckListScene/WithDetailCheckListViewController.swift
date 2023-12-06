@@ -39,7 +39,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	private let socketConnet: PassthroughSubject<Void, Never> = .init()
 	private let textShouldChange: PassthroughSubject<TextChange, Never> = .init()
-	private let textDidChange: PassthroughSubject<String, Never> = .init()
+	private let textDidChange: PassthroughSubject<WithCheckListItemChange, Never> = .init()
 	private let appendDocument: PassthroughSubject<EditText, Never> = .init()
 	private let removeDocument: PassthroughSubject<EditText, Never> = .init()
 	private let receive: PassthroughSubject<String, Never> = .init()
@@ -367,8 +367,9 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 
 // MARK: - WithCheckListItemDelegate
 extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
-	func withCheckListTextViewDidChange(_ textView: OpenListTextView) {
-		textDidChange.send(textView.text)
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView, indexPath: IndexPath) {
+		let cell = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
+		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: cell.isChecked))
 		checkListView.beginUpdates()
 		checkListView.endUpdates()
 	}

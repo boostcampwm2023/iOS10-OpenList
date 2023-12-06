@@ -16,7 +16,7 @@ enum CRDTUseCaseError: Error {
 protocol CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList
 	func receive(_ jsonString: String) async throws -> [any ListItem]
-	func update(textChange: TextChange, currentText: String) async throws -> any ListItem
+	func update(textChange: TextChange, currentText: String, isChecked: Bool) async throws -> any ListItem
 	func appendDocument(at editText: EditText) async throws -> any ListItem
 	func removeDocument(at editText: EditText) async throws -> any ListItem
 	func createDocument(id: UUID) -> RGASDocument<String>
@@ -51,16 +51,16 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		response.compactMap { item in
 			if let item = item as? CRDTDocumentResponseDTO {
 				return removeCheckList(to: item.id)
-			} else if let item = item as? CRDTCheckListToggleResponseDTO {
-				documentsStateDictionary[item.id] = item.state
-				return try? updateCheckListItem(to: item.id, name: item.name, isChecked: item.state)
 			} else if let item = item as? CRDTMessageResponseDTO {
 				if documentsId.searchNode(from: item.id) == nil {
 					return try? appendCheckListItem(to: item.id, message: item.message, name: item.name)
 				} else {
 					// 차후 isChecked 변수값 조정 -> 문제 발생 예정
-					return try? updateCheckListItem(to: item.id, message: item.message, name: item.name, isChecked: false)
+					return try? updateCheckListItem(to: item.id, message: item.message, name: item.name, isChecked: item.state)
 				}
+			} else if let item = item as? CRDTCheckListToggleResponseDTO {
+				documentsStateDictionary[item.id] = item.state
+				return try? updateCheckListItem(to: item.id, name: item.name, isChecked: item.state)
 			} else {
 				return nil
 			}
@@ -93,20 +93,20 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		}
 		switch response.event {
 		case .listen:
-			if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
-				dump("Message Number: \(data.number)")
-				if documentsId.searchNode(from: data.id) != nil {
-					return [try updateCheckListItem(to: data.id, name: data.name, isChecked: data.state)]
-				} else {
-					return []
-				}
-			} else if let data = response.data.first as? CRDTMessageResponseDTO {
+			if let data = response.data.first as? CRDTMessageResponseDTO {
 				dump("Message Name: \(data.name)")
 				dump("Message Number: \(data.number)")
 				if documentsId.searchNode(from: data.id) == nil {
 					return [try appendCheckListItem(to: data.id, message: data.message, name: data.name)]
 				} else {
-					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name, isChecked: false)]
+					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name, isChecked: data.state)]
+				}
+			} else if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
+				dump("Message Number: \(data.number)")
+				if documentsId.searchNode(from: data.id) != nil {
+					return [try updateCheckListItem(to: data.id, name: data.name, isChecked: data.state)]
+				} else {
+					return []
 				}
 			} else if let data = response.data.first as? CRDTDocumentResponseDTO {
 				dump("Message Number: \(data.number)")
@@ -148,7 +148,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		try crdtRepository.checkListStateUpdate(id: id, isChecked: isChecked)
 	}
 	
-	func update(textChange: TextChange, currentText: String) async throws -> any ListItem {
+	func update(textChange: TextChange, currentText: String, isChecked: Bool) async throws -> any ListItem {
 		#if DEBUG
 		defer {
 			printDocument(text: currentText, id: textChange.id)
@@ -160,11 +160,11 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		
 		switch lengthChange {
 		case .less:
-			return try await lengthChangeLess(textChange: textChange, currentText: currentText)
+			return try await lengthChangeLess(textChange: textChange, currentText: currentText, isChecked: isChecked)
 		case .equal:
-			return try await lengthChangeEqual(textChange: textChange, currentText: currentText)
+			return try await lengthChangeEqual(textChange: textChange, currentText: currentText, isChecked: isChecked)
 		case .more:
-			return try await lengthChangeMore(textChange: textChange, currentText: currentText)
+			return try await lengthChangeMore(textChange: textChange, currentText: currentText, isChecked: isChecked)
 		}
 	}
 	
@@ -172,7 +172,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		let operation = createOperation(at: editText, type: .insert, argument: 0)
 		let id = editText.id
 		let (item, message) = try appendCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
+		try await updateRepository(id: id, isChecked: false, message: message)
 		return item
 	}
 	
@@ -186,21 +186,21 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 
 private extension DefaultCRDTUseCase {
 	// MARK: LengthChange
-	func lengthChangeLess(textChange: TextChange, currentText: String) async throws -> any ListItem {
+	func lengthChangeLess(textChange: TextChange, currentText: String, isChecked: Bool) async throws -> any ListItem {
 		let range = textChange.range
 		let oldString = textChange.oldString
 		let id = textChange.id
 		let replacementString = textChange.replacementString
 		
 		if range.location == 0 {
-			return try await delete(at: .init(id: id, content: replacementString, range: range))
+			return try await delete(at: .init(id: id, content: replacementString, range: range), isChecked: isChecked)
 		} else {
 			let location = range.location - 1
 			let currentString = currentText.subString(offsetBy: location)
 			let prevString = oldString.subString(offsetBy: location)
 			
 			if currentString == prevString {
-				return try await delete(at: .init(id: id, content: replacementString, range: range))
+				return try await delete(at: .init(id: id, content: replacementString, range: range), isChecked: isChecked)
 			} else {
 				return try await replace(
 					at: .init(
@@ -208,13 +208,14 @@ private extension DefaultCRDTUseCase {
 						content: currentString,
 						range: .init(location: location, length: range.length)
 					),
+					isChecked: isChecked,
 					argument: 2
 				)
 			}
 		}
 	}
 	
-	func lengthChangeEqual(textChange: TextChange, currentText: String) async throws -> any ListItem {
+	func lengthChangeEqual(textChange: TextChange, currentText: String, isChecked: Bool) async throws -> any ListItem {
 		let range = textChange.range
 		let id = textChange.id
 		let location: Int = (range.length == 0) ? range.location - 1 : range.location
@@ -224,11 +225,12 @@ private extension DefaultCRDTUseCase {
 				id: id,
 				content: string,
 				range: .init(location: location, length: range.length)
-			)
+			),
+			isChecked: isChecked
 		)
 	}
 	
-	func lengthChangeMore(textChange: TextChange, currentText: String) async throws -> any ListItem {
+	func lengthChangeMore(textChange: TextChange, currentText: String, isChecked: Bool) async throws -> any ListItem {
 		let range = textChange.range
 		let id = textChange.id
 		
@@ -237,7 +239,7 @@ private extension DefaultCRDTUseCase {
 			throw CRDTUseCaseError.typeIsNil
 		}
 		if value2 < 0xac00 {
-			return try await insert(at: .init(id: id, content: string, range: range))
+			return try await insert(at: .init(id: id, content: string, range: range), isChecked: isChecked)
 		} else {
 			let location = range.location - 1
 			let prevString = currentText.subString(offsetBy: location)
@@ -247,25 +249,26 @@ private extension DefaultCRDTUseCase {
 					id: id,
 					content: string,
 					range: .init(location: location, length: range.length + 1)
-				)
+				),
+				isChecked: isChecked
 			)
 		}
 	}
 	
 	// MARK: Operation
-	func insert(at editText: EditText) async throws -> any ListItem {
+	func insert(at editText: EditText, isChecked: Bool) async throws -> any ListItem {
 		let operation = createOperation(at: editText, type: .insert, argument: 0)
 		let id = editText.id
 		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
+		try await updateRepository(id: id, isChecked: isChecked, message: message)
 		return item
 	}
 	
-	func delete(at editText: EditText) async throws -> any ListItem {
+	func delete(at editText: EditText, isChecked: Bool) async throws -> any ListItem {
 		let operation = createOperation(at: editText, type: .delete, argument: 1)
 		let id = editText.id
 		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
+		try await updateRepository(id: id, isChecked: isChecked, message: message)
 		if item.title.isEmpty {
 			documentsId.remove(value: id)
 			documentDictionary.removeValue(forKey: id)
@@ -274,11 +277,11 @@ private extension DefaultCRDTUseCase {
 		return item
 	}
 	
-	func replace(at editText: EditText, argument: Int = 1) async throws -> any ListItem {
+	func replace(at editText: EditText, isChecked: Bool, argument: Int = 1) async throws -> any ListItem {
 		let operation = createOperation(at: editText, type: .replace, argument: argument)
 		let id = editText.id
 		let (item, message) = try updateCheckListItem(to: id, operation: operation)
-		try await updateRepository(id: id, message: message)
+		try await updateRepository(id: id, isChecked: isChecked, message: message)
 		return item
 	}
 	
@@ -355,8 +358,8 @@ private extension DefaultCRDTUseCase {
 		try crdtRepository.documentDelete(id: id)
 	}
 	
-	func updateRepository(id: UUID, message: CRDTMessage) async throws {
-		try crdtRepository.send(id: id, message: message)
+	func updateRepository(id: UUID, isChecked: Bool, message: CRDTMessage) async throws {
+		try crdtRepository.send(id: id, isChecked: isChecked, message: message)
 		try await crdtRepository.save(message: message)
 	}
 }

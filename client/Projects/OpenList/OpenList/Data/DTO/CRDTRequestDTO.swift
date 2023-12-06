@@ -72,10 +72,11 @@ struct CRDTMessageRequestDTO: CRDTData, Encodable {
 	let id: UUID
 	let number: Int
 	let name: String
+	let state: Bool
 	let data: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case id, number, name, message
+		case id, number, name, state, message
 	}
 	
 	func encode(to encoder: Encoder) throws {
@@ -83,6 +84,7 @@ struct CRDTMessageRequestDTO: CRDTData, Encodable {
 		try container.encode(id, forKey: .id)
 		try container.encode(number, forKey: .number)
 		try container.encode(name, forKey: .name)
+		try container.encode(state, forKey: .state)
 		if let myMessage = data as? OperationBasedOneMessage {
 			try container.encode(myMessage, forKey: .message)
 		} else if let myMessages = data as? OperationBasedMessagesBag {

@@ -39,7 +39,7 @@ extension DefaultWithCheckListRepository: WithCheckListRepository {
 		builder.setMethod(.post)
 		do {
 			let crdtItems = items.map { (editTextId: UUID, message: CRDTMessage) -> CRDTMessageRequestDTO in
-				return CRDTMessageRequestDTO(id: editTextId, number: 1, name: name ?? "Unknown", data: message)
+				return CRDTMessageRequestDTO(id: editTextId, number: 1, name: name ?? "Unknown", state: false, data: message)
 			}
 			
 			let reuqestDTO = RequestDTO(title: title, items: crdtItems, sharedChecklistId: sharedChecklistId)

@@ -43,19 +43,20 @@ struct WithCheckListItemDTO: Decodable {
 			self.messages = messages.compactMap { datum in
 				let id = datum.id
 				let number = datum.number
-				if let name = datum.name, let state = datum.state {
+				if let name = datum.name, let message = datum.message, let state = datum.state {
+					return CRDTMessageResponseDTO(
+						id: id,
+						number: number,
+						name: name,
+						state: state,
+						message: message
+					)
+				} else if let name = datum.name, let state = datum.state {
 					return CRDTCheckListToggleResponseDTO(
 						id: id,
 						number: number,
 						name: name,
 						state: state
-					)
-				} else if let name = datum.name, let message = datum.message {
-					return CRDTMessageResponseDTO(
-						id: id,
-						number: number,
-						name: name,
-						message: message
 					)
 				} else if let event = datum.event {
 					return CRDTDocumentResponseDTO(
