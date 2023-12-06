@@ -5,6 +5,7 @@
 //  Created by wi_seong on 11/30/23.
 //
 
+import CRDT
 import Foundation
 
 // MARK: - WithCheckListItemResponseDTO
@@ -25,6 +26,15 @@ struct WithCheckListItemDTO: Decodable {
 	let itemID: Int
 	let messages: [CRDTData]
 	
+	struct DecodeMessage: CRDTData, Decodable {
+		let id: UUID
+		let number: Int
+		let event: DocumentEvent?
+		let state: Bool?
+		let name: String?
+		let messsage: CRDTMessage?
+	}
+	
 	enum CodingKeys: String, CodingKey {
 		case updatedAt
 		case createdAt
@@ -37,6 +47,15 @@ struct WithCheckListItemDTO: Decodable {
 		self.updatedAt = try container.decode(String.self, forKey: .updatedAt)
 		self.createdAt = try container.decode(String.self, forKey: .createdAt)
 		self.itemID = try container.decode(Int.self, forKey: .itemID)
+		
+		if let messages = try? container.decode([DecodeMessage].self, forKey: .messages) {
+			self.messages = messages.compactMap { datum in
+			}
+			
+		} else {
+			self.messages = []
+		}
+		
 		if let messages = try? container.decode([CRDTMessageResponseDTO].self, forKey: .messages) {
 			self.messages = messages
 		} else if let messages = try? container.decode([CRDTCheckListToggleResponseDTO].self, forKey: .messages) {

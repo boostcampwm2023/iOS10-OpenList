@@ -49,6 +49,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList {
 		self.id = id
 		let response = try await crdtRepository.fetchCheckListItems(id: id)
+		dump(response)
 		response.compactMap { item in
 			if let item = item as? CRDTDocumentResponseDTO {
 				return removeCheckList(to: item.id)
@@ -128,6 +129,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			guard let data = response.data as? [CRDTMessageResponseDTO] else {
 				throw CRDTUseCaseError.decodeFailed
 			}
+			print(data)
 			historyData = try data.map {
 				if documentsId.searchNode(from: $0.id) == nil {
 					try appendCheckListItem(to: $0.id, message: $0.message, name: $0.name)
