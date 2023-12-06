@@ -27,6 +27,7 @@ import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
 import { LoggingInterceptor } from './common/interceptor/log.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { FeedsModule } from './feeds/feeds.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     SharedChecklistsModule,
     ChecklistAiModule,
     CategoriesModule,
+    FeedsModule,
   ],
   controllers: [AppController],
   providers: [
