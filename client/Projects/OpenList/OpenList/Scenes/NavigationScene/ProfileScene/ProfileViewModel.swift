@@ -46,7 +46,7 @@ private extension ProfileViewModel {
 			.withUnretained(self)
 			.map { owner, _ in
 				let nickname = Storage.shared.fetch(key: .nickname) as? String
-				let user = User(userId: 1, email: "", fullName: "", nickname: nickname!, profileImage: "")
+				let user = User(userId: 1, email: "", fullName: "", nickname: nickname ?? "", profileImage: "")
 				owner.user = user
 				return .viewDidLoad(user)
 			}
