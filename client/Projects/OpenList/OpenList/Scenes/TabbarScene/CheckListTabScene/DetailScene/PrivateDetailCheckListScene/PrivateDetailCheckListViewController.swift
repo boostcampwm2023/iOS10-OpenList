@@ -178,6 +178,7 @@ private extension PrivateDetailCheckListViewController {
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
 		checkListView.separatorStyle = .none
+
 		/// 테이블 뷰 영역 터치 시 키보드를 내린다.
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
 		tapGesture.cancelsTouchesInView = true
@@ -251,7 +252,7 @@ private extension PrivateDetailCheckListViewController {
 // MARK: - UITableViewDelegate
 extension PrivateDetailCheckListViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return LayoutConstant.checkListItemHeight
+		return UITableView.automaticDimension
 	}
 	
 	func tableView(
@@ -290,56 +291,59 @@ extension PrivateDetailCheckListViewController: UITableViewDelegate {
 
 // MARK: - LocalCheckListItemDelegate
 extension PrivateDetailCheckListViewController: LocalCheckListItemDelegate {
-	func textFieldDidEndEditing(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
 		cell: LocalCheckListItem,
 		indexPath: IndexPath
 	) {
 		let checkListItem = CheckListItem(
 			itemId: cell.id,
-			title: textField.text ?? "",
+			title: textView.text ?? "",
 			isChecked: cell.isChecked
 		)
-		if let text = textField.text, !text.isEmpty {
+		if let text = textView.text, !text.isEmpty {
 			update.send(checkListItem)
 		} else {
 			remove.send(checkListItem)
 		}
 	}
 	
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
-		guard let text = textField.text else { return true }
+		guard let text = textView.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
-		
 		return updatedText.count <= 30
 	}
 	
 	func didChangedCheckButton(
-		_ textField: CheckListItemTextField,
+		_ textView: OpenListTextView,
 		cell: LocalCheckListItem,
 		indexPath: IndexPath,
 		isChecked: Bool
 	) {
 		let checkListItem = CheckListItem(
 			itemId: cell.id,
-			title: textField.text ?? "",
+			title: textView.text ?? "",
 			isChecked: cell.isChecked
 		)
 		update.send(checkListItem)
+	}
+	
+	func textViewDidChange(_ textView: OpenListTextView) {
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
 	}
 }
 
 // MARK: - CheckListItemPlaceholderDelegate
 extension PrivateDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
-		guard let text = textField.text else { return }
-		textField.text = nil
+	func textViewDidEndEditing(_ textView: OpenListTextView, indexPath: IndexPath) {
+		guard let text = textView.text else { return }
 		let checkListItem = CheckListItem(
 			itemId: UUID(),
 			title: text,

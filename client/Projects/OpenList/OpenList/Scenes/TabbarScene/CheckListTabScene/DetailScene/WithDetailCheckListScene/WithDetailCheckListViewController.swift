@@ -308,7 +308,7 @@ private extension WithDetailCheckListViewController {
 // MARK: - UITableViewDelegate
 extension WithDetailCheckListViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return LayoutConstant.checkListItemHeight
+		return UITableView.automaticDimension
 	}
 	
 	func tableView(
@@ -347,12 +347,12 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 
 // MARK: - WithCheckListItemDelegate
 extension WithDetailCheckListViewController: WithCheckListItemDelegate {
-	func textFieldDidEndEditing(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
 		cell: WithCheckListItem,
 		indexPath: IndexPath
 	) {
-		if let text = textField.text, !text.isEmpty {
+		if let text = textView.text, !text.isEmpty {
 			// 로컬에 저장합니다.
 			dataSource?.updateCheckListItemString(at: indexPath, with: text)
 		} else {
@@ -360,14 +360,14 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		}
 	}
 	
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
 		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool {
-		guard let text = textField.text else { return true }
+		guard let text = textView.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
@@ -377,8 +377,10 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		return true
 	}
 	
-	func textFieldDidChange(_ text: String) {
-		textDidChange.send(text)
+	func textViewDidChange(_ textView: OpenListTextView) {
+		textDidChange.send(textView.text)
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
 	}
 }
 
@@ -404,21 +406,20 @@ extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
 
 // MARK: - WithCheckListItemPlaceholderDelegate
 extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
-		guard let text = textField.text else { return true }
+		guard let text = textView.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30
 	}
 	
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
-		guard let text = textField.text else { return }
-		textField.text = nil
+	func textViewDidEndEditing(_ textView: OpenListTextView, indexPath: IndexPath) {
+		guard let text = textView.text else { return }
 		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
 	}
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D2BC1B02B1F5C17004C9DBA /* OpenListTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2BC1AF2B1F5C17004C9DBA /* OpenListTextView.swift */; };
 		4D3397FC2B02399300963664 /* Publisher+Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3397FB2B02399300963664 /* Publisher+Operator.swift */; };
 		4D3398082B023BE800963664 /* CheckListTableAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398032B023BE800963664 /* CheckListTableAction.swift */; };
 		4D3398092B023BE800963664 /* CheckListTableRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3398042B023BE800963664 /* CheckListTableRouter.swift */; };
@@ -243,6 +244,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D2BC1AF2B1F5C17004C9DBA /* OpenListTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenListTextView.swift; sourceTree = "<group>"; };
 		4D3397FB2B02399300963664 /* Publisher+Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operator.swift"; sourceTree = "<group>"; };
 		4D3398032B023BE800963664 /* CheckListTableAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableAction.swift; sourceTree = "<group>"; };
 		4D3398042B023BE800963664 /* CheckListTableRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckListTableRouter.swift; sourceTree = "<group>"; };
@@ -1106,6 +1108,7 @@
 			children = (
 				78C2F0062B04657600E4EC4E /* ConfirmButton.swift */,
 				78C2F02D2B05427E00E4EC4E /* OpenListTextField.swift */,
+				4D2BC1AF2B1F5C17004C9DBA /* OpenListTextView.swift */,
 				5FCCA3C02B104ABF00496EB2 /* OpenListNavigationBar.swift */,
 				5FCCA3C22B104AE200496EB2 /* OpenListNavigationItem.swift */,
 				5F8F5FC12B1772CA001F7978 /* CheckListEmptyView.swift */,
@@ -1397,6 +1400,7 @@
 				4DD97D9C2B14D3A600DF73BC /* DetailCheckListUseCase.swift in Sources */,
 				5F927CF02B18BEA9009C7DD2 /* OpenListNotificationName.swift in Sources */,
 				4DF0D56A2B1F561C00EC68CA /* ProfileRepository.swift in Sources */,
+				4D2BC1B02B1F5C17004C9DBA /* OpenListTextView.swift in Sources */,
 				4DDC43492B0F39EB00859B28 /* DefaultCRDTStorage.swift in Sources */,
 				4DF0D55A2B1EE54700EC68CA /* ProfileViewController.swift in Sources */,
 				4DF0D55B2B1EE54700EC68CA /* ProfileViewFactory.swift in Sources */,

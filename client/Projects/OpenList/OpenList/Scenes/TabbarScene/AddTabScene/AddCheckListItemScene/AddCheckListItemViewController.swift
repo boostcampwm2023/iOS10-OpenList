@@ -262,12 +262,12 @@ private extension AddCheckListItemViewController {
 // MARK: - UITableViewDelegate
 extension AddCheckListItemViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return LayoutConstant.checkListItemHeight
+		return UITableView.automaticDimension
 	}
 
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if section == 1 { return 0 }
-		return 18
+		return 28
 	}
 	
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -294,8 +294,8 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 
 // MARK: - SelectCheckListItemDelegate
 extension AddCheckListItemViewController: SelectCheckListCellDelegate {
-	func checkButtonDidToggled(_ textField: CheckListItemTextField, cell: SelectCheckListCell, cellId: UUID) {
-		guard let text = textField.text else { return }
+	func checkButtonDidToggled(_ textView: OpenListTextView, cell: SelectCheckListCell, cellId: UUID) {
+		guard let text = textView.text else { return }
 		dataSource?.deleteCheckListItem(with: cellId, section: .selectItem)
 		dataSource?.updateAiItem([
 			CheckListItem(
@@ -305,29 +305,34 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 		])
 	}
 	
-	func textFieldDidEndEditing(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
 		cell: SelectCheckListCell,
 		indexPath: IndexPath
 	) { }
 	
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
 		cellId: UUID
 	) -> Bool {
-		guard let text = textField.text else { return true }
+		guard let text = textView.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30
+	}
+	
+	func textViewDidChange(_ textView: OpenListTextView) {
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
 	}
 }
 
 // MARK: - AiCheckListItemDelegate
 extension AddCheckListItemViewController: AiCheckListCellDelegate {
-	func checklistButtonDidToggle(_ textField: CheckListItemTextField, cell: AiCheckListCell, cellId: UUID) {
-		guard let text = textField.text else { return }
+	func checklistButtonDidToggle(_ textView: OpenListTextView, cell: AiCheckListCell, cellId: UUID) {
+		guard let text = textView.text else { return }
 		dataSource?.deleteCheckListItem(with: cellId, section: .aiItem)
 		dataSource?.updateSelectItem([
 			CheckListItem(
@@ -337,8 +342,8 @@ extension AddCheckListItemViewController: AiCheckListCellDelegate {
 		])
 	}
 	
-	func textFieldDidEndEditing(
-		_ textField: CheckListItemTextField,
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
 		cell: AiCheckListCell,
 		indexPath: IndexPath
 	) { }
@@ -346,22 +351,21 @@ extension AddCheckListItemViewController: AiCheckListCellDelegate {
 
 // MARK: - WithCheckListItemPlaceholderDelegate
 extension AddCheckListItemViewController: AddCheckListItemPlaceholderDelegate {
-	func textField(
-		_ textField: CheckListItemTextField,
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String
 	) -> Bool {
-		guard let text = textField.text else { return true }
+		guard let text = textView.text else { return true }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30
 	}
 	
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, indexPath: IndexPath) {
-		guard let text = textField.text else { return }
+	func textViewDidEndEditing(_ textView: OpenListTextView, indexPath: IndexPath) {
+		guard let text = textView.text else { return }
 		dataSource?.updateSelectItem([.init(itemId: UUID(), title: text, isChecked: true)])
-		textField.text = nil
 	}
 }
 
