@@ -68,6 +68,15 @@ describe('FeedsService', () => {
     expect(result).toEqual(mockFeeds);
   });
 
+  it('findAllFeedsByCategory(mainCategory): 주어진 카테고리에 해당하는 피드가 없을 경우 예외를 던진다', async () => {
+    const mainCategory = 'NonExistingCategory';
+    mockFeedsRepository.find.mockResolvedValue([]);
+
+    await expect(service.findAllFeedsByCategory(mainCategory)).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
   it('updateLikeCount(feedId): 피드의 좋아요 수를 업데이트한다', async () => {
     const feedId = 1;
     const mockFeed = { feedId, likeCount: 10, downloadCount: 5 };
