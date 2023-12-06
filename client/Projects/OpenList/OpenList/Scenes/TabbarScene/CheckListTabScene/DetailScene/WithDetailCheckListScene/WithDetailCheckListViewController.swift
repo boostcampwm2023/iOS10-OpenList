@@ -420,7 +420,6 @@ extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 	// 플레이스 홀더의 텍스트를 체크리스트에 추가합니다.
 	func textViewDidEndEditing(_ textView: OpenListTextView, indexPath: IndexPath) {
 		guard let text = textView.text else { return }
-		textView.text = nil
 		appendDocument.send(.init(content: text, range: .init(location: 0, length: text.count)))
 	}
 }
