@@ -24,7 +24,7 @@ export class FeedsService {
     const feed = await this.repository.find({ where: { mainCategory } });
     if (feed.length === 0) {
       throw new BadRequestException(
-        `${mainCategory}는 존재하지 않는 카테고리 입니다.`,
+        `${mainCategory}에 대한 피드가 존재하지 않습니다.`,
       );
     }
     return feed;
