@@ -23,6 +23,7 @@
         margin-bottom: 10px;
         border-radius: 5px; /* Rounded corners */
         border: 1px solid #555; /* Border for each message */
+        cursor: pointer; /* 클릭 가능한 요소임을 나타내는 커서 스타일 */
       }
       button {
         background-color: #4caf50; /* Green background */
@@ -56,6 +57,16 @@
 
       .channel-button.selected {
         background-color: #007bff; /* 선택될 때 파란색 배경 */
+      }
+
+      .message-content {
+        max-height: 80px; /* 5줄 높이로 제한 */
+        overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+        transition: max-height 0.3s ease-in-out; /* 부드러운 전환 효과 */
+      }
+
+      .message-content.expanded {
+        max-height: none; /* 전체 내용 표시 */
       }
     </style>
   </head>
@@ -103,24 +114,40 @@
       const evtSource = new EventSource(
         `http://localhost:3000/admin/events?channels`,
       );
-      // 나머지 코드는 동일하게 유지
       evtSource.onmessage = function (event) {
         const newElement = document.createElement('li');
-        const { channel, message } = JSON.parse(event.data);
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        newElement.appendChild(contentDiv);
 
+        newElement.onclick = function () {
+          if (contentDiv.classList.contains('expanded')) {
+            contentDiv.classList.remove('expanded');
+            newElement.title = '펼치기'; // 툴팁 업데이트
+          } else {
+            contentDiv.classList.add('expanded');
+            newElement.title = '접기'; // 툴팁 업데이트
+          }
+        };
+
+        // 초기 툴팁 설정
+        newElement.title = '펼치기';
+
+        // 메시지 내용 처리
+        const { channel, message } = JSON.parse(event.data);
         newElement.setAttribute('data-channel', channel);
 
         if (isJSON(message)) {
           const jsonData = JSON.parse(message);
-          newElement.innerHTML = formatJSON(jsonData);
+          contentDiv.innerHTML = formatJSON(jsonData);
         } else {
-          newElement.textContent = message;
+          contentDiv.textContent = message;
         }
 
+        // 메시지 목록에 추가
         messagesList.appendChild(newElement);
         filterMessages(); // 새 메시지 추가 시 필터링 적용
       };
-
       function filterMessages() {
         const messages = document.querySelectorAll('#messages li');
         messages.forEach((message) => {
