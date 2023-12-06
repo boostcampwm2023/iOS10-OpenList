@@ -364,10 +364,16 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 }
 
 // MARK: - WithCheckListItemDelegate
-extension WithDetailCheckListViewController: WithCheckListItemDelegate {
+extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView) {
+		textDidChange.send(textView.text)
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
+	}
+	
 	func textViewDidEndEditing(
 		_ textView: OpenListTextView,
-		cell: WithCheckListItem,
+		cell: WithCheckListItemCell,
 		indexPath: IndexPath
 	) {
 		if let text = textView.text, !text.isEmpty {
@@ -399,12 +405,6 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		return true
 	}
 	
-	func textViewDidChange(_ textView: OpenListTextView) {
-		textDidChange.send(textView.text)
-		checkListView.beginUpdates()
-		checkListView.endUpdates()
-	}
-	
 	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool) {
 		checklistDidToggle.send(CheckToggle(id: cellId, state: isChecked))
 	}
@@ -432,6 +432,11 @@ extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
 
 // MARK: - WithCheckListItemPlaceholderDelegate
 extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
+	func textViewDidChange(_ textView: OpenListTextView) {
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
+	}
+	
 	func textView(
 		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,

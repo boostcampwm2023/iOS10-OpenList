@@ -7,16 +7,20 @@
 
 import UIKit
 
-protocol WithCheckListItemDelegate: AnyObject {
-	func textFieldDidEndEditing(_ textField: CheckListItemTextField, cell: WithCheckListItemCell, indexPath: IndexPath)
-	func textField(
-		_ textField: CheckListItemTextField,
+protocol WithCheckListItemCellDelegate: AnyObject {
+	func textViewDidEndEditing(
+		_ textView: OpenListTextView,
+		cell: WithCheckListItemCell,
+		indexPath: IndexPath
+	)
+	func textView(
+		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
 		replacementString string: String,
 		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
-	func textFieldDidChange(_ text: String)
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView)
 	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool)
 }
 
@@ -27,18 +31,19 @@ final class WithCheckListItemCell: UITableViewCell {
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
 		static let imageSize: CGFloat = 30
+		static let cellSpacing: CGFloat = 24
 	}
 	
 	// MARK: - Properties
 	private let checkButton: CheckListItemButton = .init()
-	private let textField: CheckListItemTextField = .init()
+	private let textView: OpenListTextView = .init()
 	private let userImageView: UserImageView = .init()
 	private var indexPath: IndexPath?
 	private(set) var cellId: UUID?
-	weak var delegate: WithCheckListItemDelegate?
+	weak var delegate: WithCheckListItemCellDelegate?
 	
 	var content: String {
-		textField.text ?? ""
+		textView.text ?? ""
 	}
 	
 	// MARK: - Initializers
@@ -59,7 +64,7 @@ extension WithCheckListItemCell {
 	func configure(with checkListItem: any ListItem, indexPath: IndexPath) {
 		self.indexPath = indexPath
 		self.cellId = checkListItem.id
-		textField.text = checkListItem.title
+		textView.text = checkListItem.title
 		guard let item = checkListItem as? WithCheckListItem else { return }
 		if item.isChecked {
 			checkButton.setChecked()
@@ -84,9 +89,8 @@ private extension WithCheckListItemCell {
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
-		textField.translatesAutoresizingMaskIntoConstraints = false
-		textField.delegate = self
-		textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+		textView.translatesAutoresizingMaskIntoConstraints = false
+		textView.delegate = self
 		
 		userImageView.translatesAutoresizingMaskIntoConstraints = false
 		userImageView.layer.cornerRadius = LayoutConstant.imageSize / 2
@@ -98,7 +102,7 @@ private extension WithCheckListItemCell {
 	
 	func setViewHierarchies() {
 		contentView.addSubview(checkButton)
-		contentView.addSubview(textField)
+		contentView.addSubview(textView)
 		contentView.addSubview(userImageView)
 	}
 	
@@ -107,8 +111,8 @@ private extension WithCheckListItemCell {
 			checkButton.widthAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.width),
 			checkButton.heightAnchor.constraint(equalToConstant: LayoutConstant.buttonSize.height),
 			checkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: LayoutConstant.horizontalPadding),
-			checkButton.trailingAnchor.constraint(equalTo: textField.leadingAnchor, constant: -LayoutConstant.spacing),
-			checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+			checkButton.trailingAnchor.constraint(equalTo: textView.leadingAnchor, constant: -LayoutConstant.spacing),
+			checkButton.topAnchor.constraint(equalTo: textView.topAnchor),
 			
 			userImageView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
@@ -118,12 +122,15 @@ private extension WithCheckListItemCell {
 			userImageView.heightAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
 			userImageView.widthAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
 			
-			textField.topAnchor.constraint(equalTo: checkButton.topAnchor),
-			textField.trailingAnchor.constraint(
+			textView.topAnchor.constraint(equalTo: contentView.topAnchor),
+			textView.trailingAnchor.constraint(
 				equalTo: userImageView.leadingAnchor,
 				constant: -LayoutConstant.spacing
 			),
-			textField.bottomAnchor.constraint(equalTo: checkButton.bottomAnchor)
+			textView.bottomAnchor.constraint(
+				equalTo: contentView.bottomAnchor,
+				constant: -LayoutConstant.cellSpacing
+			)
 		])
 	}
 	
@@ -136,38 +143,37 @@ private extension WithCheckListItemCell {
 	}
 }
 
-extension WithCheckListItemCell: UITextFieldDelegate {
-	func textFieldDidEndEditing(_ textField: UITextField) {
+
+extension WithCheckListItemCell: UITextViewDelegate {
+	func textViewDidEndEditing(_ textView: UITextView) {
 		guard let indexPath = indexPath else { return }
-		delegate?.textFieldDidEndEditing(self.textField, cell: self, indexPath: indexPath)
+		delegate?.textViewDidEndEditing(self.textView, cell: self, indexPath: indexPath)
 	}
 	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
-	}
-	
-	func textField(
-		_ textField: UITextField,
-		shouldChangeCharactersIn range: NSRange,
-		replacementString string: String
+	func textView(
+		_ textView: UITextView,
+		shouldChangeTextIn range: NSRange,
+		replacementText text: String
 	) -> Bool {
+		guard text != "\n" else {
+			textView.resignFirstResponder()
+			return false
+		}
 		guard
 			let delegate,
 			let indexPath,
 			let cellId
 		else { return true }
-		return delegate.textField(
-			self.textField,
+		return delegate.textView(
+			self.textView,
 			shouldChangeCharactersIn: range,
-			replacementString: string,
+			replacementString: text,
 			indexPath: indexPath,
 			cellId: cellId
 		)
 	}
 	
-	@objc func textFieldDidChange(_ sender: CheckListItemTextField?) {
-		guard let text = sender?.text else { return }
-		delegate?.textFieldDidChange(text)
+	func textViewDidChange(_ textView: UITextView) {
+		delegate?.withCheckListTextViewDidChange(self.textView)
 	}
 }
