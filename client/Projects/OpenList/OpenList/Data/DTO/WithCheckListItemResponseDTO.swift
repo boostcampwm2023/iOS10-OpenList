@@ -39,6 +39,8 @@ struct WithCheckListItemDTO: Decodable {
 		self.itemID = try container.decode(Int.self, forKey: .itemID)
 		if let messages = try? container.decode([CRDTMessageResponseDTO].self, forKey: .messages) {
 			self.messages = messages
+		} else if let messages = try? container.decode([CRDTCheckListToggleResponseDTO].self, forKey: .messages) {
+			self.messages = messages
 		} else if let messages = try? container.decode([CRDTDocumentResponseDTO].self, forKey: .messages) {
 			self.messages = messages
 		} else {

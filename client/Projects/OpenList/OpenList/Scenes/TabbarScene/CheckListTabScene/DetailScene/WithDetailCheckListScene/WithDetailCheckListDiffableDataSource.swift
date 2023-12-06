@@ -38,7 +38,7 @@ extension WithDetailCheckListDiffableDataSource {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
 			guard let item = item as? WithCheckListItem else { return }
-			if item.title.isEmpty && item.isValueChanged {
+			if item.title.isEmpty && !item.isValueChanged {
 				self.deleteCheckListItem(at: item)
 				return
 			}
@@ -46,7 +46,7 @@ extension WithDetailCheckListDiffableDataSource {
 			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [WithCheckListItem] else { return }
 			snapshot.deleteItems(items)
 			if let index = items.firstIndex(where: { $0.id == item.id }) {
-				if item.title.isEmpty {
+				if !item.title.isEmpty {
 					items[index].title = item.title
 				}
 				items[index].name = item.name

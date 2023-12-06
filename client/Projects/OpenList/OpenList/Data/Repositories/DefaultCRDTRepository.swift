@@ -47,7 +47,7 @@ extension DefaultCRDTRepository: CRDTRepository {
 		WebSocket.shared.send(data: data)
 	}
 	
-	func checkListStateUpdate(id: UUID, message: CRDTMessage, isChecked: Bool) throws {
+	func checkListStateUpdate(id: UUID, isChecked: Bool) throws {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
