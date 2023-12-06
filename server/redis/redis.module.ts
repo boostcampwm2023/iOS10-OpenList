@@ -1,5 +1,6 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { RedisClientType, createClient } from 'redis';
+import { RedisService } from './redis.service';
 
 /**
  * RedisModule은 NestJS 애플리케이션에서 Redis 클라이언트를 설정하고 관리하는데 사용되는 모듈이다.
@@ -64,8 +65,18 @@ export class RedisModule {
      */
     return {
       module: RedisModule,
-      providers: [redisProvider, redisPubProvider, redisSubProvider],
-      exports: [redisProvider, redisPubProvider, redisSubProvider],
+      providers: [
+        redisProvider,
+        redisPubProvider,
+        redisSubProvider,
+        RedisService,
+      ],
+      exports: [
+        redisProvider,
+        redisPubProvider,
+        redisSubProvider,
+        RedisService,
+      ],
     };
   }
 }

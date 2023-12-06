@@ -10,7 +10,7 @@ async function bootstrap() {
 
   //cors 설정
   app.enableCors({
-    origin: ['http://127.0.0.1:5500'],
+    origin: ['http://127.0.0.1:5500', 'http://localhost:8080'],
   });
   // AccessTokenGuard 전역 Guard로 설정
   const authService = app.get(AuthService);

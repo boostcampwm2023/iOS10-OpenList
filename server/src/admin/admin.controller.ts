@@ -1,6 +1,7 @@
-import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Inject, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { RedisClientType } from 'redis';
+import { RedisService } from 'redis/redis.service';
 
 @Controller('admin')
 export class AdminController {
@@ -9,36 +10,28 @@ export class AdminController {
     private readonly redisSubscriber: RedisClientType,
     @Inject('REDIS_PUB_CLIENT')
     private readonly redisPublisher: RedisClientType,
+    private readonly redisService: RedisService,
   ) {}
 
   @Get('events')
-  sse(
-    @Req() req,
-    @Res() res: Response,
-    @Query('channels') channelsQuery: string,
-  ) {
+  sse(@Req() req, @Res() res: Response) {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    // 클라이언트 연결 초기화
-    res.write(`data: Connection established\n\n`);
-
-    const channels = channelsQuery.split(',');
-
-    // Callback function
-    const messageHandler = (message) => {
-      console.log(message);
+    this.redisService.subscribeToChannel('channel', (message) => {
       res.write(`data: ${message}\n\n`);
-    };
-
-    // Subscribe to each channel with the callback
-    channels.forEach((channel) => {
-      this.redisSubscriber.subscribe(channel, messageHandler);
     });
-    // 클라이언트 연결 종료 시 이벤트 처리
+    this.redisService.subscribeToChannel('sharedChecklist', (message) => {
+      res.write(`data: ${message}\n\n`);
+    });
+    this.redisService.subscribeToChannel('ai_result', (message) => {
+      res.write(`data: ${message}\n\n`);
+    });
+
     req.on('close', () => {
+      // 필요한 경우 연결 종료 시 처리 로직
       res.end();
     });
   }

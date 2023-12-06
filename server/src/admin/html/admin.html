@@ -43,19 +43,76 @@
         background-color: white;
         color: black;
       }
+      .channel-button {
+        background-color: #555; /* 기본 배경색 */
+        color: white; /* 텍스트 색상 */
+        padding: 8px 16px; /* 버튼 패딩 줄임 */
+        border-radius: 20px; /* 알약 모양으로 만들기 위한 둥근 모서리 */
+        font-size: 14px; /* 글꼴 크기 줄임 */
+        border: none; /* 테두리 제거 */
+        cursor: pointer; /* 마우스 커서 스타일 변경 */
+        transition: background-color 0.3s; /* 부드러운 색상 전환 */
+      }
+
+      .channel-button.selected {
+        background-color: #007bff; /* 선택될 때 파란색 배경 */
+      }
     </style>
   </head>
   <body>
     <h1>Received Messages</h1>
+    <button class="channel-button" data-channel="sharedChecklist">
+      Shared Checklist
+    </button>
+    <button class="channel-button" data-channel="channel">Channel</button>
+    <button class="channel-button" data-channel="ai_result">AI Result</button>
 
-    <button id="generateButton">Generate</button>
+    <button id="connectButton">Connect</button>
     <button id="clearButton">Clear Screen</button>
-    <ul id="messages"></ul>
+    <button id="generateButton">Generate</button>
     <ul id="messages"></ul>
     <script>
-      const evtSource = new EventSource(
-        'http://localhost:3000/admin/events?channels=sharedChecklist,channel,ai_result',
-      );
+      const selectedChannels = new Set();
+
+      document.querySelectorAll('.channel-button').forEach((button) => {
+        button.addEventListener('click', function () {
+          const channel = this.getAttribute('data-channel');
+          if (selectedChannels.has(channel)) {
+            selectedChannels.delete(channel);
+            this.classList.remove('selected');
+          } else {
+            selectedChannels.add(channel);
+            this.classList.add('selected');
+          }
+        });
+      });
+      let evtSource = null; // EventSource 객체를 추적하기 위한 전역 변수
+
+      document
+        .getElementById('connectButton')
+        .addEventListener('click', function () {
+          if (evtSource) {
+            evtSource.close();
+          }
+
+          const channelsQuery = Array.from(selectedChannels).join(',');
+          evtSource = new EventSource(
+            `http://localhost:3000/admin/events?channels=${channelsQuery}`,
+          );
+          // 나머지 코드는 동일하게 유지
+          evtSource.onmessage = function (event) {
+            const newElement = document.createElement('li');
+
+            if (isJSON(event.data)) {
+              const jsonData = JSON.parse(event.data);
+              newElement.innerHTML = formatJSON(jsonData);
+            } else {
+              newElement.textContent = event.data;
+            }
+
+            messagesList.appendChild(newElement);
+          };
+        });
       const messagesList = document.getElementById('messages');
 
       function isJSON(data) {
@@ -71,19 +128,6 @@
         const formattedJSON = JSON.stringify(json, null, 2); // Indent with 2 spaces for readability
         return `<pre>${formattedJSON}</pre>`; // Use <pre> to preserve the format
       }
-
-      evtSource.onmessage = function (event) {
-        const newElement = document.createElement('li');
-
-        if (isJSON(event.data)) {
-          const jsonData = JSON.parse(event.data);
-          newElement.innerHTML = formatJSON(jsonData);
-        } else {
-          newElement.textContent = event.data;
-        }
-
-        messagesList.appendChild(newElement);
-      };
 
       document
         .getElementById('generateButton')
