@@ -25,6 +25,6 @@ enum WithDetailCheckListState {
 	case updateItems([any ListItem])
 	case appendItem(any ListItem)
 	case removeItem(any ListItem)
-//	case checkToggle()
+	case checkToggle
 	case socketConnet(Bool)
 }

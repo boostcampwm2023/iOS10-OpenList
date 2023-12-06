@@ -32,7 +32,8 @@ extension UserImageView {
 private extension UserImageView {
 	func setViewAttributes() {
 		nameLabel.translatesAutoresizingMaskIntoConstraints = false
-		nameLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
+		nameLabel.font = .notoSansCJKkr(type: .regular, size: .tiny)
+		nameLabel.textColor = .primary1
 	}
 	
 	func setViewHeirachies() {

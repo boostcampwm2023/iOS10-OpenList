@@ -127,6 +127,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			dump(content)
 		case let .socketConnet(isConnect):
 			dump(isConnect)
+		case let .checkToggle:
+			break
 		}
 	}
 	

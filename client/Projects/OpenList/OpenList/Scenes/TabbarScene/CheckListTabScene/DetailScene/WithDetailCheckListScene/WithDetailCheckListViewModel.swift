@@ -140,7 +140,7 @@ private extension WithDetailCheckListViewModel {
 				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { _ in return .none }
+			.map { _ in return .checkToggle }
 			.eraseToAnyPublisher()
 	}
 	

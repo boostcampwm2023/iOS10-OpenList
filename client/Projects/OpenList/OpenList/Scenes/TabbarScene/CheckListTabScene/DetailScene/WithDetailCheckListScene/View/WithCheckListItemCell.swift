@@ -30,7 +30,7 @@ final class WithCheckListItemCell: UITableViewCell {
 		static let verticalPadding: CGFloat = 12
 		static let horizontalPadding: CGFloat = 20
 		static let spacing: CGFloat = 8
-		static let imageSize: CGFloat = 30
+		static let imageSize: CGFloat = 22
 		static let cellSpacing: CGFloat = 24
 	}
 	
@@ -96,7 +96,6 @@ private extension WithCheckListItemCell {
 		userImageView.layer.cornerRadius = LayoutConstant.imageSize / 2
 		userImageView.layer.borderColor = UIColor.primary1.cgColor
 		userImageView.layer.borderWidth = 1.0
-		userImageView.configure(name: "김")
 		userImageView.isHidden = true
 	}
 	
@@ -118,7 +117,7 @@ private extension WithCheckListItemCell {
 				equalTo: contentView.trailingAnchor,
 				constant: -LayoutConstant.horizontalPadding
 			),
-			userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+			userImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
 			userImageView.heightAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
 			userImageView.widthAnchor.constraint(equalToConstant: LayoutConstant.imageSize),
 			
