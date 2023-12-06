@@ -2,7 +2,7 @@ import redis from 'redis';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
-class RedisPub {
+export class RedisPub {
   constructor() {
     this.init();
   }
@@ -26,5 +26,3 @@ class RedisPub {
     console.log('connection closed');
   }
 }
-
-module.exports = RedisPub;
