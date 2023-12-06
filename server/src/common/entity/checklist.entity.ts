@@ -6,12 +6,12 @@ export abstract class ChecklistModel extends BaseModel {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   mainCategory: string;
 
-  @Column()
+  @Column({ nullable: true })
   subCategory: string;
 
-  @Column()
+  @Column({ nullable: true })
   minorCategory: string;
 }

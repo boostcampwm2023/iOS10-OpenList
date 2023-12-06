@@ -28,6 +28,7 @@ import { winstonConfig } from './utils/winston.config';
 import { LoggingInterceptor } from './common/interceptor/log.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { FeedsModule } from './feeds/feeds.module';
+import { FeedModel } from './feeds/entity/feed.entity';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { FeedsModule } from './feeds/feeds.module';
         PrivateChecklistModel,
         SharedChecklistModel,
         SharedChecklistItemModel,
+        FeedModel,
       ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
