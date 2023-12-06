@@ -53,7 +53,9 @@
     <ul id="messages"></ul>
     <ul id="messages"></ul>
     <script>
-      const evtSource = new EventSource('http://localhost:3000/sse/events');
+      const evtSource = new EventSource(
+        'http://localhost:3000/admin/events?channels=sharedChecklist,channel,ai_result',
+      );
       const messagesList = document.getElementById('messages');
 
       function isJSON(data) {
@@ -88,7 +90,7 @@
         .addEventListener('click', function (event) {
           event.preventDefault(); // Prevents default action (navigation/refresh)
 
-          fetch('http://localhost:3000/sse/generate')
+          fetch('http://localhost:3000/admin/generate')
             .then((response) => {
               if (response.ok) {
                 return response.text();
