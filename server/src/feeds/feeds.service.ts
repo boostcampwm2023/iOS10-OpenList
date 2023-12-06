@@ -20,8 +20,14 @@ export class FeedsService {
     return feed;
   }
 
-  findAllFeedsByCategory(mainCategory: string) {
-    return this.repository.find({ where: { mainCategory } });
+  async findAllFeedsByCategory(mainCategory: string) {
+    const feed = await this.repository.find({ where: { mainCategory } });
+    if (feed.length === 0) {
+      throw new BadRequestException(
+        `${mainCategory}는 존재하지 않는 카테고리 입니다.`,
+      );
+    }
+    return feed;
   }
 
   async updateLikeCount(feedId: number) {
