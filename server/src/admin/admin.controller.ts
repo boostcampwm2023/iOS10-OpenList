@@ -21,28 +21,22 @@ export class AdminController {
 
     res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
     channels.forEach((channel) => {
-      // this.redisSubscriber.subscribe(channel, (message) => {
-      //   res.write(`data: ${changeFormat(channel, message)}\n\n`);
-      // });
       this.redisService.subscribeToChannel(channel, (message) => {
         res.write(`data: ${changeFormat(channel, message)}\n\n`);
       });
     });
 
     req.on('close', () => {
-      // 필요한 경우 연결 종료 시 처리 로직
       res.end();
     });
   }
   @Get('generate')
   generate() {
-    // this.redisPublisher.publish('channel', 'processAiResult');
     this.redisService.publishToChannel('channel', 'processAiResult');
   }
 
   @Get('category')
   category() {
-    // this.redisPublisher.publish('channel', 'processCategory');
     this.redisService.publishToChannel('channel', 'processCategory');
   }
 }
