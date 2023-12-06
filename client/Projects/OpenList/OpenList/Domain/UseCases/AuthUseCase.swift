@@ -31,7 +31,7 @@ extension DefaultAuthUseCase: AuthUseCase {
 		}
 		KeyChain.shared.create(key: AuthKey.accessToken, token: result.accessToken)
 		KeyChain.shared.create(key: AuthKey.refreshToken, token: result.refreshToken)
-		
+		Storage.shared.save(key: .nickname, value: loginInfo.fullName)
 		return true
 	}
 }

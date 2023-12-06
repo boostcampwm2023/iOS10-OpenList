@@ -12,6 +12,6 @@ struct User: Hashable {
 	let userId: Int
 	let email: String?
 	let fullName: String?
-	let nickname: String?
-	let profileImage: String?
+	var nickname: String?
+	var profileImage: String?
 }
