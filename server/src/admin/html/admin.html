@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redis Pub/Sub Messages</title>
+    <style>
+      body {
+        background-color: #333; /* Dark background */
+        color: #fff; /* Light text */
+        font-family: 'Courier New', Courier, monospace; /* Console-style font */
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 1px solid #555; /* Underline for the header */
+      }
+      #messages {
+        list-style-type: none; /* Remove bullet points */
+        padding: 0;
+      }
+      li {
+        background-color: #444; /* Slightly lighter background for messages */
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px; /* Rounded corners */
+        border: 1px solid #555; /* Border for each message */
+      }
+      button {
+        background-color: #4caf50; /* Green background */
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        transition-duration: 0.4s;
+      }
+
+      button:hover {
+        background-color: white;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Received Messages</h1>
+
+    <button id="generateButton">Generate</button>
+    <button id="clearButton">Clear Screen</button>
+    <ul id="messages"></ul>
+    <ul id="messages"></ul>
+    <script>
+      const evtSource = new EventSource('http://localhost:3000/sse/events');
+      const messagesList = document.getElementById('messages');
+
+      function isJSON(data) {
+        try {
+          JSON.parse(data);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function formatJSON(json) {
+        const formattedJSON = JSON.stringify(json, null, 2); // Indent with 2 spaces for readability
+        return `<pre>${formattedJSON}</pre>`; // Use <pre> to preserve the format
+      }
+
+      evtSource.onmessage = function (event) {
+        const newElement = document.createElement('li');
+
+        if (isJSON(event.data)) {
+          const jsonData = JSON.parse(event.data);
+          newElement.innerHTML = formatJSON(jsonData);
+        } else {
+          newElement.textContent = event.data;
+        }
+
+        messagesList.appendChild(newElement);
+      };
+
+      document
+        .getElementById('generateButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          fetch('http://localhost:3000/sse/generate')
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              } else {
+                throw new Error('Network response was not ok.');
+              }
+            })
+            .then((data) => {
+              console.log('Request successful:', data);
+            })
+            .catch((error) => {
+              console.error('Request failed:', error);
+            });
+        });
+
+      document
+        .getElementById('clearButton')
+        .addEventListener('click', function () {
+          messagesList.innerHTML = ''; // Clear the messages
+        });
+    </script>
+  </body>
+</html>
