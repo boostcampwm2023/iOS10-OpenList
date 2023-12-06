@@ -45,6 +45,12 @@ struct CRDTDocumentResponseDTO: CRDTData, Decodable {
 		case id, number, event
 	}
 	
+	init(id: UUID, number: Int, event: DocumentEvent) {
+		self.id = id
+		self.number = number
+		self.event = event
+	}
+	
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.id = try container.decode(UUID.self, forKey: .id)
@@ -62,11 +68,18 @@ struct CRDTMessageResponseDTO: CRDTData, Decodable {
 	enum CodingKeys: CodingKey {
 		case id, number, name, message
 	}
+	
+	init(id: UUID, number: Int, name: String, message: CRDTMessage) {
+		self.id = id
+		self.number = number
+		self.name = name
+		self.message = message
+	}
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.id = try container.decode(UUID.self, forKey: .id)
-		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
+		self.number = try container.decode(Int.self, forKey: .number)
 		self.name = try container.decode(String.self, forKey: .name)
 		
 		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
@@ -93,6 +106,13 @@ struct CRDTCheckListToggleResponseDTO: CRDTData, Decodable {
 	
 	enum CodingKeys: CodingKey {
 		case id, number, name, state
+	}
+	
+	init(id: UUID, number: Int, name: String, state: Bool) {
+		self.id = id
+		self.number = number
+		self.name = name
+		self.state = state
 	}
 	
 	init(from decoder: Decoder) throws {
