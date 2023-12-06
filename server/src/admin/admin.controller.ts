@@ -1,15 +1,10 @@
-import { Controller, Get, Inject, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { RedisClientType } from 'redis';
+import { RedisService } from 'redis/redis.service';
 
 @Controller('admin')
 export class AdminController {
-  constructor(
-    @Inject('REDIS_SUB_CLIENT')
-    private readonly redisSubscriber: RedisClientType,
-    @Inject('REDIS_PUB_CLIENT')
-    private readonly redisPublisher: RedisClientType,
-  ) {}
+  constructor(private readonly redisService: RedisService) {}
 
   @Get('events')
   sse(@Req() req, @Res() res: Response) {
@@ -26,7 +21,10 @@ export class AdminController {
     res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
     const channels = ['channel', 'sharedChecklist', 'ai_result'];
     channels.forEach((channel) => {
-      this.redisSubscriber.subscribe(channel, (message) => {
+      // this.redisSubscriber.subscribe(channel, (message) => {
+      //   res.write(`data: ${changeFormat(channel, message)}\n\n`);
+      // });
+      this.redisService.subscribeToChannel(channel, (message) => {
         res.write(`data: ${changeFormat(channel, message)}\n\n`);
       });
     });
@@ -38,11 +36,13 @@ export class AdminController {
   }
   @Get('generate')
   generate() {
-    this.redisPublisher.publish('channel', 'processAiResult');
+    // this.redisPublisher.publish('channel', 'processAiResult');
+    this.redisService.publishToChannel('channel', 'processAiResult');
   }
 
   @Get('category')
   category() {
-    this.redisPublisher.publish('channel', 'processCategory');
+    // this.redisPublisher.publish('channel', 'processCategory');
+    this.redisService.publishToChannel('channel', 'processCategory');
   }
 }
