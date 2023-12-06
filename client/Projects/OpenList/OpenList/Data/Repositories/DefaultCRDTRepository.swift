@@ -51,7 +51,7 @@ extension DefaultCRDTRepository: CRDTRepository {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: CRDTCheckListToggleRequestDTO(id: id, number: number, name: name, state: isChecked, data: message)
+			data: CRDTCheckListToggleRequestDTO(id: id, number: number, name: name, state: isChecked)
 		)
 		let data = try JSONEncoder().encode(request)
 		WebSocket.shared.send(data: data)

@@ -25,4 +25,5 @@ struct WithCheckListItem: ListItem {
 	var title: String
 	var isChecked: Bool
 	var name: String?
+	var isValueChanged: Bool = true
 }

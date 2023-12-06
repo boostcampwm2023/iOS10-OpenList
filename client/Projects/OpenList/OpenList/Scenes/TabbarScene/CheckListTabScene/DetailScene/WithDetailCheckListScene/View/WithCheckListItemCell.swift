@@ -60,18 +60,18 @@ extension WithCheckListItemCell {
 		self.indexPath = indexPath
 		self.cellId = checkListItem.id
 		textField.text = checkListItem.title
-		if checkListItem.isChecked {
-			checkButton.setChecked()
-		} else {
-			checkButton.setUnChecked()
-		}
-		
+
 		guard
 			let item = checkListItem as? WithCheckListItem,
 			let name = item.name,
 			let firstChar =	name.first
 		else { return }
 		userImageView.configure(name: String(firstChar))
+		if item.isChecked {
+			checkButton.setChecked()
+		} else {
+			checkButton.setUnChecked()
+		}
 	}
 	
 	func resetUserPosition() {

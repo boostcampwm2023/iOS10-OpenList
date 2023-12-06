@@ -19,8 +19,10 @@ struct CRDTResponseDTO: Decodable {
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		self.event = try container.decode(Event.self, forKey: .event)
-		
-		if let message = try? container.decode(CRDTMessageResponseDTO.self, forKey: .data) {
+
+		if let checkToggleMessage = try? container.decode(CRDTCheckListToggleResponseDTO.self, forKey: .data) {
+			self.data = [checkToggleMessage]
+		} else if let message = try? container.decode(CRDTMessageResponseDTO.self, forKey: .data) {
 			self.data = [message]
 		} else if let messages = try? container.decode([CRDTMessageResponseDTO].self, forKey: .data) {
 			self.data = messages
@@ -88,10 +90,9 @@ struct CRDTCheckListToggleResponseDTO: CRDTData, Decodable {
 	let number: Int
 	let name: String
 	let state: Bool
-	let message: CRDTMessage
 	
 	enum CodingKeys: CodingKey {
-		case id, number, name, state, message
+		case id, number, name, state
 	}
 	
 	init(from decoder: Decoder) throws {
@@ -100,20 +101,6 @@ struct CRDTCheckListToggleResponseDTO: CRDTData, Decodable {
 		self.number = (try? container.decode(Int.self, forKey: .number)) ?? 0
 		self.name = try container.decode(String.self, forKey: .name)
 		self.state = try container.decode(Bool.self, forKey: .state)
-		
-		if let message = try? container.decode(OperationBasedOneMessage.self, forKey: .message) {
-			self.message = message
-		} else if let messages = try? container.decode(OperationBasedMessagesBag.self, forKey: .message) {
-			self.message = messages
-		} else {
-			throw DecodingError.valueNotFound(
-				CRDTMessage.self,
-				.init(
-					codingPath: [CodingKeys.message],
-					debugDescription: "Unknown CRDTMessage type"
-				)
-			)
-		}
 	}
 }
 

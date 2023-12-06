@@ -56,7 +56,8 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				if documentsId.searchNode(from: item.id) == nil {
 					return try? appendCheckListItem(to: item.id, message: item.message, name: item.name)
 				} else {
-					return try? updateCheckListItem(to: item.id, message: item.message, name: item.name)
+					// 차후 isChecked 변수값 조정
+					return try? updateCheckListItem(to: item.id, message: item.message, name: item.name, isChecked: false)
 				}
 			} else {
 				return nil
@@ -92,13 +93,20 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		}
 		switch response.event {
 		case .listen:
-			if let data = response.data.first as? CRDTMessageResponseDTO {
+			if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
+				dump("Message Number: \(data.number)")
+				if documentsId.searchNode(from: data.id) != nil {
+					return [try updateCheckListItem(to: data.id, name: data.name, isChecked: data.state)]
+				} else {
+					return []
+				}
+			} else if let data = response.data.first as? CRDTMessageResponseDTO {
 				dump("Message Name: \(data.name)")
 				dump("Message Number: \(data.number)")
 				if documentsId.searchNode(from: data.id) == nil {
 					return [try appendCheckListItem(to: data.id, message: data.message, name: data.name)]
 				} else {
-					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name)]
+					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name, isChecked: false)]
 				}
 			} else if let data = response.data.first as? CRDTDocumentResponseDTO {
 				dump("Message Number: \(data.number)")
@@ -106,13 +114,6 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				case .delete:
 					return [removeCheckList(to: data.id)]
 				case .append:
-					return []
-				}
-			} else if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
-				dump("Message Number: \(data.number)")
-				if documentsId.searchNode(from: data.id) != nil {
-					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name)]
-				} else {
 					return []
 				}
 			} else {
@@ -127,7 +128,8 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				if documentsId.searchNode(from: $0.id) == nil {
 					try appendCheckListItem(to: $0.id, message: $0.message, name: $0.name)
 				} else {
-					try updateCheckListItem(to: $0.id, message: $0.message, name: $0.name)
+					// 차후에 isChecked field값 조정
+					try updateCheckListItem(to: $0.id, message: $0.message, name: $0.name, isChecked: false)
 				}
 			}
 			return historyData
@@ -315,7 +317,7 @@ private extension DefaultCRDTUseCase {
 		)
 	}
 	
-	func updateCheckListItem(to id: UUID, message: CRDTMessage, name: String) throws -> any ListItem {
+	func updateCheckListItem(to id: UUID, message: CRDTMessage, name: String, isChecked: Bool) throws -> any ListItem {
 		guard
 			let document = documentDictionary[id],
 			let merge = mergeDictionary[id]
@@ -326,7 +328,11 @@ private extension DefaultCRDTUseCase {
 		let title = document.view()
 		crdtMessageDictionay[id] = message
 		
-		return WithCheckListItem(itemId: id, title: title, isChecked: false, name: name)
+		return WithCheckListItem(itemId: id, title: title, isChecked: isChecked, name: name)
+	}
+	
+	func updateCheckListItem(to id: UUID, name: String, isChecked: Bool) throws -> any ListItem {
+		return WithCheckListItem(itemId: id, title: " ", isChecked: isChecked, name: name, isValueChanged: true)
 	}
 	
 	func updateCheckListItem(
