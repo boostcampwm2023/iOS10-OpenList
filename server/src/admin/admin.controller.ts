@@ -1,6 +1,13 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { RedisService } from 'redis/redis.service';
+import { UserId } from 'src/users/decorator/userId.decorator';
 import { channels } from './const/channels.const';
 
 @Controller('admin')
@@ -8,11 +15,15 @@ export class AdminController {
   constructor(private readonly redisService: RedisService) {}
 
   @Get('events')
-  sse(@Req() req, @Res() res: Response) {
+  sse(@Req() req, @Res() res: Response, @UserId() userId: number) {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
+
+    if (userId !== 1) {
+      throw new UnauthorizedException('관리자가 아닙니다.');
+    }
 
     const changeFormat = (channel, message) => {
       const result = { channel, message };
@@ -31,12 +42,18 @@ export class AdminController {
     });
   }
   @Get('generate')
-  generate() {
+  generate(@UserId() userId: number) {
+    if (userId !== 1) {
+      throw new UnauthorizedException('관리자가 아닙니다.');
+    }
     this.redisService.publishToChannel('channel', 'processAiResult');
   }
 
   @Get('category')
-  category() {
+  category(@UserId() userId: number) {
+    if (userId !== 1) {
+      throw new UnauthorizedException('관리자가 아닙니다.');
+    }
     this.redisService.publishToChannel('channel', 'processCategory');
   }
 }

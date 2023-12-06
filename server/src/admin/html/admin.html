@@ -84,6 +84,24 @@
       [data-channel='wsLog'] {
         color: #fdd7ac; /* 연갈색 */
       }
+
+      /* 로그인 폼 스타일 */
+      #loginForm {
+        display: none; /* 기본적으로 숨김 */
+        position: fixed; /* 고정 위치 */
+        top: 50%; /* 상단에서 50% */
+        left: 50%; /* 좌측에서 50% */
+        transform: translate(-50%, -50%); /* 중앙 정렬 */
+        background-color: #fff; /* 배경색 */
+        padding: 20px; /* 패딩 */
+        border-radius: 5px; /* 둥근 모서리 */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 그림자 */
+      }
+      /* 로그인 오류 메시지 스타일 */
+      #loginError {
+        color: red; /* 오류 메시지 색상 */
+        margin-bottom: 10px; /* 간격 */
+      }
     </style>
   </head>
   <body>
@@ -98,6 +116,13 @@
 
     <button id="clearButton">Clear Screen</button>
     <button id="generateButton">Generate</button>
+
+    <div id="loginForm">
+      <div id="loginError"></div>
+      <input type="email" id="email" placeholder="email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
     <ul id="messages"></ul>
     <script>
       const selectedChannels = new Set();
@@ -126,10 +151,51 @@
           filterMessages(); // 채널 버튼 클릭 시 필터링 적용
         });
       });
+      // 로그인 함수
+      function login() {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var loginError = document.getElementById('loginError');
 
-      const evtSource = new EventSource(
-        `http://localhost:3000/admin/events?channels`,
-      );
+        fetch('http://localhost:3000/auth/login/admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Login failed');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.cookie = 'accessToken=' + data.accessToken;
+            document.cookie = 'refreshToken=' + data.refreshToken;
+            document.getElementById('loginForm').style.display = 'none';
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            loginError.textContent =
+              '로그인 실패: 잘못된 이메일 또는 비밀번호입니다.';
+            document.getElementById('loginForm').style.display = 'block';
+          });
+      }
+
+      // 이벤트 소스 연결 시도
+      const evtSource = new EventSource(`http://localhost:3000/admin/events`, {
+        withCredentials: true,
+      });
+
+      evtSource.onerror = function (event) {
+        if (event.target.readyState === EventSource.CLOSED) {
+          console.log('EventSource closed');
+          // 로그인 폼 표시
+          document.getElementById('loginForm').style.display = 'block';
+        }
+      };
+
       evtSource.onmessage = function (event) {
         const newElement = document.createElement('li');
         const contentDiv = document.createElement('div');
@@ -197,7 +263,9 @@
         .addEventListener('click', function (event) {
           event.preventDefault(); // Prevents default action (navigation/refresh)
 
-          fetch('http://localhost:3000/admin/generate')
+          fetch('http://localhost:3000/admin/generate', {
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
             .then((response) => {
               if (response.ok) {
                 return response.text();

@@ -1,16 +1,19 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { WsAdapter } from '@nestjs/platform-ws';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AuthService } from './auth/auth.service';
 import { AccessTokenGuard } from './auth/guard/access-token.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
 
-  //cors 설정
+  //cors 설정 (개발용)
   app.enableCors({
-    origin: ['http://127.0.0.1:5500', 'http://localhost:8080'],
+    origin: ['http://localhost:5500', 'http://localhost:8080'],
+    credentials: true, // 쿠키와 함께 요청을 허용
   });
   // AccessTokenGuard 전역 Guard로 설정
   const authService = app.get(AuthService);

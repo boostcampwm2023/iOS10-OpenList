@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { createPublicKey } from 'crypto';
 import { JWK } from '@panva/jose';
 import axios from 'axios';
+import { createPublicKey } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ProviderType, UserModel } from 'src/users/entities/user.entity';
@@ -249,5 +249,26 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const newUser = await this.usersService.createUser(user);
     return this.loginUser(newUser);
+  }
+
+  loginAdminUser(user: any) {
+    const { email, password } = user;
+    console.log(email, password);
+    if (
+      email == process.env.ADMIN_EMAIL &&
+      password == process.env.ADMIN_PASSWORD
+    ) {
+      const accessToken = this.signToken(
+        { email, userId: 1 } as UserModel,
+        'access',
+      );
+      const refreshToken = this.signToken(
+        { email, userId: 1 } as UserModel,
+        'access',
+      );
+
+      return { accessToken, refreshToken };
+    }
+    throw new UnauthorizedException('관리자가 아닙니다.');
   }
 }
