@@ -7,17 +7,18 @@
 
 import UIKit
 
-final class RecommendCheckListCell: UICollectionViewListCell {
-	enum Section { case checkList4Row }
-	typealias CheckList4RowDataSource = UICollectionViewDiffableDataSource<Section, [CheckListItem]>
-	typealias CheckList4RowSnapShot = NSDiffableDataSourceSnapshot<Section, [CheckListItem]>
+final class RecommendCheckListCell: UICollectionViewCell {
+	enum Section { case checkListItem }
+	typealias CheckListRowDataSource = UICollectionViewDiffableDataSource<Section, CheckListItem>
+	typealias CheckList4RowSnapShot = NSDiffableDataSourceSnapshot<Section, CheckListItem>
 	
 	// MARK: - Properties
-	private let imageView: UIImageView = .init()
+	private let imageView: UIView = .init() 	// 체크리스트의 이미지를 보여주는 뷰 (이미지 뷰와 레이어에 그림자가 담겨있다.)
+	private var imageLayerView: UIImageView? 	// 이미지 뷰의 이미지를 보여주는 뷰
 	private let titleLabel: UILabel = .init()
 	private let dateLabel: UILabel = .init()
 	private let checkListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
-	private var checkList4RowDataSource: CheckList4RowDataSource?
+	private var checkListRowDataSource: CheckListRowDataSource?
 	private let checkListPageControl: UIPageControl = .init()
 	
 	// MARK: - Initializers
@@ -35,21 +36,29 @@ final class RecommendCheckListCell: UICollectionViewListCell {
 	
 	override func prepareForReuse() {
 		super.prepareForReuse()
-		checkList4RowDataSource = nil
+		checkListRowDataSource = nil
+		checkListView.isUserInteractionEnabled = false
+		checkListPageControl.isHidden = true
 	}
 	
 	func configure(with item: CheckList) {
 		titleLabel.text = item.title
 		dateLabel.text = item.createdAt.toString()
+		imageLayerView?.image = .logo
 		let chunkedCheckListItems = item.items.chunk(by: 4)
 		checkListPageControl.numberOfPages = chunkedCheckListItems.count
-		updatePageControl(with: 0)
-		checkList4RowDataSource = .init(collectionView: checkListView) { collectionView, indexPath, item in
-			let cell = collectionView.dequeueCell(RecommendCheckList4ItemCell.self, for: indexPath)
-			cell.configure(with: item)
-			return cell
+		
+		if chunkedCheckListItems.count > 1 {
+			// 체크리스트가 페이징이 가능하게한다.
+			checkListView.isUserInteractionEnabled = true
+			// 페이지 컨트롤을 보여준다.
+			checkListPageControl.isHidden = false
+			updatePageControl(with: 0)
 		}
-		updateSection(with: chunkedCheckListItems)
+		
+		checkListView.collectionViewLayout = makeCheckListViewLayout()
+		checkListRowDataSource = makeDataSource()
+		updateSection(with: item.items)
 	}
 }
 
@@ -91,10 +100,13 @@ private extension RecommendCheckListCell {
 
 private extension RecommendCheckListCell {
 	func setImageViewAttributes() {
-		imageView.backgroundColor = .red
 		imageView.translatesAutoresizingMaskIntoConstraints = false
+		let imageLayerView = makeImageLayerView()
+		self.imageLayerView = imageLayerView
+		imageView.addSubview(imageLayerView)
+		applyImageShadowLayer()
 	}
-	
+		
 	func setTitleLabelAttributes() {
 		titleLabel.textColor = .label
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
@@ -109,19 +121,15 @@ private extension RecommendCheckListCell {
 	
 	func setCheckListViewAttributes() {
 		checkListView.backgroundColor = .background
-		checkListView.registerCell(RecommendCheckList4ItemCell.self)
-		checkListView.collectionViewLayout = makeCheckListViewLayout()
-		checkList4RowDataSource = .init(collectionView: checkListView) { collectionView, indexPath, item in
-			let cell = collectionView.dequeueCell(RecommendCheckList4ItemCell.self, for: indexPath)
-			cell.configure(with: item)
-			return cell
-		}
+		checkListView.registerCell(RecommendCheckListItemCell.self)
 		checkListView.showsHorizontalScrollIndicator = false
 		checkListView.showsVerticalScrollIndicator = false
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
+		checkListView.isUserInteractionEnabled = false
 	}
 	
 	func setCheckListPageControlAttributes() {
+		checkListPageControl.isHidden = true
 		checkListPageControl.isUserInteractionEnabled = false
 		checkListPageControl.translatesAutoresizingMaskIntoConstraints = false
 		checkListPageControl.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
@@ -191,8 +199,7 @@ private extension RecommendCheckListCell {
 				constant: LayoutConstant.checkList4RowViewTopSpacing
 			),
 			checkListView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			checkListView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			checkListView.heightAnchor.constraint(equalToConstant: 110)
+			checkListView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
 		])
 	}
 	
@@ -208,19 +215,40 @@ private extension RecommendCheckListCell {
 	}
 }
 
+// MARK: - Make Methods
 private extension RecommendCheckListCell {
+	func makeImageLayerView() -> UIImageView {
+		let imageLayerView = UIImageView()
+		imageView.addSubview(imageLayerView)
+		imageLayerView.layer.masksToBounds = true
+		imageLayerView.layer.cornerRadius = 10
+		imageLayerView.translatesAutoresizingMaskIntoConstraints = false
+		imageLayerView.topAnchor.constraint(equalTo: imageView.topAnchor).isActive = true
+		imageLayerView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+		imageLayerView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
+		imageLayerView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor).isActive = true
+		return imageLayerView
+	}
+	
+	func applyImageShadowLayer() {
+		imageView.layer.masksToBounds = false
+		imageView.layer.cornerRadius = 10
+		imageView.layer.shadowPath = UIBezierPath(
+			roundedRect: .init(origin: .zero, size: LayoutConstant.imageSize),
+			cornerRadius: 0
+		).cgPath
+		imageView.layer.shadowColor = UIColor.shadow1.cgColor
+		imageView.layer.shadowOpacity = 1
+		imageView.layer.shadowOffset = CGSize(width: 0, height: 3)
+		imageView.layer.shadowRadius = 6
+	}
+	
 	func makeCheckListViewLayout() -> UICollectionViewLayout {
-		let itemSize = NSCollectionLayoutSize(
-			widthDimension: .fractionalWidth(1),
-			heightDimension: .estimated(110)
-		)
+		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(24))
 		let item = NSCollectionLayoutItem(layoutSize: itemSize)
-		let groupSize = NSCollectionLayoutSize(
-			widthDimension: .fractionalWidth(0.9),
-			heightDimension: .estimated(110)
-		)
-		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-		
+		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.9), heightDimension: .estimated(100))
+		let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 4)
+		group.interItemSpacing = .fixed(10)
 		let section = NSCollectionLayoutSection(group: group)
 		section.orthogonalScrollingBehavior = .groupPaging
 		section.visibleItemsInvalidationHandler = { [weak self] _, offset, environment in
@@ -233,12 +261,19 @@ private extension RecommendCheckListCell {
 		return UICollectionViewCompositionalLayout(section: section)
 	}
 	
-	func updateSection(with items: [[CheckListItem]]) {
-		guard let checkList4RowDataSource else { return }
+	func makeDataSource() -> CheckListRowDataSource {
+		return CheckListRowDataSource(collectionView: checkListView) { collectionView, indexPath, item in
+			let cell = collectionView.dequeueCell(RecommendCheckListItemCell.self, for: indexPath)
+			cell.configure(with: item)
+			return cell
+		}
+	}
+	func updateSection(with items: [CheckListItem]) {
+		guard let checkListRowDataSource else { return }
 		var snapShot = CheckList4RowSnapShot()
-		snapShot.appendSections([.checkList4Row])
-		snapShot.appendItems(items, toSection: .checkList4Row)
-		checkList4RowDataSource.apply(snapShot)
+		snapShot.appendSections([.checkListItem])
+		snapShot.appendItems(items, toSection: .checkListItem)
+		checkListRowDataSource.apply(snapShot)
 	}
 }
 

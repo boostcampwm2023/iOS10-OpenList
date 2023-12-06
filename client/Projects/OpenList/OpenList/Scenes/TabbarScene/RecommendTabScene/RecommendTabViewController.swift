@@ -200,14 +200,14 @@ private extension RecommendTabViewController {
 	}
 	
 	func makeRecommendCheckListLayout() -> UICollectionViewLayout {
-		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
-			var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-			configuration.showsSeparators = false
-			let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
-			section.interGroupSpacing = 40
-			return section
-		}
-		return layout
+		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300))
+		let item = NSCollectionLayoutItem(layoutSize: itemSize)
+		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(300))
+		let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+		let section = NSCollectionLayoutSection(group: group)
+		section.interGroupSpacing = 40
+		section.contentInsets = .init(top: 10, leading: 0, bottom: 10, trailing: 0)
+		return UICollectionViewCompositionalLayout(section: section)
 	}
 	
 	func makeRecommendCategoryDataSource() -> RecommendCategoryTabDiffableDataSource {
