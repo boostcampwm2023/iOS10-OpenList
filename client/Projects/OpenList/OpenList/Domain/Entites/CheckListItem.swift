@@ -7,7 +7,6 @@
 
 import Foundation
 
-// 도메인 모델이 나오면 변경 예정
 struct CheckListItem: ListItem {
 	var id: UUID { itemId	}
 	var itemId: UUID

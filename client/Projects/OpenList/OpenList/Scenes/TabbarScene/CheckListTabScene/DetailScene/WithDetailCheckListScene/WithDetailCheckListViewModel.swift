@@ -22,7 +22,6 @@ final class WithDetailCheckListViewModel {
 	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
 	private var textChange: TextChange = .init()
-	var userNamesForCheckListItems: [UUID: String] = [:]
 	
 	init(
 		id: UUID,

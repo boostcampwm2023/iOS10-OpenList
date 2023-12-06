@@ -72,7 +72,6 @@ extension DefaultCRDTRepository: CRDTRepository {
 		)
 		
 		let responseData = try await service.request()
-		print(responseData.prettyPrintedJSONString)
 		let response = try JSONDecoder().decode(WithCheckListItemResponseDTO.self, from: responseData)
 		var messages = [CRDTData]()
 		response.items.forEach { item in

@@ -123,4 +123,3 @@ struct CRDTCheckListToggleResponseDTO: CRDTData, Decodable {
 		self.state = try container.decode(Bool.self, forKey: .state)
 	}
 }
-

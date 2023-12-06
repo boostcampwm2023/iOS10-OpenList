@@ -16,8 +16,6 @@ enum CRDTUseCaseError: Error {
 protocol CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList
 	func receive(_ jsonString: String) async throws -> [any ListItem]
-	func itemChecked(at id: UUID) async throws -> any ListItem
-	func begingEdit(at id: UUID) async throws -> any ListItem
 	func update(textChange: TextChange, currentText: String) async throws -> any ListItem
 	func appendDocument(at editText: EditText) async throws -> any ListItem
 	func removeDocument(at editText: EditText) async throws -> any ListItem
@@ -77,10 +75,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			let items = WithCheckListItem(itemId: uuid, title: view, isChecked: isChecked, name: nil)
 			return items
 		}
-		
-		documentDictionary.forEach {
-			print($0)
-		}
+
 		return .init(
 			id: id,
 			title: "Test",
@@ -151,14 +146,6 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	
 	func updateCheckListState(to id: UUID, isChecked: Bool) async throws {
 		try crdtRepository.checkListStateUpdate(id: id, isChecked: isChecked)
-	}
-	
-	func itemChecked(at id: UUID) async throws -> any ListItem {
-		fatalError()
-	}
-	
-	func begingEdit(at id: UUID) async throws -> any ListItem {
-		fatalError()
 	}
 	
 	func update(textChange: TextChange, currentText: String) async throws -> any ListItem {

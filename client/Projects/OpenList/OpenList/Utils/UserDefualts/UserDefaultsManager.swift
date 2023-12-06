@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum UserInfoKey {
+	static let username = "Username"
+}
+
 final class UserDefaultsManager {
 	private let defaults = UserDefaults.standard
 

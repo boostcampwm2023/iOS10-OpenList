@@ -135,13 +135,13 @@ private extension WithCheckListItemCell {
 	
 	@objc func checkButtonDidTap() {
 		checkButton.toggleCheckState()
-		guard let indexPath = indexPath,
-					let cellId = cellId
+		guard
+			let indexPath = indexPath,
+			let cellId = cellId
 		else { return }
 		delegate?.checklistDidTap(indexPath, cellId: cellId, isChecked: checkButton.isChecked)
 	}
 }
-
 
 extension WithCheckListItemCell: UITextViewDelegate {
 	func textViewDidEndEditing(_ textView: UITextView) {

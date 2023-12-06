@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ListItem: Codable, Hashable, Identifiable {
+protocol ListItem: Hashable, Identifiable {
 	var id: UUID { get }
 	var itemId: UUID { get set }
 	var title: String { get set }
