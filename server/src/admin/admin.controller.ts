@@ -19,7 +19,7 @@ export class AdminController {
     };
 
     res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
-    const channels = ['channel', 'sharedChecklist', 'ai_result'];
+    const channels = ['channel', 'sharedChecklist', 'ai_result', 'httpLog'];
     channels.forEach((channel) => {
       // this.redisSubscriber.subscribe(channel, (message) => {
       //   res.write(`data: ${changeFormat(channel, message)}\n\n`);
