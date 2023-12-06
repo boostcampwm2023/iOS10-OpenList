@@ -1,7 +1,6 @@
 import { Controller, Get, Inject, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { RedisClientType } from 'redis';
-import { RedisService } from 'redis/redis.service';
 
 @Controller('admin')
 export class AdminController {
@@ -10,7 +9,6 @@ export class AdminController {
     private readonly redisSubscriber: RedisClientType,
     @Inject('REDIS_PUB_CLIENT')
     private readonly redisPublisher: RedisClientType,
-    private readonly redisService: RedisService,
   ) {}
 
   @Get('events')
@@ -20,14 +18,17 @@ export class AdminController {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    this.redisService.subscribeToChannel('channel', (message) => {
-      res.write(`data: ${message}\n\n`);
-    });
-    this.redisService.subscribeToChannel('sharedChecklist', (message) => {
-      res.write(`data: ${message}\n\n`);
-    });
-    this.redisService.subscribeToChannel('ai_result', (message) => {
-      res.write(`data: ${message}\n\n`);
+    const changeFormat = (channel, message) => {
+      const result = { channel, message };
+      return JSON.stringify(result);
+    };
+
+    res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
+    const channels = ['channel', 'sharedChecklist', 'ai_result'];
+    channels.forEach((channel) => {
+      this.redisSubscriber.subscribe(channel, (message) => {
+        res.write(`data: ${changeFormat(channel, message)}\n\n`);
+      });
     });
 
     req.on('close', () => {
