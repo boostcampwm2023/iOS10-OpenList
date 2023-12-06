@@ -78,32 +78,20 @@ async function sendRequestToClova(data) {
   }
 }
 
-function getUserRoleWithDto(dto) {
+function getUserRole(categoryDto, checklistDto) {
   return {
     role: "user",
-    content: `{
-        "mainCategory":"해외 여행",
-        "subCategory":"라오스",
-        "minorCategory":"관광명소"
-    }
-    {
-    "1": "라오스 문화에 대해 알아보기",
-    "2": "불교 사원 방문하기",
-    "3": "자연 경관 감상하기",
-    "4": "동굴 탐험하기",
-    "5": "액티비티 체험하기",
-    "6": "현지 음식 즐기기",
-    "7": "전통 공예품 구매하기",
-    "8": "교통 수단 이용 시 주의사항 숙지하기",
-    "9": "안전에 유의하며 여행하기",
-    "10": "여행 준비물 꼼꼼히 챙기기"
-    }`,
+    content: `
+    1. 대 중 소 카테고리 JSON
+    ${JSON.stringify(categoryDto)}
+    2. 체크리스트 JSON
+    ${JSON.stringify(checklistDto)}`,
   };
 }
 
-async function evaluateChecklistItem(dto) {
+async function evaluateChecklistItem(categoryDto, checklistDto) {
   const requestData = {
-    messages: [SYSTEM_ROLE, getUserRoleWithDto(dto)],
+    messages: [SYSTEM_ROLE, getUserRole(categoryDto, checklistDto)],
     ...AI_OPTIONS,
   };
 
@@ -111,16 +99,23 @@ async function evaluateChecklistItem(dto) {
   return result;
 }
 
-// DTO (Data Transfer Object) 예시
-const dtoExample = {
+const categoryDto = {
   mainCategory: "여행",
   subCategory: "유럽",
   minorCategory: "관광명소",
 };
-
-// generateChecklistItemWithAi(dtoExample)
-//   .then((result) => console.log("Generated checklist:", result))
-//   .catch((error) => console.error("Error:", error));
+const checklistDto = {
+  1: "라오스 문화에 대해 알아보기",
+  2: "불교 사원 방문하기",
+  3: "자연 경관 감상하기",
+  4: "동굴 탐험하기",
+  5: "액티비티 체험하기",
+  6: "현지 음식 즐기기",
+  7: "전통 공예품 구매하기",
+  8: "교통 수단 이용 시 주의사항 숙지하기",
+  9: "안전에 유의하며 여행하기",
+  10: "여행 준비물 꼼꼼히 챙기기",
+};
 
 async function aiResultParser(result) {
   const content = result?.result?.message?.content;
@@ -147,7 +142,7 @@ async function checkValidResult(select, reason) {
 
 async function processAiResult(retryCount = 0) {
   try {
-    const result = await evaluateChecklistItem(dtoExample);
+    const result = await evaluateChecklistItem(categoryDto, checklistDto);
     const { select, reason } = await aiResultParser(result);
     await checkValidResult(select, reason);
     console.log("select:", select);
@@ -162,7 +157,7 @@ async function processAiResult(retryCount = 0) {
   }
 }
 
-// processAiResult();
+processAiResult();
 
 module.exports = {
   processAiResult,

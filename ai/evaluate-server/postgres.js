@@ -17,14 +17,24 @@ const pool = new Pool({
 // });
 
 async function getAllChecklistItems() {
-  const result = await pool.query("SELECT * FROM test_table");
+  const result = await pool.query("SELECT * FROM ai_checklist_items");
+
   const checklistItems = arrayToObj(result.rows);
+  console.log("checklistItems:", checklistItems);
   return checklistItems;
+}
+
+async function getAllCategories() {
+  const result = await pool.query("SELECT * FROM category");
+
+  const categories = result.rows;
+  console.log("categories:", categories);
+  return categories;
 }
 
 const arrayToObj = (array) => {
   return array.reduce((obj, item) => {
-    obj[item.id] = item.name;
+    obj[item.id] = item.content;
     return obj;
   }, {});
 };
@@ -41,6 +51,8 @@ const values = ["brianc", "brian.m.carlson@gmail.com"];
 //   }
 // });
 
+getAllChecklistItems();
+// getAllCategories();
 module.exports = {
   getAllChecklistItems,
 };

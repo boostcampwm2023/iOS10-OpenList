@@ -1,4 +1,5 @@
 const redis = require("redis");
+require("dotenv").config();
 
 class RedisPub {
   constructor() {
@@ -8,8 +9,7 @@ class RedisPub {
   async init() {
     try {
       this.publisher = redis.createClient({
-        host: "localhost",
-        port: 6379,
+        url: process.env.REDIS_URL,
       });
       await this.publisher.connect();
       console.log("Redis publisher connected");
