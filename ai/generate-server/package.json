@@ -1,0 +1,15 @@
+{
+  "name": "generate-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "openai": "^4.20.1",
+    "pg": "^8.11.3",
+    "prettier": "^3.1.0",
+    "redis": "^4.6.11"
+  }
+}

@@ -1,0 +1,5 @@
+/.idea
+
+/ai/generate-server/node_modules
+
+ai/generate-server/.env
