@@ -1,6 +1,7 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { RedisService } from 'redis/redis.service';
+import { channels } from './const/channels.const';
 
 @Controller('admin')
 export class AdminController {
@@ -19,7 +20,6 @@ export class AdminController {
     };
 
     res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
-    const channels = ['channel', 'sharedChecklist', 'ai_result', 'httpLog'];
     channels.forEach((channel) => {
       // this.redisSubscriber.subscribe(channel, (message) => {
       //   res.write(`data: ${changeFormat(channel, message)}\n\n`);
