@@ -23,6 +23,11 @@ export class AccessTokenGuard implements CanActivate {
       return true;
     }
 
+    // /admin 경로에 대한 요청은 Guard를 적용하지 않음 (배포시 제거해야함)
+    if (url.startsWith('/admin')) {
+      return true;
+    }
+
     // 요청 헤더에서 'authorization' 필드를 추출
     const rawToken = req.headers['authorization'];
     // 토큰이 없는 경우 UnauthorizedException 발생
