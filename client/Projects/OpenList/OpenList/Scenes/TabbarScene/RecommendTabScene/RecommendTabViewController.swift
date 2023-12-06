@@ -235,7 +235,6 @@ extension RecommendTabViewController: UICollectionViewDelegate {
 	// category tab view delegate
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard
-			let cell = collectionView.cellForItem(at: indexPath) as? RecommendCategoryTabCell,
 			let recommendCategoryDataSource,
 			let item = recommendCategoryDataSource.itemIdentifier(for: indexPath)
 		else { return }

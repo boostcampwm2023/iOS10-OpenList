@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RecommendCheckListCell: UICollectionViewCell {
+final class RecommendCheckListCell: UICollectionViewListCell {
 	enum Section { case checkList4Row }
 	typealias CheckList4RowDataSource = UICollectionViewDiffableDataSource<Section, [CheckListItem]>
 	typealias CheckList4RowSnapShot = NSDiffableDataSourceSnapshot<Section, [CheckListItem]>
@@ -33,12 +33,22 @@ final class RecommendCheckListCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		checkList4RowDataSource = nil
+	}
+	
 	func configure(with item: CheckList) {
 		titleLabel.text = item.title
 		dateLabel.text = item.createdAt.toString()
 		let chunkedCheckListItems = item.items.chunk(by: 4)
 		checkListPageControl.numberOfPages = chunkedCheckListItems.count
 		updatePageControl(with: 0)
+		checkList4RowDataSource = .init(collectionView: checkListView) { collectionView, indexPath, item in
+			let cell = collectionView.dequeueCell(RecommendCheckList4ItemCell.self, for: indexPath)
+			cell.configure(with: item)
+			return cell
+		}
 		updateSection(with: chunkedCheckListItems)
 	}
 }
@@ -108,7 +118,6 @@ private extension RecommendCheckListCell {
 		}
 		checkListView.showsHorizontalScrollIndicator = false
 		checkListView.showsVerticalScrollIndicator = false
-		makeSection()
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
@@ -224,16 +233,10 @@ private extension RecommendCheckListCell {
 		return UICollectionViewCompositionalLayout(section: section)
 	}
 	
-	func makeSection() {
+	func updateSection(with items: [[CheckListItem]]) {
 		guard let checkList4RowDataSource else { return }
 		var snapShot = CheckList4RowSnapShot()
 		snapShot.appendSections([.checkList4Row])
-		checkList4RowDataSource.apply(snapShot)
-	}
-	
-	func updateSection(with items: [[CheckListItem]]) {
-		guard let checkList4RowDataSource else { return }
-		var snapShot = checkList4RowDataSource.snapshot()
 		snapShot.appendItems(items, toSection: .checkList4Row)
 		checkList4RowDataSource.apply(snapShot)
 	}
