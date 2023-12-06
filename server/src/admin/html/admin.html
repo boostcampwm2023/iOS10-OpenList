@@ -56,17 +56,33 @@
       }
 
       .channel-button.selected {
-        background-color: #007bff; /* 선택될 때 파란색 배경 */
+        background-color: #5c3663; /* 선택될 때 파란색 배경 */
       }
 
       .message-content {
-        max-height: 80px; /* 5줄 높이로 제한 */
+        max-height: 200px; /* 5줄 높이로 제한 */
         overflow: hidden; /* 내용이 넘칠 경우 숨김 */
         transition: max-height 0.3s ease-in-out; /* 부드러운 전환 효과 */
       }
 
       .message-content.expanded {
         max-height: none; /* 전체 내용 표시 */
+      }
+
+      [data-channel='sharedChecklist'] {
+        color: #f4b6c2; /* 연분홍색 */
+      }
+      [data-channel='channel'] {
+        color: #ffdfba; /* 연살구색 */
+      }
+      [data-channel='ai_result'] {
+        color: #a0d2eb; /* 연하늘색 */
+      }
+      [data-channel='httpLog'] {
+        color: #e4c1f9; /* 연보라색 */
+      }
+      [data-channel='wsLog'] {
+        color: #fdd7ac; /* 연갈색 */
       }
     </style>
   </head>
