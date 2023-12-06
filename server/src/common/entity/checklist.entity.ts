@@ -6,7 +6,12 @@ export abstract class ChecklistModel extends BaseModel {
   @Column()
   title: string;
 
-  // @Column({ default: 0 })
-  // @IsNumber()
-  // progress: number;
+  @Column({ nullable: true })
+  mainCategory: string;
+
+  @Column({ nullable: true })
+  subCategory: string;
+
+  @Column({ nullable: true })
+  minorCategory: string;
 }

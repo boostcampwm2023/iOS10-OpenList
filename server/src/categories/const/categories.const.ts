@@ -180,5 +180,53 @@ export const CATEGORIES = {
         },
       ],
     },
+    {
+      id: 7,
+      name: '취미',
+      subcategories: [
+        {
+          id: 701,
+          name: '음악',
+          minorCategories: [
+            { id: 70101, name: '기타' },
+            { id: 70102, name: '피아노' },
+            { id: 70103, name: '드럼' },
+            { id: 70104, name: '베이스' },
+            { id: 70105, name: '보컬' },
+            { id: 70106, name: '작곡' },
+            { id: 70107, name: '음악 이론' },
+          ],
+        },
+        {
+          id: 702,
+          name: '미술',
+          minorCategories: [
+            { id: 70201, name: '드로잉' },
+            { id: 70202, name: '수채화' },
+            { id: 70203, name: '아크릴화' },
+            { id: 70204, name: '유화' },
+            { id: 70205, name: '파스텔' },
+            { id: 70206, name: '캘리그라피' },
+            { id: 70207, name: '조소' },
+            { id: 70208, name: '판화' },
+            { id: 70209, name: '캐리커쳐' },
+          ],
+        },
+        {
+          id: 703,
+          name: '공예',
+          minorCategories: [
+            { id: 70301, name: '가죽' },
+            { id: 70302, name: '목공' },
+            { id: 70303, name: '도자기' },
+            { id: 70304, name: '비즈' },
+            { id: 70305, name: '플라워' },
+            { id: 70306, name: '캔들' },
+            { id: 70307, name: '향수' },
+            { id: 70308, name: '비누' },
+          ],
+        },
+      ],
+    },
   ],
 };
