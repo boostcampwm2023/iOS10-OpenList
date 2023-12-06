@@ -169,6 +169,7 @@
 		5FDA02A72B21583200F28960 /* RecommendChecklistResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FDA02A62B21583200F28960 /* RecommendChecklistResponseDTO.swift */; };
 		5FFB3B872B1EE4F3003BBFDF /* RecommendCheckListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFB3B862B1EE4F3003BBFDF /* RecommendCheckListItemCell.swift */; };
 		786BB5892B20755B00CCE3AC /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB5882B20755B00CCE3AC /* Storage.swift */; };
+		786BB58C2B20D09900CCE3AC /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB58B2B20D09900CCE3AC /* Storage.swift */; };
 		78A4C71A2B0F2ED900E07492 /* LoginAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7152B0F2ED900E07492 /* LoginAction.swift */; };
 		78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7162B0F2ED900E07492 /* LoginRouter.swift */; };
 		78A4C71C2B0F2ED900E07492 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7172B0F2ED900E07492 /* LoginViewController.swift */; };
@@ -420,6 +421,7 @@
 		5FDA02A62B21583200F28960 /* RecommendChecklistResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendChecklistResponseDTO.swift; sourceTree = "<group>"; };
 		5FFB3B862B1EE4F3003BBFDF /* RecommendCheckListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendCheckListItemCell.swift; sourceTree = "<group>"; };
 		786BB5882B20755B00CCE3AC /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = ../../../../../../../../../../.Trash/Storage.swift; sourceTree = "<group>"; };
+		786BB58B2B20D09900CCE3AC /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = ../Storage.swift; sourceTree = "<group>"; };
 		78A4C7152B0F2ED900E07492 /* LoginAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAction.swift; sourceTree = "<group>"; };
 		78A4C7162B0F2ED900E07492 /* LoginRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRouter.swift; sourceTree = "<group>"; };
 		78A4C7172B0F2ED900E07492 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -966,7 +968,7 @@
 		5FA1F89B2AFF7E1D00869079 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				786BB5872B20754700CCE3AC /* UserDefaults */,
+				786BB58A2B20D08B00CCE3AC /* UserDefaults */,
 				78B9F1442B1DE75000B903E7 /* UserDefualts */,
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
@@ -1124,11 +1126,13 @@
 			);
 			path = View;
 		786BB5872B20754700CCE3AC /* UserDefaults */ = {
+		786BB58A2B20D08B00CCE3AC /* UserDefaults */ = {
 			isa = PBXGroup;
 			children = (
-				786BB5882B20755B00CCE3AC /* Storage.swift */,
+				786BB58B2B20D09900CCE3AC /* Storage.swift */,
 			);
-			path = UserDefaults;
+			name = UserDefaults;
+			path = ../../../../../../../../../.Trash/UserDefaults;
 			sourceTree = "<group>";
 		};
 		78A4C7142B0F2ECC00E07492 /* LoginScene */ = {
@@ -1487,7 +1491,6 @@
 				4DD97D9E2B14D56B00DF73BC /* CheckList.swift in Sources */,
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
-				786BB5892B20755B00CCE3AC /* Storage.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
 				78B9F14C2B1F826D00B903E7 /* CheckToggle.swift in Sources */,
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
@@ -1591,6 +1594,7 @@
 				4DDC43302B0F16CC00859B28 /* WithDetailCheckListRouter.swift in Sources */,
 				78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */,
 				4D36A3992B1777DA009AA063 /* SelectCheckListCell.swift in Sources */,
+				786BB58C2B20D09900CCE3AC /* Storage.swift in Sources */,
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
 				4DF0D5682B1F560C00EC68CA /* DefaultProfileRepository.swift in Sources */,
 				78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */,

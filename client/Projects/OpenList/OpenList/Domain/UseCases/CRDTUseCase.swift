@@ -348,7 +348,7 @@ private extension DefaultCRDTUseCase {
 		documentDictionary.removeValue(forKey: id)
 		mergeDictionary.removeValue(forKey: id)
 		
-		return WithCheckListItem(itemId: id, title: "", isChecked: false, name: nil)
+		return WithCheckListItem(itemId: id, title: "", isChecked: false, name: nil, isValueChanged: false)
 	}
 	
 	func removeRepository(id: UUID) async throws {
