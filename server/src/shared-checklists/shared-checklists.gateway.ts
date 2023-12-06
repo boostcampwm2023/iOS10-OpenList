@@ -61,9 +61,10 @@ export class SharedChecklistsGateway
     this.addClientToMap(client, sharedChecklistId);
     const count = await this.updateRedisCount(sharedChecklistId, true);
 
-    console.log(
-      `CONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`,
-    );
+    const logMessage = `CONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
+
     await this.sendHistoryToClient(client, sharedChecklistId);
 
     console.log(``);
@@ -82,9 +83,13 @@ export class SharedChecklistsGateway
     this.removeClientFromMap(client, sharedChecklistId);
     const count = await this.updateRedisCount(sharedChecklistId, false);
 
-    console.log(
-      `DISCONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`,
-    );
+    // console.log(
+    //   `DISCONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`,
+    // );
+
+    const logMessage = `DISCONNECT ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId} Count: ${count}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
     console.log(``);
 
     if (count === 0) {
@@ -246,10 +251,15 @@ export class SharedChecklistsGateway
     });
 
     const clientId = client['id'];
-    console.log(
-      `POST send ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId}`,
-    );
+    // console.log(
+    //   `POST send ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId}`,
+    // );
+    // console.log(`data: ${JSON.stringify(data)}`);
+    const logMessage = `POST send ::: CLIENT:${clientId} CHECKLIST:${sharedChecklistId}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
     console.log(`data: ${JSON.stringify(data)}`);
+    this.redisPublisher.publish('wsLog', JSON.stringify(data));
     console.log(``);
     this.redisPublisher.publish('sharedChecklist', message);
     const redisArrayKey = `sharedChecklistHistory:${sharedChecklistId}`;
@@ -272,7 +282,11 @@ export class SharedChecklistsGateway
       data,
     });
     this.redisPublisher.publish('sharedChecklist', message);
-    console.log(`POST editing ::: CHECKLIST:${sharedChecklistId}`);
+    // console.log(`POST editing ::: CHECKLIST:${sharedChecklistId}`);
+    // console.log(`data: ${JSON.stringify(data)}`);
+    const logMessage = `POST editing ::: CHECKLIST:${sharedChecklistId}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
     console.log(`data: ${JSON.stringify(data)}`);
     console.log(``);
   }
@@ -287,11 +301,17 @@ export class SharedChecklistsGateway
     event: string,
     data: string[] | string,
   ) {
-    console.log(
-      `GET ${event} ::: CLIENT:${client['id']} CHECKLIST:${client['sharedChecklistId']}`,
-    );
+    // console.log(
+    //   `GET ${event} ::: CLIENT:${client['id']} CHECKLIST:${client['sharedChecklistId']}`,
+    // );
+    // console.log(`data: ${JSON.stringify(data)}`);
+    const logMessage = `GET ${event} ::: CLIENT:${client['id']} CHECKLIST:${client['sharedChecklistId']}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
     console.log(`data: ${JSON.stringify(data)}`);
+    this.redisPublisher.publish('wsLog', JSON.stringify(data));
     console.log(``);
+
     client.send(JSON.stringify({ event, data }));
   }
 
@@ -308,10 +328,16 @@ export class SharedChecklistsGateway
       sharedChecklistId,
       now,
     );
-    console.log(
-      `saveToDatabase CHECKLIST: ${sharedChecklistId}: ${JSON.stringify(
-        result,
-      )}`,
-    );
+    // console.log(
+    //   `saveToDatabase CHECKLIST: ${sharedChecklistId}: ${JSON.stringify(
+    //     result,
+    //   )}`,
+    // );
+    const logMessage = `saveToDatabase CHECKLIST: ${sharedChecklistId}}`;
+    console.log(logMessage);
+    this.redisPublisher.publish('wsLog', logMessage);
+    console.log(`data: ${JSON.stringify(result)}`);
+    this.redisPublisher.publish('wsLog', JSON.stringify(result));
+    console.log(``);
   }
 }
