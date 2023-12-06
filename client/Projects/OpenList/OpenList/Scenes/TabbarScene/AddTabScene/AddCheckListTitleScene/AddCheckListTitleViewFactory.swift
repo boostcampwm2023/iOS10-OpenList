@@ -11,24 +11,14 @@ import Foundation
 protocol AddCheckListTitleDependency: Dependency {
 	var validCheckUseCase: ValidCheckUseCase { get }
 	var persistenceUseCase: PersistenceUseCase { get }
+	var categoryUseCase: CategoryUseCase { get }
 }
 
 final class AddCheckListTitleComponent:
 	Component<AddCheckListTitleDependency>,
 	MainCategoryDependency {
 	var categoryUseCase: CategoryUseCase {
-		return DefaultCategoryUseCase(categoryRepository: categoryRepository)
-	}
-	
-	var categoryRepository: CategoryRepository {
-		return DefaultCategoryRepository(session: categorySession)
-	}
-	
-	var categorySession: CustomSession {
-		return CustomSession(
-			configuration: .default,
-			interceptor: AccessTokenInterceptor()
-		)
+		return parent.categoryUseCase
 	}
 	
 	fileprivate var validCheckUseCase: ValidCheckUseCase {

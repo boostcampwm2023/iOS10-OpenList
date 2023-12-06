@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CheckList {
+struct CheckList: Hashable {
 	let id: UUID
 	let title: String
 	let createdAt: Date

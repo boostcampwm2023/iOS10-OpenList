@@ -81,4 +81,8 @@ extension DefaultCheckListRepository: CheckListRepository {
 	func transfromToWith(id: UUID) async throws {
 		return try await checkListStorage.transfromToWith(id: id)
 	}
+	
+	func fetchRecommendCheckList(id: Int) async throws -> [CheckList] {
+		return []
+	}
 }

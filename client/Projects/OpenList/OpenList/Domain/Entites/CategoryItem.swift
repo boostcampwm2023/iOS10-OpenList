@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CategoryItem {
+struct CategoryItem: Hashable {
 	let id: Int
 	let name: String
 }
