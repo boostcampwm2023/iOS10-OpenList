@@ -379,11 +379,9 @@ extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
 		cell: WithCheckListItemCell,
 		indexPath: IndexPath
 	) {
-		if let text = textView.text, !text.isEmpty {
-			// 로컬에 저장합니다.
-			dataSource?.updateCheckListItemString(at: indexPath, with: text)
-		} else {
+		guard let text = textView.text, !text.isEmpty else {
 			dataSource?.deleteCheckListItem(at: indexPath)
+			return
 		}
 	}
 	

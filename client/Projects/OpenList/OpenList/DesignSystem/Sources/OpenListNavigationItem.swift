@@ -25,7 +25,7 @@ extension OpenListNavigationItemType {
 			return .more.withRenderingMode(.alwaysTemplate)
 		case .profile:
 			var image: UIImage {
-				guard let profile = Storage.shared.fetch(key: .profile) as? UIImage else {
+				guard let profile = UserDefaultsManager.shared.fetch(key: .profile) as? UIImage else {
 					return UIImage.profile
 				}
 				return profile

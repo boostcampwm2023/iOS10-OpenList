@@ -11,7 +11,7 @@ import Foundation
 
 final class DefaultWithCheckListRepository {
 	private let session: CustomSession
-	private let name = UserDefaultsManager.load(forKey: UserInfoKey.username, type: String.self)
+	private let name = UserDefaultsManager.shared.fetch(key: .nickname)
 	
 	init(session: CustomSession) {
 		self.session = session
@@ -39,7 +39,8 @@ extension DefaultWithCheckListRepository: WithCheckListRepository {
 		builder.setMethod(.post)
 		do {
 			let crdtItems = items.map { (editTextId: UUID, message: CRDTMessage) -> CRDTMessageRequestDTO in
-				return CRDTMessageRequestDTO(id: editTextId, number: 1, name: name ?? "Unknown", state: false, data: message)
+				let name = (name as? String) ?? "Unknown"
+				return CRDTMessageRequestDTO(id: editTextId, number: 1, name: name, state: false, data: message)
 			}
 			
 			let reuqestDTO = RequestDTO(title: title, items: crdtItems, sharedChecklistId: sharedChecklistId)

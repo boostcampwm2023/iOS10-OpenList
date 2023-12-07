@@ -65,8 +65,8 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		setViewConstraints()
 		bind()
 		configureHeaderView.send()
-		viewLoad.send()
 		LoadingIndicator.showLoading()
+		viewLoad.send()
 	}
 }
 
