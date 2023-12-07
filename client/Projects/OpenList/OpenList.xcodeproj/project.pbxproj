@@ -425,6 +425,7 @@
 		786BB58B2B20D09900CCE3AC /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = ../Storage.swift; sourceTree = "<group>"; };
 		786BB58B2B20D09900CCE3AC /* UserDefaultsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserDefaultsManager.swift; path = ../UserDefaultsManager.swift; sourceTree = "<group>"; };
 		786BB58D2B20D6D800CCE3AC /* WithCheckListItemChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItemChange.swift; sourceTree = "<group>"; };
+		786BB5902B2158EE00CCE3AC /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		78A4C7152B0F2ED900E07492 /* LoginAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAction.swift; sourceTree = "<group>"; };
 		78A4C7162B0F2ED900E07492 /* LoginRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRouter.swift; sourceTree = "<group>"; };
 		78A4C7172B0F2ED900E07492 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -971,7 +972,7 @@
 		5FA1F89B2AFF7E1D00869079 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				786BB58A2B20D08B00CCE3AC /* UserDefaults */,
+				786BB58F2B2158E500CCE3AC /* UserDeaults */,
 				78F7476C2B126EB7003ED6DA /* KeyChain */,
 				4DCF10EE2B10EC3900C614B7 /* DataStructure */,
 				5FA1F8AE2AFF7FAD00869079 /* App */,
@@ -1129,12 +1130,12 @@
 			path = View;
 		786BB5872B20754700CCE3AC /* UserDefaults */ = {
 		786BB58A2B20D08B00CCE3AC /* UserDefaults */ = {
+		786BB58F2B2158E500CCE3AC /* UserDeaults */ = {
 			isa = PBXGroup;
 			children = (
-				786BB58B2B20D09900CCE3AC /* UserDefaultsManager.swift */,
+				786BB5902B2158EE00CCE3AC /* UserDefaultsManager.swift */,
 			);
-			name = UserDefaults;
-			path = ../../../../../../../../../.Trash/UserDefaults;
+			path = UserDeaults;
 			sourceTree = "<group>";
 		};
 		78A4C7142B0F2ECC00E07492 /* LoginScene */ = {
@@ -1587,7 +1588,6 @@
 				4DDC43302B0F16CC00859B28 /* WithDetailCheckListRouter.swift in Sources */,
 				78E955FB2B16FC23005CF5D3 /* MainCategoryAction.swift in Sources */,
 				4D36A3992B1777DA009AA063 /* SelectCheckListCell.swift in Sources */,
-				786BB58C2B20D09900CCE3AC /* UserDefaultsManager.swift in Sources */,
 				5FCCA3C32B104AE200496EB2 /* OpenListNavigationItem.swift in Sources */,
 				4DF0D5682B1F560C00EC68CA /* DefaultProfileRepository.swift in Sources */,
 				78E956222B178CB3005CF5D3 /* CategoryResponseDTO.swift in Sources */,
