@@ -130,11 +130,15 @@ export class AuthService {
    * @returns {{accessToken: string, refreshToken: string}}
    */
 
-  loginUser(user: UserModel): { accessToken: string; refreshToken: string } {
+  loginUser(user: UserModel): {
+    accessToken: string;
+    refreshToken: string;
+    nickname: string;
+  } {
     const accessToken = this.signToken(user, 'access');
     const refreshToken = this.signToken(user, 'refresh');
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, nickname: user.nickname };
   }
 
   /**
