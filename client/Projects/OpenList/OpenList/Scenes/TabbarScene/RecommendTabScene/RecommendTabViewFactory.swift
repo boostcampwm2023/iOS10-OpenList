@@ -10,20 +10,24 @@ import Foundation
 protocol RecommendTabDependency: Dependency {
 	var categoryUseCase: CategoryUseCase { get }
 	var checkListRepository: CheckListRepository { get }
+	var profileFactoryable: ProfileFactoryable { get }
+	var settingFactoryable: SettingFactoryable { get }
 }
 
 final class RecommendTabComponent: Component<RecommendTabDependency> {
-	fileprivate var categoryUseCase: CategoryUseCase {
-		return parent.categoryUseCase
-	}
+	fileprivate var categoryUseCase: CategoryUseCase { parent.categoryUseCase }
 	
 	fileprivate var recommendCheckListUseCase: RecommendCheckListUseCase {
 		return DefaultRecommendCheckListUseCase(checklistRepository: parent.checkListRepository)
 	}
+	
+	fileprivate var profileFactoryable: ProfileFactoryable { parent.profileFactoryable }
+	
+	fileprivate var settingFactoryable: SettingFactoryable { parent.settingFactoryable }
 }
 
 protocol RecommendTabFactoryable: Factoryable {
-	func make() -> ViewControllable
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable
 }
 
 final class RecommendTabViewFactory: Factory<RecommendTabDependency>, RecommendTabFactoryable {
@@ -31,17 +35,22 @@ final class RecommendTabViewFactory: Factory<RecommendTabDependency>, RecommendT
 		super.init(parent: parent)
 	}
 	
-	func make() -> ViewControllable {
-		let compoment = RecommendTabComponent(parent: parent)
-		let router = RecommendTabRouter()
+	func make(with appRouter: AppRouterProtocol) -> ViewControllable {
+		let component = RecommendTabComponent(parent: parent)
+		let router = RecommendTabRouter(
+			appRouter: appRouter,
+			profileFactory: component.profileFactoryable,
+			settingFactory: component.settingFactoryable
+		)
 		let viewModel = RecommendTabModel(
-			categoryUseCase: compoment.categoryUseCase,
-			recommendCheckListUseCase: compoment.recommendCheckListUseCase
+			categoryUseCase: component.categoryUseCase,
+			recommendCheckListUseCase: component.recommendCheckListUseCase
 		)
 		let viewController = RecommendTabViewController(
 			router: router,
 			viewModel: viewModel
 		)
+		router.viewController = viewController
 		return viewController
 	}
 }

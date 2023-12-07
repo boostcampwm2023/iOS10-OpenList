@@ -17,7 +17,9 @@ final class TabBarComponent:
 	Component<TabBarDependency>,
 	CheckListTabDependency,
 	AddCheckListTitleDependency,
-	RecommendTabDependency {
+	RecommendTabDependency,
+	ProfileDependency,
+	SettingDependency {
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> {
 		return parent.deepLinkSubject
 	}
@@ -56,6 +58,14 @@ final class TabBarComponent:
 	var session: CustomSession = .init(
 		interceptor: AccessTokenInterceptor()
 	)
+	
+	var profileFactoryable: ProfileFactoryable {
+		return ProfileViewFactory(parent: self)
+	}
+	
+	var settingFactoryable: SettingFactoryable {
+		return SettingViewFactory(parent: self)
+	}
 	
 	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {
 		return AddCheckListTitleViewFactory(parent: self)

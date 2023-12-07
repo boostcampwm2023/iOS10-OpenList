@@ -43,7 +43,7 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 		let checkListTabNavigationController = makeTabNavigationController(of: checkListTabViewControllable)
 		checkListTabNavigationController.navigationController.tabBarItem = makeTabBarItem(of: .checklistTab)
 		
-		let recommendTabViewControllable = recommendTabFactoryable.make()
+		let recommendTabViewControllable = recommendTabFactoryable.make(with: appRouter)
 		let recommendTabNavigationController = makeTabNavigationController(of: recommendTabViewControllable)
 		recommendTabNavigationController.navigationController.tabBarItem = makeTabBarItem(of: .recommendTab)
 		self.viewControllers = [
