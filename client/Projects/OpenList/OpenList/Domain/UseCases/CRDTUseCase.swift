@@ -47,15 +47,13 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 	func fetchCheckList(id: UUID) async throws -> CheckList {
 		self.id = id
 		let response = try await crdtRepository.fetchCheckListItems(id: id)
-		dump(response)
-		response.compactMap { item in
+		response.messages.compactMap { item in
 			if let item = item as? CRDTDocumentResponseDTO {
 				return removeCheckList(to: item.id)
 			} else if let item = item as? CRDTMessageResponseDTO {
 				if documentsId.searchNode(from: item.id) == nil {
 					return try? appendCheckListItem(to: item.id, message: item.message, name: item.name)
 				} else {
-					// 차후 isChecked 변수값 조정 -> 문제 발생 예정
 					return try? updateCheckListItem(to: item.id, message: item.message, name: item.name, isChecked: item.state)
 				}
 			} else if let item = item as? CRDTCheckListToggleResponseDTO {
@@ -65,25 +63,15 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 				return nil
 			}
 		}
-		
-		// 기록 하나로 합치기.
-		let documentIds = documentsId.values()
-		let items = documentIds.map { uuid in
-			let currentDocument = documentDictionary[uuid]
-			let view = currentDocument!.view()
-			let isChecked = documentsStateDictionary[uuid] ?? false
-			let items = WithCheckListItem(itemId: uuid, title: view, isChecked: isChecked, name: nil)
-			return items
-		}
 
 		return .init(
 			id: id,
-			title: "Test",
-			createdAt: .now,
-			updatedAt: .now,
+			title: response.title,
+			createdAt: response.createdAt.toDateString(),
+			updatedAt: response.updatedAt.toDateString(),
 			progress: 0,
 			orderBy: [],
-			items: items
+			items: []
 		)
 	}
 	
@@ -94,22 +82,18 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 		switch response.event {
 		case .listen:
 			if let data = response.data.first as? CRDTMessageResponseDTO {
-				dump("Message Name: \(data.name)")
-				dump("Message Number: \(data.number)")
 				if documentsId.searchNode(from: data.id) == nil {
 					return [try appendCheckListItem(to: data.id, message: data.message, name: data.name)]
 				} else {
 					return [try updateCheckListItem(to: data.id, message: data.message, name: data.name, isChecked: data.state)]
 				}
 			} else if let data = response.data.first as? CRDTCheckListToggleResponseDTO {
-				dump("Message Number: \(data.number)")
 				if documentsId.searchNode(from: data.id) != nil {
 					return [try updateCheckListItem(to: data.id, name: data.name, isChecked: data.state)]
 				} else {
 					return []
 				}
 			} else if let data = response.data.first as? CRDTDocumentResponseDTO {
-				dump("Message Number: \(data.number)")
 				switch data.event {
 				case .delete:
 					return [removeCheckList(to: data.id)]
@@ -121,25 +105,37 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			}
 			
 		case .history:
-			guard let data = response.data as? [CRDTMessageResponseDTO] else {
-				throw CRDTUseCaseError.decodeFailed
-			}
-			print(data)
-			historyData = try data.map {
-				if documentsId.searchNode(from: $0.id) == nil {
-					try appendCheckListItem(to: $0.id, message: $0.message, name: $0.name)
+			response.data.compactMap { item in
+				if let item = item as? CRDTDocumentResponseDTO {
+					return removeCheckList(to: item.id)
+				} else if let item = item as? CRDTMessageResponseDTO {
+					if documentsId.searchNode(from: item.id) == nil {
+						return try? appendCheckListItem(to: item.id, message: item.message, name: item.name)
+					} else {
+						return try? updateCheckListItem(to: item.id, message: item.message, name: item.name, isChecked: item.state)
+					}
+				} else if let item = item as? CRDTCheckListToggleResponseDTO {
+					documentsStateDictionary[item.id] = item.state
+					return try? updateCheckListItem(to: item.id, name: item.name, isChecked: item.state)
 				} else {
-					// 차후에 isChecked field값 조정
-					try updateCheckListItem(to: $0.id, message: $0.message, name: $0.name, isChecked: false)
+					return nil
 				}
 			}
-			return historyData
+			// 기록 하나로 합치기.
+			let documentIds = documentsId.values()
+			let items = documentIds.map { uuid in
+				let currentDocument = documentDictionary[uuid]
+				let view = currentDocument!.view()
+				let isChecked = documentsStateDictionary[uuid] ?? false
+				let items = WithCheckListItem(itemId: uuid, title: view, isChecked: isChecked, name: nil)
+				return items
+			}
+			return items
 			
 		case .lastDate:
 			throw CRDTUseCaseError.decodeFailed
 			
 		default:
-			dump(response)
 			throw CRDTUseCaseError.docmuentNotFound
 		}
 	}
@@ -411,3 +407,11 @@ extension DefaultCRDTUseCase {
 	}
 }
 #endif
+
+fileprivate extension String {
+	func toDateString() -> Date {
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+		return dateFormatter.date(from: self) ?? Date()
+	}
+}

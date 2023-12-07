@@ -174,6 +174,7 @@
 		786BB5B92B2162A600CCE3AC /* CheckToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB5B82B2162A600CCE3AC /* CheckToggle.swift */; };
 		786BB5BC2B2162B000CCE3AC /* WithCheckListItemChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB5BA2B2162B000CCE3AC /* WithCheckListItemChange.swift */; };
 		786BB5BD2B2162B000CCE3AC /* WithCheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB5BB2B2162B000CCE3AC /* WithCheckListItem.swift */; };
+		786BB5BF2B21AA7100CCE3AC /* WithCheckListItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786BB5BE2B21AA7100CCE3AC /* WithCheckListItemDetail.swift */; };
 		78A4C71A2B0F2ED900E07492 /* LoginAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7152B0F2ED900E07492 /* LoginAction.swift */; };
 		78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7162B0F2ED900E07492 /* LoginRouter.swift */; };
 		78A4C71C2B0F2ED900E07492 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A4C7172B0F2ED900E07492 /* LoginViewController.swift */; };
@@ -426,6 +427,7 @@
 		786BB5B82B2162A600CCE3AC /* CheckToggle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckToggle.swift; sourceTree = "<group>"; };
 		786BB5BA2B2162B000CCE3AC /* WithCheckListItemChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WithCheckListItemChange.swift; sourceTree = "<group>"; };
 		786BB5BB2B2162B000CCE3AC /* WithCheckListItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WithCheckListItem.swift; sourceTree = "<group>"; };
+		786BB5BE2B21AA7100CCE3AC /* WithCheckListItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithCheckListItemDetail.swift; sourceTree = "<group>"; };
 		78A4C7152B0F2ED900E07492 /* LoginAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAction.swift; sourceTree = "<group>"; };
 		78A4C7162B0F2ED900E07492 /* LoginRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRouter.swift; sourceTree = "<group>"; };
 		78A4C7172B0F2ED900E07492 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -708,6 +710,7 @@
 				4DF0D53F2B1E0FFC00EC68CA /* SettingItem.swift */,
 				5FDA02A42B2156DA00F28960 /* FeedCheckList.swift */,
 				786BB5BB2B2162B000CCE3AC /* WithCheckListItem.swift */,
+				786BB5BE2B21AA7100CCE3AC /* WithCheckListItemDetail.swift */,
 				786BB5BA2B2162B000CCE3AC /* WithCheckListItemChange.swift */,
 				4DB4D5152B21935E009369B0 /* DeleteCheckListItem.swift */,
 			);
@@ -1485,6 +1488,7 @@
 				4DD97D9E2B14D56B00DF73BC /* CheckList.swift in Sources */,
 				4D33980C2B023BE800963664 /* CheckListTableViewFactory.swift in Sources */,
 				78A4C71D2B0F2ED900E07492 /* LoginViewFactory.swift in Sources */,
+				786BB5BF2B21AA7100CCE3AC /* WithCheckListItemDetail.swift in Sources */,
 				5FA1F8E32AFF818E00869079 /* TabBarViewFactory.swift in Sources */,
 				78A4C71B2B0F2ED900E07492 /* LoginRouter.swift in Sources */,
 				78E956002B16FC23005CF5D3 /* CategoryHeaderView.swift in Sources */,

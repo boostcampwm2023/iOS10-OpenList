@@ -10,7 +10,7 @@ import Foundation
 
 struct CRDTResponseDTO: Decodable {
 	let event: Event
-	let data: [Any]
+	let data: [CRDTData]
 	
 	enum CodingKeys: CodingKey {
 		case number, event, data
@@ -28,8 +28,35 @@ struct CRDTResponseDTO: Decodable {
 			self.data = messages
 		} else if let deleteDocument = try? container.decode(CRDTDocumentResponseDTO.self, forKey: .data) {
 			self.data = [deleteDocument]
-		} else if let lastDate = try? container.decode(String.self, forKey: .data) {
-			self.data = [lastDate]
+		} else if let messages = try? container.decode([DecodeMessage].self, forKey: .data) {
+			self.data = messages.compactMap { datum in
+				let id = datum.id
+				let number = datum.number
+				if let name = datum.name, let message = datum.message, let state = datum.state {
+					return CRDTMessageResponseDTO(
+						id: id,
+						number: number,
+						name: name,
+						state: state,
+						message: message
+					)
+				} else if let name = datum.name, let state = datum.state {
+					return CRDTCheckListToggleResponseDTO(
+						id: id,
+						number: number,
+						name: name,
+						state: state
+					)
+				} else if let event = datum.event {
+					return CRDTDocumentResponseDTO(
+						id: id,
+						number: number,
+						event: event
+					)
+				} else {
+					return nil
+				}
+			}
 		} else {
 			self.data = []
 		}
