@@ -16,5 +16,5 @@ protocol CheckListRepository {
 	func updateCheckList(id: UUID, item: CheckListItem) async throws
 	func removeCheckList(id: UUID, item: CheckListItem, orderBy: [UUID]) async throws
 	func transfromToWith(id: UUID) async throws
-	func fetchRecommendCheckList(id: Int) async throws -> [CheckList]
+	func fetchFeedCheckList(by cateogryName: String) async throws -> [FeedCheckList]
 }

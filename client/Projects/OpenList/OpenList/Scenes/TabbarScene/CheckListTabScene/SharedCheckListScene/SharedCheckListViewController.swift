@@ -27,7 +27,7 @@ final class SharedCheckListViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
 	private let sharedCheckListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var sharedCheckListViewDataSource: SharedCheckListViewDataSource?
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .sharedTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .sharedCheckListView)
 	
 	// MARK: - Initializers
 	init(

@@ -58,9 +58,9 @@ private extension RecommendTabModel {
 	
 	func fetchRecommendCheckList(_ input: Input) -> Output {
 		return input.fetchRecommendCheckList
-			.flatMap { [weak self] id in
+			.flatMap { [weak self] categoryName in
 				LoadingIndicator.showLoading()
-				return Future(asyncFunc: { await self?.recommendCheckListUseCase.fetchRecommendCheckList(by: id) })
+				return Future(asyncFunc: { await self?.recommendCheckListUseCase.fetchFeedCheckList(by: categoryName) })
 					.eraseToAnyPublisher()
 			}
 			.map { result in

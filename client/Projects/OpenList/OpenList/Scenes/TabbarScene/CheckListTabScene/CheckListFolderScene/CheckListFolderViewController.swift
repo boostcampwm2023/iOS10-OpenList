@@ -22,7 +22,7 @@ final class CheckListFolderViewController: UIViewController, ViewControllable {
 	// MARK: - UI Components
 	private let folderView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var folderViewDataSource: UICollectionViewDiffableDataSource<Section, CheckListFolderItem>?
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateCheckListView)
 	
 	// MARK: - Initializers
 	init(

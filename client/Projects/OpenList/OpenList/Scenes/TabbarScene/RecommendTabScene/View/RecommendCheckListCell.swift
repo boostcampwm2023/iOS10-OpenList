@@ -9,8 +9,8 @@ import UIKit
 
 final class RecommendCheckListCell: UICollectionViewCell {
 	enum Section { case checkListItem }
-	typealias CheckListRowDataSource = UICollectionViewDiffableDataSource<Section, CheckListItem>
-	typealias CheckList4RowSnapShot = NSDiffableDataSourceSnapshot<Section, CheckListItem>
+	typealias CheckListRowDataSource = UICollectionViewDiffableDataSource<Section, FeedCheckListItem>
+	typealias CheckList4RowSnapShot = NSDiffableDataSourceSnapshot<Section, FeedCheckListItem>
 	
 	// MARK: - Properties
 	private let imageView: UIView = .init() 	// 체크리스트의 이미지를 보여주는 뷰 (이미지 뷰와 레이어에 그림자가 담겨있다.)
@@ -41,9 +41,9 @@ final class RecommendCheckListCell: UICollectionViewCell {
 		checkListPageControl.isHidden = true
 	}
 	
-	func configure(with item: CheckList) {
+	func configure(with item: FeedCheckList) {
 		titleLabel.text = item.title
-		dateLabel.text = item.createdAt.toString()
+		dateLabel.text = item.createdAt.toDateString()?.toString()
 		imageLayerView?.image = .logo
 		let chunkedCheckListItems = item.items.chunk(by: 4)
 		checkListPageControl.numberOfPages = chunkedCheckListItems.count
@@ -110,6 +110,7 @@ private extension RecommendCheckListCell {
 	func setTitleLabelAttributes() {
 		titleLabel.textColor = .label
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
+		titleLabel.numberOfLines = 0
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
@@ -268,7 +269,7 @@ private extension RecommendCheckListCell {
 			return cell
 		}
 	}
-	func updateSection(with items: [CheckListItem]) {
+	func updateSection(with items: [FeedCheckListItem]) {
 		guard let checkListRowDataSource else { return }
 		var snapShot = CheckList4RowSnapShot()
 		snapShot.appendSections([.checkListItem])
@@ -285,6 +286,14 @@ fileprivate extension Collection {
 			let end = index(start, offsetBy: size)
 			return Array(self[start ..< Swift.min(end, endIndex)])
 		}
+	}
+}
+
+fileprivate extension String {
+	func toDateString() -> Date? {
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+		return dateFormatter.date(from: self)
 	}
 }
 

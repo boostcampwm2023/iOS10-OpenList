@@ -9,11 +9,11 @@ import Combine
 
 struct RecommendTabInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
-	let fetchRecommendCheckList: PassthroughSubject<Int, Never> // categoryId
+	let fetchRecommendCheckList: PassthroughSubject<String, Never> // categoryName
 }
 
 enum RecommendTabState {
 	case reloadRecommendCategory([CategoryItem])
-	case reloadRecommendCheckList([CheckList])
+	case reloadRecommendCheckList([FeedCheckList])
 	case error(Error?)
 }

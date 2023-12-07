@@ -22,10 +22,11 @@ final class RecommendTabViewController: UIViewController, ViewControllable {
 	private var recommendCategoryDataSource: RecommendCategoryTabDiffableDataSource?
 	private let recommendCheckListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var recommendCheckListDataSource: RecommendCheckListDiffableDataSource?
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .feedCheckListView)
 	
 	// MARK: - Event Subjects
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
-	private let recommendCategoryDidSelect: PassthroughSubject<Int, Never> = .init()
+	private let recommendCategoryDidSelect: PassthroughSubject<String, Never> = .init()
 	
 	// MARK: - Initializers
 	init(router: RecommendTabRoutingLogic, viewModel: some RecommendTabModelable) {
@@ -78,15 +79,18 @@ extension RecommendTabViewController: ViewBindable {
 		case .reloadRecommendCategory(let items):
 			recommendCategoryDataSource?.updateCategoryItem(with: items)
 			guard !items.isEmpty else { return }
-			selectRecommendCategory(with: items[0].id, at: 0)
+			selectRecommendCategory(with: items[0].name, at: 0)
 			LoadingIndicator.hideLoading()
 			
 		case let .reloadRecommendCheckList(checkList):
 			recommendCheckListDataSource?.updateRecommendCheckList(with: checkList)
+			checkListEmptyView.isHidden = !checkList.isEmpty
 			LoadingIndicator.hideLoading()
+			
 		case .error(let error):
 			guard let error else { return }
 			handleError(error)
+			LoadingIndicator.hideLoading()
 		}
 	}
 	
@@ -107,6 +111,7 @@ private extension RecommendTabViewController {
 		setTitleLabelAttributes()
 		setRecommendCategoryTabViewAttributes()
 		setRecommendCheckListViewAttributes()
+		setEmptyViewAttributes()
 	}
 	
 	func setTitleLabelAttributes() {
@@ -135,10 +140,16 @@ private extension RecommendTabViewController {
 		recommendCheckListView.showsHorizontalScrollIndicator = false
 	}
 	
+	func setEmptyViewAttributes() {
+		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
+		checkListEmptyView.isHidden = false
+	}
+	
 	func setViewHierarchies() {
 		view.addSubview(titleLabel)
 		view.addSubview(recommendCategoryTabView)
 		view.addSubview(recommendCheckListView)
+		view.addSubview(checkListEmptyView)
 	}
 	
 	func setViewConstraints() {
@@ -163,14 +174,22 @@ private extension RecommendTabViewController {
 			),
 			recommendCheckListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 			recommendCheckListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			recommendCheckListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+			recommendCheckListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+			
+			checkListEmptyView.topAnchor.constraint(
+				equalTo: recommendCategoryTabView.bottomAnchor,
+				constant: Constants.reocmmendCheckListViewTopPadding
+			),
+			checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
 		])
 	}
 }
 
 private extension RecommendTabViewController {
-	func selectRecommendCategory(with id: Int, at index: Int) {
-		recommendCategoryDidSelect.send(id)
+	func selectRecommendCategory(with categoryName: String, at index: Int) {
+		recommendCategoryDidSelect.send(categoryName)
 		
 		recommendCategoryTabView.selectItem(
 			at: IndexPath(row: index, section: 0),
@@ -219,7 +238,7 @@ private extension RecommendTabViewController {
 	}
 	
 	func makeRecommendCheckListDataSource() -> RecommendCheckListDiffableDataSource {
-		typealias RecommendCheckListRegistration = UICollectionView.CellRegistration<RecommendCheckListCell, CheckList>
+		typealias RecommendCheckListRegistration = UICollectionView.CellRegistration<RecommendCheckListCell, FeedCheckList>
 		let cellRegistration = RecommendCheckListRegistration.init { cell, _, item in
 			cell.configure(with: item)
 		}
@@ -238,6 +257,6 @@ extension RecommendTabViewController: UICollectionViewDelegate {
 			let recommendCategoryDataSource,
 			let item = recommendCategoryDataSource.itemIdentifier(for: indexPath)
 		else { return }
-		selectRecommendCategory(with: item.id, at: indexPath.row)
+		selectRecommendCategory(with: item.name, at: indexPath.row)
 	}
 }
