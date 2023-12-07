@@ -392,6 +392,7 @@ extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
 		cellId: UUID
 	) -> Bool {
 		guard let text = textView.text else { return true }
+		guard !(string.unicodeScalars.contains { $0.properties.isEmoji }) else { return false }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
@@ -443,6 +444,7 @@ extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 		replacementString string: String
 	) -> Bool {
 		guard let text = textView.text else { return true }
+		guard !(string.unicodeScalars.contains { $0.properties.isEmoji }) else { return false }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30
