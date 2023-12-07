@@ -74,9 +74,9 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
-		setWebSocket()
+//		setWebSocket()
 		bind()
-		socketConnet.send()
+//		socketConnet.send()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -174,9 +174,7 @@ private extension WithDetailCheckListViewController {
 	
 	func viewAppear(_ checkList: CheckList) {
 		headerView.configure(title: checkList.title, isLocked: false)
-		checkList.items.forEach { [weak self] in
-			self?.dataSource?.receiveCheckListItem(with: $0)
-		}
+		setWebSocket()
 	}
 	
 	func updateTextField(to items: [any ListItem]) {

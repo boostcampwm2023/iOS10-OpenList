@@ -57,7 +57,7 @@ extension DefaultCRDTRepository: CRDTRepository {
 		WebSocket.shared.send(data: data)
 	}
 	
-	func fetchCheckListItems(id: UUID) async throws -> [CRDTData] {
+	func fetchCheckListItems(id: UUID) async throws -> WithCheckListItemDetail {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/shared-checklists/\(id.uuidString)")
 		builder.addHeader(
 			field: "Content-Type",
@@ -79,7 +79,13 @@ extension DefaultCRDTRepository: CRDTRepository {
 				messages.append($0)
 			}
 		}
-		return messages
+		return WithCheckListItemDetail(
+			title: response.withChecklist.title,
+			updatedAt: response.withChecklist.updatedAt,
+			createdAt: response.withChecklist.createdAt,
+			sharedChecklistID: response.withChecklist.sharedChecklistID,
+			messages: messages
+		)
 	}
 }
 
