@@ -10,9 +10,12 @@ import Foundation
 
 protocol WithDetailCheckListDependency: Dependency {
 	var session: CustomSession { get }
+	var withCheckListUseCase: WithCheckListUseCase { get }
 }
 
 final class WithDetailCheckListComponent: Component<WithDetailCheckListDependency> {
+	var withCheckListUseCase: WithCheckListUseCase { parent.withCheckListUseCase }
+	
 	fileprivate var crdtUseCase: CRDTUseCase {
 		return DefaultCRDTUseCase(crdtRepository: crdtRepository)
 	}
@@ -40,7 +43,8 @@ final class WithDetailCheckListViewFactory: Factory<WithDetailCheckListDependenc
 		let router = WithDetailCheckListRouter()
 		let viewModel = WithDetailCheckListViewModel(
 			id: id,
-			crdtUseCase: component.crdtUseCase
+			crdtUseCase: component.crdtUseCase,
+			withCheckListUseCase: component.withCheckListUseCase
 		)
 		let viewController = WithDetailCheckListViewController(router: router, viewModel: viewModel)
 		router.viewController = viewController

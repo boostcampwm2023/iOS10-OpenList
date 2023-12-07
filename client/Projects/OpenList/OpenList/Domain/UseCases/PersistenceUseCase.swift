@@ -7,10 +7,15 @@
 
 import Foundation
 
+enum PersistenceUseCaseError: Error {
+	case failedDelete
+}
+
 protocol PersistenceUseCase {
 	func saveCheckList(title: String, items: [CheckListItem]) async -> Bool
 	func fetchAllCheckList() async -> [CheckListTableItem]
-	func removeCheckList(checklistId: UUID) -> Bool
+	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem
+	func removeCheckList(checklistId: UUID) async -> Bool
 }
 
 final class DefaultPersistenceUseCase {
@@ -40,7 +45,13 @@ extension DefaultPersistenceUseCase: PersistenceUseCase {
 		}
 	}
 	
-	func removeCheckList(checklistId: UUID) -> Bool {
-		return checkListRepository.removeCheckList(checklistId)
+	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem {
+		let result = await checkListRepository.removeCheckList(item.id)
+		guard result else { throw PersistenceUseCaseError.failedDelete }
+		return item
+	}
+	
+	func removeCheckList(checklistId: UUID) async -> Bool {
+		return await checkListRepository.removeCheckList(checklistId)
 	}
 }

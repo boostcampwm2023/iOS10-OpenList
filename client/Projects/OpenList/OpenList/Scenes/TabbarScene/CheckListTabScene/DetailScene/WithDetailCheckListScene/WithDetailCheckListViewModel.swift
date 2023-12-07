@@ -21,14 +21,17 @@ protocol WithDetailCheckListDataSource {
 final class WithDetailCheckListViewModel {
 	private var id: UUID
 	private var crdtUseCase: CRDTUseCase
+	private var withCheckListUseCase: WithCheckListUseCase
 	private var textChange: TextChange = .init()
 	
 	init(
 		id: UUID,
-		crdtUseCase: CRDTUseCase
+		crdtUseCase: CRDTUseCase,
+		withCheckListUseCase: WithCheckListUseCase
 	) {
 		self.id = id
 		self.crdtUseCase = crdtUseCase
+		self.withCheckListUseCase = withCheckListUseCase
 	}
 }
 
@@ -51,7 +54,8 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 			appendDocument(input),
 			removeDocument(input),
 			receive(input),
-			checklistToggle(input)
+			checklistToggle(input),
+			deleteCheckList(input)
 		).eraseToAnyPublisher()
 	}
 }
@@ -155,6 +159,20 @@ private extension WithDetailCheckListViewModel {
 			}
 			.map { items in
 				return .updateItems(items)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func deleteCheckList(_ input: Input) -> Output {
+		return input.deleteCheckList
+			.withUnretained(self)
+			.flatMap { (owner, _) -> AnyPublisher<Void, Never>  in
+				Future(asyncFunc: {
+					try await owner.withCheckListUseCase.removeCheckList(id: owner.id)
+				}).eraseToAnyPublisher()
+			}
+			.map { _ in
+				return .dismiss
 			}
 			.eraseToAnyPublisher()
 	}

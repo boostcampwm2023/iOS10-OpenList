@@ -116,7 +116,7 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 			)
 			guard isSuccess else { return false }
 			
-			return checkListRepository.removeCheckList(checkList.id)
+			return await checkListRepository.removeCheckList(checkList.id)
 		} catch {
 			return false
 		}

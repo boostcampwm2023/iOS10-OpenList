@@ -44,6 +44,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let removeDocument: PassthroughSubject<EditText, Never> = .init()
 	private let receive: PassthroughSubject<String, Never> = .init()
 	private let checklistDidToggle: PassthroughSubject<CheckToggle, Never> = .init()
+	private let deleteCheckList: PassthroughSubject<Void, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -102,7 +103,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			appendDocument: appendDocument,
 			removeDocument: removeDocument,
 			receive: receive,
-			checklistDidTap: checklistDidToggle
+			checklistDidTap: checklistDidToggle,
+			deleteCheckList: deleteCheckList
 		)
 		let output = viewModel.transform(input)
 		
@@ -129,6 +131,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			dump(isConnect)
 		case .checkToggle:
 			break
+		case .dismiss:
+			router.dismissDetailScene()
 		}
 	}
 	
@@ -144,13 +148,11 @@ private extension WithDetailCheckListViewController {
 			self?.invite()
 		}
 		
-		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			dump("didPress delete")
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+			self?.deleteCheckList.send()
 		}
 		
-		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
-			dump("didPress cancel")
-		}
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel)
 		
 		actionSheet.addAction(inviteAction)
 		actionSheet.addAction(deleteAction)

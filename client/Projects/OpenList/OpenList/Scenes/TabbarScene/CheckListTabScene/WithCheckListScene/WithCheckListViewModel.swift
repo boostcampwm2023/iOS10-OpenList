@@ -9,8 +9,8 @@ import Combine
 
 protocol WithCheckListViewModelable: ViewModelable
 where Input == WithCheckListInput,
-  State == WithCheckListState,
-  Output == AnyPublisher<State, Never> { }
+	State == WithCheckListState,
+	Output == AnyPublisher<State, Never> { }
 
 final class WithCheckListViewModel {
 	private let withCheckListUseCase: WithCheckListUseCase
@@ -21,10 +21,12 @@ final class WithCheckListViewModel {
 }
 
 extension WithCheckListViewModel: WithCheckListViewModelable {
-  func transform(_ input: Input) -> Output {
-		let viewWillAppear = viewLoad(input)
-    return Publishers.MergeMany<Output>(viewWillAppear).eraseToAnyPublisher()
-  }
+	func transform(_ input: Input) -> Output {
+		return Publishers.MergeMany<Output>(
+			viewLoad(input),
+			remove(input)
+		).eraseToAnyPublisher()
+	}
 }
 
 private extension WithCheckListViewModel {
@@ -38,6 +40,20 @@ private extension WithCheckListViewModel {
 			}
 			.map { items in
 				return .reload(items)
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func remove(_ input: Input) -> Output {
+		return input.removeCheckList
+			.withUnretained(self)
+			.flatMap { owner, item -> AnyPublisher<DeleteCheckListItem, Never> in
+				Future(asyncFunc: {
+					try await owner.withCheckListUseCase.removeCheckList(to: item)
+				}).eraseToAnyPublisher()
+			}
+			.map { item in
+				return .deleteItem(item)
 			}
 			.eraseToAnyPublisher()
 	}

@@ -43,6 +43,12 @@ public struct URLRequestBuilder {
 		return self
 	}
 	
+	@discardableResult
+	mutating public func addPath(_ path: String) -> URLRequestBuilder {
+		url?.append(path: path)
+		return self
+	}
+	
 	func build() -> URLRequest? {
 		guard let url = url else { return nil }
 		var request = URLRequest(url: url)

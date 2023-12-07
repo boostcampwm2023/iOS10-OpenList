@@ -152,8 +152,9 @@ private extension PrivateDetailCheckListViewModel {
 		return input.removeCheckList
 			.withUnretained(self)
 			.flatMap { (owner, _) -> AnyPublisher<Bool, Never> in
-				return Just(owner.persistenceUseCase.removeCheckList(checklistId: owner.id))
-					.eraseToAnyPublisher()
+				Future(asyncFunc: {
+					await owner.persistenceUseCase.removeCheckList(checklistId: owner.id)
+				}).eraseToAnyPublisher()
 			}
 			.map { success in
 				guard success else {

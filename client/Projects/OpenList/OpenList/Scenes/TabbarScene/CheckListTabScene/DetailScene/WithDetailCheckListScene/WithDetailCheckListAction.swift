@@ -17,6 +17,7 @@ struct WithDetailCheckListInput {
 	let removeDocument: PassthroughSubject<EditText, Never>
 	let receive: PassthroughSubject<String, Never>
 	let checklistDidTap: PassthroughSubject<CheckToggle, Never>
+	let deleteCheckList: PassthroughSubject<Void, Never>
 }
 
 enum WithDetailCheckListState {
@@ -27,4 +28,5 @@ enum WithDetailCheckListState {
 	case removeItem(any ListItem)
 	case checkToggle
 	case socketConnet(Bool)
+	case dismiss
 }
