@@ -50,7 +50,8 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 			textDidChange(input),
 			appendDocument(input),
 			removeDocument(input),
-			receive(input)
+			receive(input),
+			checklistToggle(input)
 		).eraseToAnyPublisher()
 	}
 }
@@ -84,11 +85,12 @@ private extension WithDetailCheckListViewModel {
 	func textDidChange(_ input: Input) -> Output {
 		return input.textDidChange
 			.withUnretained(self)
-			.flatMap { (owner, currentText) -> AnyPublisher<CheckListItem, Never> in
+			.flatMap { (owner, item) -> AnyPublisher<any ListItem, Never> in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.update(
 						textChange: owner.textChange,
-						currentText: currentText
+						currentText: item.text,
+						isChecked: item.isChecked
 					)
 				})
 				return future.eraseToAnyPublisher()
@@ -102,7 +104,7 @@ private extension WithDetailCheckListViewModel {
 	func appendDocument(_ input: Input) -> Output {
 		return input.appendDocument
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<any ListItem, Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.appendDocument(at: editText)
 				})
@@ -117,7 +119,7 @@ private extension WithDetailCheckListViewModel {
 	func removeDocument(_ input: Input) -> Output {
 		return input.removeDocument
 			.withUnretained(self)
-			.flatMap { (owner, editText) -> AnyPublisher<CheckListItem, Never>  in
+			.flatMap { (owner, editText) -> AnyPublisher<any ListItem, Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.removeDocument(at: editText)
 				})
@@ -129,17 +131,30 @@ private extension WithDetailCheckListViewModel {
 			.eraseToAnyPublisher()
 	}
 	
+	func checklistToggle(_ input: Input) -> Output {
+		return input.checklistDidTap
+			.withUnretained(self)
+			.flatMap { (owner, checkToggle) -> AnyPublisher<Void, Never> in
+				let future = Future(asyncFunc: {
+					try await owner.crdtUseCase.updateCheckListState(to: checkToggle.id, isChecked: checkToggle.state)
+				})
+				return future.eraseToAnyPublisher()
+			}
+			.map { _ in return .checkToggle }
+			.eraseToAnyPublisher()
+	}
+	
 	func receive(_ input: Input) -> Output {
 		return input.receive
 			.withUnretained(self)
-			.flatMap { (owner, jsonString) -> AnyPublisher<[CheckListItem], Never>  in
+			.flatMap { (owner, jsonString) -> AnyPublisher<[any ListItem], Never>  in
 				let future = Future(asyncFunc: {
 					try await owner.crdtUseCase.receive(jsonString)
 				})
 				return future.eraseToAnyPublisher()
 			}
 			.map { items in
-				return .updateItem(items)
+				return .updateItems(items)
 			}
 			.eraseToAnyPublisher()
 	}

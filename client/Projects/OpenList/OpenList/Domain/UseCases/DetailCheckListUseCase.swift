@@ -41,7 +41,7 @@ extension DefaultDetailCheckListUseCase: DetailCheckListUseCase {
 			orderBy = response.orderBy
 			let itemDictionary = Dictionary(uniqueKeysWithValues: response.items.map { ($0.id, $0) })
 			let newItems: [CheckListItem] = response.orderBy.compactMap {
-				return itemDictionary[$0]
+				return itemDictionary[$0] as? CheckListItem
 			}
 			response.items = newItems
 			self.checkList = response

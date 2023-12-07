@@ -60,7 +60,7 @@ extension DefaultCheckListRepository: CheckListRepository {
 			progress: result.progress,
 			orderBy: result.orderBy,
 			items: result.items.map {
-				.init(
+				CheckListItem(
 					itemId: $0.itemId,
 					title: $0.content,
 					isChecked: $0.isChecked

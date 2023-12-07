@@ -65,6 +65,7 @@ final class AddCheckListItemViewController: UIViewController, ViewControllable {
 		setViewConstraints()
 		bind()
 		configureHeaderView.send()
+		LoadingIndicator.showLoading()
 		viewLoad.send()
 	}
 }
@@ -95,7 +96,6 @@ extension AddCheckListItemViewController: ViewBindable {
 			updateView(categoryInfo: categoryInfo)
 				
 		case .viewDidLoad(let items):
-			LoadingIndicator.showLoading()
 			dataSource?.updateAiItem(
 				items.map {
 					return CheckListItem(itemId: UUID(), title: $0.content, isChecked: false)

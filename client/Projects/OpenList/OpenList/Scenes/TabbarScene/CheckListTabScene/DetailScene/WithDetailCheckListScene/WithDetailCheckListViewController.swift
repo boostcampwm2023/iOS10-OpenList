@@ -29,6 +29,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private var dataSource: WithDetailCheckListDiffableDataSource?
 	private var isOpenSocket: Bool = false
 	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, rightItems: [.more])
+	private var userIndicatingDictionary: [String: IndexPath] = [:]
 	
 	// View Properties
 	private let checkListView: UITableView = .init()
@@ -38,10 +39,11 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
 	private let socketConnet: PassthroughSubject<Void, Never> = .init()
 	private let textShouldChange: PassthroughSubject<TextChange, Never> = .init()
-	private let textDidChange: PassthroughSubject<String, Never> = .init()
+	private let textDidChange: PassthroughSubject<WithCheckListItemChange, Never> = .init()
 	private let appendDocument: PassthroughSubject<EditText, Never> = .init()
 	private let removeDocument: PassthroughSubject<EditText, Never> = .init()
 	private let receive: PassthroughSubject<String, Never> = .init()
+	private let checklistDidToggle: PassthroughSubject<CheckToggle, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -99,7 +101,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			textDidChange: textDidChange,
 			appendDocument: appendDocument,
 			removeDocument: removeDocument,
-			receive: receive
+			receive: receive,
+			checklistDidTap: checklistDidToggle
 		)
 		let output = viewModel.transform(input)
 		
@@ -116,7 +119,7 @@ extension WithDetailCheckListViewController: ViewBindable {
 			break
 		case let .viewWillAppear(checkList):
 			viewAppear(checkList)
-		case let .updateItem(items):
+		case let .updateItems(items):
 			updateTextField(to: items)
 		case let .appendItem(item):
 			appendItem(item)
@@ -124,6 +127,8 @@ extension WithDetailCheckListViewController: ViewBindable {
 			dump(content)
 		case let .socketConnet(isConnect):
 			dump(isConnect)
+		case .checkToggle:
+			break
 		}
 	}
 	
@@ -172,15 +177,26 @@ private extension WithDetailCheckListViewController {
 		}
 	}
 	
-	func updateTextField(to items: [CheckListItem]) {
+	func updateTextField(to items: [any ListItem]) {
 		items.forEach { [weak self] in
 			self?.dataSource?.receiveCheckListItem(with: $0)
 		}
 	}
 	
-	func appendItem(_ item: CheckListItem) {
+	func appendItem(_ item: any ListItem) {
 		dataSource?.appendCheckListItem(item)
 		dataSource?.updatePlaceholder()
+	}
+	
+	func removeItem(id: UUID, indexPath: IndexPath) {
+		removeDocument.send(
+			.init(
+				id: id,
+				content: "",
+				range: .init(location: 0, length: 0)
+			)
+		)
+		dataSource?.deleteCheckListItem(at: indexPath)
 	}
 }
 
@@ -201,7 +217,7 @@ private extension WithDetailCheckListViewController {
 	func setCheckListViewAttributes() {
 		checkListView.keyboardDismissMode = .interactive
 		checkListView.translatesAutoresizingMaskIntoConstraints = false
-		checkListView.registerCell(WithCheckListItem.self)
+		checkListView.registerCell(WithCheckListItemCell.self)
 		checkListView.registerCell(CheckListItemPlaceholder.self)
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
@@ -284,9 +300,12 @@ private extension WithDetailCheckListViewController {
 			tableView: checkListView,
 			cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
 				switch itemIdentifier {
-				case is CheckListItem:
-					let cell = tableView.dequeueCell(WithCheckListItem.self, for: indexPath)
-					guard let item = itemIdentifier as? CheckListItem else { return cell }
+				case is WithCheckListItem:
+					let cell = tableView.dequeueCell(WithCheckListItemCell.self, for: indexPath)
+					guard let item = itemIdentifier as? WithCheckListItem else { return cell }
+					let name = item.name ?? ""
+					self?.handleNewData(name: name)
+					self?.userIndicatingDictionary[name] = indexPath
 					cell.configure(with: item, indexPath: indexPath)
 					cell.delegate = self
 					return cell
@@ -302,6 +321,13 @@ private extension WithDetailCheckListViewController {
 				}
 			}
 		)
+	}
+	
+	func handleNewData(name: String) {
+		if let previousIndexpath = self.userIndicatingDictionary[name] {
+			guard let cell = checkListView.cellForRow(at: previousIndexpath) as? WithCheckListItemCell else { return }
+			cell.resetUserPosition()
+		}
 	}
 }
 
@@ -327,16 +353,10 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 	}
 	
 	func deleteSwipeAction(at indexPath: IndexPath) -> UIContextualAction {
-		let item = checkListView.cellForRow(WithCheckListItem.self, at: indexPath)
+		let item = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
-			self?.removeDocument.send(
-				.init(
-					id: item.cellId ?? UUID(),
-					content: item.content,
-					range: .init(location: 0, length: item.content.count)
-				)
-			)
-			self?.dataSource?.deleteCheckListItem(at: indexPath)
+			let id = item.cellId ?? UUID()
+			self?.removeItem(id: id, indexPath: indexPath)
 			completion(true)
 		}
 		action.image = UIImage(systemName: "trash")
@@ -346,17 +366,22 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 }
 
 // MARK: - WithCheckListItemDelegate
-extension WithDetailCheckListViewController: WithCheckListItemDelegate {
+extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView, indexPath: IndexPath) {
+		let cell = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
+		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: cell.isChecked))
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
+	}
+	
 	func textViewDidEndEditing(
 		_ textView: OpenListTextView,
-		cell: WithCheckListItem,
+		cell: WithCheckListItemCell,
 		indexPath: IndexPath
 	) {
-		if let text = textView.text, !text.isEmpty {
-			// 로컬에 저장합니다.
-			dataSource?.updateCheckListItemString(at: indexPath, with: text)
-		} else {
+		guard let text = textView.text, !text.isEmpty else {
 			dataSource?.deleteCheckListItem(at: indexPath)
+			return
 		}
 	}
 	
@@ -371,16 +396,18 @@ extension WithDetailCheckListViewController: WithCheckListItemDelegate {
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
+		guard !updatedText.isEmpty else {
+			removeItem(id: cellId, indexPath: indexPath)
+			return false
+		}
 		textShouldChange.send(
 			.init(id: cellId, range: range, oldString: text, replacementString: string)
 		)
 		return true
 	}
 	
-	func textViewDidChange(_ textView: OpenListTextView) {
-		textDidChange.send(textView.text)
-		checkListView.beginUpdates()
-		checkListView.endUpdates()
+	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool) {
+		checklistDidToggle.send(CheckToggle(id: cellId, state: isChecked))
 	}
 }
 
@@ -406,6 +433,11 @@ extension WithDetailCheckListViewController: URLSessionWebSocketDelegate {
 
 // MARK: - WithCheckListItemPlaceholderDelegate
 extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
+	func textViewDidChange(_ textView: OpenListTextView) {
+		checkListView.beginUpdates()
+		checkListView.endUpdates()
+	}
+	
 	func textView(
 		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,

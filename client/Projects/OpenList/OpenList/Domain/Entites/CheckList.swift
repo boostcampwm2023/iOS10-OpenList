@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct CheckList: Hashable {
+struct CheckList {
 	let id: UUID
 	let title: String
 	let createdAt: Date
 	let updatedAt: Date
 	let progress: Int
 	let orderBy: [UUID]
-	var items: [CheckListItem]
+	var items: [any ListItem]
 }

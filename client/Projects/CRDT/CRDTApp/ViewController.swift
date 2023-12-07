@@ -169,11 +169,17 @@ extension OperationBasedViewController: UITextFieldDelegate {
 	) -> Bool {
 		guard let oldString = textField.text else { return false }
 		let content = string.map { String($0) }
-		self.range = range
+		let isContainEmoji = !(string.unicodeScalars.filter({ $0.properties.isEmoji }).isEmpty)
+		let imojiCount = oldString.unicodeScalars.filter({ $0.properties.isEmoji }).count
+		if isContainEmoji && range.length == 2 {
+			self.range = .init(location: range.location - imojiCount, length: range.length - 1)
+		} else {
+			self.range = .init(location: range.location - imojiCount, length: range.length)
+		}
 		self.oldString = oldString
 		self.replacementString = content
 		
-		return range.length < 2
+		return self.range.length < 2
 	}
 	
 	@objc func textFieldDidChange(_ sender: Any?) {
@@ -228,7 +234,12 @@ private extension OperationBasedViewController {
 		var string = currentText.subString(offsetBy: range.location)
 		guard let value2 = UnicodeScalar(String(string))?.value else { return }
 		
-		if value2 < 0xac00 {
+		let isContainEmoji = !(string.unicodeScalars.filter({ $0.properties.isEmoji }).isEmpty)
+		let numberCharacters = string.rangeOfCharacter(from: .decimalDigits)
+		print(isContainEmoji)
+		print(numberCharacters)
+		
+		if value2 < 0xac00 || isContainEmoji {
 			let content = string.map { String($0) }
 			try insertOperation(range: range, content: content)
 		} else {

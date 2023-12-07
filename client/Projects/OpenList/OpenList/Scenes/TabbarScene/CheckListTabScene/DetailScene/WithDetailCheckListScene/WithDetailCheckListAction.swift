@@ -12,17 +12,19 @@ struct WithDetailCheckListInput {
 	let viewWillAppear: PassthroughSubject<Void, Never>
 	let socketConnet: PassthroughSubject<Void, Never>
 	let textShouldChange: PassthroughSubject<TextChange, Never>
-	let textDidChange: PassthroughSubject<String, Never>
+	let textDidChange: PassthroughSubject<WithCheckListItemChange, Never>
 	let appendDocument: PassthroughSubject<EditText, Never>
 	let removeDocument: PassthroughSubject<EditText, Never>
 	let receive: PassthroughSubject<String, Never>
+	let checklistDidTap: PassthroughSubject<CheckToggle, Never>
 }
 
 enum WithDetailCheckListState {
 	case none
 	case viewWillAppear(CheckList)
-	case updateItem([CheckListItem])
-	case appendItem(CheckListItem)
-	case removeItem(CheckListItem)
+	case updateItems([any ListItem])
+	case appendItem(any ListItem)
+	case removeItem(any ListItem)
+	case checkToggle
 	case socketConnet(Bool)
 }

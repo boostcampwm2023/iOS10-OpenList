@@ -24,6 +24,6 @@ extension DefaultProfileUserCase: ProfileUserCase {
 	func updateProfile() { }
 	
 	func updateNickname(to nickname: String) {
-		Storage.shared.save(key: .nickname, value: nickname)
+		UserDefaultsManager.shared.save(key: .nickname, value: nickname)
 	}
 }

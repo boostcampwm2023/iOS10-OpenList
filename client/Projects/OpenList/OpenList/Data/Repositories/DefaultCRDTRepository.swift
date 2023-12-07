@@ -13,6 +13,7 @@ final class DefaultCRDTRepository {
 	private let session: CustomSession
 	private let crdtStorage: CRDTStorage
 	private var number: Int = 0
+	private let name = (UserDefaultsManager.shared.fetch(key: .nickname) as? String) ?? "Unknown"
 	
 	init(session: CustomSession = .init(), crdtStorage: CRDTStorage) {
 		self.session = session
@@ -26,17 +27,37 @@ extension DefaultCRDTRepository: CRDTRepository {
 		return message
 	}
 	
-	func send(id: UUID, message: CRDTMessage) throws {
+	func send(id: UUID, isChecked: Bool, message: CRDTMessage) throws {
 		self.number += 1
 		let request = CRDTRequestDTO(
 			event: .send,
-			data: .init(id: id, number: number, data: message)
+			data: CRDTMessageRequestDTO(id: id, number: number, name: name, state: isChecked, data: message)
 		)
 		let data = try JSONEncoder().encode(request)
 		WebSocket.shared.send(data: data)
 	}
 	
-	func fetchCheckListItems(id: UUID) async throws -> [CRDTMessageResponseDTO] {
+	func documentDelete(id: UUID) throws {
+		self.number += 1
+		let request = CRDTRequestDTO(
+			event: .send,
+			data: CRDTDocumentRequestDTO(id: id, number: number, event: .delete)
+		)
+		let data = try JSONEncoder().encode(request)
+		WebSocket.shared.send(data: data)
+	}
+	
+	func checkListStateUpdate(id: UUID, isChecked: Bool) throws {
+		self.number += 1
+		let request = CRDTRequestDTO(
+			event: .send,
+			data: CRDTCheckListToggleRequestDTO(id: id, number: number, name: name, state: isChecked)
+		)
+		let data = try JSONEncoder().encode(request)
+		WebSocket.shared.send(data: data)
+	}
+	
+	func fetchCheckListItems(id: UUID) async throws -> [CRDTData] {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/shared-checklists/\(id.uuidString)")
 		builder.addHeader(
 			field: "Content-Type",
@@ -52,7 +73,7 @@ extension DefaultCRDTRepository: CRDTRepository {
 		
 		let responseData = try await service.request()
 		let response = try JSONDecoder().decode(WithCheckListItemResponseDTO.self, from: responseData)
-		var messages = [CRDTMessageResponseDTO]()
+		var messages = [CRDTData]()
 		response.items.forEach { item in
 			item.messages.forEach {
 				messages.append($0)

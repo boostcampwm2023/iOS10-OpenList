@@ -28,6 +28,7 @@ extension UIFont {
 		case large = 20.0
 		case medium = 16.0
 		case small = 14.0
+		case tiny = 12.0
 	}
 	
 	enum NotoSansCJKkrType {
