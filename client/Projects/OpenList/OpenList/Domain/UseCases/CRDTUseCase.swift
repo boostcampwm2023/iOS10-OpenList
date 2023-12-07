@@ -105,7 +105,7 @@ extension DefaultCRDTUseCase: CRDTUseCase {
 			}
 			
 		case .history:
-			historyData = response.data.compactMap { item in
+			response.data.compactMap { item in
 				if let item = item as? CRDTDocumentResponseDTO {
 					return removeCheckList(to: item.id)
 				} else if let item = item as? CRDTMessageResponseDTO {
