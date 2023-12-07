@@ -309,7 +309,10 @@ extension AddCheckListItemViewController: SelectCheckListCellDelegate {
 		_ textView: OpenListTextView,
 		cell: SelectCheckListCell,
 		indexPath: IndexPath
-	) { }
+	) {
+		guard let text = textView.text, text.isEmpty  else { return }
+		dataSource?.deleteCheckListItem(at: indexPath)
+	}
 	
 	func textView(
 		_ textView: OpenListTextView,
@@ -346,7 +349,10 @@ extension AddCheckListItemViewController: AiCheckListCellDelegate {
 		_ textView: OpenListTextView,
 		cell: AiCheckListCell,
 		indexPath: IndexPath
-	) { }
+	) {
+		guard let text = textView.text, text.isEmpty  else { return }
+		dataSource?.deleteCheckListItem(at: indexPath)
+	}
 }
 
 // MARK: - WithCheckListItemPlaceholderDelegate
