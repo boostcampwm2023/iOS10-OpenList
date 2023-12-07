@@ -11,9 +11,9 @@ final class CheckListEmptyView: UIView {
 	private let checklistImageView: UIImageView = .init()
 	private let descriptionLabel: UILabel = .init()
 	private let subDescriptionLabel: UILabel = .init()
-	private let checkListType: CheckListTabType
+	private let checkListType: CheckListViewType
 	
-	init(checkListType: CheckListTabType) {
+	init(checkListType: CheckListViewType) {
 		self.checkListType = checkListType
 		super.init(frame: .zero)
 		setViewAttributes()
@@ -65,26 +65,37 @@ private extension CheckListEmptyView {
 	}
 }
 
-fileprivate extension CheckListTabType {
-	var description: String {
-		switch self {
-		case .privateTab:
-			return "아직 체크리스트가 없습니다!"
-		case .withTab:
-			return "아직 함께하는 체크리스트가 없습니다!"
-		case .sharedTab:
-			return "아직 공유된 체크리스트가 없습니다!"
+extension CheckListEmptyView {
+	enum CheckListViewType {
+		case privateCheckListView
+		case withCheckListView
+		case sharedCheckListView
+		case feedCheckListView
+		
+		var description: String {
+			switch self {
+			case .privateCheckListView:
+				return "아직 체크리스트가 없습니다!"
+			case .withCheckListView:
+				return "아직 함께하는 체크리스트가 없습니다!"
+			case .sharedCheckListView:
+				return "아직 공유된 체크리스트가 없습니다!"
+			case .feedCheckListView:
+				return "아직 추천 체크리스트가 없습니다!"
+			}
 		}
-	}
-	
-	var subDescription: String {
-		switch self {
-		case .privateTab:
-			return "나만의 체크리스트를 작성해주세요."
-		case .withTab:
-			return "함께 체크리스트를 작성해보세요."
-		case .sharedTab:
-			return "다른 사람들과 함께 공유하세요."
+		
+		var subDescription: String {
+			switch self {
+			case .privateCheckListView:
+				return "나만의 체크리스트를 작성해주세요."
+			case .withCheckListView:
+				return "함께 체크리스트를 작성해보세요."
+			case .sharedCheckListView:
+				return "다른 사람들과 함께 공유하세요."
+				case .feedCheckListView:
+				return "AI가 추천하는 다른 카테고리의 체크리스트를 확인해보세요."
+			}
 		}
 	}
 }

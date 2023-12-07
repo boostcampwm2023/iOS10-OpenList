@@ -24,7 +24,7 @@ final class WithCheckListViewController: UIViewController, ViewControllable {
 	// UI Components
 	private var dataSource: CheckListTableDataSource?
 	private let checkListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .withCheckListView)
 	
 	// Event Properties
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()

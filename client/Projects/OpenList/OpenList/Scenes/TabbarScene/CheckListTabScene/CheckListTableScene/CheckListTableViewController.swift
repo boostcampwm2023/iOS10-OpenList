@@ -26,7 +26,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private let viewAppear: PassthroughSubject<Void, Never> = .init()
 	private var dataSource: CheckListTableDataSource?
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateTab)
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateCheckListView)
 	private var cancellables: Set<AnyCancellable> = []
 	private let removeCheckList: PassthroughSubject<UUID, Never> = .init()
 	

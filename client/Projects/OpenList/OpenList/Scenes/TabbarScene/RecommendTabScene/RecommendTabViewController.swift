@@ -22,6 +22,7 @@ final class RecommendTabViewController: UIViewController, ViewControllable {
 	private var recommendCategoryDataSource: RecommendCategoryTabDiffableDataSource?
 	private let recommendCheckListView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var recommendCheckListDataSource: RecommendCheckListDiffableDataSource?
+	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .feedCheckListView)
 	
 	// MARK: - Event Subjects
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
@@ -83,7 +84,9 @@ extension RecommendTabViewController: ViewBindable {
 			
 		case let .reloadRecommendCheckList(checkList):
 			recommendCheckListDataSource?.updateRecommendCheckList(with: checkList)
+			checkListEmptyView.isHidden = !checkList.isEmpty
 			LoadingIndicator.hideLoading()
+			
 		case .error(let error):
 			guard let error else { return }
 			handleError(error)
@@ -108,6 +111,7 @@ private extension RecommendTabViewController {
 		setTitleLabelAttributes()
 		setRecommendCategoryTabViewAttributes()
 		setRecommendCheckListViewAttributes()
+		setEmptyViewAttributes()
 	}
 	
 	func setTitleLabelAttributes() {
@@ -136,10 +140,16 @@ private extension RecommendTabViewController {
 		recommendCheckListView.showsHorizontalScrollIndicator = false
 	}
 	
+	func setEmptyViewAttributes() {
+		checkListEmptyView.translatesAutoresizingMaskIntoConstraints = false
+		checkListEmptyView.isHidden = false
+	}
+	
 	func setViewHierarchies() {
 		view.addSubview(titleLabel)
 		view.addSubview(recommendCategoryTabView)
 		view.addSubview(recommendCheckListView)
+		view.addSubview(checkListEmptyView)
 	}
 	
 	func setViewConstraints() {
@@ -164,7 +174,15 @@ private extension RecommendTabViewController {
 			),
 			recommendCheckListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 			recommendCheckListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			recommendCheckListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+			recommendCheckListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+			
+			checkListEmptyView.topAnchor.constraint(
+				equalTo: recommendCategoryTabView.bottomAnchor,
+				constant: Constants.reocmmendCheckListViewTopPadding
+			),
+			checkListEmptyView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			checkListEmptyView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			checkListEmptyView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
 		])
 	}
 }
