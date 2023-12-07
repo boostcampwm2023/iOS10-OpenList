@@ -367,9 +367,8 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 
 // MARK: - WithCheckListItemDelegate
 extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
-	func withCheckListTextViewDidChange(_ textView: OpenListTextView, indexPath: IndexPath) {
-		let cell = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
-		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: cell.isChecked))
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView, isChecked: Bool) {
+		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: isChecked))
 		checkListView.beginUpdates()
 		checkListView.endUpdates()
 	}
