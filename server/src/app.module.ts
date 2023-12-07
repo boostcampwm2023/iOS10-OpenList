@@ -5,16 +5,21 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { RedisModule } from 'redis/redis.module';
+import { AdminModule } from './admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ChecklistAiModule } from './checklist-ai/checklist-ai.module';
 import { CommonModule } from './common/common.module';
+import { LoggingInterceptor } from './common/interceptor/log.interceptor';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { FeedModel } from './feeds/entity/feed.entity';
+import { FeedsModule } from './feeds/feeds.module';
 import { FolderModel } from './folders/entities/folder.entity';
 import { FoldersModule } from './folders/folders.module';
 import { PrivateChecklistModel } from './folders/private-checklists/entities/private-checklist.entity';
@@ -25,10 +30,6 @@ import { SharedChecklistsModule } from './shared-checklists/shared-checklists.mo
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
-import { LoggingInterceptor } from './common/interceptor/log.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { FeedsModule } from './feeds/feeds.module';
-import { FeedModel } from './feeds/entity/feed.entity';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { FeedModel } from './feeds/entity/feed.entity';
     ChecklistAiModule,
     CategoriesModule,
     FeedsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
