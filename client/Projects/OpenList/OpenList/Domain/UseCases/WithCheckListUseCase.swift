@@ -14,6 +14,7 @@ enum WithCheckListUseCaseError: Error {
 protocol WithCheckListUseCase {
 	func fetchAllCheckList() async -> [WithCheckList]
 	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem
+	func removeCheckList(id: UUID) async throws
 }
 
 final class DefaultWithCheckListUseCase {
@@ -30,8 +31,11 @@ extension DefaultWithCheckListUseCase: WithCheckListUseCase {
 	}
 	
 	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem {
-		let result = try await withCheckListRepository.removeCheckList(item.id)
-		guard result else { throw WithCheckListUseCaseError.failedDelete }
+		try await withCheckListRepository.removeCheckList(item.id)
 		return item
+	}
+	
+	func removeCheckList(id: UUID) async throws {
+		try await withCheckListRepository.removeCheckList(id)
 	}
 }

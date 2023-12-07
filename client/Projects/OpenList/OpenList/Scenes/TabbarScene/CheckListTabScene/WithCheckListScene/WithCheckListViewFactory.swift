@@ -28,7 +28,7 @@ final class WithCheckListComponent: Component<WithCheckListDependency>, WithDeta
 		return DefaultWithCheckListRepository(session: session)
 	}
 	
-	fileprivate var withCheckListUseCase: WithCheckListUseCase {
+	var withCheckListUseCase: WithCheckListUseCase {
 		return DefaultWithCheckListUseCase(withCheckListRepository: withCheckListRepository)
 	}
 	

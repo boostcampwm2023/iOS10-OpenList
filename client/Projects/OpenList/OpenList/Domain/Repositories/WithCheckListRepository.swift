@@ -15,5 +15,5 @@ protocol WithCheckListRepository {
 		sharedChecklistId: UUID
 	) async -> Bool
 	func fetchAllSharedCheckList() async -> [WithCheckList]
-	func removeCheckList(_ checkListId: UUID) async throws -> Bool
+	func removeCheckList(_ checkListId: UUID) async throws
 }

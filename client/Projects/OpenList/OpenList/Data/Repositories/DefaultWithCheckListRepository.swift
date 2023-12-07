@@ -82,17 +82,12 @@ extension DefaultWithCheckListRepository: WithCheckListRepository {
 		}
 	}
 	
-	func removeCheckList(_ checkListId: UUID) async throws -> Bool {
+	func removeCheckList(_ checkListId: UUID) async throws {
 		var builder = URLRequestBuilder(url: Constant.baseUrl)
 		builder.addPath(checkListId.uuidString)
 		builder.addHeader(field: "Content-Type", value: "application/json")
 		builder.setMethod(.delete)
-		do {
-			let service = NetworkService(customSession: session, urlRequestBuilder: builder)
-			try await service.request()
-			return true
-		} catch {
-			return false
-		}
+		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
+		try await service.request()
 	}
 }
