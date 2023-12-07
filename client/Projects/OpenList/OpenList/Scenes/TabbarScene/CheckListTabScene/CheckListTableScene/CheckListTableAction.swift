@@ -10,10 +10,11 @@ import Foundation
 
 struct CheckListTableInput {
 	let viewAppear: PassthroughSubject<Void, Never>
-	let removeCheckList: PassthroughSubject<UUID, Never>
+	let removeCheckList: PassthroughSubject<DeleteCheckListItem, Never>
 }
 
 enum CheckListTableState {
 	case error(_ error: Error)
 	case reload(_ items: [CheckListTableItem])
+	case delete(_ item: DeleteCheckListItem)
 }

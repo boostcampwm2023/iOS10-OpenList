@@ -28,6 +28,7 @@ final class WithCheckListViewController: UIViewController, ViewControllable {
 	
 	// Event Properties
 	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let removeCheckList: PassthroughSubject<DeleteCheckListItem, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -48,6 +49,7 @@ final class WithCheckListViewController: UIViewController, ViewControllable {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.view.backgroundColor = .systemBackground
+		setLongGestureRecognizerOnCollection()
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
@@ -66,7 +68,10 @@ extension WithCheckListViewController: ViewBindable {
 	typealias OutputError = Error
 	
 	func bind() {
-		let input = WithCheckListInput(viewWillAppear: viewWillAppear)
+		let input = WithCheckListInput(
+			viewWillAppear: viewWillAppear,
+			removeCheckList: removeCheckList
+		)
 		let state = viewModel.transform(input)
 		state
 			.receive(on: DispatchQueue.main)
@@ -81,6 +86,8 @@ extension WithCheckListViewController: ViewBindable {
 			handleError(error)
 		case .reload(let items):
 			reload(items: items)
+		case .deleteItem(let item):
+			deleteItem(item: item)
 		}
 	}
 	
@@ -96,6 +103,17 @@ private extension WithCheckListViewController {
 		snapshot.deleteItems(previousProducts)
 		snapshot.appendItems(items, toSection: .withTab)
 		dataSource?.apply(snapshot, animatingDifferences: true)
+	}
+	
+	func deleteItem(item: DeleteCheckListItem) {
+		guard
+			var snapshot = dataSource?.snapshot(),
+			let item = dataSource?.itemIdentifier(for: item.indexPath)
+		else { return }
+		let previousProducts = snapshot.itemIdentifiers(inSection: .withTab)
+		snapshot.deleteItems([item])
+		dataSource?.apply(snapshot, animatingDifferences: true)
+		checkListEmptyView.isHidden = !(previousProducts.count == 1)
 	}
 }
 
@@ -187,32 +205,22 @@ extension WithCheckListViewController: UIGestureRecognizerDelegate {
 		guard gestureRecognizer.state == .began else { return }
 		let point = gestureRecognizer.location(in: checkListView)
 		
-		if let indexPath = checkListView.indexPathForItem(at: point) {
-			showActionSheet()
+		if let indexPath = checkListView.indexPathForItem(at: point),
+			let checkList = dataSource?.itemIdentifier(for: indexPath) {
+			showActionSheet(with: .init(id: checkList.sharedCheckListId, indexPath: indexPath))
+			debugPrint("Long press at item: \(indexPath.row)")
 		}
 	}
 	
-	func showActionSheet() {
+	func showActionSheet(with deleteItem: DeleteCheckListItem) {
 		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		
-		let moveFolderAction = UIAlertAction(title: "폴더 이동", style: .default) { _ in
-			print("didPress move folder")
+		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+			self?.removeCheckList.send(deleteItem)
 		}
 		
-		let shareAction = UIAlertAction(title: "게시", style: .default) { _ in
-			print("didPress share")
-		}
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel)
 		
-		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-			print("didPress delete")
-		}
-		
-		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
-			print("didPress cancel")
-		}
-		
-		actionSheet.addAction(moveFolderAction)
-		actionSheet.addAction(shareAction)
 		actionSheet.addAction(deleteAction)
 		actionSheet.addAction(cancelAction)
 		

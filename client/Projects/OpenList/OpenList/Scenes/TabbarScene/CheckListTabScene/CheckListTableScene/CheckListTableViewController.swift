@@ -28,7 +28,7 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	private let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
 	private let checkListEmptyView: CheckListEmptyView = .init(checkListType: .privateCheckListView)
 	private var cancellables: Set<AnyCancellable> = []
-	private let removeCheckList: PassthroughSubject<UUID, Never> = .init()
+	private let removeCheckList: PassthroughSubject<DeleteCheckListItem, Never> = .init()
 	
 	// MARK: - Initializers
 	init(
@@ -91,6 +91,8 @@ extension CheckListTableViewController: ViewBindable {
 			handleError(error)
 		case .reload(let items):
 			reload(items: items)
+		case .delete(let item):
+			removeItem(to: item)
 		}
 	}
 	
@@ -106,6 +108,17 @@ private extension CheckListTableViewController {
 		snapshot.deleteItems(previousProducts)
 		snapshot.appendItems(items, toSection: .main)
 		dataSource?.apply(snapshot, animatingDifferences: true)
+	}
+	
+	func removeItem(to item: DeleteCheckListItem) {
+		guard
+			var snapshot = dataSource?.snapshot(),
+			let item = dataSource?.itemIdentifier(for: item.indexPath)
+		else { return }
+		let previousProducts = snapshot.itemIdentifiers(inSection: .main)
+		snapshot.deleteItems([item])
+		dataSource?.apply(snapshot, animatingDifferences: true)
+		checkListEmptyView.isHidden = !(previousProducts.count == 1)
 	}
 }
 
@@ -191,32 +204,20 @@ extension CheckListTableViewController: UIGestureRecognizerDelegate {
 		
 		if let indexPath = collectionView.indexPathForItem(at: point),
 			let checkList = dataSource?.itemIdentifier(for: indexPath) {
-			showActionSheet(with: checkList.id)
-			print("Long press at item: \(indexPath.row)")
+			showActionSheet(with: .init(id: checkList.id, indexPath: indexPath))
+			debugPrint("Long press at item: \(indexPath.row)")
 		}
 	}
 	
-	func showActionSheet(with checkListId: UUID) {
+	func showActionSheet(with item: DeleteCheckListItem) {
 		let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		
-		let moveFolderAction = UIAlertAction(title: "폴더 이동", style: .default) { _ in
-			print("didPress move folder")
-		}
-		
-		let shareAction = UIAlertAction(title: "게시", style: .default) { _ in
-			print("didPress share")
-		}
-		
 		let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
-			self?.removeCheckList.send(checkListId)
+			self?.removeCheckList.send(item)
 		}
 		
-		let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
-			print("didPress cancel")
-		}
+		let cancelAction = UIAlertAction(title: "취소", style: .cancel)
 		
-		actionSheet.addAction(moveFolderAction)
-		actionSheet.addAction(shareAction)
 		actionSheet.addAction(deleteAction)
 		actionSheet.addAction(cancelAction)
 		

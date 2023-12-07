@@ -93,7 +93,7 @@ extension CheckListEmptyView {
 				return "함께 체크리스트를 작성해보세요."
 			case .sharedCheckListView:
 				return "다른 사람들과 함께 공유하세요."
-				case .feedCheckListView:
+			case .feedCheckListView:
 				return "AI가 추천하는 다른 카테고리의 체크리스트를 확인해보세요."
 			}
 		}

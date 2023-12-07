@@ -7,8 +7,13 @@
 
 import Foundation
 
+enum WithCheckListUseCaseError: Error {
+	case failedDelete
+}
+
 protocol WithCheckListUseCase {
 	func fetchAllCheckList() async -> [WithCheckList]
+	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem
 }
 
 final class DefaultWithCheckListUseCase {
@@ -22,5 +27,11 @@ final class DefaultWithCheckListUseCase {
 extension DefaultWithCheckListUseCase: WithCheckListUseCase {
 	func fetchAllCheckList() async -> [WithCheckList] {
 		return await withCheckListRepository.fetchAllSharedCheckList()
+	}
+	
+	func removeCheckList(to item: DeleteCheckListItem) async throws -> DeleteCheckListItem {
+		let result = try await withCheckListRepository.removeCheckList(item.id)
+		guard result else { throw WithCheckListUseCaseError.failedDelete }
+		return item
 	}
 }

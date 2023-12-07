@@ -48,13 +48,14 @@ private extension CheckListTableViewModel {
 	func remove(_ input: Input) -> Output {
 		return input.removeCheckList
 			.withUnretained(self)
-			.flatMap { owner, uuid -> AnyPublisher<[CheckListTableItem], Never> in
-				_ = owner.persistenceUseCase.removeCheckList(checklistId: uuid)
-				let future = Future(asyncFunc: { await owner.persistenceUseCase.fetchAllCheckList() })
+			.flatMap { owner, item -> AnyPublisher<DeleteCheckListItem, Never> in
+				let future = Future(asyncFunc: {
+					try await owner.persistenceUseCase.removeCheckList(to: item)
+				})
 				return future.eraseToAnyPublisher()
 			}
-			.map { items in
-				return .reload(items)
+			.map { item in
+				return .delete(item)
 			}
 			.eraseToAnyPublisher()
 	}
