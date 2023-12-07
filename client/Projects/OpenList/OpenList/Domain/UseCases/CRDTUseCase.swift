@@ -320,7 +320,11 @@ private extension DefaultCRDTUseCase {
 	}
 	
 	func updateCheckListItem(to id: UUID, name: String, isChecked: Bool) throws -> any ListItem {
-		return WithCheckListItem(itemId: id, title: "", isChecked: isChecked, name: name, isValueChanged: true)
+		guard let document = documentDictionary[id] else {
+			throw CRDTUseCaseError.docmuentNotFound
+		}
+		let title = document.view()
+		return WithCheckListItem(itemId: id, title: title, isChecked: isChecked, name: name, isValueChanged: true)
 	}
 	
 	func updateCheckListItem(

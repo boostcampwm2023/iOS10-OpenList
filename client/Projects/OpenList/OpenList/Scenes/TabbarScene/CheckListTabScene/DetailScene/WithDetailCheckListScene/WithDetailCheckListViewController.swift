@@ -367,9 +367,8 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 
 // MARK: - WithCheckListItemDelegate
 extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
-	func withCheckListTextViewDidChange(_ textView: OpenListTextView, indexPath: IndexPath) {
-		let cell = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
-		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: cell.isChecked))
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView, isChecked: Bool) {
+		textDidChange.send(WithCheckListItemChange(text: textView.text, isChecked: isChecked))
 		checkListView.beginUpdates()
 		checkListView.endUpdates()
 	}
@@ -393,6 +392,7 @@ extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
 		cellId: UUID
 	) -> Bool {
 		guard let text = textView.text else { return true }
+		guard !(string.unicodeScalars.contains { $0.properties.isEmoji }) else { return false }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
@@ -444,6 +444,7 @@ extension WithDetailCheckListViewController: CheckListItemPlaceholderDelegate {
 		replacementString string: String
 	) -> Bool {
 		guard let text = textView.text else { return true }
+		guard !(string.unicodeScalars.contains { $0.properties.isEmoji }) else { return false }
 		guard let stringRange = Range(range, in: text) else { return false }
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		return updatedText.count <= 30

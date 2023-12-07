@@ -20,7 +20,7 @@ protocol WithCheckListItemCellDelegate: AnyObject {
 		indexPath: IndexPath,
 		cellId: UUID
 	) -> Bool
-	func withCheckListTextViewDidChange(_ textView: OpenListTextView, indexPath: IndexPath)
+	func withCheckListTextViewDidChange(_ textView: OpenListTextView, isChecked: Bool)
 	func checklistDidTap(_ indexPath: IndexPath, cellId: UUID, isChecked: Bool)
 }
 
@@ -178,6 +178,6 @@ extension WithCheckListItemCell: UITextViewDelegate {
 	
 	func textViewDidChange(_ textView: UITextView) {
 		guard let indexPath = self.indexPath else { return }
-		delegate?.withCheckListTextViewDidChange(self.textView, indexPath: indexPath)
+		delegate?.withCheckListTextViewDidChange(self.textView, isChecked: isChecked)
 	}
 }
