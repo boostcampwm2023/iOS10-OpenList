@@ -8,19 +8,19 @@
 import UIKit
 
 enum RecommendCheckListSection { case recommendCheckList }
-typealias RecommendCheckListDataSource = UICollectionViewDiffableDataSource<RecommendCheckListSection, CheckList>
-typealias RecommendCheckListSnapshot = NSDiffableDataSourceSnapshot<RecommendCheckListSection, CheckList>
+typealias RecommendCheckListDataSource = UICollectionViewDiffableDataSource<RecommendCheckListSection, FeedCheckList>
+typealias RecommendCheckListSnapshot = NSDiffableDataSourceSnapshot<RecommendCheckListSection, FeedCheckList>
 
 final class RecommendCheckListDiffableDataSource: RecommendCheckListDataSource {
 	override init(
 		collectionView: UICollectionView,
-		cellProvider: @escaping UICollectionViewDiffableDataSource<RecommendCheckListSection, CheckList>.CellProvider
+		cellProvider: @escaping UICollectionViewDiffableDataSource<RecommendCheckListSection, FeedCheckList>.CellProvider
 	) {
 		super.init(collectionView: collectionView, cellProvider: cellProvider)
 		makeSection()
 	}
 	
-	func updateRecommendCheckList(with items: [CheckList]) {
+	func updateRecommendCheckList(with items: [FeedCheckList]) {
 		var snapshot = snapshot()
 		let previousItems = snapshot.itemIdentifiers
 		snapshot.deleteItems(previousItems)

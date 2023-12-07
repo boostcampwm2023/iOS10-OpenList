@@ -29,8 +29,8 @@ final class RecommendCheckListItemCell: UICollectionViewCell {
 		checkListIconView.image = nil
 	}
 	
-	func configure(with item: CheckListItem) {
-		titleLabel.text = item.title
+	func configure(with item: FeedCheckListItem) {
+		titleLabel.text = item.value
 		let checkImage = item.isChecked ? UIImage.checkCircle : UIImage.circle
 		let imageSize = CGSize(width: 16, height: 16)
 		let resizedCheckImage = checkImage.resizeImage(size: imageSize)?.withRenderingMode(.alwaysTemplate)

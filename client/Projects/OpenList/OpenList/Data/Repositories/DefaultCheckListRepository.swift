@@ -5,13 +5,16 @@
 //  Created by Hoon on 11/15/23.
 //
 
+import CustomNetwork
 import Foundation
 
 final class DefaultCheckListRepository {
 	private let checkListStorage: PrivateCheckListStorage
+	private let session: CustomSession
 	
-	init(checkListStorage: PrivateCheckListStorage) {
+	init(checkListStorage: PrivateCheckListStorage, session: CustomSession) {
 		self.checkListStorage = checkListStorage
+		self.session = session
 	}
 }
 
@@ -82,7 +85,25 @@ extension DefaultCheckListRepository: CheckListRepository {
 		return try await checkListStorage.transfromToWith(id: id)
 	}
 	
-	func fetchRecommendCheckList(id: Int) async throws -> [CheckList] {
-		return []
+	func fetchFeedCheckList(by cateogryName: String) async throws -> [FeedCheckList] {
+		let urlString = "https://openlist.kro.kr/feeds/category?category=\(cateogryName)"
+		guard let koreanEncodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+		else { return [] }
+		var builder = URLRequestBuilder(url: koreanEncodedString)
+		builder.addHeader(field: "Content-Type", value: "application/json")
+		builder.setMethod(.get)
+		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
+		let data = try await service.request()
+		let feedCheckListResponseDTO = try JSONDecoder().decode([FeedCheckListResponseDTO].self, from: data)
+		return feedCheckListResponseDTO.map {
+			FeedCheckList(
+				createdAt: $0.createdAt,
+				title: $0.title,
+				items: $0.items.map { FeedCheckListItem(isChecked: $0.isChecked, value: $0.value) },
+				feedId: $0.feedId,
+				likeCount: $0.likeCount,
+				downloadCount: $0.downloadCount
+			)
+		}
 	}
 }

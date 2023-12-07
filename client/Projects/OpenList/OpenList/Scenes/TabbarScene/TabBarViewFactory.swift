@@ -46,7 +46,7 @@ final class TabBarComponent:
 	}
 	
 	var checkListRepository: CheckListRepository {
-		return DefaultCheckListRepository(checkListStorage: checkListStorage)
+		return DefaultCheckListRepository(checkListStorage: checkListStorage, session: session)
 	}
 	
 	var checkListStorage: PrivateCheckListStorage {

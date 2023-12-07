@@ -8,7 +8,7 @@
 import Foundation
 
 protocol RecommendCheckListUseCase {
-	func fetchRecommendCheckList(by id: Int) async -> Result<[CheckList], Error>
+	func fetchFeedCheckList(by mainCategory: String) async -> Result<[FeedCheckList], Error>
 }
 
 final class DefaultRecommendCheckListUseCase {
@@ -20,9 +20,9 @@ final class DefaultRecommendCheckListUseCase {
 }
 
 extension DefaultRecommendCheckListUseCase: RecommendCheckListUseCase {
-	func fetchRecommendCheckList(by id: Int) async -> Result<[CheckList], Error> {
+	func fetchFeedCheckList(by mainCategory: String) async -> Result<[FeedCheckList], Error> {
 		do {
-			let items = try await checklistRepository.fetchRecommendCheckList(id: id)
+			let items = try await checklistRepository.fetchFeedCheckList(by: mainCategory)
 			return .success(items)
 		} catch {
 			return .failure(error)
