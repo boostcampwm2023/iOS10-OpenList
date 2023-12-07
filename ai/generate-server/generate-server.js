@@ -44,10 +44,10 @@ export const generateGptData = async (category, count = 10) => {
         { role: 'user', content: `${category}}` },
       ],
       // model: 'gpt-3.5-turbo-1106',
-      model: 'gpt-4',
-      // model: 'gpt-4-1106-preview',
+      // model: 'gpt-4',
+      model: 'gpt-4-1106-preview',
       // temperature: 1.5, // randomness
-      // response_format: { type: 'json_object' },
+      response_format: { type: 'json_object' },
     });
     console.log('gpt start');
     // console.log('completion:', completion);

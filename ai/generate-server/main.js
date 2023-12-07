@@ -10,7 +10,7 @@ async function main() {
   //   await saveData(data, category);
   // }
 
-  const category = ['자기관리', '운동', '벌크업'];
+  const category = ['자기관리', '운동', '벌크업식단'];
   // const data = await generateGptData(category);
   // await saveData(data, category);
 
