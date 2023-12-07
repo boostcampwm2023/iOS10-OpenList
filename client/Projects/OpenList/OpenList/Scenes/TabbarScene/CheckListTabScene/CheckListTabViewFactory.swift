@@ -15,6 +15,8 @@ protocol CheckListTabDependency: Dependency {
 	var persistenceUseCase: PersistenceUseCase { get }
 	var checkListRepository: CheckListRepository { get }
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { get }
+	var profileFactoryable: ProfileFactoryable { get }
+	var settingFactoryable: SettingFactoryable { get }
 }
 
 final class CheckListTabComponent:
@@ -38,6 +40,10 @@ final class CheckListTabComponent:
 	
 	var deepLinkSubject: PassthroughSubject<DeepLinkTarget, Never> { parent.deepLinkSubject }
 	
+	fileprivate var profileFactoryable: ProfileFactoryable { parent.profileFactoryable }
+	
+	fileprivate var settingFactoryable: SettingFactoryable { parent.settingFactoryable }
+	
 	fileprivate var privateCheckListTableFactoryable: CheckListTableFactoryable {
 		return CheckListTableViewFactory(parent: self)
 	}
@@ -48,14 +54,6 @@ final class CheckListTabComponent:
 	
 	fileprivate var sharedCheckListFactoryable: SharedCheckListFactoryable {
 		return SharedCheckListViewFactory(parent: self)
-	}
-	
-	fileprivate var profileFactoryable: ProfileFactoryable {
-		return ProfileViewFactory(parent: self)
-	}
-	
-	fileprivate var settingFactoryable: SettingFactoryable {
-		return SettingViewFactory(parent: self)
 	}
 }
 

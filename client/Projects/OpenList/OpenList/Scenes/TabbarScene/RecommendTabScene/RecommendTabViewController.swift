@@ -8,7 +8,10 @@
 import Combine
 import UIKit
 
-protocol RecommendTabRoutingLogic: AnyObject {}
+protocol RecommendTabRoutingLogic: AnyObject {
+	func showProfile()
+	func showSetting()
+}
 
 final class RecommendTabViewController: UIViewController, ViewControllable {
 	// MARK: - Properties
@@ -17,6 +20,7 @@ final class RecommendTabViewController: UIViewController, ViewControllable {
 	private var cancellables: Set<AnyCancellable> = []
 	
 	// MARK: - UI Components
+	private let navigationBar: OpenListNavigationBar = .init(leftItems: [.profile], rightItems: [.more])
 	private let titleLabel: UILabel = .init()
 	private let recommendCategoryTabView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())
 	private var recommendCategoryDataSource: RecommendCategoryTabDiffableDataSource?
@@ -112,6 +116,7 @@ private extension RecommendTabViewController {
 		setRecommendCategoryTabViewAttributes()
 		setRecommendCheckListViewAttributes()
 		setEmptyViewAttributes()
+		setNavigationBarAttributes()
 	}
 	
 	func setTitleLabelAttributes() {
@@ -145,7 +150,12 @@ private extension RecommendTabViewController {
 		checkListEmptyView.isHidden = false
 	}
 	
+	func setNavigationBarAttributes() {
+		navigationBar.delegate = self
+	}
+	
 	func setViewHierarchies() {
+		view.addSubview(navigationBar)
 		view.addSubview(titleLabel)
 		view.addSubview(recommendCategoryTabView)
 		view.addSubview(recommendCheckListView)
@@ -155,7 +165,7 @@ private extension RecommendTabViewController {
 	func setViewConstraints() {
 		NSLayoutConstraint.activate([
 			titleLabel.topAnchor.constraint(
-				equalTo: view.safeAreaLayoutGuide.topAnchor,
+				equalTo: navigationBar.bottomAnchor,
 				constant: Constants.titleLabelTopPadding
 			),
 			titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.horizontalPadding),
@@ -258,5 +268,19 @@ extension RecommendTabViewController: UICollectionViewDelegate {
 			let item = recommendCategoryDataSource.itemIdentifier(for: indexPath)
 		else { return }
 		selectRecommendCategory(with: item.name, at: indexPath.row)
+	}
+}
+
+extension RecommendTabViewController: OpenListNavigationBarDelegate {
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBackButton button: UIButton) { }
+	
+	func openListNavigationBar(_ navigationBar: OpenListNavigationBar, didTapBarItem item: OpenListNavigationBarItem) {
+		switch item.type {
+		case .profile:
+			router.showProfile()
+		case .more:
+			router.showSetting()
+		default: return
+		}
 	}
 }
