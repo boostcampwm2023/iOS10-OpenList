@@ -43,6 +43,8 @@ jobs:
           REDIS_URL=${{ secrets.REDIS_URL }}
           REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}
           REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
           EOF
       # .p8 파일 생성
       - name: Generate .p8 file
