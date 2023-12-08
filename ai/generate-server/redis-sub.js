@@ -30,12 +30,20 @@ async function init() {
         console.log('start');
 
         // generateGptData 함수 호출에 category 전달
-        const checklistItems = await generateGptData(category);
-        console.log('checklistItems:', checklistItems);
-        console.log('save to postgres');
-        // saveData 함수 호출에 category 전달
-        await saveData(checklistItems, category);
-        console.log('finished');
+        for (const category of categories) {
+          const checklistItems = await generateGptData(category);
+          console.log('checklistItems:', checklistItems);
+          console.log('save to postgres');
+          // saveData 함수 호출에 category 전달
+          await saveData(checklistItems, category);
+          console.log('finished');
+        }
+        // const checklistItems = await generateGptData(category);
+        // console.log('checklistItems:', checklistItems);
+        // console.log('save to postgres');
+        // // saveData 함수 호출에 category 전달
+        // await saveData(checklistItems, category);
+        // console.log('finished');
 
         console.log('end');
       }
