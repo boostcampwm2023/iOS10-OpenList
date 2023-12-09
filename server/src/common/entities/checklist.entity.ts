@@ -1,17 +1,17 @@
 import { BaseModel } from './base.entity';
-// import { IsNumber } from 'class-validator';
-import { Column } from 'typeorm';
+import { Column, OneToOne } from 'typeorm';
+import { CategoryModel } from '../../categories/entities/category.entity';
 
 export abstract class ChecklistModel extends BaseModel {
   @Column()
   title: string;
 
-  @Column({ nullable: true })
+  @OneToOne(() => CategoryModel, (item) => item.mainCategory)
   mainCategory: string;
 
-  @Column({ nullable: true })
+  @OneToOne(() => CategoryModel, (item) => item.subCategory)
   subCategory: string;
 
-  @Column({ nullable: true })
+  @OneToOne(() => CategoryModel, (item) => item.minorCategory)
   minorCategory: string;
 }
