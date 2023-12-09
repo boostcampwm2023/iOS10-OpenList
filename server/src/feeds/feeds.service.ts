@@ -2,12 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FeedModel } from './entities/feed.entity';
 import { Repository } from 'typeorm';
+import { CategoryModel } from '../categories/entities/category.entity';
 
 @Injectable()
 export class FeedsService {
   constructor(
     @InjectRepository(FeedModel)
     private readonly repository: Repository<FeedModel>,
+    @InjectRepository(CategoryModel)
+    private readonly categoryRepository: Repository<CategoryModel>,
   ) {}
 
   async findFeedById(feedId: number) {
@@ -21,13 +24,26 @@ export class FeedsService {
   }
 
   async findAllFeedsByCategory(mainCategory: string) {
-    const feed = await this.repository.find({ where: { mainCategory } });
-    if (feed.length === 0) {
+    // mainCategory를 사용하여 CategoryModel 찾기
+    const category = await this.categoryRepository.findOne({
+      where: { mainCategory },
+    });
+    if (!category) {
+      throw new BadRequestException(
+        `${mainCategory}는 존재하지 않는 카테고리입니다.`,
+      );
+    }
+
+    // 해당 카테고리 ID를 가진 모든 피드 검색
+    const feeds = await this.repository.find({
+      where: { category: category },
+    });
+    if (feeds.length === 0) {
       throw new BadRequestException(
         `${mainCategory}에 대한 피드가 존재하지 않습니다.`,
       );
     }
-    return feed;
+    return feeds;
   }
 
   async updateLikeCount(feedId: number) {
