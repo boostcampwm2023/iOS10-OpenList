@@ -1,6 +1,6 @@
 import { IsBoolean, IsString } from 'class-validator';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ChecklistModel } from '../../../common/entity/checklist.entity';
+import { ChecklistModel } from '../../../common/entities/checklist.entity';
 import { UserModel } from '../../../users/entities/user.entity';
 import { FolderModel } from '../../entities/folder.entity';
 

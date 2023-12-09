@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BaseModel } from '../../common/entity/base.entity';
+import { BaseModel } from '../../common/entities/base.entity';
 import { UserModel } from '../../users/entities/user.entity';
 import { PrivateChecklistModel } from '../private-checklists/entities/private-checklist.entity';
 

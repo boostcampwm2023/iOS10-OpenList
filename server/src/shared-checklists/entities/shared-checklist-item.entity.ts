@@ -1,4 +1,4 @@
-import { BaseModel } from 'src/common/entity/base.entity';
+import { BaseModel } from 'src/common/entities/base.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SharedChecklistModel } from './shared-checklist.entity';
 
