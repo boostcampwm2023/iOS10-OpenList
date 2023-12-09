@@ -127,33 +127,35 @@ async function aiResultParser(result) {
   return { select, reason };
 }
 
-async function checkValidResult(select, reason) {
+async function checkValidResult(select, reason, checklistDto) {
   if (select.length !== 3) {
     throw new Error("select 항목이 3개가 아닙니다.");
   }
   if (Object.keys(reason).length !== 3) {
     throw new Error("reason 항목이 3개가 아닙니다.");
   }
-  // if (select.some((item) => !reason[item])) {
-  //   throw new Error("select 항목에 reason 항목이 없습니다.");
-  // }
-  if (select.some((item) => isNaN(item))) {
-    throw new Error("select 항목이 숫자가 아닙니다.");
-  }
   if (Object.keys(reason).some((item) => isNaN(item))) {
     throw new Error("reason의 키 항목이 숫자가 아닙니다.");
   }
+  if (select.some((item) => isNaN(item))) {
+    throw new Error("select 항목이 숫자가 아닙니다.");
+  }
+  const checklistDtoKeys = Object.keys(checklistDto);
+  if (!Object.keys(reason).every((key) => checklistDtoKeys.includes(key))) {
+    throw new Error("reason의 키에 해당하는 checklistDto의 키가 없습니다.");
+  }
 }
 
-async function processAiResult(categoryDto, checklistDto, maxRetries = 1) {
+async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
   let retryCount = 0;
   while (retryCount < maxRetries) {
     try {
       publisher.send("ai_result", "ai evaluation start");
       const result = await evaluateChecklistItem(categoryDto, checklistDto);
+      console.log("checklistDto:", checklistDto);
       console.log("raw data:", result);
       const { select, reason } = await aiResultParser(result);
-      await checkValidResult(select, reason);
+      await checkValidResult(select, reason, checklistDto);
       await publisher.send("ai_result", JSON.stringify({ select, reason }));
       console.log("select:", select);
       console.log("reason:", reason);

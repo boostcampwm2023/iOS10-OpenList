@@ -4,25 +4,27 @@ const {
   getMinMaxEvaluatesByCategory,
   getChecklistItemsByCategoryAndEvaluateCount,
   getChecklistItemsByEvaluateCount,
+  incrementCounts,
+  insertReasons,
   pool,
 } = require("./postgres.js");
 
 const { processAiResult } = require("./evaluate-api.js");
 async function main() {
-  const checklistItemsByEvaluateCount = await getChecklistItemsByEvaluateCount(
-    2
-  );
-  const result = transformAndChunkItems(checklistItemsByEvaluateCount);
-  console.log("expected count: ", result.length);
-  console.log("result:", result);
-  //   result.forEach(async (item) => {
-  //     const { category, contents } = item;
-  //     await processAiResult(category, contents);
-  //   });
-  processResultsSequentially(result).then(() => {
+  try {
+    const checklistItemsByEvaluateCount =
+      await getChecklistItemsByEvaluateCount(5);
+    const result = transformAndChunkItems(checklistItemsByEvaluateCount);
+    console.log("expected count: ", result.length);
+    console.log("result:", result);
+
+    await processResultsSequentially(result); // 작업이 완료될 때까지 기다림
     console.log("모든 처리가 완료되었습니다.");
-  });
-  pool.end();
+  } catch (error) {
+    console.error("An error occurred:", error);
+  } finally {
+    await pool.end(); // 모든 작업이 끝난 후 연결 풀을 닫음
+  }
 }
 
 function transformAndChunkItems(items, chunkSize = 10) {
@@ -62,20 +64,35 @@ function transformAndChunkItems(items, chunkSize = 10) {
 async function processResultsSequentially(result) {
   let successCount = 0;
   let failureCount = 0;
+  const contentIDsObj = [];
+
   for (const item of result) {
     const { category, contents } = item;
+    const contentIDs = Object.keys(contents);
     const { select, reason } = await processAiResult(category, contents);
+
     if (select === undefined || reason === undefined) {
       failureCount++;
-      console.log("failureCount:", failureCount);
+      console.log("Failure:", failureCount);
     } else {
-      successCount++;
-      console.log("select:", select);
-      console.log("reason:", reason);
+      try {
+        await incrementCounts(contentIDs, "evaluated");
+        contentIDsObj.push(contentIDs);
+        await incrementCounts(Object.keys(reason), "selected");
+        await insertReasons(reason);
+        successCount++;
+        console.log("Success:", successCount);
+      } catch (error) {
+        failureCount++;
+        console.log("Failure:", failureCount);
+      }
     }
   }
+  console.log("contentIDsObj:", contentIDsObj);
+  console.log("contentIDsObj.length:", contentIDsObj.length);
+  const sortedContentIDsObj = contentIDsObj.sort((a, b) => a - b);
+  console.log("sortedContentIDsObj:", sortedContentIDsObj);
 }
-
 // 사용 예시
 
 main();
