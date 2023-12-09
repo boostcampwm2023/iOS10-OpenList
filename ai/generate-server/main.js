@@ -10,7 +10,12 @@ async function main() {
   //   await saveData(data, category);
   // }
 
-  const category = ['자기관리', '운동', '벌크업식단'];
+  const categories = [
+    ['활동', '자기계발', '프로그래밍'],
+    ['활동', '자기계발', '취미 개발'],
+    ['활동', '레저 스포츠', '등산'],
+    ['활동', '레저 스포츠', '서핑'],
+  ];
   // const data = await generateGptData(category);
   // await saveData(data, category);
 
@@ -20,7 +25,7 @@ async function main() {
     'category',
     JSON.stringify({
       messageData: 'generateGptData',
-      category: category,
+      categories: categories,
     }),
   );
 }

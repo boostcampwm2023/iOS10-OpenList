@@ -23,9 +23,9 @@ async function init() {
       const parsedMessage = JSON.parse(message);
 
       if (parsedMessage.messageData === 'generateGptData') {
-        const { messageData, category } = parsedMessage;
+        const { messageData, categories } = parsedMessage;
         console.log('messageData:', messageData);
-        console.log('category:', category);
+        console.log('categories:', categories);
 
         console.log('start');
 
