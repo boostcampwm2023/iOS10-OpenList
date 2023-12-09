@@ -16,13 +16,13 @@ async function init() {
       console.log("message:", message);
       if (message === "processAiResult") {
         console.log("start");
-        publisher.send("channel", "pub start");
+        publisher.send("channel", "processAiResult start");
         await processAiResult();
         console.log("finished");
-        publisher.send("channel", "pub finished");
+        publisher.send("channel", "processAiResult finished");
         console.log("get data from postgres");
-        const checklistItems = await getAllChecklistItems();
-        console.log("checklistItems:", checklistItems);
+        // const checklistItems = await getAllChecklistItems();
+        // console.log("checklistItems:", checklistItems);
         console.log("end");
       }
     } catch (error) {

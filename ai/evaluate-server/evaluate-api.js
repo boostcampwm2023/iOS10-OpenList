@@ -1,5 +1,8 @@
 require("dotenv").config();
 const axios = require("axios");
+const RedisPub = require("./RedisPub");
+
+const publisher = new RedisPub();
 
 const AI_OPTIONS = {
   topP: 0.8,
@@ -142,22 +145,28 @@ async function checkValidResult(select, reason) {
 
 async function processAiResult(retryCount = 0) {
   try {
+    publisher.send("ai_result", "ai evaluation start");
     const result = await evaluateChecklistItem(categoryDto, checklistDto);
     const { select, reason } = await aiResultParser(result);
     await checkValidResult(select, reason);
+    await publisher.send("ai_result", JSON.stringify({ select, reason }));
     console.log("select:", select);
     console.log("reason:", reason);
   } catch (error) {
     if (retryCount < 3) {
+      console.error("Error:", error);
+      await publisher.send("ai_result", `Error: ${error}`);
       console.log("retryCount:", retryCount + 1);
+      await publisher.send("ai_result", `retryCount: ${retryCount + 1}`);
       processAiResult(retryCount + 1);
     } else {
       console.error("Error:", error);
+      await publisher.send("ai_result", `Error: ${error}`);
     }
   }
 }
 
-processAiResult();
+// processAiResult();
 
 module.exports = {
   processAiResult,

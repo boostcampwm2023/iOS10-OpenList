@@ -51,7 +51,7 @@ const values = ["brianc", "brian.m.carlson@gmail.com"];
 //   }
 // });
 
-getAllChecklistItems();
+// getAllChecklistItems();
 // getAllCategories();
 module.exports = {
   getAllChecklistItems,
