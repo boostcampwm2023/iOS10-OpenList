@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@supercharge/promise-pool": "^3.1.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "openai": "^4.20.1",
