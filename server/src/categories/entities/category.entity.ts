@@ -1,8 +1,8 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { AiChecklistItemModel } from '../../checklist-ai/entities/checklist-ai.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseModel } from '../../common/entities/base.entity';
 
 @Entity()
-export class CategoryModel {
+export class CategoryModel extends BaseModel {
   @PrimaryGeneratedColumn()
   categoryId: number;
 
@@ -14,13 +14,4 @@ export class CategoryModel {
 
   @Column()
   minorCategory: string;
-
-  @OneToOne(() => AiChecklistItemModel, (item) => item.mainCategory)
-  mainCategoryItem: AiChecklistItemModel;
-
-  @OneToOne(() => AiChecklistItemModel, (item) => item.subCategory)
-  subCategoryItem: AiChecklistItemModel;
-
-  @OneToOne(() => AiChecklistItemModel, (item) => item.minorCategory)
-  minorCategoryItem: AiChecklistItemModel;
 }

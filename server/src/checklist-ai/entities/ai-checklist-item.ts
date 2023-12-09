@@ -1,11 +1,12 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { AiChecklistItemNaverReasonModel } from '../../reasons/entities/ai-checklist-item-naver-reason.entity';
+import { AiChecklistItemNaverReasonModel } from './ai-checklist-item-naver-reason.entity';
 import { BaseModel } from '../../common/entities/base.entity';
 import { CategoryModel } from '../../categories/entities/category.entity';
 
@@ -30,14 +31,9 @@ export class AiChecklistItemModel extends BaseModel {
   @Column({ default: 0 })
   final_score: number;
 
-  @OneToOne(() => CategoryModel, (item) => item.mainCategory)
-  mainCategory: string;
-
-  @OneToOne(() => CategoryModel, (item) => item.subCategory)
-  subCategory: string;
-
-  @OneToOne(() => CategoryModel, (item) => item.minorCategory)
-  minorCategory: string;
+  @ManyToOne(() => CategoryModel)
+  @JoinColumn({ name: 'categoryId' })
+  category: CategoryModel;
 
   @OneToMany(
     () => AiChecklistItemNaverReasonModel,

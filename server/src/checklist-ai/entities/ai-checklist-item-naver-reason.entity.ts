@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseModel } from '../../common/entities/base.entity';
-import { AiChecklistItemModel } from '../../checklist-ai/entities/checklist-ai.entity';
+import { AiChecklistItemModel } from './ai-checklist-item';
 
 @Entity()
 export class AiChecklistItemNaverReasonModel extends BaseModel {

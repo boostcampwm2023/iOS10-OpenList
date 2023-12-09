@@ -30,6 +30,9 @@ import { SharedChecklistsModule } from './shared-checklists/shared-checklists.mo
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { winstonConfig } from './utils/winston.config';
+import { CategoryModel } from './categories/entities/category.entity';
+import { AiChecklistItemModel } from './checklist-ai/entities/ai-checklist-item';
+import { AiChecklistItemNaverReasonModel } from './checklist-ai/entities/ai-checklist-item-naver-reason.entity';
 
 @Module({
   imports: [
@@ -52,6 +55,9 @@ import { winstonConfig } from './utils/winston.config';
         SharedChecklistModel,
         SharedChecklistItemModel,
         FeedModel,
+        CategoryModel,
+        AiChecklistItemModel,
+        AiChecklistItemNaverReasonModel,
       ],
       synchronize: true, // DO NOT USE IN PRODUCTION
     }),
