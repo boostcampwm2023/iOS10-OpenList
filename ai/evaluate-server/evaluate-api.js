@@ -46,7 +46,6 @@ const SYSTEM_ROLE = {
       "10": "생성된 체크리스트10"
   }
   
-  출력 결과
   
   {
       "select": [
@@ -102,23 +101,23 @@ async function evaluateChecklistItem(categoryDto, checklistDto) {
   return result;
 }
 
-const categoryDto = {
-  mainCategory: "여행",
-  subCategory: "유럽",
-  minorCategory: "관광명소",
-};
-const checklistDto = {
-  1: "라오스 문화에 대해 알아보기",
-  2: "불교 사원 방문하기",
-  3: "자연 경관 감상하기",
-  4: "동굴 탐험하기",
-  5: "액티비티 체험하기",
-  6: "현지 음식 즐기기",
-  7: "전통 공예품 구매하기",
-  8: "교통 수단 이용 시 주의사항 숙지하기",
-  9: "안전에 유의하며 여행하기",
-  10: "여행 준비물 꼼꼼히 챙기기",
-};
+// const categoryDto = {
+//   mainCategory: "여행",
+//   subCategory: "유럽",
+//   minorCategory: "관광명소",
+// };
+// const checklistDto = {
+//   1: "라오스 문화에 대해 알아보기",
+//   2: "불교 사원 방문하기",
+//   3: "자연 경관 감상하기",
+//   4: "동굴 탐험하기",
+//   5: "액티비티 체험하기",
+//   6: "현지 음식 즐기기",
+//   7: "전통 공예품 구매하기",
+//   8: "교통 수단 이용 시 주의사항 숙지하기",
+//   9: "안전에 유의하며 여행하기",
+//   10: "여행 준비물 꼼꼼히 챙기기",
+// };
 
 async function aiResultParser(result) {
   const content = result?.result?.message?.content;
@@ -135,34 +134,42 @@ async function checkValidResult(select, reason) {
   if (Object.keys(reason).length !== 3) {
     throw new Error("reason 항목이 3개가 아닙니다.");
   }
-  if (select.some((item) => !reason[item])) {
-    throw new Error("select 항목에 reason 항목이 없습니다.");
-  }
+  // if (select.some((item) => !reason[item])) {
+  //   throw new Error("select 항목에 reason 항목이 없습니다.");
+  // }
   if (select.some((item) => isNaN(item))) {
     throw new Error("select 항목이 숫자가 아닙니다.");
   }
+  if (Object.keys(reason).some((item) => isNaN(item))) {
+    throw new Error("reason의 키 항목이 숫자가 아닙니다.");
+  }
 }
 
-async function processAiResult(retryCount = 0) {
-  try {
-    publisher.send("ai_result", "ai evaluation start");
-    const result = await evaluateChecklistItem(categoryDto, checklistDto);
-    const { select, reason } = await aiResultParser(result);
-    await checkValidResult(select, reason);
-    await publisher.send("ai_result", JSON.stringify({ select, reason }));
-    console.log("select:", select);
-    console.log("reason:", reason);
-  } catch (error) {
-    if (retryCount < 3) {
+async function processAiResult(categoryDto, checklistDto, maxRetries = 1) {
+  let retryCount = 0;
+  while (retryCount < maxRetries) {
+    try {
+      publisher.send("ai_result", "ai evaluation start");
+      const result = await evaluateChecklistItem(categoryDto, checklistDto);
+      console.log("raw data:", result);
+      const { select, reason } = await aiResultParser(result);
+      await checkValidResult(select, reason);
+      await publisher.send("ai_result", JSON.stringify({ select, reason }));
+      console.log("select:", select);
+      console.log("reason:", reason);
+      return { select, reason };
+    } catch (error) {
       console.error("Error:", error);
       await publisher.send("ai_result", `Error: ${error}`);
       console.log("retryCount:", retryCount + 1);
       await publisher.send("ai_result", `retryCount: ${retryCount + 1}`);
-      processAiResult(retryCount + 1);
-    } else {
-      console.error("Error:", error);
-      await publisher.send("ai_result", `Error: ${error}`);
+      retryCount++;
     }
+  }
+  if (retryCount === maxRetries) {
+    console.error("모든 재시도 실패");
+    await publisher.send("ai_result", "모든 재시도 실패");
+    return { select: undefined, reason: undefined };
   }
 }
 

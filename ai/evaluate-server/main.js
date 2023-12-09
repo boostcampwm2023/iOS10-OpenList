@@ -6,12 +6,22 @@ const {
   getChecklistItemsByEvaluateCount,
   pool,
 } = require("./postgres.js");
+
+const { processAiResult } = require("./evaluate-api.js");
 async function main() {
   const checklistItemsByEvaluateCount = await getChecklistItemsByEvaluateCount(
     2
   );
   const result = transformAndChunkItems(checklistItemsByEvaluateCount);
+  console.log("expected count: ", result.length);
   console.log("result:", result);
+  //   result.forEach(async (item) => {
+  //     const { category, contents } = item;
+  //     await processAiResult(category, contents);
+  //   });
+  processResultsSequentially(result).then(() => {
+    console.log("모든 처리가 완료되었습니다.");
+  });
   pool.end();
 }
 
@@ -49,5 +59,23 @@ function transformAndChunkItems(items, chunkSize = 10) {
 
   return result;
 }
+async function processResultsSequentially(result) {
+  let successCount = 0;
+  let failureCount = 0;
+  for (const item of result) {
+    const { category, contents } = item;
+    const { select, reason } = await processAiResult(category, contents);
+    if (select === undefined || reason === undefined) {
+      failureCount++;
+      console.log("failureCount:", failureCount);
+    } else {
+      successCount++;
+      console.log("select:", select);
+      console.log("reason:", reason);
+    }
+  }
+}
+
+// 사용 예시
 
 main();
