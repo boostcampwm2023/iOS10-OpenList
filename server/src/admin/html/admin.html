@@ -84,6 +84,15 @@
       [data-channel='wsLog'] {
         color: #fdd7ac; /* 연갈색 */
       }
+      [data-channel='system-stats'] {
+        color: #f4b6c2; /* 연분홍색 */
+      }
+      [data-channel='ai_evaluate'] {
+        color: #ffdfba; /* 연살구색 */
+      }
+      [data-channel='ai_evaluate_error'] {
+        color: #ff0000; /* 빨간색 */
+      }
 
       /* 로그인 폼 스타일 */
       #loginForm {
@@ -102,7 +111,33 @@
         color: red; /* 오류 메시지 색상 */
         margin-bottom: 10px; /* 간격 */
       }
+
+      /* 차트 컨테이너 스타일 */
+      .chart-container {
+        display: flex; /* Flexbox 레이아웃 사용 */
+        flex-wrap: wrap; /* 줄 바꿈 허용 */
+        justify-content: space-around; /* 요소들 사이에 공간을 균등하게 배분 */
+        align-items: center; /* 세로 방향 중앙 정렬 */
+        margin-bottom: 20px; /* 아래쪽 여백 */
+      }
+
+      .chart {
+        flex-basis: 30%; /* 각 차트가 차지할 너비 */
+        margin-bottom: 20px; /* 아래쪽 여백 */
+      }
+
+      /* 화면 너비가 768픽셀 미만일 때의 스타일 */
+      @media (max-width: 768px) {
+        .chart-container {
+          flex-direction: column; /* 요소들을 세로로 정렬 */
+        }
+
+        .chart {
+          flex-basis: 100%; /* 각 차트가 전체 너비를 차지하도록 설정 */
+        }
+      }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <h1>Received Messages</h1>
@@ -113,6 +148,15 @@
     <button class="channel-button" data-channel="ai_result">AI Result</button>
     <button class="channel-button" data-channel="httpLog">httpLog</button>
     <button class="channel-button" data-channel="wsLog">wsLog</button>
+    <button class="channel-button" data-channel="system-stats">
+      system-stats
+    </button>
+    <button class="channel-button" data-channel="ai_evaluate">
+      ai_evaluate
+    </button>
+    <button class="channel-button" data-channel="ai_evaluate_error">
+      ai_evaluate_error
+    </button>
 
     <button id="clearButton">Clear Screen</button>
     <button id="generateButton">Generate</button>
@@ -123,8 +167,32 @@
       <input type="password" id="password" placeholder="Password" />
       <button onclick="login()">Login</button>
     </div>
+    <!-- 차트 컨테이너 -->
+    <div class="chart-container">
+      <!-- CPU 사용률 차트 -->
+      <div class="chart">
+        <h2>CPU Usage</h2>
+        <canvas id="cpuChart"></canvas>
+      </div>
+
+      <!-- 메모리 사용량 차트 -->
+      <div class="chart">
+        <h2>Memory Usage</h2>
+        <canvas id="memoryChart"></canvas>
+      </div>
+
+      <!-- 네트워크 트래픽 차트 -->
+      <div class="chart">
+        <h2>Network Traffic</h2>
+        <canvas id="networkChart"></canvas>
+      </div>
+    </div>
     <ul id="messages"></ul>
     <script>
+      const isLocalhost = true;
+      const SERVER_URL = isLocalhost
+        ? 'http://localhost:3000/'
+        : 'https://openlist.kro.kr/';
       const selectedChannels = new Set();
       selectedChannels.add('notice');
 
@@ -157,7 +225,7 @@
         var password = document.getElementById('password').value;
         var loginError = document.getElementById('loginError');
 
-        fetch('http://localhost:3000/auth/login/admin', {
+        fetch(SERVER_URL + 'auth/login/admin', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -182,9 +250,13 @@
             document.getElementById('loginForm').style.display = 'block';
           });
       }
-
+      // 그래프 관련 변수 초기화
+      let cpuChart, memoryChart, networkChart;
+      const cpuUsageData = [];
+      const memoryUsageData = [];
+      const networkTrafficData = [];
       // 이벤트 소스 연결 시도
-      const evtSource = new EventSource(`http://localhost:3000/admin/events`, {
+      const evtSource = new EventSource(SERVER_URL + `admin/events`, {
         withCredentials: true,
       });
 
@@ -225,11 +297,103 @@
         } else {
           contentDiv.textContent = message;
         }
+        if (channel === 'system-stats') {
+          const data = JSON.parse(message);
+          updateChartData(data);
+          updateCharts();
+        }
 
         // 메시지 목록에 추가
         messagesList.appendChild(newElement);
         filterMessages(); // 새 메시지 추가 시 필터링 적용
       };
+
+      // 차트 데이터 업데이트 함수
+      function updateChartData(data) {
+        const { cpuUsage, freeMemory, totalMemory, networkTraffic } = data;
+        const usedMemory = totalMemory - freeMemory;
+        const usedMemoryPercent = (usedMemory / totalMemory) * 100;
+        const totalNetworkTraffic =
+          networkTraffic.totalIpkts + networkTraffic.totalOpkts;
+
+        cpuUsageData.push(cpuUsage);
+        memoryUsageData.push(usedMemoryPercent);
+        networkTrafficData.push(totalNetworkTraffic);
+
+        // 데이터가 너무 많아지면 가장 오래된 데이터 제거
+        if (cpuUsageData.length > 10) cpuUsageData.shift();
+        if (memoryUsageData.length > 10) memoryUsageData.shift();
+        if (networkTrafficData.length > 10) networkTrafficData.shift();
+      }
+      function createLineChart(canvasId, data, label, borderColor) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        return new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: Array(data.length).fill(''), // X축 레이블
+            datasets: [
+              {
+                label: label,
+                data: data,
+                borderColor: borderColor,
+                fill: false, // 선 차트로 표시
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true, // Y축 0부터 시작
+              },
+            },
+          },
+        });
+      }
+
+      function updateCharts() {
+        // CPU 차트 업데이트
+        if (!cpuChart) {
+          cpuChart = createLineChart(
+            'cpuChart',
+            cpuUsageData,
+            'CPU Usage (%)',
+            'rgb(255, 99, 132)',
+          );
+        } else {
+          cpuChart.data.datasets[0].data = cpuUsageData;
+          cpuChart.data.labels = Array(cpuUsageData.length).fill('');
+          cpuChart.update();
+        }
+
+        // 메모리 차트 업데이트
+        if (!memoryChart) {
+          memoryChart = createLineChart(
+            'memoryChart',
+            memoryUsageData,
+            'Memory Usage',
+            'rgb(54, 162, 235)',
+          );
+        } else {
+          memoryChart.data.datasets[0].data = memoryUsageData;
+          memoryChart.data.labels = Array(memoryUsageData.length).fill('');
+          memoryChart.update();
+        }
+
+        // 네트워크 트래픽 차트 업데이트
+        if (!networkChart) {
+          networkChart = createLineChart(
+            'networkChart',
+            networkTrafficData,
+            'Network Traffic',
+            'rgb(75, 192, 192)',
+          );
+        } else {
+          networkChart.data.datasets[0].data = networkTrafficData;
+          networkChart.data.labels = Array(networkTrafficData.length).fill('');
+          networkChart.update();
+        }
+      }
+
       function filterMessages() {
         const messages = document.querySelectorAll('#messages li');
         messages.forEach((message) => {
@@ -263,7 +427,7 @@
         .addEventListener('click', function (event) {
           event.preventDefault(); // Prevents default action (navigation/refresh)
 
-          fetch('http://localhost:3000/admin/generate', {
+          fetch(SERVER_URL + 'admin/generate', {
             credentials: 'include', // 쿠키를 포함하여 요청
           })
             .then((response) => {

@@ -8,7 +8,6 @@ import {
 import { Response } from 'express';
 import { RedisService } from 'redis/redis.service';
 import { UserId } from 'src/users/decorator/userId.decorator';
-import { channels } from './const/channels.const';
 
 @Controller('admin')
 export class AdminController {
@@ -31,10 +30,9 @@ export class AdminController {
     };
 
     res.write(`data: ${changeFormat('notice', 'Server connected')}\n\n`);
-    channels.forEach((channel) => {
-      this.redisService.subscribeToChannel(channel, (message) => {
-        res.write(`data: ${changeFormat(channel, message)}\n\n`);
-      });
+
+    this.redisService.psubscribeToPattern('*', (message, channel) => {
+      res.write(`data: ${changeFormat(channel, message)}\n\n`);
     });
 
     req.on('close', () => {
