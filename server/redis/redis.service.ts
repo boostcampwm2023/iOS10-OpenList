@@ -18,4 +18,9 @@ export class RedisService {
   publishToChannel(channel: string, message: string) {
     this.redisPublisher.publish(channel, message);
   }
+  psubscribeToPattern(pattern: string, callback: Function) {
+    this.redisSubscriber.pSubscribe(pattern, (message, channel) => {
+      callback(message, channel);
+    });
+  }
 }
