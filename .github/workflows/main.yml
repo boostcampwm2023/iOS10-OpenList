@@ -16,43 +16,18 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      # github repository에서 checkout
       - name: Check out source code
         uses: actions/checkout@v2
-      # .env 파일 생성
       - name: Generate .env file
         run: |
           cat << EOF > ./server/.env
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          HASH_ROUNDS=${{ secrets.HASH_ROUNDS }}
-          PROTOCOL=${{ secrets.PROTOCOL }}
-          HOST=${{ secrets.HOST }}
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_PORT=${{ secrets.DB_PORT }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_DATABASE=${{ secrets.DB_DATABASE }}
-          SUB=${{ secrets.SUB }}
-          ALG=${{ secrets.ALG }}
-          KID=${{ secrets.KID }}
-          ISS=${{ secrets.ISS }}
-          AUTHKEY=${{ secrets.AUTHKEY }}
-          X_NCP_CLOVASTUDIO_API_KEY=${{ secrets.X_NCP_CLOVASTUDIO_API_KEY }}
-          X_NCP_APIGW_API_KEY=${{ secrets.X_NCP_APIGW_API_KEY }}
-          X_NCP_CLOVASTUDIO_REQUEST_ID=${{ secrets.X_NCP_CLOVASTUDIO_REQUEST_ID }}
-          REDIS_URL=${{ secrets.REDIS_URL }}
-          REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}
-          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          # ... 환경 변수
           EOF
-      # .p8 파일 생성
       - name: Generate .p8 file
         run: |
           cat << EOF > ./server/.p8
           ${{ secrets.P8 }}
           EOF
-      # docker build 수행  
       - name: Set up docker buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -60,10 +35,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.VERSION }} # runner 설정에서 읽음.
+          key: ${{ runner.os }}-buildx-${{ env.VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      # GitHub 컨테이너 레지스트리에 로그인 후 빌드 & 푸시    
       - name: Login to ghcr
         uses: docker/login-action@v1
         with:
@@ -71,19 +45,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Build and push
-        id: docker_build
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: ./server   # Docker 빌드 컨텍스트를 'server' 디렉토리로 설정
-          file: ./server/Dockerfile   # 'server' 디렉토리 내의 Dockerfile 사용
+          context: ./server
+          file: ./server/Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
-  # 배포 Job
-  deploy:
-    needs: build # build 후에 실행되도록 정의
-    name: Deploy
-    runs-on: [ self-hosted, label-go ] # ncloud ./configure에서 사용할 label명
+
+  # 배포 Job - 서버 1
+  deploy-server1:
+    needs: build
+    name: Deploy to Server 1
+    runs-on: [ self-hosted, label-server1 ] 
     steps:
       - name: Login to ghcr
         uses: docker/login-action@v1
@@ -91,8 +65,28 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
-      # 3000 -> 3000 포트로 수행하도록 지정
-      - name: Docker run
+      - name: Docker run (Server 1)
         run: |
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 3000:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker stop go_cicd1 || true
+          docker rm go_cicd1 || true
+          docker pull ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 3000:3000 --name go_cicd1 --restart always ${{ env.DOCKER_IMAGE }}:latest
+
+  # 배포 Job - 서버 2
+  deploy-server2:
+    needs: build
+    name: Deploy to Server 2
+    runs-on: [ self-hosted, label-server2 ]
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Docker run (Server 2)
+        run: |
+          docker stop go_cicd2 || true
+          docker rm go_cicd2 || true
+          docker pull ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 3001:3000 --name go_cicd2 --restart always ${{ env.DOCKER_IMAGE }}:latest
