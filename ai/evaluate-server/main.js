@@ -1,19 +1,16 @@
 const {
-  getAllCategories,
-  getAllChecklistItems,
-  getMinMaxEvaluatesByCategory,
-  getChecklistItemsByCategoryAndEvaluateCount,
   getChecklistItemsByEvaluateCount,
   incrementCounts,
   insertReasons,
   pool,
 } = require("./postgres.js");
+const { PromisePool } = require("@supercharge/promise-pool");
 
 const { processAiResult } = require("./evaluate-api.js");
 async function main() {
   try {
     const checklistItemsByEvaluateCount =
-      await getChecklistItemsByEvaluateCount(5);
+      await getChecklistItemsByEvaluateCount(100);
     const result = transformAndChunkItems(checklistItemsByEvaluateCount);
     console.log("expected count: ", result.length);
     console.log("result:", result);
@@ -61,7 +58,41 @@ function transformAndChunkItems(items, chunkSize = 10) {
 
   return result;
 }
+
 async function processResultsSequentially(result) {
+  let successCount = 0;
+  let failureCount = 0;
+
+  const { results, errors } = await PromisePool.withConcurrency(10) // 동시에 처리할 작업 수를 5개로 설정
+    .for(result)
+    .process(async (item) => {
+      const { category, contents } = item;
+      const contentIDs = Object.keys(contents);
+      const { select, reason } = await processAiResult(category, contents);
+
+      if (select === undefined || reason === undefined) {
+        failureCount++;
+        console.log("Failure:", failureCount);
+      } else {
+        try {
+          await incrementCounts(contentIDs, "evaluated");
+          await incrementCounts(Object.keys(reason), "selected");
+          await insertReasons(reason);
+          successCount++;
+          console.log("Success:", successCount);
+        } catch (error) {
+          failureCount++;
+          console.log("Failure:", failureCount);
+        }
+      }
+    });
+
+  // 오류 로그
+  if (errors.length) {
+    console.log("Errors:", errors);
+  }
+}
+async function processResultsSequentiallySlow(result) {
   let successCount = 0;
   let failureCount = 0;
   const contentIDsObj = [];
@@ -93,6 +124,5 @@ async function processResultsSequentially(result) {
   const sortedContentIDsObj = contentIDsObj.sort((a, b) => a - b);
   console.log("sortedContentIDsObj:", sortedContentIDsObj);
 }
-// 사용 예시
 
 main();

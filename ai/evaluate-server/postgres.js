@@ -9,8 +9,8 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-const items = "ai_checklist_item_model";
-const category = "category_model";
+const items = "ai_checklist_item_model2";
+const category = "category_model2";
 const reasonTable = "ai_checklist_items_naver_reason";
 
 async function getAllChecklistItems() {
@@ -131,9 +131,9 @@ async function incrementCounts(ids, type) {
     WHERE id IN (${ids});
   `;
   try {
-    console.log("query:", query);
+    // console.log("query:", query);
     const result = await pool.query(query);
-    console.log("rows were updated", type, result);
+    // console.log("rows were updated", type, result);
   } catch (error) {
     console.error("Error updating counts:", error);
   }
