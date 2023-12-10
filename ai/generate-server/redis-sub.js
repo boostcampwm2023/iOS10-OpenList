@@ -33,7 +33,7 @@ async function init() {
   const publisher = new RedisPub();
   const redisSub = await subscriber.connect();
 
-  redisSub.subscribe('category', async function (message) {
+  redisSub.subscribe('ai_generate', async function (message) {
     console.log('message:', message);
 
     const parsedMessage = JSON.parse(message);

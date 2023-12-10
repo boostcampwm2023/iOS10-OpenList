@@ -42,7 +42,7 @@ async function main() {
   // redis pub/sub 테스트
   const redisPub = new RedisPub();
   redisPub.send(
-    'category',
+    'ai_generate',
     JSON.stringify({
       messageData: 'generateGptData',
       categories: categoriesInRange,
