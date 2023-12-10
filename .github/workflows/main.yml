@@ -89,4 +89,4 @@ jobs:
           docker stop go_cicd2 || true
           docker rm go_cicd2 || true
           docker pull ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 3001:3000 --name go_cicd2 --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 3000:3000 --name go_cicd2 --restart always ${{ env.DOCKER_IMAGE }}:latest
