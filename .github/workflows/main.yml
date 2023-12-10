@@ -18,10 +18,32 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v2
+       # .env 파일 생성
       - name: Generate .env file
         run: |
           cat << EOF > ./server/.env
-          # ... 환경 변수
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          HASH_ROUNDS=${{ secrets.HASH_ROUNDS }}
+          PROTOCOL=${{ secrets.PROTOCOL }}
+          HOST=${{ secrets.HOST }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          SUB=${{ secrets.SUB }}
+          ALG=${{ secrets.ALG }}
+          KID=${{ secrets.KID }}
+          ISS=${{ secrets.ISS }}
+          AUTHKEY=${{ secrets.AUTHKEY }}
+          X_NCP_CLOVASTUDIO_API_KEY=${{ secrets.X_NCP_CLOVASTUDIO_API_KEY }}
+          X_NCP_APIGW_API_KEY=${{ secrets.X_NCP_APIGW_API_KEY }}
+          X_NCP_CLOVASTUDIO_REQUEST_ID=${{ secrets.X_NCP_CLOVASTUDIO_REQUEST_ID }}
+          REDIS_URL=${{ secrets.REDIS_URL }}
+          REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
           EOF
       - name: Generate .p8 file
         run: |
