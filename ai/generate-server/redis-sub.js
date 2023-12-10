@@ -14,12 +14,25 @@ const subscriber = redis.createClient({
 /**
  * 카테고리를 받아서 gpt-4로 데이터 생성 후 postgres에 저장
  * @param category
+ * @param publisher
  * @returns {Promise<void>}
  */
-async function processCategory(category) {
+async function processCategory(category, publisher) {
+  publisher.send(
+    'ai_generate',
+    JSON.stringify({ messageData: 'start', category }),
+  );
   try {
     const checklistItems = await generateGptData(category);
+    await publisher.send(
+      'ai_generate',
+      JSON.stringify({ messageData: 'generated', checklistItems }),
+    );
     await saveData(checklistItems, category);
+    await publisher.send(
+      'ai_generate',
+      JSON.stringify({ messageData: `${category} data saved successfully` }),
+    );
   } catch (error) {
     console.error(`Error processing category ${category}:`, error);
   }
@@ -49,11 +62,18 @@ async function init() {
       const { results, errors } = await PromisePool.withConcurrency(5)
         .for(categories)
         .process(async (category) => {
-          await processCategory(category);
+          await processCategory(category, publisher);
         });
 
       // 오류 처리 또는 결과 확인
       if (errors.length) {
+        publisher.send(
+          'ai_generate',
+          JSON.stringify({
+            messageData: 'error',
+            errorLog: errors,
+          }),
+        );
         console.error('Errors:', errors);
       }
 
