@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryColumn,
 } from 'typeorm';
-import { ChecklistModel } from '../../common/entity/checklist.entity';
+import { ChecklistModel } from '../../common/entities/checklist.entity';
 import { UserModel } from '../../users/entities/user.entity';
 import { SharedChecklistItemModel } from './shared-checklist-item.entity';
 
