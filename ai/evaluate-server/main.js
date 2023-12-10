@@ -5,25 +5,51 @@ const {
   pool,
 } = require("./postgres.js");
 const { PromisePool } = require("@supercharge/promise-pool");
+const RedisPub = require("./RedisPub");
+const redis = require("redis");
+
+const subscriber = redis.createClient({
+  url: process.env.REDIS_URL,
+});
+
+const publisher = new RedisPub();
 
 const { processAiResult } = require("./evaluate-api.js");
 async function main() {
-  try {
-    const checklistItemsByEvaluateCount =
-      await getChecklistItemsByEvaluateCount(100);
-    const result = transformAndChunkItems(checklistItemsByEvaluateCount);
-    console.log("expected count: ", result.length);
-    console.log("result:", result);
+  const redisSub = await subscriber.connect();
+  redisSub.subscribe("ai_generate", async function (data) {
+    try {
+      const { message, body } = parseJsonData(data);
+      if (message === "processAiEvaluate") {
+        publisher.send(
+          "ai_evaluate",
+          `received: ${message} ${body} processAiEvaluate start`
+        );
+        const evaluateCountMax = parseInt(body);
+        const checklistItemsByEvaluateCount =
+          await getChecklistItemsByEvaluateCount(evaluateCountMax);
+        const result = transformAndChunkItems(checklistItemsByEvaluateCount);
+        const evaluateCycle = result.length;
+        publisher.send("ai_evaluate", `expected count: ${evaluateCycle}`);
 
-    await processResultsSequentially(result); // 작업이 완료될 때까지 기다림
-    console.log("모든 처리가 완료되었습니다.");
-  } catch (error) {
-    console.error("An error occurred:", error);
-  } finally {
-    await pool.end(); // 모든 작업이 끝난 후 연결 풀을 닫음
-  }
+        await processResultsSequentially(result); // 작업이 완료될 때까지 기다림
+        console.log("모든 처리가 완료되었습니다.");
+        publisher.send("ai_evaluate", `모든 처리가 완료되었습니다.`);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      publisher.send("ai_evaluate", `An error occurred: ${error}`);
+    }
+  });
 }
 
+function parseJsonData(data) {
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    return { message: "", body: "0" };
+  }
+}
 function transformAndChunkItems(items, chunkSize = 10) {
   const categoryMap = {};
 
@@ -62,8 +88,9 @@ function transformAndChunkItems(items, chunkSize = 10) {
 async function processResultsSequentially(result) {
   let successCount = 0;
   let failureCount = 0;
+  const proccessCycle = result.length;
 
-  const { results, errors } = await PromisePool.withConcurrency(10) // 동시에 처리할 작업 수를 5개로 설정
+  const { results, errors } = await PromisePool.withConcurrency(10) // 동시에 처리할 작업 수를 10개로 설정
     .for(result)
     .process(async (item) => {
       const { category, contents } = item;
@@ -79,10 +106,22 @@ async function processResultsSequentially(result) {
           await incrementCounts(Object.keys(reason), "selected");
           await insertReasons(reason);
           successCount++;
-          console.log("Success:", successCount);
+          console.log(`Success: ${successCount} / ${proccessCycle}`);
+          publisher.send(
+            "ai_evaluate",
+            `Success: ${successCount} / ${proccessCycle}`
+          );
         } catch (error) {
           failureCount++;
-          console.log("Failure:", failureCount);
+          // console.log("Failure:", failureCount);
+          // publisher.send("ai_generate", `Failure: ${failureCount}`);
+          console.error("An error occurred:", error);
+          publisher.send("ai_evaluate_error", `An error occurred: ${error}`);
+          console.log(`Failure: ${failureCount} / ${proccessCycle}`);
+          publisher.send(
+            "ai_evaluate",
+            `Failure: ${failureCount} / ${proccessCycle}`
+          );
         }
       }
     });
@@ -91,38 +130,6 @@ async function processResultsSequentially(result) {
   if (errors.length) {
     console.log("Errors:", errors);
   }
-}
-async function processResultsSequentiallySlow(result) {
-  let successCount = 0;
-  let failureCount = 0;
-  const contentIDsObj = [];
-
-  for (const item of result) {
-    const { category, contents } = item;
-    const contentIDs = Object.keys(contents);
-    const { select, reason } = await processAiResult(category, contents);
-
-    if (select === undefined || reason === undefined) {
-      failureCount++;
-      console.log("Failure:", failureCount);
-    } else {
-      try {
-        await incrementCounts(contentIDs, "evaluated");
-        contentIDsObj.push(contentIDs);
-        await incrementCounts(Object.keys(reason), "selected");
-        await insertReasons(reason);
-        successCount++;
-        console.log("Success:", successCount);
-      } catch (error) {
-        failureCount++;
-        console.log("Failure:", failureCount);
-      }
-    }
-  }
-  console.log("contentIDsObj:", contentIDsObj);
-  console.log("contentIDsObj.length:", contentIDsObj.length);
-  const sortedContentIDsObj = contentIDsObj.sort((a, b) => a - b);
-  console.log("sortedContentIDsObj:", sortedContentIDsObj);
 }
 
 main();

@@ -135,11 +135,13 @@ async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
   let retryCount = 0;
   while (retryCount < maxRetries) {
     try {
-      publisher.send("ai_evaluate", "ai evaluation start");
       const result = await evaluateChecklistItem(categoryDto, checklistDto);
       const { select, reason } = await aiResultParser(result);
       await checkValidResult(select, reason, checklistDto);
-      await publisher.send("ai_evaluate", JSON.stringify({ select, reason }));
+      await publisher.send(
+        "ai_evaluate",
+        JSON.stringify({ message: "result", body: { select, reason } })
+      );
       console.log("select:", select);
       console.log("reason:", reason);
       return { select, reason };
@@ -147,12 +149,11 @@ async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
       // 429 에러인 경우, 2초에서 5초 사이의 랜덤한 시간 동안 대기 후 재시도
       if (error?.response?.status === 429) {
         console.error("Too many requests");
-        await publisher.send("ai_evaluate_error", "Too many requests");
         const delayTime = getRandomDelay(2000, 10000); // 2초에서 5초 사이의 랜덤한 시간
         console.log(`Waiting for ${delayTime}ms before retry...`);
         await publisher.send(
           "ai_evaluate_error",
-          `Waiting for ${delayTime}ms before retry...`
+          `Too many requests::Waiting for ${delayTime}ms before retry...`
         );
         await delay(delayTime);
         continue; // 다음 시도로 이동

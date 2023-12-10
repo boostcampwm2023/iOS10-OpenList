@@ -70,54 +70,8 @@ async function getChecklistItemsByEvaluateCount(evaluateCount) {
     ORDER BY item_id;
   `;
   const result = await pool.query(query);
-  console.log("result.rows:", result.rows);
   return result.rows;
 }
-
-const arrayToObj = (array) => {
-  return array.reduce((obj, item) => {
-    obj[item.id] = item.content;
-    return obj;
-  }, {});
-};
-
-// async function incrementCounts(ids, type) {
-//   const column =
-//     type === "selected"
-//       ? "selected_count_by_naver_ai"
-//       : "evaluated_count_by_naver_ai";
-//   const idListString = ids.join(", ");
-//   const query = `
-//     UPDATE ${items}
-//     SET ${column} = ${column} + 1
-//     WHERE id IN (${idListString});
-//   `;
-//   try {
-//     const result = await pool.query(query);
-//     console.log(result.rowCount, "rows were updated");
-//   } catch (error) {
-//     console.error("Error updating counts:", error);
-//   }
-// }
-
-// async function updateReasons(reasons) {
-//   // Start a transaction
-//   await pool.query("BEGIN");
-
-//   try {
-//     for (const [id, reason] of Object.entries(reasons)) {
-//       const query = `UPDATE ${reasonTable} SET reason = $1 WHERE ai_checklist_items_id = $2;`;
-//       await pool.query(query, [reason, id]);
-//     }
-//     // Commit the transaction if all updates are successful
-//     await pool.query("COMMIT");
-//     console.log("All reasons were updated successfully.");
-//   } catch (error) {
-//     // If there's an error, roll back the transaction
-//     await pool.query("ROLLBACK");
-//     console.error("Error occurred during reasons update:", error);
-//   }
-// }
 
 async function incrementCounts(ids, type) {
   const column =
@@ -130,13 +84,7 @@ async function incrementCounts(ids, type) {
     SET ${column} = ${column} + 1
     WHERE id IN (${ids});
   `;
-  try {
-    // console.log("query:", query);
-    const result = await pool.query(query);
-    // console.log("rows were updated", type, result);
-  } catch (error) {
-    console.error("Error updating counts:", error);
-  }
+  await pool.query(query);
 }
 
 async function insertReasons(reasons) {
