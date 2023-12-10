@@ -33,7 +33,6 @@ export class AdminController {
 
     this.redisService.psubscribeToPattern('*', (message, channel) => {
       res.write(`data: ${changeFormat(channel, message)}\n\n`);
-      console.log(message, channel);
     });
 
     req.on('close', () => {
