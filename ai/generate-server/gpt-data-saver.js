@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
-const pool = new Pool({
+export const pool = new Pool({
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT),
   user: process.env.DB_USERNAME,
@@ -14,15 +14,15 @@ const pool = new Pool({
 });
 
 export const saveData = async (checklistItems, category) => {
-  const [main, sub, minor] = category;
+  const [main, sub, minor, categoryId] = category; // categoryId를 추가로 받습니다.
   const client = await pool.connect();
 
   try {
     for (const [key, value] of Object.entries(checklistItems)) {
       const queryText =
-        'INSERT INTO ai_checklist_items(content, mainCategory, subCategory, minorCategory) VALUES($1, $2, $3, $4)';
+        'INSERT INTO ai_checklist_item_model("content", "categoryId") VALUES($1, $2)';
 
-      await client.query(queryText, [value, main, sub, minor]);
+      await client.query(queryText, [value, categoryId]); // categoryId를 사용하여 쿼리 실행
     }
   } catch (error) {
     console.error('Error during database query execution:', error);

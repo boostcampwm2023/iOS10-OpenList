@@ -8,6 +8,31 @@ const organization = process.env.OPENAI_ORGANIZATION;
 
 // console.log(apiKey, organization);
 
+/**
+ * 응답이 유효한지 확인합니다.
+ * @param response
+ * @param count
+ */
+const checkIfValidResponse = (response, count) => {
+  const responseLength = Object.keys(response).length;
+  if (responseLength !== count) {
+    throw new Error(`Invalid response length: ${responseLength}`);
+  }
+
+  // 객체의 각 값의 길이가 30자 이하인지 확인
+  if (!Object.values(response).every((item) => item.length <= 30)) {
+    throw new Error(
+      `Invalid response item length: ${JSON.stringify(response)}`,
+    );
+  }
+};
+
+/**
+ * 카테고리를 받아서 gpt-4로 데이터 생성 후 postgres에 저장
+ * @param category
+ * @param count
+ * @returns {Promise<any>}
+ */
 export const generateGptData = async (category, count = 10) => {
   const openai = new OpenAI({ apiKey, organization });
   const [main, sub, minor] = category;
@@ -34,33 +59,39 @@ export const generateGptData = async (category, count = 10) => {
                 }
                 `;
   console.log('content:', content);
-  try {
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content,
-        },
-        { role: 'user', content: `${category}}` },
-      ],
-      // model: 'gpt-3.5-turbo-1106',
-      // model: 'gpt-4',
-      model: 'gpt-4-1106-preview',
-      // temperature: 1.5, // randomness
-      response_format: { type: 'json_object' },
-    });
-    console.log('gpt start');
-    // console.log('completion:', completion);
-    const response = completion.choices[0];
-    console.log('response: ', response);
-    const checklistItems = JSON.parse(
-      response.message.content.replace(/\\n/g, ''),
-    );
-    console.log(checklistItems);
-    return checklistItems;
-  } catch (error) {
-    console.error('Error during AI generation:', error);
-    throw error;
+
+  // 에러가 나면 retry
+  let retryCount = 1;
+  while (retryCount--) {
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content,
+          },
+          { role: 'user', content: `${category}}` },
+        ],
+        // model: 'gpt-3.5-turbo-1106',
+        // model: 'gpt-4',
+        model: 'gpt-4-1106-preview',
+        // temperature: 1.5, // randomness
+        response_format: { type: 'json_object' },
+      });
+      console.log('gpt start');
+      // console.log('completion:', completion);
+      const response = completion.choices[0];
+      console.log('response: ', response);
+      const checklistItems = JSON.parse(
+        response.message.content.replace(/\\n/g, ''),
+      );
+      console.log(checklistItems);
+      checkIfValidResponse(checklistItems, count);
+      return checklistItems;
+    } catch (error) {
+      console.error('Error during AI generation:', error);
+      retryCount++;
+    }
   }
 };
 
