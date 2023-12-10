@@ -1,15 +1,29 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import * as process from 'process';
 import { CreateChecklistItemsDto } from './dto/create-checklist-items.dto';
 import { AI_OPTIONS } from './const/ai-options.const';
 import { SYSTEM_ROLE } from './const/system-role.const';
 import { CLOVA_API_URL } from './const/request-option.const';
+import { RedisClientType } from 'redis';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AiChecklistItemModel } from './entities/ai-checklist-item';
 
 @Injectable()
 export class ChecklistAiService {
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private httpService: HttpService,
+    @InjectRepository(AiChecklistItemModel)
+    private readonly aiChecklistItemModelRepository: Repository<AiChecklistItemModel>,
+    @Inject('REDIS_PUB_CLIENT')
+    private readonly redisPublisher: RedisClientType,
+  ) {}
 
   // HTTP 요청을 보내는 별도의 메서드
   private async sendRequestToClova(url: string, headers: any, data: any) {
@@ -63,5 +77,40 @@ export class ChecklistAiService {
     }
 
     return this.extractResultData(response.data);
+  }
+
+  async getAiItemCountByCategories() {
+    const categoriesCount = await this.aiChecklistItemModelRepository
+      .createQueryBuilder('item')
+      .select('category.mainCategory', 'mainCategory')
+      .addSelect('category.subCategory', 'subCategory')
+      .addSelect('category.minorCategory', 'minorCategory')
+      .addSelect('COUNT(item.aiChecklistItemId)', 'itemCount')
+      .innerJoin('item.category', 'category')
+      .groupBy('category.mainCategory')
+      .addGroupBy('category.subCategory')
+      .addGroupBy('category.minorCategory')
+      .getRawMany();
+
+    console.log('categoriesCount', categoriesCount);
+    return categoriesCount;
+  }
+
+  formatCategoryData(categoriesCount) {
+    return categoriesCount.map((category) => {
+      return `[${category.mainCategory}, ${category.subCategory}, ${category.minorCategory}] - ${category.itemCount}개`;
+    });
+  }
+
+  publishToRedis(channel, formattedData) {
+    console.log('formattedData', formattedData);
+    this.redisPublisher.publish(channel, JSON.stringify(formattedData));
+  }
+
+  async publishItemCountByCategory() {
+    const categoriesCount = await this.getAiItemCountByCategories();
+    const formattedData = this.formatCategoryData(categoriesCount);
+    this.publishToRedis('itemCount', formattedData);
+    return formattedData;
   }
 }
