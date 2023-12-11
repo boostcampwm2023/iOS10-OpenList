@@ -34,7 +34,7 @@ final class WithCheckListCell: UICollectionViewCell {
 	
 	func configure(with item: WithCheckList) {
 		titleLabel.text = item.title
-		profileImagesCountLabel.text = "+\(item.users.count)"
+		profileImagesCountLabel.text = "\(item.users.count)명과 함께"
 	}
 }
 
