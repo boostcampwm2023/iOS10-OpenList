@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 struct WithDetailCheckListInput {
-	let viewWillAppear: PassthroughSubject<Void, Never>
+	let viewLoad: PassthroughSubject<Void, Never>
 	let socketConnet: PassthroughSubject<Void, Never>
 	let textShouldChange: PassthroughSubject<TextChange, Never>
 	let textDidChange: PassthroughSubject<WithCheckListItemChange, Never>
@@ -22,7 +22,7 @@ struct WithDetailCheckListInput {
 
 enum WithDetailCheckListState {
 	case none
-	case viewWillAppear(CheckList)
+	case viewLoad(CheckList)
 	case updateItems([any ListItem])
 	case appendItem(any ListItem)
 	case removeItem(any ListItem)
