@@ -1,27 +1,42 @@
-<img height="75" align="left" alt="OpenListAppIcon" src="https://hackmd.io/_uploads/rkuPMDeNa.png"/> 
+![image](https://hackmd.io/_uploads/H1JfySE86.png)
 
-# OpenList 
-**친구와 함께, AI와 함께 체크리스트 작성을!**
-
-# TEAM
-|S006|S008|S021|J050|J080|
-|:---:|:---:|:---:|:---:|:---:|
-|<img src="https://github.com/SeongHunTed.png" width="120">|<img src="https://github.com/klmyoungyun.png" width="120"/>|<img src="https://github.com/wi-seong-cheol.png" width="120"/>|<img src="https://github.com/pminsung12.png" width="120"/>|<img src="https://github.com/YangDongsuk.png" width="120"/>|
-|[김성훈](https://github.com/SeongHunTed)|[김영균](https://github.com/klmyoungyun)|[위성철](https://github.com/wi-seong-cheol)|[박민성](https://github.com/pminsung12)|[양동석](https://github.com/YangDongsuk)|
-|iOS|iOS|iOS|WEB|WEB|
+- [다운로드 링크](https://openlist.kro.kr)
+- [릴리즈 0.3.0](https://github.com/boostcampwm2023/iOS10-OpenList/tree/client/release/0.3.0)
+- [릴리즈 0.4.0](https://github.com/boostcampwm2023/iOS10-OpenList/tree/client/release/0.4.0)
 
 # Content
 - [주요기능](#주요기능)
 - [기술 스택](#기술-스택)
+- [문서](#문서)
 - [규칙](#규칙)
+- [팀소개](#TEAM)
 - [위키](https://github.com/boostcampwm2023/iOS10-OpenList/wiki)
 
 # 주요기능
+<details open>
+<summary><h3>CRDT</h3></summary>
+<div markdown="1">
+
 - `CRDT` 기술을 사용하여 사람들과 체크리스트 동시 편집
+    
+</div>
+</details>
+
+<details open>
+<summary><h3>AI</h3></summary>
+<div markdown="2">
+
 - `Naver Clova Studio` 를 활용한 AI가 추천한 체크리스트 제공
 
+</div>
+</details>
+
+
 # 기술 스택
-## 클라이언트
+<details open>
+<summary><h3>iOS</h3></summary>
+<div markdown="3">
+
 **`Xcode 및 MacOS 버전`**
 - 15.0.1 / Sonoma(14.0)
 
@@ -49,7 +64,13 @@
 **`오픈소스`**
 - [SwiftLint](https://github.com/realm/SwiftLint)
 
-## 서버
+</div>
+</details>
+
+<details open>
+<summary><h3>서버</h3></summary>
+<div markdown="4">
+
 **`Nest 버전`**
 - [NestJS](https://nestjs.com/) v.10.2.0
 - [TypeScript](https://www.typescriptlang.org/) v.5.1.3
@@ -64,17 +85,51 @@
 
 **`AI`**
 - [CLOVA Studio](https://www.ncloud.com/product/aiService/clovaStudio)
+- [GPT-4](https://openai.com/blog/introducing-chatgpt-and-whisper-apis)
 
 **`DevOps`**
 - [Docker](https://www.docker.com/)
-- [Ncloud](https://www.docker.com/)
+- [Ncloud](https://www.ncloud.com/)
 - [Nginx](https://www.nginx.com/)
 - [GitHub Actions](https://docs.github.com/ko/actions)
+    
+</div>
+</details>
 
-## 협업 도구
+<details open>
+<summary><h3>협업 도구</h3></summary>
+<div markdown="5">
+
+
 - [XD](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
 - [Notion](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
 - [Slack](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
+
+</div>
+</details>
+
+# 문서
+## 기획
+- [에픽](https://msmspark.notion.site/b7f4338e6f874b9cb336a744b4352cd0?pvs=4)
+- [유저스토리](https://msmspark.notion.site/06ef6f2186994a34af3916ed4154496a?v=bd29e6e95d714a07bda3235b709939b4&pvs=4)
+- [디자인](https://xd.adobe.com/view/f06a11c9-59d5-47d5-9ec7-87a0b18b90dd-a539/)
+
+## iOS
+|제목|키워드|
+|:---|:---|
+|[[ADR] 아키텍처 의사 결정 기록: iOS 애플리케이션 아키텍처 채택하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-iOS-애플리케이션-아키텍처-채택하기)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: SwiftLint 채택](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:--SwiftLint-채택)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: UI 영역에서 Combine 사용 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-UI-영역에서-Combine-사용-결정)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: Presentation영역의 ViewModel에서 Input Output 패턴 도입 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Presentation영역의-ViewModel에서-Input-Output-패턴-도입-결정)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: 코디네이터 패턴 도입 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-코디네이터-패턴-도입-결정)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: 로컬 스토리지로 코어 데이터 사용 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-로컬-스토리지로-코어-데이터-사용-결정)|**`ADR`**|
+|[[ADR] 아키텍처 의사 결정 기록: Custom Network Foundation 라이브러리 구현 및 모듈화 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Custom-Network-Foundation-라이브러리-구현-및-모듈화-결정)|**`ADR`**|
+
+## 서버
+|제목|키워드|
+|:---|:---|
+|[Sample]()|**`Sample`**|
+
 
 # 규칙
 <details>
@@ -189,3 +244,11 @@
 
 </div>
 </details>
+
+
+# TEAM
+|S006|S008|S021|J050|J080|
+|:---:|:---:|:---:|:---:|:---:|
+|<img src="https://github.com/SeongHunTed.png" width="120">|<img src="https://github.com/klmyoungyun.png" width="120"/>|<img src="https://github.com/wi-seong-cheol.png" width="120"/>|<img src="https://github.com/pminsung12.png" width="120"/>|<img src="https://github.com/YangDongsuk.png" width="120"/>|
+|[김성훈](https://github.com/SeongHunTed)|[김영균](https://github.com/klmyoungyun)|[위성철](https://github.com/wi-seong-cheol)|[박민성](https://github.com/pminsung12)|[양동석](https://github.com/YangDongsuk)|
+|iOS|iOS|iOS|WEB|WEB|
