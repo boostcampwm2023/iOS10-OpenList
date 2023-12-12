@@ -1,35 +1,73 @@
-![image](https://hackmd.io/_uploads/H1JfySE86.png)
+![image](https://github.com/boostcampwm2023/iOS10-OpenList/assets/53855302/314335b7-9f27-42ff-8eda-2078135970ff)
 
-- [다운로드 링크](https://openlist.kro.kr)
-- [릴리즈 0.3.0](https://github.com/boostcampwm2023/iOS10-OpenList/tree/client/release/0.3.0)
-- [릴리즈 0.4.0](https://github.com/boostcampwm2023/iOS10-OpenList/tree/client/release/0.4.0)
+
+<div align="center"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fboostcampwm2023/iOS10-OpenList&count_bg=%237B68DC&title_bg=%23464775&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/>
+    <img src="https://img.shields.io/github/stars/boostcampwm2023/iOS10-OpenList.svg?style=flat&label=star">
+<img src="https://github.com/boostcampwm2023/iOS10-OpenList/actions/workflows/main.yml/badge.svg"></div>
+<p align="center">
+    <code>2023.10.17 ~ </code>
+</p>
+
 
 # Content
 - [주요기능](#주요기능)
+- [기술적 도전](#기술적-도전)
 - [기술 스택](#기술-스택)
-- [문서](#문서)
-- [규칙](#규칙)
-- [팀소개](#TEAM)
+- [아키텍처](#아키텍처)
+- [문서](#프로젝트-문서)
+- [팀 소개](#TEAM)
 - [위키](https://github.com/boostcampwm2023/iOS10-OpenList/wiki)
 
+<br>
+
 # 주요기능
-<details open>
-<summary><h3>CRDT</h3></summary>
-<div markdown="1">
+![image](https://hackmd.io/_uploads/HJu_NVS8p.png)
+## AI
+> 체크리스트 작성이 어려운 사람들을 위해 AI 추천기능을 구현하였습니다.
+>
+> GPT-4를 이용한 체크리스트 캐싱 시스템, CLOVA Studio를 이용한 평가 시스템을 도입하여 빠르고 정확한 정보를 제공합니다.
 
-- `CRDT` 기술을 사용하여 사람들과 체크리스트 동시 편집
-    
-</div>
-</details>
+|체크리스트의 카테고리를 선택할 수 있어요|선택한 카테고리로 AI가 체크리스트를 추천해줘요|AI의 체크리스트를 바탕으로 개인 체크리스트를 만들어요|
+|:---:|:---:|:---:|
+|<img src="https://hackmd.io/_uploads/Sk9dT6SLp.gif"/>|<img src="https://hackmd.io/_uploads/ryYtapSUT.gif"/>|<img src="https://hackmd.io/_uploads/B1QxCaHIp.gif"/>
 
-<details open>
-<summary><h3>AI</h3></summary>
-<div markdown="2">
+## 동시편집!
+> 여러명과 동시에 체크리스트를 작성하기 위해 동시편집 기능을 구현하였습니다.
+> 
+> 동시편집은 CRDT 알고리즘 중에 RGATreeSplit 방식을 채택하였습니다.
 
-- `Naver Clova Studio` 를 활용한 AI가 추천한 체크리스트 제공
+|개인 체크리스트를 함께 작성하도록 변경할 수 있어요|친구를 초대하여 체크리스트를 같이 작성할 수 있어요|현재 편집중인 친구의 위치를 알 수 있어요|
+|:---:|:---:|:---:|
+|<img src="https://hackmd.io/_uploads/B1UOiaH8T.gif"/>|<img src="https://hackmd.io/_uploads/B1MZ3pBU6.gif"/>|<img src="https://hackmd.io/_uploads/SkYjqTrI6.gif"/>|
 
-</div>
-</details>
+- [[동시편집] CRDT vs OT](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-vs-OT)
+- [[동시편집] 왜 RGATreeSplit 방식을 채택하였나?](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%99%9C-RGASplitTree-%EB%B0%A9%EC%8B%9D%EC%9D%84-%EC%B1%84%ED%83%9D%ED%95%98%EC%98%80%EC%9D%84%EA%B9%8C%3F)
+- [[동시편집] ID 부여 방식](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-ID-%EB%B6%80%EC%97%AC%EB%B0%A9%EC%8B%9D)
+- [[동시편집] Tree 방식에서 밸런싱](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-Tree-%EB%B0%A9%EC%8B%9D%EC%97%90%EC%84%9C-%EB%B0%B8%EB%9F%B0%EC%8B%B1)
+- [[동시편집] 자소분리 문제 해결과정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%9E%90%EC%86%8C%EB%B6%84%EB%A6%AC-%ED%95%B4%EA%B2%B0%EA%B3%BC%EC%A0%95)
+
+# [기술적 도전](https://msmspark.notion.site/OPENLIST-a14eede6efb643698f166a0512f4206d?pvs=4)
+## 📡 [Redis Pub/Sub과 서버 다중화]()
+- 🔗 **서버 다중화**: Redis의 Pub/Sub 모델을 활용하여 서버 다중화를 구현하고, 효율적인 트래픽 분산 및 높은 확장성을 실현했습니다.
+
+- 🔄 **실시간 데이터 스트리밍**: 앱에서는 CRDT를 활용하여 실시간으로 체크리스트를 업데이트하고, 서버는 Redis의 list 자료구조를 이용해 데이터 어레이를 모두 유지하여 사용자의 연결의 끊어져도, 문서에 대한 실시간 최신 상태를 유지합니다.
+
+
+## 🌐 [Pipe & Filter 아키텍처와 인공지능 데이터 캐싱]()
+- ⚡ **응답 시간 최적화**: DB에서 카테고리별로 캐싱된 데이터를 활용하여 Clova Studio API 응답 시간을 단축했습니다.
+
+- 🛠 **캐싱 파이프라인**: Pipe & Filter 아키텍처를 적용하여 순차적 데이터 처리와 Redis Pub/Sub을 통한 효율적인 데이터 관리를 구현했습니다.
+
+![image](https://hackmd.io/_uploads/BJ36ipH8T.png)
+
+
+## 💻 [관리자 웹 페이지를 통한 시스템 모니터링]()
+- 📊 **실시간 모니터링**: 프로덕션 환경에서 서버 상태를 모니터링하고 장애를 신속하게 관리할 수 있는 관리자 페이지를 구축했습니다.
+
+- 📈 **데이터 관리 및 로깅**: Redis를 통해 시스템 로그를 관리하고, 캐싱 데이터 생성 및 평가 파이프라인을 트리거할 수 있는 기능을 통합했습니다.
+
+![image](https://hackmd.io/_uploads/ryDjsaB8T.png)
+
 
 
 # 기술 스택
@@ -37,82 +75,54 @@
 <summary><h3>iOS</h3></summary>
 <div markdown="3">
 
-**`Xcode 및 MacOS 버전`**
-- 15.0.1 / Sonoma(14.0)
+![Xcode](https://img.shields.io/badge/Xcode-15.0.1-blue?style=flat-square&logo=xcode) ![macOS](https://img.shields.io/badge/macOS-Sonoma(14.0)-lightgrey?style=flat-square&logo=apple)
 
-**`의존성 관리 도구`**
-- Swift Package Manager
+![Minimum Target](https://img.shields.io/badge/Minimum%20Target-16.0-blue?style=flat-square&logo=apple)
+![UI Framework](https://img.shields.io/badge/UI%20Framework-UIKit-lightblue?style=flat-square&logo=apple)
+![Async Framework](https://img.shields.io/badge/Async%20Framework-Combine-yellow?style=flat-square&logo=apple)
+![Architecture](https://img.shields.io/badge/Architecture-Butterfly%20Architecture-orange?style=flat-square)
 
-**`미니멈 타겟`**
-- 16.0
+![Others](https://img.shields.io/badge/Others-Core%20Data-green?style=flat-square&logo=apple)
+![Open Source](https://img.shields.io/badge/Open%20Source-SwiftLint-red?style=flat-square&logo=swift)
 
-**`UI 프레임워크`**
-- UIKit
-
-**`비동기 프레임워크`**
-- [Combine](https://developer.apple.com/documentation/combine)
-
-**`아키텍처`**
-- [Butterfly Architecture](https://medium.com/@jungkim/%EB%B2%84%ED%84%B0%ED%94%8C%EB%9D%BC%EC%9D%B4-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EB%A5%BC-%EC%86%8C%EA%B0%9C%ED%95%A9%EB%8B%88%EB%8B%A4-9d4abd71c3c1)
-- Router Pattern
-
-**`기타`**
-- [Core Data](https://developer.apple.com/documentation/coredata/)
-- [Swift.Network](https://developer.apple.com/documentation/network)
-- [APNs](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns)
-
-**`오픈소스`**
-- [SwiftLint](https://github.com/realm/SwiftLint)
 
 </div>
 </details>
+
 
 <details open>
-<summary><h3>서버</h3></summary>
-<div markdown="4">
+<summary><h3>💻 서버</h3></summary>
+<div markdown="1">
 
-**`Nest 버전`**
-- [NestJS](https://nestjs.com/) v.10.2.0
-- [TypeScript](https://www.typescriptlang.org/) v.5.1.3
+![NestJS](https://img.shields.io/badge/NestJS-v.10.2.0-brightgreen?style=flat-square&logo=nestjs)
+![TypeScript](https://img.shields.io/badge/TypeScript-v.5.1.3-blue?style=flat-square&logo=typescript)
 
-**`데이터베이스`**
-- [Postgresql](https://www.postgresql.org/)
-- [TypeORM](https://typeorm.io/)
-- [Redis](https://redis.io/)
+![PostgreSQL](https://img.shields.io/badge/Postgresql-v.15-blue?style=flat-square&logo=postgresql)
+![TypeORM](https://img.shields.io/badge/TypeORM-v.10-orange?style=flat-square&logo=typeorm)
+![Redis](https://img.shields.io/badge/Redis-v.7.2-red?style=flat-square&logo=redis)
 
-**`테스트`**
-- [Jest](https://jestjs.io/)
+![CLOVA Studio](https://img.shields.io/badge/CLOVA%20Studio-API-yellow?style=flat-square&logo=naver) ![GPT-4](https://img.shields.io/badge/GPT--4-API-purple?style=flat-square&logo=openai)
 
-**`AI`**
-- [CLOVA Studio](https://www.ncloud.com/product/aiService/clovaStudio)
-- [GPT-4](https://openai.com/blog/introducing-chatgpt-and-whisper-apis)
+![Docker](https://img.shields.io/badge/Docker-Tool-blue?style=flat-square&logo=docker) ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI/CD-blueviolet?style=flat-square&logo=github-actions) ![Nginx](https://img.shields.io/badge/Nginx-Server-lightgrey?style=flat-square&logo=nginx) 
+![Ncloud](https://img.shields.io/badge/Ncloud-Service-yellow?style=flat-square&logo=naver)
 
-**`DevOps`**
-- [Docker](https://www.docker.com/)
-- [Ncloud](https://www.ncloud.com/)
-- [Nginx](https://www.nginx.com/)
-- [GitHub Actions](https://docs.github.com/ko/actions)
-    
-</div>
-</details>
-
-<details open>
-<summary><h3>협업 도구</h3></summary>
-<div markdown="5">
-
-
-- [XD](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
-- [Notion](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
-- [Slack](https://helpx.adobe.com/xd/user-guide.html) - A digital design app for Mac (paid)
 
 </div>
 </details>
 
-# 문서
-## 기획
-- [에픽](https://msmspark.notion.site/b7f4338e6f874b9cb336a744b4352cd0?pvs=4)
-- [유저스토리](https://msmspark.notion.site/06ef6f2186994a34af3916ed4154496a?v=bd29e6e95d714a07bda3235b709939b4&pvs=4)
-- [디자인](https://xd.adobe.com/view/f06a11c9-59d5-47d5-9ec7-87a0b18b90dd-a539/)
+</br>
+</br>
+
+# 아키텍처
+
+### iOS 아키텍처
+<img width="1000" alt="IOS 아키텍처-버터플라이아키텍처" src="https://hackmd.io/_uploads/Bkp5HTr8a.png"/>
+
+### 서버 아키텍처
+<img width="1000" alt="서버 아키텍쳐" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/f0f11e91-dbab-4552-986c-2d8d28afbc16">
+
+
+# 프로젝트 문서
 
 ## iOS
 |제목|키워드|
@@ -124,131 +134,19 @@
 |[[ADR] 아키텍처 의사 결정 기록: 코디네이터 패턴 도입 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-코디네이터-패턴-도입-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: 로컬 스토리지로 코어 데이터 사용 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-로컬-스토리지로-코어-데이터-사용-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: Custom Network Foundation 라이브러리 구현 및 모듈화 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Custom-Network-Foundation-라이브러리-구현-및-모듈화-결정)|**`ADR`**|
-
-## 서버
-|제목|키워드|
-|:---|:---|
-|[Sample]()|**`Sample`**|
-
-
-# 규칙
-<details>
-<summary>
-<b>
-<a href="https://github.com/boostcampwm2023/iOS10-OpenList/wiki/그라운드-룰">그라운드 룰</a>
-</b>
-</summary>
-<div markdown="1">
-    
-## 🐥 오리 규칙
-**✅ 오리들 수면 시간을 보장합니다.**
-  - 수면 코어 시간: `04:00 ~ 07:00`
-  - 최소 6시간을 지킵니다.
-```
-잠깐! 오리들 수면 시간
-  - 성훈님: `04:00 ~ 09:00`
-  - 성철님: `01:00 ~ 09:00`
-  - 영균님: `12:00 ~ 07:30`
-  - 동석님: `07:00 ~ 09:00`, `12:00 ~ 16:00(마스터클래스 없는 날)`
-  - 민성님: `03:00 ~ 09:50`
-```
-
-**✅ 코어타임을 준수합니다.**
-  - 참석하기 어려운 상황이 있다면 팀원에게 미리 알려줍니다.
-  - 평일에 열심히하고 주말엔 쉽니다.
-
-**✅ 회의**
- - 50분 회의 10분 휴식을 준수합니다.
- - 끝내는 시간을 정하고 회의를 시작합니다.
-
-**✅ 스크럼 마스터는 서로 돌아가면서합니다.**
-
+|[[ADR] 아키텍처 의사 결정 기록: 웹 소켓을 뷰 컨트롤러에서 연결하도록 변경](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-웹-소켓을-뷰-컨트롤러에서-연결하도록-변경)|**`ADR`**|
+|[CRDT vs OT](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-vs-OT)|**`CRDT`**|
+|[왜 RGATreeSplit 방식을 채택하였나?](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%99%9C-RGASplitTree-%EB%B0%A9%EC%8B%9D%EC%9D%84-%EC%B1%84%ED%83%9D%ED%95%98%EC%98%80%EC%9D%84%EA%B9%8C%3F)|**`CRDT`**|
+|[ID 부여 방식](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-ID-%EB%B6%80%EC%97%AC%EB%B0%A9%EC%8B%9D)|**`CRDT`**|
+|[Tree 방식에서 밸런싱](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-Tree-%EB%B0%A9%EC%8B%9D%EC%97%90%EC%84%9C-%EB%B0%B8%EB%9F%B0%EC%8B%B1)|**`CRDT`**|
+|[자소분리 문제 해결과정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%9E%90%EC%86%8C%EB%B6%84%EB%A6%AC-%ED%95%B4%EA%B2%B0%EA%B3%BC%EC%A0%95)|**`CRDT`**|
+|[딥링크로 체크리스트 초대하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/딥링크로-체크리스트-초대하기)|**`딥링크`**|
 </div>
 </details>
-
-<details>
-<summary>
-<b>
-<a href="https://github.com/boostcampwm2023/iOS10-OpenList/wiki/브랜치-전략">브랜치 전략</a>
-</b>
-</summary>
-<div markdown="2">
-
-## 🐥 오리의 브랜치 전략
-**main branch**
-- `main`
-
-**develop branch**
-- `ios/develop`
-- `backend/develop`
-
-**feature branch**
-- `ios/feature/#{issue_number}`
-- `backend/feature/#{issue_number}`
-
-**release branch**
-> 릴리즈 넘버 규칙 : `major.minor.patch`
-- `ios/release/#{release_number}`
-- `backend/release/#{release_number}`
-
-</div>
-</details>
-
-
-<details>
-<summary>
-<b>
-<a href="https://github.com/boostcampwm2023/iOS10-OpenList/wiki/커밋-전략">커밋 전략</a>
-</b>
-</summary>
-<div markdown="3">
-
-## 🐥 커밋 전략
-```
-# <타입>: <제목>
-#
-# 본문은 위에 작성
-# --- COMMIT END ---
-#
-# <타입> 리스트
-#   feat    : 기능 (새로운 기능)
-#   fix     : 버그 (버그 수정)
-#   refactor: 리팩토링
-#   style   : 코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우
-#   docs    : 문서 (문서 추가, 수정, 삭제)
-#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)
-#   chore   : 빌드 업무 수정, 패키지 매니저 수정
-#
-# ------------------
-#
-#   타입은 영어로 작성하고 제목과 본문은 한글로 작성한다.
-#   제목 끝에 마침표(.) 금지
-#   제목과 본문을 한 줄 띄워 분리하기
-#   본문은 "어떻게" 보다 "무엇을", "왜"를 설명한다.
-#   본문에 여러줄의 메시지를 작성할 땐 "-"로 구분
-#
-# ------------------
-#
-# 예시
-#   feat: 회원 가입 기능 구현
-#   fix: jwt 버그 수정
-#   docs: 스프린트 계획 추가
-#   style: 코드 인덴트 수정
-#   style: 코드 띄어쓰기 수정
-#   style: 변수명 변경
-#   style: 주석 제거
-#   refactor: 회원 가입 로직 리팩토링
-#   test: 뷰 모델 테스트 코드 추가
-#   chore: 빌드 패키지 수정
-```
-
-</div>
-</details>
-
 
 # TEAM
 |S006|S008|S021|J050|J080|
 |:---:|:---:|:---:|:---:|:---:|
 |<img src="https://github.com/SeongHunTed.png" width="120">|<img src="https://github.com/klmyoungyun.png" width="120"/>|<img src="https://github.com/wi-seong-cheol.png" width="120"/>|<img src="https://github.com/pminsung12.png" width="120"/>|<img src="https://github.com/YangDongsuk.png" width="120"/>|
 |[김성훈](https://github.com/SeongHunTed)|[김영균](https://github.com/klmyoungyun)|[위성철](https://github.com/wi-seong-cheol)|[박민성](https://github.com/pminsung12)|[양동석](https://github.com/YangDongsuk)|
-|iOS|iOS|iOS|WEB|WEB|
+|iOS|iOS|iOS|Backend|Backend|
