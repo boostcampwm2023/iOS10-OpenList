@@ -1,6 +1,7 @@
 const redis = require("redis");
 require("dotenv").config();
 
+// RedisPub 클래스
 class RedisPub {
   constructor() {
     this.init();

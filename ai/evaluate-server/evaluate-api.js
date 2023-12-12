@@ -4,6 +4,51 @@ const RedisPub = require("./RedisPub");
 
 const publisher = new RedisPub();
 
+// 체크리스트를 평가하는 메인 함수
+async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
+  let retryCount = 0;
+  while (retryCount < maxRetries) {
+    try {
+      const result = await evaluateChecklistItem(categoryDto, checklistDto);
+      const { select, reason } = await aiResultParser(result);
+      await checkValidResult(select, reason, checklistDto);
+      await publisher.send(
+        "ai_evaluate",
+        JSON.stringify({ message: "result", body: { select, reason } })
+      );
+      console.log("select:", select);
+      console.log("reason:", reason);
+      return { select, reason };
+    } catch (error) {
+      // 429 에러인 경우, 2초에서 5초 사이의 랜덤한 시간 동안 대기 후 재시도
+      if (error?.response?.status === 429) {
+        console.error("Too many requests");
+        const delayTime = getRandomDelay(2000, 10000); // 2초에서 5초 사이의 랜덤한 시간
+        console.log(`Waiting for ${delayTime}ms before retry...`);
+        await publisher.send(
+          "ai_evaluate_error",
+          `Too many requests::Waiting for ${delayTime}ms before retry...`
+        );
+        await delay(delayTime);
+        continue; // 다음 시도로 이동
+      }
+      console.error("Error:", error.message);
+      await publisher.send("ai_evaluate_error", error.message);
+      console.log("retryCount:", retryCount + 1);
+      await publisher.send(
+        "ai_evaluate_error",
+        `retryCount: ${retryCount + 1}`
+      );
+      retryCount++;
+    }
+  }
+  if (retryCount === maxRetries) {
+    console.error("모든 재시도 실패");
+    await publisher.send("ai_evaluate_error", "모든 재시도 실패");
+    return { select: undefined, reason: undefined };
+  }
+}
+
 const AI_OPTIONS = {
   topP: 0.8,
   topK: 0,
@@ -62,6 +107,7 @@ const SYSTEM_ROLE = {
     `,
 };
 
+// api 요청을 보내는 함수
 async function sendRequestToClova(data) {
   const headers = {
     "X-NCP-CLOVASTUDIO-API-KEY": process.env.X_NCP_CLOVASTUDIO_API_KEY,
@@ -75,6 +121,7 @@ async function sendRequestToClova(data) {
   return response.data;
 }
 
+// 카테고리 기반으로 사용자 역할을 가진 메시지를 생성하는 함수
 function getUserRole(categoryDto, checklistDto) {
   return {
     role: "user",
@@ -86,6 +133,7 @@ function getUserRole(categoryDto, checklistDto) {
   };
 }
 
+// clova api를 통해 체크리스트를 평가를 요청하고 결과를 반환하는 함수
 async function evaluateChecklistItem(categoryDto, checklistDto) {
   const requestData = {
     messages: [SYSTEM_ROLE, getUserRole(categoryDto, checklistDto)],
@@ -96,6 +144,7 @@ async function evaluateChecklistItem(categoryDto, checklistDto) {
   return result;
 }
 
+// clova api의 결과를 파싱하는 함수
 async function aiResultParser(result) {
   const content = result?.result?.message?.content;
   const parsedContent = JSON.parse(content);
@@ -104,6 +153,7 @@ async function aiResultParser(result) {
   return { select, reason };
 }
 
+// clova api의 결과가 유효한지 검사하는 함수
 async function checkValidResult(select, reason, checklistDto) {
   if (select.length !== 3) {
     throw new Error("select 항목이 3개가 아닙니다.");
@@ -123,56 +173,14 @@ async function checkValidResult(select, reason, checklistDto) {
   }
 }
 
+// 지정된 시간만큼 대기하는 함수
 function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+// 지정된 범위의 랜덤한 시간을 반환하는 함수
 function getRandomDelay(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
-  let retryCount = 0;
-  while (retryCount < maxRetries) {
-    try {
-      const result = await evaluateChecklistItem(categoryDto, checklistDto);
-      const { select, reason } = await aiResultParser(result);
-      await checkValidResult(select, reason, checklistDto);
-      await publisher.send(
-        "ai_evaluate",
-        JSON.stringify({ message: "result", body: { select, reason } })
-      );
-      console.log("select:", select);
-      console.log("reason:", reason);
-      return { select, reason };
-    } catch (error) {
-      // 429 에러인 경우, 2초에서 5초 사이의 랜덤한 시간 동안 대기 후 재시도
-      if (error?.response?.status === 429) {
-        console.error("Too many requests");
-        const delayTime = getRandomDelay(2000, 10000); // 2초에서 5초 사이의 랜덤한 시간
-        console.log(`Waiting for ${delayTime}ms before retry...`);
-        await publisher.send(
-          "ai_evaluate_error",
-          `Too many requests::Waiting for ${delayTime}ms before retry...`
-        );
-        await delay(delayTime);
-        continue; // 다음 시도로 이동
-      }
-      console.error("Error:", error.message);
-      await publisher.send("ai_evaluate_error", error.message);
-      console.log("retryCount:", retryCount + 1);
-      await publisher.send(
-        "ai_evaluate_error",
-        `retryCount: ${retryCount + 1}`
-      );
-      retryCount++;
-    }
-  }
-  if (retryCount === maxRetries) {
-    console.error("모든 재시도 실패");
-    await publisher.send("ai_evaluate_error", "모든 재시도 실패");
-    return { select: undefined, reason: undefined };
-  }
 }
 
 module.exports = {

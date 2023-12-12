@@ -15,6 +15,8 @@ const subscriber = redis.createClient({
 
 const publisher = new RedisPub();
 
+// 메인 함수
+// processAiEvaluate 메시지를 받으면 ai_evaluate를 시작하는 함수
 async function main() {
   const redisSub = await subscriber.connect();
   redisSub.subscribe("ai_generate", async function (data) {
@@ -32,7 +34,7 @@ async function main() {
         const evaluateCycle = result.length;
         publisher.send("ai_evaluate", `expected count: ${evaluateCycle}`);
 
-        await processResultsSequentially(result); // 작업이 완료될 때까지 기다림
+        await processResultsConcurrency(result); // 작업이 완료될 때까지 기다림
         console.log("모든 처리가 완료되었습니다.");
         publisher.send("ai_evaluate", `모든 처리가 완료되었습니다.`);
       }
@@ -43,6 +45,7 @@ async function main() {
   });
 }
 
+// JSON 데이터를 파싱하는 함수
 function parseJsonData(data) {
   try {
     return JSON.parse(data);
@@ -50,10 +53,10 @@ function parseJsonData(data) {
     return { message: "", body: "0" };
   }
 }
+
+// 카테고리별로 아이템을 묶고, 10개씩 묶어서 반환하는 함수
 function transformAndChunkItems(items, chunkSize = 10) {
   const categoryMap = {};
-
-  // Group items by category_id
   items.forEach((item) => {
     if (!categoryMap[item.category_id]) {
       categoryMap[item.category_id] = {
@@ -84,7 +87,8 @@ function transformAndChunkItems(items, chunkSize = 10) {
   return result;
 }
 
-async function processResultsSequentially(result) {
+// ai evaluate를 동시에 여러개 처리하는 함수
+async function processResultsConcurrency(result) {
   let successCount = 0;
   let failureCount = 0;
   const proccessCycle = result.length;
