@@ -17,7 +17,7 @@ public final class RGASTree<T: Codable & Equatable>: Codable {
 	weak var root: RGASNode<T>? //
 	
 	/// 부모를 가르키는 idNode
-	var parent: RGASTree<T>?
+	weak var parent: RGASTree<T>?
 	
 	/// 왼쪽 자식 트리를 가르키는 idNode
 	private(set) var leftChild: RGASTree<T>?
