@@ -175,8 +175,6 @@ async function processAiResult(categoryDto, checklistDto, maxRetries = 10) {
   }
 }
 
-// processAiResult();
-
 module.exports = {
   processAiResult,
 };

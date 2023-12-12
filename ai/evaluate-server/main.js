@@ -1,12 +1,13 @@
+const { PromisePool } = require("@supercharge/promise-pool");
+const RedisPub = require("./RedisPub");
+const redis = require("redis");
 const {
   getChecklistItemsByEvaluateCount,
   incrementCounts,
   insertReasons,
   pool,
 } = require("./postgres.js");
-const { PromisePool } = require("@supercharge/promise-pool");
-const RedisPub = require("./RedisPub");
-const redis = require("redis");
+const { processAiResult } = require("./evaluate-api.js");
 
 const subscriber = redis.createClient({
   url: process.env.REDIS_URL,
@@ -14,7 +15,6 @@ const subscriber = redis.createClient({
 
 const publisher = new RedisPub();
 
-const { processAiResult } = require("./evaluate-api.js");
 async function main() {
   const redisSub = await subscriber.connect();
   redisSub.subscribe("ai_generate", async function (data) {
@@ -70,7 +70,6 @@ function transformAndChunkItems(items, chunkSize = 10) {
     });
   });
 
-  // Chunk items within each category
   const result = [];
   Object.values(categoryMap).forEach((cat) => {
     for (let i = 0; i < cat.contents.length; i += chunkSize) {
@@ -113,8 +112,6 @@ async function processResultsSequentially(result) {
           );
         } catch (error) {
           failureCount++;
-          // console.log("Failure:", failureCount);
-          // publisher.send("ai_generate", `Failure: ${failureCount}`);
           console.error("An error occurred:", error);
           publisher.send("ai_evaluate_error", `An error occurred: ${error}`);
           console.log(`Failure: ${failureCount} / ${proccessCycle}`);
