@@ -53,9 +53,18 @@ async function insertReasons(reasons) {
   await Promise.all(inserts);
 }
 
+async function setFinalScore() {
+  const query = `
+  UPDATE "${ITEM_MODEL}"
+  SET final_score = ROUND((selected_count_by_naver_ai::float / GREATEST(evaluated_count_by_naver_ai, 1)) * 100 + LOG(GREATEST(evaluated_count_by_naver_ai, 1)));
+  `;
+  await pool.query(query);
+}
+
 module.exports = {
   getChecklistItemsByEvaluateCount,
   incrementCounts,
   insertReasons,
+  setFinalScore,
   pool,
 };

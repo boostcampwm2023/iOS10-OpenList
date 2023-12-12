@@ -5,6 +5,7 @@ const {
   getChecklistItemsByEvaluateCount,
   incrementCounts,
   insertReasons,
+  setFinalScore,
   pool,
 } = require("./postgres.js");
 const { processAiResult } = require("./evaluate-api.js");
@@ -35,8 +36,11 @@ async function main() {
         publisher.send("ai_evaluate", `expected count: ${evaluateCycle}`);
 
         await processResultsConcurrency(result); // 작업이 완료될 때까지 기다림
-        console.log("모든 처리가 완료되었습니다.");
-        publisher.send("ai_evaluate", `모든 처리가 완료되었습니다.`);
+        console.log("모든 평가가 완료되었습니다.");
+        publisher.send("ai_evaluate", `모든 평가가 완료되었습니다.`);
+        await setFinalScore();
+        console.log("final_score가 업데이트되었습니다.");
+        publisher.send("ai_evaluate", `final_score가 업데이트되었습니다.`);
       }
     } catch (error) {
       console.error("An error occurred:", error);
