@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryModel } from './entities/category.entity';
 import { Repository } from 'typeorm';
@@ -12,49 +12,62 @@ export class CategoriesService {
 
   /**
    * 대카테고리 반환
-   * @returns {Promise<{id: number, name: string}[]>}
+   * @returns {Promise<{name: string}[]>}
    */
-  async findMainCategories(): Promise<{ id: number; name: string }[]> {
-    const categories = await this.categoryModelRepository.find();
-    return categories.map((category) => ({
-      id: category.categoryId,
-      name: category.mainCategory,
-    }));
+  async findMainCategories(): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.mainCategory', 'name')
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
+      throw new BadRequestException('대카테고리가 존재하지 않습니다.');
+    return categories;
   }
 
   /**
    * 특정 대카테고리의 중카테고리 반환
-   * @param {number} mainId
-   * @returns {{id: number, name: string}[]}
+   * @param {string} mainCategory
+   * @returns {Promise<{name: string}[]>}
    */
-  async findSubCategories(
-    mainId: number,
-  ): Promise<{ id: number; name: string }[]> {
-    const categories = await this.categoryModelRepository.find({
-      where: { mainCategory: mainId.toString() },
-    });
-    return categories.map((category) => ({
-      id: category.categoryId,
-      name: category.subCategory,
-    }));
+  async findSubCategories(mainCategory: string): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.subCategory', 'name')
+      .where('category.mainCategory = :mainCategory', { mainCategory })
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
+      throw new BadRequestException(
+        `${mainCategory}에 대한 중카테고리가 존재하지 않습니다.`,
+      );
+    return categories;
   }
 
   /**
    * 특정 중카테고리의 소카테고리 반환
-   * @param {number} mainId
-   * @param {number} subId
-   * @returns {{id: number; name: string}[]}
+   * @param {string} mainCategory
+   * @param {string} subCategory
+   * @returns {Promise<{name: string}[]>}
    */
   async findMinorCategories(
-    mainId: number,
-    subId: number,
-  ): Promise<{ id: number; name: string }[]> {
-    const categories = await this.categoryModelRepository.find({
-      where: { mainCategory: mainId.toString(), subCategory: subId.toString() },
-    });
-    return categories.map((category) => ({
-      id: category.categoryId,
-      name: category.minorCategory,
-    }));
+    mainCategory: string,
+    subCategory: string,
+  ): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.minorCategory', 'name')
+      .where('category.mainCategory = :mainCategory', { mainCategory })
+      .andWhere('category.subCategory = :subCategory', { subCategory })
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
+      throw new BadRequestException(
+        `${mainCategory}-${subCategory}에 대한 소카테고리가 존재하지 않습니다.`,
+      );
+    return categories;
   }
 }

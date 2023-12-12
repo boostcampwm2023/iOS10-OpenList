@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 
 @Controller('categories')
@@ -10,16 +10,19 @@ export class CategoriesController {
     return this.categoriesService.findMainCategories();
   }
 
-  @Get(':mainId/sub-categories')
-  getSubCategories(@Param('mainId') mainId: number) {
-    return this.categoriesService.findSubCategories(mainId);
+  @Get('/sub-categories')
+  getSubCategories(@Query('mainCategory') mainCategory: string) {
+    return this.categoriesService.findSubCategories(mainCategory);
   }
 
-  @Get(':mainId/sub-categories/:subId/minor-categories')
+  @Get('minor-categories')
   getMinorCategories(
-    @Param('mainId') mainId: number,
-    @Param('subId') subId: number,
+    @Query('mainCategory') mainCategory: string,
+    @Query('subCategory') subCategory: string,
   ) {
-    return this.categoriesService.findMinorCategories(mainId, subId);
+    return this.categoriesService.findMinorCategories(
+      mainCategory,
+      subCategory,
+    );
   }
 }
