@@ -8,7 +8,7 @@ export class ChecklistAiController {
 
   @Post()
   async getChecklistItemsWithAi(@Body() dto: CreateChecklistItemsDto) {
-    return this.checklistAiService.generateChecklistItemWithAi(dto);
+    return this.checklistAiService.findAiChecklistItems(dto);
   }
 
   @Get('count-item')

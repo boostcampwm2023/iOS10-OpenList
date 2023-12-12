@@ -1,60 +1,73 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CATEGORIES } from './const/categories.const';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryModel } from './entities/category.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CategoriesService {
+  constructor(
+    @InjectRepository(CategoryModel)
+    private readonly categoryModelRepository: Repository<CategoryModel>,
+  ) {}
+
   /**
-   * 모든 대카테고리 반환
-   * @returns {{id: number, name: string}[]}
+   * 대카테고리 반환
+   * @returns {Promise<{name: string}[]>}
    */
-  findMainCategories(): { id: number; name: string }[] {
-    return CATEGORIES.mainCategory.map(({ id, name }) => ({ id, name }));
+  async findMainCategories(): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.mainCategory', 'name')
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
+      throw new BadRequestException('대카테고리가 존재하지 않습니다.');
+    return categories;
   }
 
   /**
    * 특정 대카테고리의 중카테고리 반환
-   * @param {number} mainId
-   * @returns {{id: number, name: string}[]}
+   * @param {string} mainCategory
+   * @returns {Promise<{name: string}[]>}
    */
-  findSubCategories(mainId: number): { id: number; name: string }[] {
-    // 특정 대카테고리의 중카테고리만 반환
-    const mainCategory = CATEGORIES.mainCategory.find(
-      (category) => category.id === (mainId as unknown as number),
-    );
-    if (!mainCategory) {
+  async findSubCategories(mainCategory: string): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.subCategory', 'name')
+      .where('category.mainCategory = :mainCategory', { mainCategory })
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
       throw new BadRequestException(
-        `대 카테고리 ID ${mainId}은/는 존재하지 않습니다.`,
+        `${mainCategory}에 대한 중카테고리가 존재하지 않습니다.`,
       );
-    }
-    return mainCategory.subcategories.map(({ id, name }) => ({ id, name }));
+    return categories;
   }
 
   /**
    * 특정 중카테고리의 소카테고리 반환
-   * @param {number} mainId
-   * @param {number} subId
-   * @returns {{id: number; name: string}[]}
+   * @param {string} mainCategory
+   * @param {string} subCategory
+   * @returns {Promise<{name: string}[]>}
    */
-  findMinorCategories(
-    mainId: number,
-    subId: number,
-  ): { id: number; name: string }[] {
-    const mainCategory = CATEGORIES.mainCategory.find(
-      (category) => category.id === (mainId as unknown as number),
-    );
-    if (!mainCategory) {
+  async findMinorCategories(
+    mainCategory: string,
+    subCategory: string,
+  ): Promise<{ name: string }[]> {
+    const categories = await this.categoryModelRepository
+      .createQueryBuilder('category')
+      .select('category.minorCategory', 'name')
+      .where('category.mainCategory = :mainCategory', { mainCategory })
+      .andWhere('category.subCategory = :subCategory', { subCategory })
+      .distinct(true)
+      .getRawMany();
+
+    if (!categories.length)
       throw new BadRequestException(
-        `대 카테고리 ID ${mainId}은/는 존재하지 않습니다.`,
+        `${mainCategory}-${subCategory}에 대한 소카테고리가 존재하지 않습니다.`,
       );
-    }
-    const subCategory = mainCategory.subcategories.find(
-      (sub) => sub.id === (subId as unknown as number),
-    );
-    if (!subCategory) {
-      throw new BadRequestException(
-        `중 카테고리 ID ${subId}은/는 존재하지 않습니다.`,
-      );
-    }
-    return subCategory.minorCategories;
+    return categories;
   }
 }
