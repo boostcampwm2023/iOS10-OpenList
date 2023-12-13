@@ -8,6 +8,6 @@
 import Foundation
 
 struct RecommendChecklistItem {
-	let id: String
+	let id: Int
 	let content: String
 }

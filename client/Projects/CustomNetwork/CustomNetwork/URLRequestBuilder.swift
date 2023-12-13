@@ -49,6 +49,18 @@ public struct URLRequestBuilder {
 		return self
 	}
 	
+	@discardableResult
+	mutating public func addQuery(query: [String: String]) -> URLRequestBuilder {
+		guard let url = self.url else { return self }
+		var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+		components?.percentEncodedQuery = query
+			.map { $0.key + "=" + $0.value }
+			.joined(separator: "&")
+			.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+		self.url = components?.url
+		return self
+	}
+	
 	func build() -> URLRequest? {
 		guard let url = url else { return nil }
 		var request = URLRequest(url: url)
@@ -58,3 +70,20 @@ public struct URLRequestBuilder {
 		return request
 	}
 }
+//
+//extension URLQueryItem {
+//	func percentEncoded() -> URLQueryItem {
+//		var newQueryItem = self
+//		newQueryItem.value = value?
+//			.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+////			.replacingOccurrences(of: "+", with: "%2B")
+//		
+//		return newQueryItem
+//	}
+//}
+//
+//extension Array where Element == URLQueryItem {
+//	func percentEncoded() -> Array<Element> {
+//		return map { $0.percentEncoded() }
+//	}
+//}

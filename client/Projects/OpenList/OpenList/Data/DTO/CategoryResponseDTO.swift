@@ -8,7 +8,6 @@
 import Foundation
 
 struct MainCategoryResponseDTO: Decodable {
-	let id: Int
 	let name: String
 }
 
