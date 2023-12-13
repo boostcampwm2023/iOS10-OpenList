@@ -182,15 +182,15 @@ private extension WithDetailCheckListViewController {
 		dataSource?.updatePlaceholder()
 	}
 	
-	func removeItem(id: UUID, indexPath: IndexPath) {
+	func removeItem(item: CheckListItem) {
 		removeDocument.send(
 			.init(
-				id: id,
-				content: "",
+				id: item.id,
+				content: item.title,
 				range: .init(location: 0, length: 0)
 			)
 		)
-		dataSource?.deleteCheckListItem(at: indexPath)
+		dataSource?.deleteCheckListItem(at: item)
 	}
 }
 
@@ -350,7 +350,7 @@ extension WithDetailCheckListViewController: UITableViewDelegate {
 		let item = checkListView.cellForRow(WithCheckListItemCell.self, at: indexPath)
 		let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, completion in
 			let id = item.cellId ?? UUID()
-			self?.removeItem(id: id, indexPath: indexPath)
+			self?.removeItem(item: .init(itemId: id, title: "", isChecked: false))
 			completion(true)
 		}
 		action.image = UIImage(systemName: "trash")
@@ -367,17 +367,6 @@ extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
 		checkListView.endUpdates()
 	}
 	
-	func textViewDidEndEditing(
-		_ textView: OpenListTextView,
-		cell: WithCheckListItemCell,
-		indexPath: IndexPath
-	) {
-		guard let text = textView.text, !text.isEmpty else {
-			dataSource?.deleteCheckListItem(at: indexPath)
-			return
-		}
-	}
-	
 	func textView(
 		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
@@ -391,7 +380,7 @@ extension WithDetailCheckListViewController: WithCheckListItemCellDelegate {
 		let updatedText = text.replacingCharacters(in: stringRange, with: string)
 		guard updatedText.count <= 30 && range.length < 2 else { return false }
 		guard !updatedText.isEmpty else {
-			removeItem(id: cellId, indexPath: indexPath)
+			removeItem(item: .init(itemId: cellId, title: "", isChecked: false))
 			return false
 		}
 		textShouldChange.send(

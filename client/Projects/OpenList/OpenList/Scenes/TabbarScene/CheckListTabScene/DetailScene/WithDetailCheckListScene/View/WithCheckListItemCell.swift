@@ -8,11 +8,6 @@
 import UIKit
 
 protocol WithCheckListItemCellDelegate: AnyObject {
-	func textViewDidEndEditing(
-		_ textView: OpenListTextView,
-		cell: WithCheckListItemCell,
-		indexPath: IndexPath
-	)
 	func textView(
 		_ textView: OpenListTextView,
 		shouldChangeCharactersIn range: NSRange,
@@ -148,11 +143,6 @@ private extension WithCheckListItemCell {
 }
 
 extension WithCheckListItemCell: UITextViewDelegate {
-	func textViewDidEndEditing(_ textView: UITextView) {
-		guard let indexPath = indexPath else { return }
-		delegate?.textViewDidEndEditing(self.textView, cell: self, indexPath: indexPath)
-	}
-	
 	func textView(
 		_ textView: UITextView,
 		shouldChangeTextIn range: NSRange,
@@ -177,7 +167,6 @@ extension WithCheckListItemCell: UITextViewDelegate {
 	}
 	
 	func textViewDidChange(_ textView: UITextView) {
-		guard let indexPath = self.indexPath else { return }
 		delegate?.withCheckListTextViewDidChange(self.textView, isChecked: isChecked)
 	}
 }
