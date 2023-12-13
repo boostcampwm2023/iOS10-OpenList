@@ -70,20 +70,3 @@ public struct URLRequestBuilder {
 		return request
 	}
 }
-//
-//extension URLQueryItem {
-//	func percentEncoded() -> URLQueryItem {
-//		var newQueryItem = self
-//		newQueryItem.value = value?
-//			.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-////			.replacingOccurrences(of: "+", with: "%2B")
-//		
-//		return newQueryItem
-//	}
-//}
-//
-//extension Array where Element == URLQueryItem {
-//	func percentEncoded() -> Array<Element> {
-//		return map { $0.percentEncoded() }
-//	}
-//}
