@@ -87,7 +87,7 @@ extension DefaultCheckListRepository: CheckListRepository {
 	
 	func fetchFeedCheckList(by cateogryName: String) async throws -> [FeedCheckList] {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/feeds/category")
-		builder.addQuery(query: ["category": cateogryName])
+		builder.addQuery(parameter: ["category": cateogryName])
 		builder.addHeader(field: "Content-Type", value: "application/json")
 		builder.setMethod(.get)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)

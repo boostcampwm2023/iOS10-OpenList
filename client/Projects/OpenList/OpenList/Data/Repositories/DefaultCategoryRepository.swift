@@ -41,7 +41,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 	
 	func fetchSubCategory(with mainCategory: CategoryItem) async throws -> [CategoryItem] {
 		var builder = URLRequestBuilder(url: Constant.baseUrl + "sub-categories")
-		builder.addQuery(query: ["mainCategory": mainCategory.name])
+		builder.addQuery(parameter: ["mainCategory": mainCategory.name])
 		builder.setMethod(.get)
 		builder.addHeader(
 			field: "Content-Type",
@@ -57,7 +57,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 	func fetchMinorCategory(with mainCategory: CategoryItem, subCategory: CategoryItem) async throws -> [CategoryItem] {
 		var builder = URLRequestBuilder(url: Constant.baseUrl + "minor-categories")
 		builder.setMethod(.get)
-		builder.addQuery(query: [
+		builder.addQuery(parameter: [
 			"mainCategory": mainCategory.name,
 			"subCategory": subCategory.name
 		])

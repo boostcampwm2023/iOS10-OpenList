@@ -50,10 +50,10 @@ public struct URLRequestBuilder {
 	}
 	
 	@discardableResult
-	mutating public func addQuery(query: [String: String]) -> URLRequestBuilder {
+	mutating public func addQuery(parameter: [String: String]) -> URLRequestBuilder {
 		guard let url = self.url else { return self }
 		var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-		components?.percentEncodedQuery = query
+		components?.percentEncodedQuery = parameter
 			.map { $0.key + "=" + $0.value }
 			.joined(separator: "&")
 			.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
