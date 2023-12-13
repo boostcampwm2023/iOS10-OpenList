@@ -153,11 +153,12 @@ export class AuthService {
       userId: user.userId,
       tokenType,
     };
-    const ONE_WEEK = 7 * 24 * 60 * 60;
+    const ACCESS_TOKEN_EXPIRES = process.env['ACCESS_TOKEN_EXPIRES'];
+    const REFRESH_TOKEN_EXPIRES = process.env['REFRESH_TOKEN_EXPIRES'];
     return this.jwtService.sign(payload, {
       secret: process.env['JWT_SECRET'],
-      // expiresIn: tokenType === 'access' ? 300 : 3600,
-      expiresIn: tokenType === 'access' ? ONE_WEEK : ONE_WEEK,
+      expiresIn:
+        tokenType === 'access' ? ACCESS_TOKEN_EXPIRES : REFRESH_TOKEN_EXPIRES,
     });
   }
 
@@ -172,6 +173,7 @@ export class AuthService {
         secret: process.env['JWT_SECRET'],
       });
     } catch (error) {
+      console.error(error);
       throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다.');
     }
   }
