@@ -56,7 +56,8 @@ final class TabBarComponent:
 	}
 	
 	var session: CustomSession = .init(
-		interceptor: AccessTokenInterceptor()
+		interceptor: AccessTokenInterceptor(),
+		retrier: OAtuhRequestRetrier()
 	)
 	
 	var profileFactoryable: ProfileFactoryable {
@@ -66,7 +67,7 @@ final class TabBarComponent:
 	var settingFactoryable: SettingFactoryable {
 		return SettingViewFactory(parent: self)
 	}
-	
+
 	fileprivate var addTabFactoryable: AddCheckListTitleFactoryable {
 		return AddCheckListTitleViewFactory(parent: self)
 	}

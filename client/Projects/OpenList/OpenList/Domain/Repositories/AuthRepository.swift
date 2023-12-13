@@ -8,5 +8,5 @@
 import Foundation
 
 protocol AuthRepository {
-	func postLoginInfo(loginInfo: LoginInfo) async -> LoginResponseDTO?
+	func postLoginInfo(loginInfo: LoginInfo) async -> TokenResponseDTO?
 }

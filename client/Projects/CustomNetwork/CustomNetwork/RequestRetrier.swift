@@ -9,7 +9,7 @@ import Foundation
 
 public protocol RequestRetrier {
 	func shouldRetry(_ request: URLRequest, with error: Error, attempt: Int) -> Bool
-	func retry(_ request: URLRequest, with error: Error, attempt: Int) -> URLRequest?
+	func retry(_ request: URLRequest, with error: Error, attempt: Int) async -> URLRequest?
 }
 
 public final class SimpleRequestRetrier: RequestRetrier {
@@ -23,7 +23,7 @@ public final class SimpleRequestRetrier: RequestRetrier {
 		return attempt < maxAttempts
 	}
 	
-	public func retry(_ request: URLRequest, with error: Error, attempt: Int) -> URLRequest? {
+	public func retry(_ request: URLRequest, with error: Error, attempt: Int) async -> URLRequest? {
 		return request
 	}
 }

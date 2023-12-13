@@ -25,10 +25,7 @@ public final class NetworkService {
 	}
 	
 	private func sendRequest(_ request: URLRequest) async throws -> Data {
-		let (data, response) = try await customSession.data(for: request)
-		guard let httpResponse = response as? HTTPURLResponse else {
-			throw NetworkError.invalidResponse
-		}
+		let (data, httpResponse) = try await customSession.data(for: request)
 		guard (200...299).contains(httpResponse.statusCode) else {
 			throw NetworkError.serverError(statusCode: httpResponse.statusCode)
 		}
