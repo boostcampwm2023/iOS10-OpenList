@@ -36,7 +36,7 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 	private let headerView: CheckListHeaderView = .init()
 	
 	// Event Properties
-	private let viewWillAppear: PassthroughSubject<Void, Never> = .init()
+	private let viewLoad: PassthroughSubject<Void, Never> = .init()
 	private let socketConnet: PassthroughSubject<Void, Never> = .init()
 	private let textShouldChange: PassthroughSubject<TextChange, Never> = .init()
 	private let textDidChange: PassthroughSubject<WithCheckListItemChange, Never> = .init()
@@ -74,14 +74,8 @@ final class WithDetailCheckListViewController: UIViewController, ViewControllabl
 		setViewAttributes()
 		setViewHierarchies()
 		setViewConstraints()
-//		setWebSocket()
 		bind()
-//		socketConnet.send()
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		viewWillAppear.send(())
+		viewLoad.send(())
 	}
 	
 	deinit {
@@ -96,7 +90,7 @@ extension WithDetailCheckListViewController: ViewBindable {
 	
 	func bind() {
 		let input = WithDetailCheckListInput(
-			viewWillAppear: viewWillAppear,
+			viewLoad: viewLoad,
 			socketConnet: socketConnet,
 			textShouldChange: textShouldChange,
 			textDidChange: textDidChange,
@@ -119,7 +113,7 @@ extension WithDetailCheckListViewController: ViewBindable {
 		switch state {
 		case .none:
 			break
-		case let .viewWillAppear(checkList):
+		case let .viewLoad(checkList):
 			viewAppear(checkList)
 		case let .updateItems(items):
 			updateTextField(to: items)

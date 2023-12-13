@@ -62,7 +62,7 @@ extension WithDetailCheckListViewModel: WithDetailCheckListViewModelable {
 			
 private extension WithDetailCheckListViewModel {
 	func updateTitle(_ input: Input) -> Output {
-		return input.viewWillAppear
+		return input.viewLoad
 			.withUnretained(self)
 			.flatMap { (owner, _) -> AnyPublisher<CheckList, Never> in
 				let future = Future(asyncFunc: {
@@ -71,7 +71,7 @@ private extension WithDetailCheckListViewModel {
 				return future.eraseToAnyPublisher()
 			}
 			.map { checkList in
-				return .viewWillAppear(checkList)
+				return .viewLoad(checkList)
 			}
 			.eraseToAnyPublisher()
 	}
