@@ -14,10 +14,10 @@ public final class RGASTree<T: Codable & Equatable>: Codable {
 	/// 기본 RGA알고리즘의 링크드 리스트의 노드
 	/// 기본 RGA 노드도 RGASTree을 서로 참조하고 있다.
 	/// 만약 RGA 노드가 툼스톤이 된다면 nil을 가르킨다.
-	weak var root: RGASNode<T>? //
+	var root: RGASNode<T>? //
 	
 	/// 부모를 가르키는 idNode
-	var parent: RGASTree<T>?
+	weak var parent: RGASTree<T>?
 	
 	/// 왼쪽 자식 트리를 가르키는 idNode
 	private(set) var leftChild: RGASTree<T>?

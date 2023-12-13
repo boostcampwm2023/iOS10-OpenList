@@ -19,7 +19,7 @@ public final class RGASNode<T: Codable & Equatable>: Codable {
 	var link: RGASNode?
 	
 	/// idNode
-	var tree: RGASTree<T>?
+	weak var tree: RGASTree<T>?
 	
 	/// 컨텐츠
 	var content: [T]?

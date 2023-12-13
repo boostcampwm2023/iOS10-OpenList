@@ -8,7 +8,7 @@
 import CustomNetwork
 import Foundation
 
-final class AccessTokenInterceptor: RequestInterceptor {
+struct AccessTokenInterceptor: RequestInterceptor {
 	public func intercept(_ request: URLRequest) -> URLRequest {
 		var request = request
 
