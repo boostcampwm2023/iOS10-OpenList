@@ -36,9 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			loginFactoryable: loginViewFactory
 		)
 		
-		if
-			KeyChain.shared.read(key: AuthKey.accessToken) != nil,
-			KeyChain.shared.read(key: AuthKey.refreshToken) != nil {
+		if isValidRefreshToken() {
 			appRootRouter.showTapFlow()
 		} else {
 			appRootRouter.showLoginFlow()
@@ -95,5 +93,25 @@ private extension SceneDelegate {
 		} catch {
 			return false
 		}
+	}
+	
+	func isValidRefreshToken() -> Bool {
+		guard let refreshToken = KeyChain.shared.read(key: AuthKey.refreshToken) else { return false }
+		var payload64 = refreshToken.components(separatedBy: ".")[1]
+		
+		while payload64.count % 4 != 0 {
+			payload64 += "="
+		}
+		
+		guard
+			let payloadData = Data(base64Encoded: payload64, options: .ignoreUnknownCharacters),
+			let json = try? JSONSerialization.jsonObject(with: payloadData, options: []) as? [String: Any],
+			let exp = json["exp"] as? Int
+		else { return false }
+		
+		let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
+		let isValid = expDate.compare(Date()) == .orderedDescending
+		
+		return isValid
 	}
 }
