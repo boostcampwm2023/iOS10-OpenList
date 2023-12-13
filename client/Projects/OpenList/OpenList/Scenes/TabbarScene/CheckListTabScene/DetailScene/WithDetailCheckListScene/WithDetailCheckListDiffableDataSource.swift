@@ -74,28 +74,6 @@ extension WithDetailCheckListDiffableDataSource {
 		updateSection(with: items, to: .checkList)
 	}
 	
-	func updateCheckListItemString(at indexPath: IndexPath, with text: String) {
-		DispatchQueue.main.async { [weak self] in
-			guard let self else { return }
-			var snapshot = snapshot()
-			guard var items = snapshot.itemIdentifiers(inSection: .checkList) as? [WithCheckListItem] else { return }
-			snapshot.deleteItems(items)
-			items[indexPath.row].title = text
-			snapshot.appendItems(items, toSection: .checkList)
-			apply(snapshot, animatingDifferences: false)
-		}
-	}
-	
-	func deleteCheckListItem(at indexPath: IndexPath) {
-		DispatchQueue.main.async { [weak self] in
-			guard let self else { return }
-			var snapshot = snapshot()
-			guard let item = itemIdentifier(for: indexPath) else { return }
-			snapshot.deleteItems([item])
-			apply(snapshot, animatingDifferences: true)
-		}
-	}
-	
 	func deleteCheckListItem(at item: any ListItem) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
