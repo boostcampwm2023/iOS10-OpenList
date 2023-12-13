@@ -35,12 +35,14 @@ extension DefaultCategoryRepository: CategoryRepository {
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
 		let data = try await service.request()
 		let mainCategoryResponseDTO = try JSONDecoder().decode([MainCategoryResponseDTO].self, from: data)
-		let mainCategories = mainCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
+		let mainCategories = mainCategoryResponseDTO.map { CategoryItem(name: $0.name) }
 		return mainCategories
 	}
 	
 	func fetchSubCategory(with mainCategory: CategoryItem) async throws -> [CategoryItem] {
-		var builder = URLRequestBuilder(url: Constant.baseUrl + "\(mainCategory.id)" + "/sub-categories")
+		var builder = URLRequestBuilder(url: Constant.baseUrl + "sub-categories")
+		builder.addQuery(parameter: ["mainCategory": mainCategory.name])
+		builder.setMethod(.get)
 		builder.addHeader(
 			field: "Content-Type",
 			value: "application/json"
@@ -48,14 +50,17 @@ extension DefaultCategoryRepository: CategoryRepository {
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
 		let data = try await service.request()
 		let subCategoryResponseDTO = try JSONDecoder().decode([SubCategoryResponseDTO].self, from: data)
-		let subCategories = subCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
+		let subCategories = subCategoryResponseDTO.map { CategoryItem(name: $0.name) }
 		return subCategories
 	}
 	
 	func fetchMinorCategory(with mainCategory: CategoryItem, subCategory: CategoryItem) async throws -> [CategoryItem] {
-		var builder = URLRequestBuilder(
-			url: Constant.baseUrl + "\(mainCategory.id)" + "/sub-categories/" + "\(subCategory.id)" + "/minor-categories"
-		)
+		var builder = URLRequestBuilder(url: Constant.baseUrl + "minor-categories")
+		builder.setMethod(.get)
+		builder.addQuery(parameter: [
+			"mainCategory": mainCategory.name,
+			"subCategory": subCategory.name
+		])
 		builder.addHeader(
 			field: "Content-Type",
 			value: "application/json"
@@ -63,7 +68,7 @@ extension DefaultCategoryRepository: CategoryRepository {
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
 		let data = try await service.request()
 		let minorCategoryResponseDTO = try JSONDecoder().decode([MinorCategoryResponseDTO].self, from: data)
-		let minorCategories = minorCategoryResponseDTO.map { CategoryItem(id: $0.id, name: $0.name) }
+		let minorCategories = minorCategoryResponseDTO.map { CategoryItem(name: $0.name) }
 		return minorCategories
 	}
 	
@@ -93,8 +98,8 @@ extension DefaultCategoryRepository: CategoryRepository {
 		builder.setMethod(.post)
 		let service = NetworkService(customSession: session, urlRequestBuilder: builder)
 		let data = try await service.request()
-		let recommendChecklistResponseDTO = try JSONDecoder().decode(RecommendChecklistResponseDTO.self, from: data)
-		let recommendChecklist = recommendChecklistResponseDTO.map { RecommendChecklistItem(id: $0.key, content: $0.value)}
+		let recommendChecklistResponseDTO = try JSONDecoder().decode([RecommendChecklistResponseDTO].self, from: data)
+		let recommendChecklist = recommendChecklistResponseDTO.map { RecommendChecklistItem(id: $0.id, content: $0.content)}
 		return recommendChecklist
 	}
 }
