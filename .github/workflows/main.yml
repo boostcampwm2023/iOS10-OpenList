@@ -24,7 +24,7 @@ jobs:
           cat << EOF > ./server/.env
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRES=${{ secrets.ACCESS_TOKEN_EXPIRES }}
-          REFRESH_TOKEN_EXPIRES${{ secrets.REFRESH_TOKEN_EXPIRES }}
+          REFRESH_TOKEN_EXPIRES=${{ secrets.REFRESH_TOKEN_EXPIRES }}
           HASH_ROUNDS=${{ secrets.HASH_ROUNDS }}
           PROTOCOL=${{ secrets.PROTOCOL }}
           HOST=${{ secrets.HOST }}
