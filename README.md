@@ -10,6 +10,7 @@
 
 
 # Content
+- [소개영상](#소개영상)
 - [주요기능](#주요기능)
 - [기술적 도전](#기술적-도전)
 - [기술 스택](#기술-스택)
@@ -20,8 +21,16 @@
 
 <br>
 
+# 소개영상
+
+https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/29ab52ca-06a4-4a99-a6af-4290936f8823
+
+
 # 주요기능
 ![image](https://hackmd.io/_uploads/HJu_NVS8p.png)
+
+
+
 ## AI
 > 체크리스트 작성이 어려운 사람들을 위해 AI 추천기능을 구현하였습니다.
 >
@@ -35,10 +44,15 @@
   </tr>
   <tr>
     <td><img src="https://hackmd.io/_uploads/Sk9dT6SLp.gif" style="width: 100%;"/></td>
-    <td><img src="https://hackmd.io/_uploads/ryYtapSUT.gif" style="width: 100%;"/></td>
+    <td><img src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/0580a8c1-164e-4567-b78e-b0bdd745e428.gif" style="width: 100%;"/></td>
     <td><img src="https://hackmd.io/_uploads/B1QxCaHIp.gif" style="width: 100%;"/></td>
   </tr>
 </table>
+
+
+
+
+
 
 ## 동시편집!
 > 여러명과 동시에 체크리스트를 작성하기 위해 동시편집 기능을 구현하였습니다.
@@ -83,12 +97,17 @@
 
 - 📈 **데이터 관리 및 로깅**: Redis를 통해 시스템 로그를 관리하고, 캐싱 데이터 생성 및 평가 파이프라인을 트리거할 수 있는 기능을 통합했습니다.
 
-![image](https://hackmd.io/_uploads/ryDjsaB8T.png)
+<img width="2560" alt="스크린샷 2023-12-15 오전 2 13 03" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/f70c0b2a-fabf-46ae-9f92-921214ae93d3">
+
+https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/e1e9a40e-8562-4dd9-b6f3-8c79abe34c4f
 
 
 
 # 기술 스택
 <details open>
+
+
+
 <summary><h3>iOS</h3></summary>
 <div markdown="3">
 
@@ -136,7 +155,7 @@
 <img width="1000" alt="IOS 아키텍처-버터플라이아키텍처" src="https://hackmd.io/_uploads/Bkp5HTr8a.png"/>
 
 ### 서버 아키텍처
-<img width="1000" alt="서버 아키텍쳐" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/e8102aae-f691-4061-bb68-ebe01109660f">
+<img width="1000" alt="서버 아키텍쳐" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/3fb4dc55-104e-4866-9963-574dc1758d9b">
 
 
 # 프로젝트 문서
@@ -178,8 +197,7 @@
 |6|[Logger 설정 - winston middleware to interceptor](https://www.notion.so/Logger-winston-middleware-to-interceptor-24540c46ce5b4d1894ef77618f233565?pvs=21)|**`Logging` `Winston`**|
 |7|[apple login](https://www.notion.so/apple-login-88997ef1090f49daabdc4cde407aa625?pvs=21)|**`OAuth` `Apple Login`**|
 |8|[NestJS 서비스에서 CLOVA Studio API 연동](https://www.notion.so/NestJS-CLOVA-Studio-API-86cfae6c9ca34baab47950ef00787b50?pvs=21)|**`CLOVA Studio API`**|
-|9|[Pipe & Filter 아키텍처와 인공지능 데이터 캐싱](https://www.notion.so/Pipe-Filter-fd5f1bbd49934b978f820e9b4ff8d450?pvs=21)|**`Redis Pub/Sub`** |
-
+|9|[Pipe & Filter 아키텍처와 인공지능 데이터 캐싱](https://msmspark.notion.site/Pipe-Filter-fd5f1bbd49934b978f820e9b4ff8d450)|**`Redis Pub/Sub`** |
 </div>
 </details>
 
