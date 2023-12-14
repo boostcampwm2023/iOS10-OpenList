@@ -7,7 +7,6 @@
 
 import CustomNetwork
 import Foundation
-import UIKit
 
 struct OAtuhRequestRetrier: RequestRetrier {
 	private let maxAttempts: Int
