@@ -66,8 +66,8 @@ private extension SharedCheckListCell {
 	
 	func setTitleLabelAttributes() {
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
-		titleLabel.textColor = .label
-		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
+		titleLabel.textColor = .gray1
+		titleLabel.font = .notoSansCJKkr(type: .medium, size: .small)
 	}
 	
 	func setViewHierarchies() {

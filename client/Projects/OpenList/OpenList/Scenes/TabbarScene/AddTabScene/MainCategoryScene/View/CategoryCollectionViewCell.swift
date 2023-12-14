@@ -26,9 +26,9 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 	
 	override var isSelected: Bool {
 		didSet {
-			layer.borderColor = isSelected ? UIColor.clear.cgColor : UIColor.gray2.cgColor
-			backgroundColor = isSelected ? UIColor.primary1 : UIColor.background
-			cateGoryLabel.textColor = isSelected ? UIColor.background : UIColor.gray2
+			layer.borderColor = isSelected ? UIColor.clear.cgColor : UIColor.gray3.cgColor
+			backgroundColor = isSelected ? .primary1 : .background
+			cateGoryLabel.textColor = isSelected ? .white : .gray3
 		}
 	}
 	
@@ -45,12 +45,12 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 private extension CategoryCollectionViewCell {
 	func setAttributes() {
 		cateGoryLabel.translatesAutoresizingMaskIntoConstraints = false
-		cateGoryLabel.textColor = UIColor.gray2
+		cateGoryLabel.textColor = .gray3
 		cateGoryLabel.textAlignment = .center
-		cateGoryLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
+		cateGoryLabel.font = .notoSansCJKkr(type: .medium, size: .small)
 		
 		backgroundColor = .background
-		layer.borderColor = UIColor.gray2.cgColor
+		layer.borderColor = UIColor.gray3.cgColor
 		layer.borderWidth = 1
 		layer.cornerRadius = 8
 		clipsToBounds = true

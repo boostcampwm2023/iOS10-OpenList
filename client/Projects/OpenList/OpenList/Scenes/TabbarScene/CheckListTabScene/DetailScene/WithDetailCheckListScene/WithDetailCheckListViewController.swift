@@ -216,6 +216,7 @@ private extension WithDetailCheckListViewController {
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
 		checkListView.separatorStyle = .none
+		checkListView.backgroundColor = .background
 		/// 테이블 뷰 영역 터치 시 키보드를 내린다.
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
 		tapGesture.cancelsTouchesInView = true

@@ -32,18 +32,18 @@ final class CheckListHeaderView: UIView {
 
 extension CheckListHeaderView {
 	func configure(title: String, isLocked: Bool) {
-		backgroundColor = UIColor.background
+		backgroundColor = .background
 		titleLabel.text = title
 		lockImageView.image = isLocked ?
-		UIImage(systemName: "lock")?.withTintColor(.label, renderingMode: .alwaysOriginal) :
-		UIImage(systemName: "lock.open")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+		UIImage(systemName: "lock")?.withTintColor(.gray1, renderingMode: .alwaysOriginal) :
+		UIImage(systemName: "lock.open")?.withTintColor(.gray1, renderingMode: .alwaysOriginal)
 	}
 }
 
 private extension CheckListHeaderView {
 	func setViewAttributes() {
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
-		titleLabel.textColor = .label
+		titleLabel.textColor = .gray1
 		titleLabel.numberOfLines = 2
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 		lockImageView.image = UIImage(systemName: "lock")

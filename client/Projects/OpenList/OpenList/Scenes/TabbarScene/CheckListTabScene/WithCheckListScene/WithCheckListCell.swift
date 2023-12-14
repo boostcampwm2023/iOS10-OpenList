@@ -81,14 +81,14 @@ private extension WithCheckListCell {
 	
 	func setContainerViewAttributes() {
 		containerView.translatesAutoresizingMaskIntoConstraints = false
-		containerView.backgroundColor = .white
+		containerView.backgroundColor = .background
 		containerView.layer.masksToBounds = true
 		containerView.layer.cornerRadius = LayoutConstant.containerViewCornerRadius
 	}
 	
 	func setTitleLabelAttributes() {
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
-		titleLabel.textColor = .black
+		titleLabel.textColor = .gray1
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
 	}
 	

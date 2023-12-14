@@ -58,8 +58,8 @@ private extension CheckListFolderCell {
 	}
 	
 	func setTitleLabelAttributes() {
-		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
-		titleLabel.textColor = .label
+		titleLabel.font = .notoSansCJKkr(type: .medium, size: .medium)
+		titleLabel.textColor = .gray1
 		titleLabel.textAlignment = .left
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
@@ -69,7 +69,7 @@ private extension CheckListFolderCell {
 	}
 	
 	func setDiscriptionLabelAttributes() {
-		descriptionLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .small)
+		descriptionLabel.font = .notoSansCJKkr(type: .medium, size: .small)
 		descriptionLabel.textColor = .gray3
 		descriptionLabel.textAlignment = .left
 		descriptionLabel.translatesAutoresizingMaskIntoConstraints = false

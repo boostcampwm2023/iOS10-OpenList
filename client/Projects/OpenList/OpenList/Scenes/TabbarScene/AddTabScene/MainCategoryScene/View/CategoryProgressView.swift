@@ -26,12 +26,10 @@ final class CategoryProgressView: UIView {
 		switch stage {
 		case .main:
 			gradientCircleFirst.activates()
-			gradientStickFirst.activates()
 		case .sub:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()
 			gradientCircleSecond.activates()
-			gradientStickSecond.activates()
 		case .minor:
 			gradientCircleFirst.activates()
 			gradientStickFirst.activates()

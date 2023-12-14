@@ -54,29 +54,29 @@ private extension CheckListTableCell {
 			),
 			cornerRadius: backView.layer.cornerRadius
 		).cgPath
-		layer.shadowColor = UIColor(red: 177/255, green: 170/255, blue: 236/255, alpha: 1.0).cgColor
+		layer.shadowColor = UIColor.shadow1.cgColor
 		layer.shadowOpacity = 0.3
 		layer.shadowOffset = CGSize(width: 0, height: 3)
 		layer.shadowRadius = 6
 	}
 	
 	func setBackViewAttributes() {
-		backView.backgroundColor = .white
+		backView.backgroundColor = .background
 		backView.layer.masksToBounds = true
-		backView.layer.cornerRadius = 10
+		backView.layer.cornerRadius = 8
 	}
 	
 	func setTitleLabelAttributes() {
-		titleLabel.textColor = .black
-		titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+		titleLabel.textColor = .gray1
+		titleLabel.font = .notoSansCJKkr(type: .medium, size: .small)
 		
-		achievementPercentLabel.font = .systemFont(ofSize: 12)
-		achievementPercentLabel.textColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
+		achievementPercentLabel.font = .notoSansCJKkr(type: .regular, size: .small)
+		achievementPercentLabel.textColor = .primary1
 	}
 	
 	func setAchievementPercentLabelAttributes() {
-		achievementPercentLabel.font = .systemFont(ofSize: 12)
-		achievementPercentLabel.textColor = UIColor(red: 72/255, green: 190/255, blue: 91/255, alpha: 1.0)
+		achievementPercentLabel.font = .notoSansCJKkr(type: .regular, size: .small)
+		achievementPercentLabel.textColor = .primary1
 	}
 	
 	func setViewHierarchies() {
@@ -107,13 +107,12 @@ private extension CheckListTableCell {
 			titleLabel.leadingAnchor.constraint(equalTo: backView.leadingAnchor, constant: contentInset.left),
 			titleLabel.trailingAnchor.constraint(equalTo: gaugeView.leadingAnchor, constant: 4),
 			
-			achievementPercentLabel.topAnchor.constraint(equalTo: backView.topAnchor, constant: contentInset.top),
 			achievementPercentLabel.centerXAnchor.constraint(equalTo: gaugeView.centerXAnchor),
 			
 			gaugeView.widthAnchor.constraint(equalToConstant: 44),
 			gaugeView.heightAnchor.constraint(equalToConstant: 4),
 			gaugeView.topAnchor.constraint(equalTo: achievementPercentLabel.bottomAnchor, constant: 2),
-			gaugeView.bottomAnchor.constraint(equalTo: backView.bottomAnchor, constant: -contentInset.bottom),
+			gaugeView.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor),
 			gaugeView.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -contentInset.right)
 		])
 	}

@@ -36,7 +36,7 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 		delegate = self
 		
 		let emptyViewController = UIViewController()
-		emptyViewController.view.backgroundColor = .systemBackground
+		emptyViewController.view.backgroundColor = .background
 		emptyViewController.tabBarItem = makeTabBarItem(of: .addTab)
 		
 		let checkListTabViewControllable = checkListTabFactoryable.make(with: appRouter)
@@ -52,8 +52,8 @@ final class TabBarViewController: UITabBarController, ViewControllable {
 			recommendTabNavigationController.navigationController
 		]
 		selectedIndex = TabBarPage.checklistTab.pageOrderNumber()
-		view.backgroundColor = .systemBackground
-		tabBar.backgroundColor = .systemBackground
+		view.backgroundColor = .background
+		tabBar.backgroundColor = .background
 		tabBar.tintColor = .primary1
 	}
 }

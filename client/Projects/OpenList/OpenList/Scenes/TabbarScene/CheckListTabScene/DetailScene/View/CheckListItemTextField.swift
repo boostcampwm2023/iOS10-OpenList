@@ -23,7 +23,7 @@ final class CheckListItemTextField: UITextField {
 private extension CheckListItemTextField {
 	func setViewAttributes() {
 		backgroundColor = .background
-		textColor = .label
+		textColor = .gray1
 		font = UIFont.notoSansCJKkr(type: .medium, size: .small)
 		returnKeyType = .done
 	}

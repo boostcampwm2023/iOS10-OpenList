@@ -32,7 +32,7 @@ final class AddCheckListItemHeaderView: UIView {
 
 extension AddCheckListItemHeaderView {
 	func configure(title: String, tags: [String]?) {
-		backgroundColor = UIColor.background
+		backgroundColor = .background
 		titleLabel.text = title
 		guard let tags = tags else { return }
 		tagLabel.text = tags
@@ -44,7 +44,7 @@ extension AddCheckListItemHeaderView {
 private extension AddCheckListItemHeaderView {
 	func setViewAttributes() {
 		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .large)
-		titleLabel.textColor = .label
+		titleLabel.textColor = .gray1
 		titleLabel.numberOfLines = 2
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 

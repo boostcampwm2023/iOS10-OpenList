@@ -39,8 +39,8 @@ final class CategoryHeaderView: UICollectionReusableView {
 
 private extension CategoryHeaderView {
 	func setViewAttributes() {
-		categoryLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .large)
-		categoryLabel.textColor = .label
+		categoryLabel.font = .notoSansCJKkr(type: .medium, size: .large)
+		categoryLabel.textColor = .gray1
 		categoryLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
 

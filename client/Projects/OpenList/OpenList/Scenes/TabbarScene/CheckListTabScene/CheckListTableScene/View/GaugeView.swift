@@ -49,7 +49,7 @@ extension GaugeView {
 		let width = 42 * (1.0 - rating)
 		maskGaugeLayer.frame = CGRect(origin: .init(x: 1 + 42 - width, y: 1), size: .init(width: width, height: 2))
 		maskGaugeLayer.cornerRadius = maskGaugeLayer.frame.height / 2
-		maskGaugeLayer.backgroundColor = UIColor.white.cgColor
+		maskGaugeLayer.backgroundColor = UIColor.background.cgColor
 		return maskGaugeLayer
 	}
 }

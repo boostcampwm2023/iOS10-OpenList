@@ -121,8 +121,8 @@ private extension RecommendTabViewController {
 	
 	func setTitleLabelAttributes() {
 		titleLabel.text = Constants.title
-		titleLabel.textColor = .label
-		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .extra)
+		titleLabel.textColor = .gray1
+		titleLabel.font = .notoSansCJKkr(type: .medium, size: .extra)
 		titleLabel.numberOfLines = 2
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
@@ -134,6 +134,7 @@ private extension RecommendTabViewController {
 		recommendCategoryTabView.translatesAutoresizingMaskIntoConstraints = false
 		recommendCategoryTabView.isPagingEnabled = true
 		recommendCategoryTabView.delegate = self
+		recommendCategoryTabView.backgroundColor = .background
 	}
 	
 	func setRecommendCheckListViewAttributes() {

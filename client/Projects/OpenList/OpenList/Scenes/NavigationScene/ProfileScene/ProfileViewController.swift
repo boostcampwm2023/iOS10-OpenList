@@ -31,6 +31,7 @@ final class ProfileViewController: UIViewController, ViewControllable {
 	private let viewModel: any ProfileViewModelable & ProfileViewModelDataSource
 	private var cancellables: Set<AnyCancellable> = []
 	
+	
 	// UI Components
 	private let navigationBar = OpenListNavigationBar(isBackButtonHidden: false, backButtonTitle: Constant.previousTitle)
 	private let titleHaederView: TitleHeaderView = .init()
@@ -120,7 +121,7 @@ private extension ProfileViewController {
 // MARK: - View Methods
 private extension ProfileViewController {
 	func setViewAttributes() {
-		view.backgroundColor = UIColor.background
+		view.backgroundColor = .background
 		
 		setNavigationAttributes()
 		setHeaderViewAttributes()
@@ -143,8 +144,7 @@ private extension ProfileViewController {
 	func setProfileImageViewAttributes() {
 		profileImageView.translatesAutoresizingMaskIntoConstraints = false
 		profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
-		profileImageView.image = .profile
-		profileImageView.tintColor = .primary1
+		profileImageView.image = .profile.withTintColor(.primary1, renderingMode: .alwaysOriginal)
 	}
 	
 	func setNicknameInputViewAttributes() {
@@ -168,8 +168,7 @@ private extension ProfileViewController {
 	
 	func setEditImageViewAttributes() {
 		editImageView.translatesAutoresizingMaskIntoConstraints = false
-		editImageView.image = .edit
-		editImageView.image?.withTintColor(.gray1)
+		editImageView.image = .edit.withTintColor(.gray1, renderingMode: .alwaysOriginal)
 	}
 	
 	func setViewHierarchies() {

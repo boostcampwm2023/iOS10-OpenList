@@ -36,20 +36,20 @@ final class ConfirmButton: UIButton {
 	override var isEnabled: Bool {
 		didSet {
 			if isEnabled {
-				backgroundColor = UIColor.primary1
-				setTitleColor(.background, for: .normal)
+				backgroundColor = .primary1
+				setTitleColor(.white, for: .normal)
 			} else {
 				layer.borderColor = UIColor.primary1.cgColor
 				layer.borderWidth = 1
 				backgroundColor = .background
-				setTitleColor(UIColor.primary1, for: .normal)
+				setTitleColor(.primary1, for: .normal)
 			}
 		}
 	}
 	
 	private func configure() {
-		backgroundColor = UIColor.primary1
+		backgroundColor = .primary1
 		layer.cornerRadius = 10
-		titleLabel?.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
+		titleLabel?.font = .notoSansCJKkr(type: .medium, size: .medium)
 	}
 }

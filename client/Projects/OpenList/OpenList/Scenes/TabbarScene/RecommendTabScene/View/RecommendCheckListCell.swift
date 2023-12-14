@@ -108,8 +108,8 @@ private extension RecommendCheckListCell {
 	}
 		
 	func setTitleLabelAttributes() {
-		titleLabel.textColor = .label
-		titleLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .medium)
+		titleLabel.textColor = .gray1
+		titleLabel.font = .notoSansCJKkr(type: .medium, size: .medium)
 		titleLabel.numberOfLines = 0
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 	}
