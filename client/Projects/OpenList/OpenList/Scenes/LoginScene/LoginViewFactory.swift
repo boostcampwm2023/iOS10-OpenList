@@ -12,7 +12,7 @@ protocol LoginDependency: Dependency {}
 
 final class LoginComponent: Component<LoginDependency> {
 	fileprivate var authRepository: AuthRepository {
-		return DefaultAuthRepository()
+		return DefaultAuthRepository(session: CustomSession())
 	}
 	
 	fileprivate var loginUseCase: AuthUseCase {
