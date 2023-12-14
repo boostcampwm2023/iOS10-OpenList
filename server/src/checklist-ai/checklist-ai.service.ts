@@ -4,10 +4,11 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { CreateChecklistItemsDto } from './dto/create-checklist-items.dto';
-import { RedisClientType } from 'redis';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RedisClientType } from 'redis';
+import { RedisService } from 'redis/redis.service';
 import { Repository } from 'typeorm';
+import { CreateChecklistItemsDto } from './dto/create-checklist-items.dto';
 import { AiChecklistItemModel } from './entities/ai-checklist-item';
 
 @Injectable()
@@ -18,6 +19,7 @@ export class ChecklistAiService {
     private readonly aiChecklistItemModelRepository: Repository<AiChecklistItemModel>,
     @Inject('REDIS_PUB_CLIENT')
     private readonly redisPublisher: RedisClientType,
+    private readonly redisService: RedisService,
   ) {}
 
   async findAiChecklistItems(dto: CreateChecklistItemsDto): Promise<any[]> {
@@ -128,5 +130,12 @@ export class ChecklistAiService {
     const categories = await this.getCategoriesLessThanCount(count);
     this.publishToRedis('ai_generate', 'generateGptData', categories);
     return categories;
+  }
+
+  async publishToEvaluateItems(count: number) {
+    this.redisPublisher.publish(
+      'ai_generate',
+      JSON.stringify({ message: 'processAiEvaluate', body: count }),
+    );
   }
 }
