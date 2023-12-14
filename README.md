@@ -53,12 +53,12 @@
 - 🔄 **실시간 데이터 스트리밍**: 앱에서는 CRDT를 활용하여 실시간으로 체크리스트를 업데이트하고, 서버는 Redis의 list 자료구조를 이용해 데이터 어레이를 모두 유지하여 사용자의 연결의 끊어져도, 문서에 대한 실시간 최신 상태를 유지합니다.
 
 
-## 🌐 [Pipe & Filter 아키텍처와 인공지능 데이터 캐싱]()
+## 🌐 [Pipe & Filter 아키텍처와 인공지능 데이터 캐싱](https://msmspark.notion.site/Pipe-Filter-fd5f1bbd49934b978f820e9b4ff8d450)
 - ⚡ **응답 시간 최적화**: DB에서 카테고리별로 캐싱된 데이터를 활용하여 Clova Studio API 응답 시간을 단축했습니다.
 
 - 🛠 **캐싱 파이프라인**: Pipe & Filter 아키텍처를 적용하여 순차적 데이터 처리와 Redis Pub/Sub을 통한 효율적인 데이터 관리를 구현했습니다.
 
-![image](https://hackmd.io/_uploads/BJ36ipH8T.png)
+![이미지](https://github.com/boostcampwm2023/iOS10-OpenList/assets/42074365/ee8fb324-c826-47de-b0cc-e0f712cb4380)
 
 
 ## 💻 [관리자 웹 페이지를 통한 시스템 모니터링]()
@@ -119,15 +119,28 @@
 <img width="1000" alt="IOS 아키텍처-버터플라이아키텍처" src="https://hackmd.io/_uploads/Bkp5HTr8a.png"/>
 
 ### 서버 아키텍처
-<img width="1000" alt="서버 아키텍쳐" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/f0f11e91-dbab-4552-986c-2d8d28afbc16">
+<img width="1000" alt="서버 아키텍쳐" src="https://github.com/boostcampwm2023/iOS10-OpenList/assets/51476641/e8102aae-f691-4061-bb68-ebe01109660f">
 
 
 # 프로젝트 문서
 
 ## iOS
+### 기술 문서
+|번호|제목|키워드|
+|:---|:---|:---|
+|1|[CRDT vs OT](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-vs-OT)|**`CRDT`**|
+|2|[왜 RGATreeSplit 방식을 채택하였나?](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%99%9C-RGASplitTree-%EB%B0%A9%EC%8B%9D%EC%9D%84-%EC%B1%84%ED%83%9D%ED%95%98%EC%98%80%EC%9D%84%EA%B9%8C%3F)|**`CRDT`**|
+|3|[ID 부여 방식](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-ID-%EB%B6%80%EC%97%AC%EB%B0%A9%EC%8B%9D)|**`CRDT`**|
+|4|[Tree 방식에서 밸런싱](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-Tree-%EB%B0%A9%EC%8B%9D%EC%97%90%EC%84%9C-%EB%B0%B8%EB%9F%B0%EC%8B%B1)|**`CRDT`**|
+|5|[자소분리 문제 해결과정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%9E%90%EC%86%8C%EB%B6%84%EB%A6%AC-%ED%95%B4%EA%B2%B0%EA%B3%BC%EC%A0%95)|**`CRDT`**|
+|6|[딥링크로 체크리스트 초대하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/딥링크로-체크리스트-초대하기)|**`딥링크`**|
+|7|[프레임워크 vs 라이브러리](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BFramework-&-Library%5D-%EB%AC%B4%EC%97%87%EC%9D%B4-%EB%A7%9E%EC%9D%84%EA%B9%8C)|**`모듈`**|
+|8|[소켓통신: Any와의 싸움](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EC%86%8C%EC%BC%93%ED%86%B5%EC%8B%A0%5D-Any-Type%EA%B3%BC%EC%9D%98-%EC%8B%B8%EC%9B%80)|**`소켓`**|
+
+### 의사결정 기록
 |제목|키워드|
 |:---|:---|
-|[[ADR] 아키텍처 의사 결정 기록: iOS 애플리케이션 아키텍처 채택하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-iOS-애플리케이션-아키텍처-채택하기)|**`ADR`**|
+[[ADR] 아키텍처 의사 결정 기록: iOS 애플리케이션 아키텍처 채택하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-iOS-애플리케이션-아키텍처-채택하기)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: SwiftLint 채택](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:--SwiftLint-채택)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: UI 영역에서 Combine 사용 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-UI-영역에서-Combine-사용-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: Presentation영역의 ViewModel에서 Input Output 패턴 도입 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Presentation영역의-ViewModel에서-Input-Output-패턴-도입-결정)|**`ADR`**|
@@ -135,12 +148,7 @@
 |[[ADR] 아키텍처 의사 결정 기록: 로컬 스토리지로 코어 데이터 사용 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-로컬-스토리지로-코어-데이터-사용-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: Custom Network Foundation 라이브러리 구현 및 모듈화 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Custom-Network-Foundation-라이브러리-구현-및-모듈화-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: 웹 소켓을 뷰 컨트롤러에서 연결하도록 변경](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-웹-소켓을-뷰-컨트롤러에서-연결하도록-변경)|**`ADR`**|
-|[CRDT vs OT](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-vs-OT)|**`CRDT`**|
-|[왜 RGATreeSplit 방식을 채택하였나?](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%99%9C-RGASplitTree-%EB%B0%A9%EC%8B%9D%EC%9D%84-%EC%B1%84%ED%83%9D%ED%95%98%EC%98%80%EC%9D%84%EA%B9%8C%3F)|**`CRDT`**|
-|[ID 부여 방식](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-ID-%EB%B6%80%EC%97%AC%EB%B0%A9%EC%8B%9D)|**`CRDT`**|
-|[Tree 방식에서 밸런싱](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-Tree-%EB%B0%A9%EC%8B%9D%EC%97%90%EC%84%9C-%EB%B0%B8%EB%9F%B0%EC%8B%B1)|**`CRDT`**|
-|[자소분리 문제 해결과정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%9E%90%EC%86%8C%EB%B6%84%EB%A6%AC-%ED%95%B4%EA%B2%B0%EA%B3%BC%EC%A0%95)|**`CRDT`**|
-|[딥링크로 체크리스트 초대하기](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/딥링크로-체크리스트-초대하기)|**`딥링크`**|
+
 </div>
 </details>
 
