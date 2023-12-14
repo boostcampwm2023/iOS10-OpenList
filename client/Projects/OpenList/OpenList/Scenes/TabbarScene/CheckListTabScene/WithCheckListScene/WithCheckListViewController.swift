@@ -130,15 +130,8 @@ private extension WithCheckListViewController {
 		
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
-		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
-			let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-			let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
-			section.interGroupSpacing = 24
-			section.contentInsets = .init(top: 0, leading: 20, bottom: 12, trailing: 20)
-			return section
-		}
+		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
 		checkListView.collectionViewLayout = layout
-		
 		dataSource = makeDataSource()
 		makeInitialSection()
 	}

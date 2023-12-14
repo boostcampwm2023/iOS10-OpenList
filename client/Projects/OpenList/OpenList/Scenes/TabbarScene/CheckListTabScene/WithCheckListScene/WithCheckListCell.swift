@@ -40,7 +40,7 @@ final class WithCheckListCell: UICollectionViewCell {
 
 private extension WithCheckListCell {
 	enum LayoutConstant {
-		static let cellPadding: UIEdgeInsets = .init(top: 0, left: 20, bottom: 24, right: 20)
+		static let cellPadding: UIEdgeInsets = .init(top: 12, left: 20, bottom: 12, right: 20)
 		static let bottomMargin: CGFloat = 24
 		static let horizontalMargin: CGFloat = 20
 		static let containerViewCornerRadius: CGFloat = 8
@@ -62,12 +62,21 @@ private extension WithCheckListCell {
 	}
 	
 	func setLayerViewConstraints() {
-		contentView.layer.applySketchShadow(
-			color: UIColor.shadow1.cgColor,
-			blur: LayoutConstant.shadowBlur,
-			alpha: LayoutConstant.shadowAlpha,
-			y: LayoutConstant.shadowYAxis
-		)
+		layer.masksToBounds = false
+		layer.shadowPath = UIBezierPath(
+			roundedRect: .init(
+				origin: .init(x: LayoutConstant.cellPadding.left, y: LayoutConstant.cellPadding.top),
+				size: .init(
+					width: frame.width - LayoutConstant.cellPadding.left * 2,
+					height: 48
+				)
+			),
+			cornerRadius: LayoutConstant.containerViewCornerRadius
+		).cgPath
+		layer.shadowColor = UIColor.shadow1.cgColor
+		layer.shadowOpacity = 0.3
+		layer.shadowOffset = CGSize(width: 0, height: 3)
+		layer.shadowRadius = 6
 	}
 	
 	func setContainerViewAttributes() {
@@ -112,10 +121,22 @@ private extension WithCheckListCell {
 	
 	func setContainerViewConstraints() {
 		NSLayoutConstraint.activate([
-			containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
-			containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-			containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+			containerView.topAnchor.constraint(
+				equalTo: contentView.topAnchor,
+				constant: LayoutConstant.cellPadding.top
+			),
+			containerView.bottomAnchor.constraint(
+				equalTo: contentView.bottomAnchor,
+				constant: -LayoutConstant.cellPadding.bottom
+			),
+			containerView.leadingAnchor.constraint(
+				equalTo: contentView.leadingAnchor,
+				constant: LayoutConstant.cellPadding.left
+			),
+			containerView.trailingAnchor.constraint(
+				equalTo: contentView.trailingAnchor,
+				constant: -LayoutConstant.cellPadding.right
+			)
 		])
 	}
 	
