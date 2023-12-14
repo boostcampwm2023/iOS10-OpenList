@@ -1,11 +1,13 @@
 const os = require('os');
 const redis = require('redis');
-const { exec } = require('child_process');
-dotenv = require('dotenv');
+
+// 환경 변수
+const REDIS_URL = 'redis://localhost:6379';
+const SERVER_NAME = 'nest2';
 
 // Redis 클라이언트 설정
 const client = redis.createClient({
-  url: process.env.REDIS_URL,
+  url: REDIS_URL,
 });
 
 client.on('error', (err) => {
@@ -43,52 +45,19 @@ function getCpuUsage() {
   return usage.toFixed(2);
 }
 
-// 네트워크 트래픽 정보 파싱 및 총 사용량 계산 함수
-function parseNetworkTraffic(data) {
-  const lines = data.split('\n');
-  let totalIpkts = 0,
-    totalOpkts = 0;
-
-  for (const line of lines) {
-    const parts = line.trim().split(/\s+/);
-    if (parts.length > 4 && parts[0] !== 'Name') {
-      const ipkts = parseInt(parts[4], 10);
-      const opkts = parseInt(parts[6], 10);
-      totalIpkts += ipkts;
-      totalOpkts += opkts;
-    }
-  }
-
-  return { totalIpkts, totalOpkts };
-}
-
-// 네트워크 트래픽 정보 수집 함수
-function getNetworkTraffic(callback) {
-  exec('netstat -i', (err, stdout, stderr) => {
-    if (err) {
-      console.error('Error executing netstat:', err);
-      return;
-    }
-    callback(parseNetworkTraffic(stdout));
-  });
-}
-
 // 시스템 상태를 수집하고 Redis에 publish하는 함수
 function publishSystemStats() {
-  getNetworkTraffic((networkTraffic) => {
-    const stats = {
-      freeMemory: os.freemem(),
-      totalMemory: os.totalmem(),
-      cpuUsage: getCpuUsage(),
-      uptime: os.uptime(),
-      networkTraffic: networkTraffic, // 총 네트워크 사용량 표시
-    };
+  const stats = {
+    freeMemory: os.freemem(),
+    totalMemory: os.totalmem(),
+    cpuUsage: getCpuUsage(),
+    uptime: os.uptime(),
+  };
 
-    // Redis에 publish
-    client.publish('system-stats', JSON.stringify(stats));
+  // Redis에 publish
+  client.publish('system-stats-' + SERVER_NAME, JSON.stringify(stats));
 
-    console.log('Published system stats:', stats);
-  });
+  console.log('Published system stats:', stats);
 }
 
 // 5초마다 시스템 상태 publish
