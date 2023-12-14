@@ -1,3 +1,10 @@
+
+/.idea
+
+/ai/generate-server/node_modules
+
+ai/generate-server/.env
+=======
 # 디폴트 무시된 파일
 /.idea/shelf/
 /.idea/workspace.xml
@@ -8,3 +15,4 @@
 /dataSources.local.xml
 
 /.idea
+
