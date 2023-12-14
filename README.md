@@ -27,18 +27,35 @@
 >
 > GPT-4를 이용한 체크리스트 캐싱 시스템, CLOVA Studio를 이용한 평가 시스템을 도입하여 빠르고 정확한 정보를 제공합니다.
 
-|체크리스트의 카테고리를 선택할 수 있어요|선택한 카테고리로 AI가 체크리스트를 추천해줘요|AI의 체크리스트를 바탕으로 개인 체크리스트를 만들어요|
-|:---:|:---:|:---:|
-|<img src="https://hackmd.io/_uploads/Sk9dT6SLp.gif"/>|<img src="https://hackmd.io/_uploads/ryYtapSUT.gif"/>|<img src="https://hackmd.io/_uploads/B1QxCaHIp.gif"/>
+<table>
+  <tr>
+    <th style="width: 33%;">체크리스트 작성을 위해 카테고리를 선택해주세요</th>
+    <th style="width: 33%;">선택된 카테고리로 AI가 체크리스트를 추천해줘요</th>
+    <th style="width: 33%;">AI가 추천한 목록들로 개인 체크리스트를 만들어요</th>
+  </tr>
+  <tr>
+    <td><img src="https://hackmd.io/_uploads/Sk9dT6SLp.gif" style="width: 100%;"/></td>
+    <td><img src="https://hackmd.io/_uploads/ryYtapSUT.gif" style="width: 100%;"/></td>
+    <td><img src="https://hackmd.io/_uploads/B1QxCaHIp.gif" style="width: 100%;"/></td>
+  </tr>
+</table>
 
 ## 동시편집!
 > 여러명과 동시에 체크리스트를 작성하기 위해 동시편집 기능을 구현하였습니다.
 > 
 > 동시편집은 CRDT 알고리즘 중에 RGATreeSplit 방식을 채택하였습니다.
-
-|개인 체크리스트를 함께 작성하도록 변경할 수 있어요|친구를 초대하여 체크리스트를 같이 작성할 수 있어요|현재 편집중인 친구의 위치를 알 수 있어요|
-|:---:|:---:|:---:|
-|<img src="https://hackmd.io/_uploads/B1UOiaH8T.gif"/>|<img src="https://hackmd.io/_uploads/B1MZ3pBU6.gif"/>|<img src="https://hackmd.io/_uploads/SkYjqTrI6.gif"/>|
+<table>
+  <tr>
+    <th style="width: 33%;">개인 체크리스트를 함께 작성하도록 변경할 수 있어요</th>
+    <th style="width: 33%;">친구를 초대하여 체크리스트를 같이 작성할 수 있어요</th>
+    <th style="width: 33%;">동시편집시 현재 편집중인 친구의 위치를 알 수 있어요</th>
+  </tr>
+  <tr>
+    <td><img src="https://hackmd.io/_uploads/B1UOiaH8T.gif" style="width: 100%;"/></td>
+    <td><img src="https://hackmd.io/_uploads/B1MZ3pBU6.gif" style="width: 100%;"/></td>
+    <td><img src="https://hackmd.io/_uploads/SkYjqTrI6.gif" style="width: 100%;"/></td>
+  </tr>
+</table>
 
 - [[동시편집] CRDT vs OT](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-CRDT-vs-OT)
 - [[동시편집] 왜 RGATreeSplit 방식을 채택하였나?](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5B%EB%8F%99%EC%8B%9C%ED%8E%B8%EC%A7%91%5D-%EC%99%9C-RGASplitTree-%EB%B0%A9%EC%8B%9D%EC%9D%84-%EC%B1%84%ED%83%9D%ED%95%98%EC%98%80%EC%9D%84%EA%B9%8C%3F)
