@@ -166,6 +166,20 @@
 |[[ADR] 아키텍처 의사 결정 기록: Custom Network Foundation 라이브러리 구현 및 모듈화 결정](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-Custom-Network-Foundation-라이브러리-구현-및-모듈화-결정)|**`ADR`**|
 |[[ADR] 아키텍처 의사 결정 기록: 웹 소켓을 뷰 컨트롤러에서 연결하도록 변경](https://github.com/boostcampwm2023/iOS10-OpenList/wiki/%5BADR%5D-아키텍처-의사-결정-기록:-웹-소켓을-뷰-컨트롤러에서-연결하도록-변경)|**`ADR`**|
 
+## BE
+### 기술 문서
+|번호|제목|키워드|
+|:---|:---|:---|
+|1|[vpc 설정 feat. 서브넷 마스킹](https://www.notion.so/msmspark/vpc-feat-0a443c45a9ab4ea2abbab93ca5c9975d?pvs=4)|**`vpc`**|
+|2|[public, private 서버 인스턴스 생성](https://www.notion.so/public-private-e34aadf4fcd94b09846ef796573dae55?pvs=21)|**`서브넷`**|
+|3|[private 서버 인스턴스 NAT 게이트웨이 생성](https://www.notion.so/private-NAT-4986dbea4fa54f67bfd8e7b7edf85fd8?pvs=21)|**`NAT`**|
+|4|[로컬에서 ssh tunneling을 통한 private 인스턴스 속 postgresql 서버 접속](https://www.notion.so/ssh-tunneling-private-postgresql-6479857528d54b0e9919368209c7c465?pvs=21)|**`ssh tunneling` `postgresql`**|
+|5|[github actions와 docker를 통한 nest 서버 배포](https://www.notion.so/github-actions-docker-nest-dd8139f6d14348ec888d2029a6ff56c2?pvs=21)|**`github actions` `docker` `CI/CD`**|
+|6|[Logger 설정 - winston middleware to interceptor](https://www.notion.so/Logger-winston-middleware-to-interceptor-24540c46ce5b4d1894ef77618f233565?pvs=21)|**`Logging` `Winston`**|
+|7|[apple login](https://www.notion.so/apple-login-88997ef1090f49daabdc4cde407aa625?pvs=21)|**`OAuth` `Apple Login`**|
+|8|[NestJS 서비스에서 CLOVA Studio API 연동](https://www.notion.so/NestJS-CLOVA-Studio-API-86cfae6c9ca34baab47950ef00787b50?pvs=21)|**`CLOVA Studio API`**|
+|9|[Pipe & Filter 아키텍처와 인공지능 데이터 캐싱](https://www.notion.so/Pipe-Filter-fd5f1bbd49934b978f820e9b4ff8d450?pvs=21)|**`Redis Pub/Sub`** |
+
 </div>
 </details>
 
