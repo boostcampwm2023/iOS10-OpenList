@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redis Pub/Sub Messages</title>
+    <style>
+      body {
+        background-color: #333; /* Dark background */
+        color: #fff; /* Light text */
+        font-family: 'Courier New', Courier, monospace; /* Console-style font */
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 1px solid #555; /* Underline for the header */
+      }
+      #messages {
+        list-style-type: none; /* Remove bullet points */
+        padding: 0;
+      }
+      li {
+        background-color: #444; /* Slightly lighter background for messages */
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px; /* Rounded corners */
+        border: 1px solid #555; /* Border for each message */
+        cursor: pointer; /* 클릭 가능한 요소임을 나타내는 커서 스타일 */
+      }
+      button {
+        background-color: #4caf50; /* Green background */
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        transition-duration: 0.4s;
+      }
+
+      button:hover {
+        background-color: white;
+        color: black;
+      }
+      .channel-button {
+        background-color: #555; /* 기본 배경색 */
+        color: white; /* 텍스트 색상 */
+        padding: 8px 16px; /* 버튼 패딩 줄임 */
+        border-radius: 20px; /* 알약 모양으로 만들기 위한 둥근 모서리 */
+        font-size: 14px; /* 글꼴 크기 줄임 */
+        border: none; /* 테두리 제거 */
+        cursor: pointer; /* 마우스 커서 스타일 변경 */
+        transition: background-color 0.3s; /* 부드러운 색상 전환 */
+      }
+
+      .channel-button.selected {
+        background-color: #5c3663; /* 선택될 때 파란색 배경 */
+      }
+
+      .message-content {
+        max-height: 200px; /* 5줄 높이로 제한 */
+        overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+        transition: max-height 0.3s ease-in-out; /* 부드러운 전환 효과 */
+      }
+
+      .message-content.expanded {
+        max-height: none; /* 전체 내용 표시 */
+      }
+
+      [data-channel='sharedChecklist'] {
+        color: #f4b6c2; /* 연분홍색 */
+      }
+      [data-channel='channel'] {
+        color: #ffdfba; /* 연살구색 */
+      }
+      [data-channel='ai_result'] {
+        color: #a0d2eb; /* 연하늘색 */
+      }
+      [data-channel='httpLog'] {
+        color: #e4c1f9; /* 연보라색 */
+      }
+      [data-channel='wsLog'] {
+        color: #fdd7ac; /* 연갈색 */
+      }
+      [data-channel='system-stats'] {
+        color: #f4b6c2; /* 연분홍색 */
+      }
+      [data-channel='ai_evaluate'] {
+        color: #ffdfba; /* 연살구색 */
+      }
+      [data-channel='ai_generate'] {
+        color: #a0d2eb; /* 연하늘색 */
+      }
+      [data-channel='ai_evaluate_error'] {
+        color: #ff0000; /* 빨간색 */
+      }
+
+      /* 로그인 폼 스타일 */
+      #loginForm {
+        display: none; /* 기본적으로 숨김 */
+        position: fixed; /* 고정 위치 */
+        top: 50%; /* 상단에서 50% */
+        left: 50%; /* 좌측에서 50% */
+        transform: translate(-50%, -50%); /* 중앙 정렬 */
+        background-color: #fff; /* 배경색 */
+        padding: 20px; /* 패딩 */
+        border-radius: 5px; /* 둥근 모서리 */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 그림자 */
+      }
+      /* 로그인 오류 메시지 스타일 */
+      #loginError {
+        color: red; /* 오류 메시지 색상 */
+        margin-bottom: 10px; /* 간격 */
+      }
+
+      /* 차트 컨테이너 스타일 */
+      .chart-container {
+        display: flex; /* Flexbox 레이아웃 사용 */
+        flex-wrap: wrap; /* 줄 바꿈 허용 */
+        justify-content: space-around; /* 요소들 사이에 공간을 균등하게 배분 */
+        align-items: center; /* 세로 방향 중앙 정렬 */
+        margin-bottom: 20px; /* 아래쪽 여백 */
+      }
+
+      .chart {
+        flex-basis: 100%; /* 각 차트가 차지할 너비 */
+        margin-bottom: 20px; /* 아래쪽 여백 */
+      }
+
+      /* 화면 너비가 768픽셀 미만일 때의 스타일 */
+      @media (max-width: 768px) {
+        .chart-container {
+          flex-direction: column; /* 요소들을 세로로 정렬 */
+        }
+
+        .chart {
+          flex-basis: 100%; /* 각 차트가 전체 너비를 차지하도록 설정 */
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <h1>Received Messages</h1>
+    <button class="channel-button" data-channel="sharedChecklist">
+      Shared Checklist
+    </button>
+    <button class="channel-button" data-channel="channel">Channel</button>
+    <button class="channel-button" data-channel="ai_result">AI Result</button>
+    <button class="channel-button" data-channel="httpLog">httpLog</button>
+    <button class="channel-button" data-channel="wsLog">wsLog</button>
+    <button class="channel-button" data-channel="system-stats">
+      system-stats
+    </button>
+    <button class="channel-button" data-channel="ai_evaluate">
+      ai_evaluate
+    </button>
+    <button class="channel-button" data-channel="ai_evaluate_error">
+      ai_evaluate_error
+    </button>
+    <button class="channel-button" data-channel="ai_generate">
+      ai_generate
+    </button>
+
+    <button id="clearButton">Clear Screen</button>
+    <button id="generateInfoButton">Generate INFO</button>
+    <input
+      type="number"
+      id="countInput"
+      value="0"
+      min="1"
+      style="margin-right: 10px"
+    />
+    <button id="generateButton">Generate</button>
+    <input
+      type="number"
+      id="evaluateCountInput"
+      value="0"
+      min="1"
+      style="margin-right: 10px"
+    />
+    <button id="evaluateButton">evaluate</button>
+
+    <div id="loginForm">
+      <div id="loginError"></div>
+      <input type="email" id="email" placeholder="email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+    <!-- 차트 컨테이너 -->
+    <div class="chart-container">
+      <!-- CPU 사용률 차트 -->
+      <div class="chart">
+        <h2>CPU Usage</h2>
+        <canvas id="cpuChart"></canvas>
+      </div>
+
+      <!-- 메모리 사용량 차트 -->
+      <div class="chart" style="display: none">
+        <h2>Memory Usage</h2>
+        <canvas id="memoryChart"></canvas>
+      </div>
+    </div>
+    <ul id="messages"></ul>
+    <script>
+      const isLocalhost = true;
+      const SERVER_URL = isLocalhost
+        ? 'http://localhost:3000/'
+        : 'https://openlist.kro.kr/';
+      const selectedChannels = new Set();
+      selectedChannels.add('notice');
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.channel-button');
+        buttons.forEach((button) => {
+          button.classList.add('selected');
+          const channel = button.getAttribute('data-channel');
+          selectedChannels.add(channel); // 모든 채널을 selectedChannels에 추가
+        });
+        filterMessages(); // 초기 필터링 적용
+      });
+
+      document.querySelectorAll('.channel-button').forEach((button) => {
+        button.addEventListener('click', function () {
+          const channel = this.getAttribute('data-channel');
+          if (selectedChannels.has(channel)) {
+            selectedChannels.delete(channel);
+            this.classList.remove('selected');
+          } else {
+            selectedChannels.add(channel);
+            this.classList.add('selected');
+          }
+          filterMessages(); // 채널 버튼 클릭 시 필터링 적용
+        });
+      });
+      // 로그인 함수
+      function login() {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var loginError = document.getElementById('loginError');
+
+        fetch(SERVER_URL + 'auth/login/admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Login failed');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.cookie = 'accessToken=' + data.accessToken;
+            document.cookie = 'refreshToken=' + data.refreshToken;
+            document.getElementById('loginForm').style.display = 'none';
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            loginError.textContent =
+              '로그인 실패: 잘못된 이메일 또는 비밀번호입니다.';
+            document.getElementById('loginForm').style.display = 'block';
+          });
+      }
+      // 그래프 관련 변수 초기화
+      let cpuChart, memoryChart;
+
+      // 차트 데이터셋 초기화
+      const cpuUsageDataNginx = [];
+      const cpuUsageDataNest1 = [];
+      const cpuUsageDataNest2 = [];
+      const memoryUsageDataNginx = [];
+      const memoryUsageDataNest1 = [];
+      const memoryUsageDataNest2 = [];
+      // 이벤트 소스 연결 시도
+      const evtSource = new EventSource(SERVER_URL + `admin/events`, {
+        withCredentials: true,
+      });
+
+      evtSource.onerror = function (event) {
+        if (event.target.readyState === EventSource.CLOSED) {
+          console.log('EventSource closed');
+          // 로그인 폼 표시
+          document.getElementById('loginForm').style.display = 'block';
+        }
+      };
+
+      function createMessageBlock(event) {
+        const newElement = document.createElement('li');
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        newElement.appendChild(contentDiv);
+
+        newElement.onclick = function () {
+          if (contentDiv.classList.contains('expanded')) {
+            contentDiv.classList.remove('expanded');
+            newElement.title = '펼치기'; // 툴팁 업데이트
+          } else {
+            contentDiv.classList.add('expanded');
+            newElement.title = '접기'; // 툴팁 업데이트
+          }
+        };
+
+        // 초기 툴팁 설정
+        newElement.title = '펼치기';
+
+        return newElement;
+      }
+      function handleMessageEvent(event) {
+        const newElement = createMessageBlock(event);
+
+        // 메시지 내용 처리
+        const { channel, message } = JSON.parse(event.data);
+        newElement.setAttribute('data-channel', channel);
+
+        const contentDiv = newElement.querySelector('.message-content');
+        if (isJSON(message)) {
+          const jsonData = JSON.parse(message);
+          contentDiv.innerHTML = formatJSON(jsonData);
+        } else {
+          contentDiv.textContent = message;
+        }
+        if (channel.match(/^system-stats/)) {
+          const data = JSON.parse(message);
+          updateChartData(channel, data); // 채널을 updateChartData 함수에 전달
+          updateCharts();
+        }
+
+        // 메시지 목록에 추가
+        messagesList.appendChild(newElement);
+        filterMessages(); // 새 메시지 추가 시 필터링 적용
+      }
+
+      evtSource.onmessage = handleMessageEvent;
+
+      // 차트 데이터 업데이트 함수
+      function updateChartData(channel, data) {
+        const { cpuUsage, freeMemory, totalMemory } = data;
+        const usedMemory = totalMemory - freeMemory;
+        const usedMemoryPercent = (usedMemory / totalMemory) * 100;
+
+        switch (channel) {
+          case 'system-stats-nginx':
+            cpuUsageDataNginx.push(cpuUsage);
+            memoryUsageDataNginx.push(usedMemoryPercent);
+            break;
+          case 'system-stats-nest1':
+            cpuUsageDataNest1.push(cpuUsage);
+            memoryUsageDataNest1.push(usedMemoryPercent);
+            break;
+          case 'system-stats-nest2':
+            cpuUsageDataNest2.push(cpuUsage);
+            memoryUsageDataNest2.push(usedMemoryPercent);
+            break;
+        }
+
+        // 데이터가 너무 많아지면 가장 오래된 데이터 제거
+        [
+          cpuUsageDataNginx,
+          cpuUsageDataNest1,
+          cpuUsageDataNest2,
+          memoryUsageDataNginx,
+          memoryUsageDataNest1,
+          memoryUsageDataNest2,
+        ].forEach((dataSet) => {
+          if (dataSet.length > 10) dataSet.shift();
+        });
+      }
+      // 차트 생성 및 업데이트 로직
+      function createLineChart(canvasId, datasets, label) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        return new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: Array(datasets[0].length).fill(''), // X축 레이블
+            datasets: datasets.map((dataset) => ({
+              label: label + dataset.name,
+              data: dataset.data,
+              borderColor: dataset.color,
+              fill: false,
+            })),
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      function updateCharts() {
+        // CPU 차트 업데이트
+        if (!cpuChart) {
+          cpuChart = createLineChart(
+            'cpuChart',
+            [
+              {
+                name: 'nginx',
+                data: cpuUsageDataNginx,
+                color: 'rgb(255, 99, 132)',
+              },
+              {
+                name: 'nest1',
+                data: cpuUsageDataNest1,
+                color: 'rgb(54, 162, 235)',
+              },
+              {
+                name: 'nest2',
+                data: cpuUsageDataNest2,
+                color: 'rgb(75, 192, 192)',
+              },
+            ],
+            '',
+          );
+        } else {
+          cpuChart.data.datasets[0].data = cpuUsageDataNginx;
+          cpuChart.data.datasets[1].data = cpuUsageDataNest1;
+          cpuChart.data.datasets[2].data = cpuUsageDataNest2;
+          cpuChart.data.labels = Array(cpuUsageDataNginx.length).fill('');
+
+          cpuChart.update();
+        }
+
+        // 메모리 차트 업데이트
+        if (!memoryChart) {
+          memoryChart = createLineChart(
+            'memoryChart',
+            [
+              {
+                name: 'nginx',
+                data: memoryUsageDataNginx,
+                color: 'rgb(255, 159, 64)',
+              },
+              {
+                name: 'nest1',
+                data: memoryUsageDataNest1,
+                color: 'rgb(153, 102, 255)',
+              },
+              {
+                name: 'nest2',
+                data: memoryUsageDataNest2,
+                color: 'rgb(201, 203, 207)',
+              },
+            ],
+            '',
+          );
+        } else {
+          memoryChart.data.datasets[0].data = memoryUsageDataNginx;
+          memoryChart.data.datasets[1].data = memoryUsageDataNest1;
+          memoryChart.data.datasets[2].data = memoryUsageDataNest2;
+          memoryChart.data.labels = Array(memoryUsageDataNginx.length).fill('');
+          memoryChart.update();
+        }
+      }
+      function filterMessages() {
+        const messages = document.querySelectorAll('#messages li');
+        messages.forEach((message) => {
+          const channel = message.getAttribute('data-channel');
+          if (selectedChannels.has(channel) || channel === 'notice') {
+            message.style.display = ''; // 표시
+          } else {
+            message.style.display = 'none'; // 숨김
+          }
+        });
+      }
+
+      const messagesList = document.getElementById('messages');
+
+      function isJSON(data) {
+        try {
+          JSON.parse(data);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function formatJSON(json) {
+        const formattedJSON = JSON.stringify(json, null, 2); // Indent with 2 spaces for readability
+        return `<pre>${formattedJSON}</pre>`; // Use <pre> to preserve the format
+      }
+      document
+        .getElementById('generateButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          const countValue = document.getElementById('countInput').value || 0;
+          const apiUrl =
+            SERVER_URL + `checklist-ai/generate-item?count=${countValue}`;
+
+          fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+              }
+            })
+            .catch((error) => {
+              console.log('error', error);
+              console.error('Request failed:', error);
+            });
+        });
+      document
+        .getElementById('evaluateButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          const countValue =
+            document.getElementById('evaluateCountInput').value || 0;
+          const apiUrl =
+            SERVER_URL + `checklist-ai/evaluate-item?count=${countValue}`;
+
+          fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+              }
+            })
+            .catch((error) => {
+              console.error('Request failed:', error);
+            });
+        });
+
+      document
+        .getElementById('generateInfoButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          fetch(SERVER_URL + 'checklist-ai/count-item', {
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              } else {
+                throw new Error('Network response was not ok.');
+              }
+            })
+            .then((data) => {
+              console.log('Request successful:', data);
+            })
+            .catch((error) => {
+              console.error('Request failed:', error);
+            });
+        });
+
+      document
+        .getElementById('clearButton')
+        .addEventListener('click', function () {
+          messagesList.innerHTML = ''; // Clear the messages
+        });
+    </script>
+  </body>
+</html>
