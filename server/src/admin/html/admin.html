@@ -90,6 +90,9 @@
       [data-channel='ai_evaluate'] {
         color: #ffdfba; /* 연살구색 */
       }
+      [data-channel='ai_generate'] {
+        color: #a0d2eb; /* 연하늘색 */
+      }
       [data-channel='ai_evaluate_error'] {
         color: #ff0000; /* 빨간색 */
       }
@@ -122,7 +125,7 @@
       }
 
       .chart {
-        flex-basis: 30%; /* 각 차트가 차지할 너비 */
+        flex-basis: 100%; /* 각 차트가 차지할 너비 */
         margin-bottom: 20px; /* 아래쪽 여백 */
       }
 
@@ -157,6 +160,9 @@
     <button class="channel-button" data-channel="ai_evaluate_error">
       ai_evaluate_error
     </button>
+    <button class="channel-button" data-channel="ai_generate">
+      ai_generate
+    </button>
 
     <button id="clearButton">Clear Screen</button>
     <button id="generateButton">Generate</button>
@@ -176,20 +182,14 @@
       </div>
 
       <!-- 메모리 사용량 차트 -->
-      <div class="chart">
+      <div class="chart" style="display: none">
         <h2>Memory Usage</h2>
         <canvas id="memoryChart"></canvas>
-      </div>
-
-      <!-- 네트워크 트래픽 차트 -->
-      <div class="chart">
-        <h2>Network Traffic</h2>
-        <canvas id="networkChart"></canvas>
       </div>
     </div>
     <ul id="messages"></ul>
     <script>
-      const isLocalhost = true;
+      const isLocalhost = false;
       const SERVER_URL = isLocalhost
         ? 'http://localhost:3000/'
         : 'https://openlist.kro.kr/';
@@ -251,10 +251,15 @@
           });
       }
       // 그래프 관련 변수 초기화
-      let cpuChart, memoryChart, networkChart;
-      const cpuUsageData = [];
-      const memoryUsageData = [];
-      const networkTrafficData = [];
+      let cpuChart, memoryChart;
+
+      // 차트 데이터셋 초기화
+      const cpuUsageDataNginx = [];
+      const cpuUsageDataNest1 = [];
+      const cpuUsageDataNest2 = [];
+      const memoryUsageDataNginx = [];
+      const memoryUsageDataNest1 = [];
+      const memoryUsageDataNest2 = [];
       // 이벤트 소스 연결 시도
       const evtSource = new EventSource(SERVER_URL + `admin/events`, {
         withCredentials: true,
@@ -297,9 +302,9 @@
         } else {
           contentDiv.textContent = message;
         }
-        if (channel === 'system-stats') {
+        if (channel.match(/^system-stats/)) {
           const data = JSON.parse(message);
-          updateChartData(data);
+          updateChartData(channel, data); // 채널을 updateChartData 함수에 전달
           updateCharts();
         }
 
@@ -309,41 +314,57 @@
       };
 
       // 차트 데이터 업데이트 함수
-      function updateChartData(data) {
-        const { cpuUsage, freeMemory, totalMemory, networkTraffic } = data;
+      function updateChartData(channel, data) {
+        const { cpuUsage, freeMemory, totalMemory } = data;
         const usedMemory = totalMemory - freeMemory;
         const usedMemoryPercent = (usedMemory / totalMemory) * 100;
-        const totalNetworkTraffic =
-          networkTraffic.totalIpkts + networkTraffic.totalOpkts;
 
-        cpuUsageData.push(cpuUsage);
-        memoryUsageData.push(usedMemoryPercent);
-        networkTrafficData.push(totalNetworkTraffic);
+        switch (channel) {
+          case 'system-stats-nginx':
+            cpuUsageDataNginx.push(cpuUsage);
+            memoryUsageDataNginx.push(usedMemoryPercent);
+            break;
+          case 'system-stats-nest1':
+            cpuUsageDataNest1.push(cpuUsage);
+            memoryUsageDataNest1.push(usedMemoryPercent);
+            break;
+          case 'system-stats-nest2':
+            cpuUsageDataNest2.push(cpuUsage);
+            memoryUsageDataNest2.push(usedMemoryPercent);
+            break;
+        }
 
         // 데이터가 너무 많아지면 가장 오래된 데이터 제거
-        if (cpuUsageData.length > 10) cpuUsageData.shift();
-        if (memoryUsageData.length > 10) memoryUsageData.shift();
-        if (networkTrafficData.length > 10) networkTrafficData.shift();
+        [
+          cpuUsageDataNginx,
+          cpuUsageDataNest1,
+          cpuUsageDataNest2,
+          memoryUsageDataNginx,
+          memoryUsageDataNest1,
+          memoryUsageDataNest2,
+        ].forEach((dataSet) => {
+          if (dataSet.length > 10) dataSet.shift();
+        });
       }
-      function createLineChart(canvasId, data, label, borderColor) {
+      // 차트 생성 및 업데이트 로직
+      function createLineChart(canvasId, datasets, label) {
         const ctx = document.getElementById(canvasId).getContext('2d');
+
         return new Chart(ctx, {
           type: 'line',
           data: {
-            labels: Array(data.length).fill(''), // X축 레이블
-            datasets: [
-              {
-                label: label,
-                data: data,
-                borderColor: borderColor,
-                fill: false, // 선 차트로 표시
-              },
-            ],
+            labels: Array(datasets[0].length).fill(''), // X축 레이블
+            datasets: datasets.map((dataset) => ({
+              label: label + dataset.name,
+              data: dataset.data,
+              borderColor: dataset.color,
+              fill: false,
+            })),
           },
           options: {
             scales: {
               y: {
-                beginAtZero: true, // Y축 0부터 시작
+                beginAtZero: true,
               },
             },
           },
@@ -355,13 +376,31 @@
         if (!cpuChart) {
           cpuChart = createLineChart(
             'cpuChart',
-            cpuUsageData,
-            'CPU Usage (%)',
-            'rgb(255, 99, 132)',
+            [
+              {
+                name: 'nginx',
+                data: cpuUsageDataNginx,
+                color: 'rgb(255, 99, 132)',
+              },
+              {
+                name: 'nest1',
+                data: cpuUsageDataNest1,
+                color: 'rgb(54, 162, 235)',
+              },
+              {
+                name: 'nest2',
+                data: cpuUsageDataNest2,
+                color: 'rgb(75, 192, 192)',
+              },
+            ],
+            '',
           );
         } else {
-          cpuChart.data.datasets[0].data = cpuUsageData;
-          cpuChart.data.labels = Array(cpuUsageData.length).fill('');
+          cpuChart.data.datasets[0].data = cpuUsageDataNginx;
+          cpuChart.data.datasets[1].data = cpuUsageDataNest1;
+          cpuChart.data.datasets[2].data = cpuUsageDataNest2;
+          cpuChart.data.labels = Array(cpuUsageDataNginx.length).fill('');
+
           cpuChart.update();
         }
 
@@ -369,31 +408,33 @@
         if (!memoryChart) {
           memoryChart = createLineChart(
             'memoryChart',
-            memoryUsageData,
-            'Memory Usage',
-            'rgb(54, 162, 235)',
+            [
+              {
+                name: 'nginx',
+                data: memoryUsageDataNginx,
+                color: 'rgb(255, 159, 64)',
+              },
+              {
+                name: 'nest1',
+                data: memoryUsageDataNest1,
+                color: 'rgb(153, 102, 255)',
+              },
+              {
+                name: 'nest2',
+                data: memoryUsageDataNest2,
+                color: 'rgb(201, 203, 207)',
+              },
+            ],
+            '',
           );
         } else {
-          memoryChart.data.datasets[0].data = memoryUsageData;
-          memoryChart.data.labels = Array(memoryUsageData.length).fill('');
+          memoryChart.data.datasets[0].data = memoryUsageDataNginx;
+          memoryChart.data.datasets[1].data = memoryUsageDataNest1;
+          memoryChart.data.datasets[2].data = memoryUsageDataNest2;
+          memoryChart.data.labels = Array(memoryUsageDataNginx.length).fill('');
           memoryChart.update();
         }
-
-        // 네트워크 트래픽 차트 업데이트
-        if (!networkChart) {
-          networkChart = createLineChart(
-            'networkChart',
-            networkTrafficData,
-            'Network Traffic',
-            'rgb(75, 192, 192)',
-          );
-        } else {
-          networkChart.data.datasets[0].data = networkTrafficData;
-          networkChart.data.labels = Array(networkTrafficData.length).fill('');
-          networkChart.update();
-        }
       }
-
       function filterMessages() {
         const messages = document.querySelectorAll('#messages li');
         messages.forEach((message) => {
