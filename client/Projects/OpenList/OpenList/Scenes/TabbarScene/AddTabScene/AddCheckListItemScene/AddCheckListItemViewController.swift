@@ -283,12 +283,17 @@ extension AddCheckListItemViewController: UITableViewDelegate {
 		trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
 	) -> UISwipeActionsConfiguration? {
 		// 사용자가 삭제 액션을 수행하면 호출될 핸들러 함수를 정의합니다.
-		let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, _) in
-			self?.dataSource?.deleteCheckListItem(at: indexPath)
+		switch indexPath.section {
+		case 1:
+			return nil
+		default:
+			let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, _) in
+				self?.dataSource?.deleteCheckListItem(at: indexPath)
+			}
+			deleteAction.backgroundColor = .red
+			let swipeConfig = UISwipeActionsConfiguration(actions: [deleteAction])
+			return swipeConfig
 		}
-		deleteAction.backgroundColor = .red
-		let swipeConfig = UISwipeActionsConfiguration(actions: [deleteAction])
-		return swipeConfig
 	}
 }
 

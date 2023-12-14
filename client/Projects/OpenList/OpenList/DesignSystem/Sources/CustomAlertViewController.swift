@@ -34,12 +34,12 @@ final class CustomAlertViewController: UIViewController {
 		super.viewDidLayoutSubviews()
 		let border = CALayer()
 		border.frame = CGRect(x: 0, y: textField.frame.size.height + 4, width: textField.frame.width, height: 0.5)
-		border.backgroundColor = UIColor.black.cgColor
+		border.backgroundColor = UIColor.gray3.cgColor
 		textField.layer.addSublayer(border)
 	}
 	
 	@objc func confirm() {
-		guard let text = textField.text else { return }
+		guard let text = textField.text, !text.isEmpty else { return }
 		addActionConfirm?.action?(text)
 		dismiss(animated: true)
 	}

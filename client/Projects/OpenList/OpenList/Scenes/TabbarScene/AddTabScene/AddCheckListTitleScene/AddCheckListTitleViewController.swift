@@ -114,7 +114,7 @@ private extension AddCheckListTitleViewController {
 	}
 	
 	func setViewAttributes() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		setTitleLabel()
 		setTextField()
 		setNextButton()

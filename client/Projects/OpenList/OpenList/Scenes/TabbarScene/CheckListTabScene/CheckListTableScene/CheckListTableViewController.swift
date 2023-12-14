@@ -48,7 +48,6 @@ final class CheckListTableViewController: UIViewController, ViewControllable {
 	// MARK: - View Life Cycles
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemBackground
 		setLongGestureRecognizerOnCollection()
 		setViewAttributes()
 		setViewHierarchies()
@@ -159,6 +158,7 @@ private extension CheckListTableViewController {
 		
 		var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
 		configuration.showsSeparators = false
+		configuration.backgroundColor = .background
 		let layout = UICollectionViewCompositionalLayout.list(using: configuration)
 		collectionView.collectionViewLayout = layout
 	}

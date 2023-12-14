@@ -51,8 +51,8 @@ private extension OpenListTextField {
 	}
 	
 	func setViewAttributes() {
-		bottomLine.backgroundColor = .secondarySystemBackground
-		font = UIFont.notoSansCJKkr(type: .regular, size: .small)
+		bottomLine.backgroundColor = .gray2
+		font = .notoSansCJKkr(type: .regular, size: .small)
 	}
 	
 	func setViewHierachies() {

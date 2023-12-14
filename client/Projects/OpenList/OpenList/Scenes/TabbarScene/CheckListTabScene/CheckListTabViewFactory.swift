@@ -30,7 +30,7 @@ final class CheckListTabComponent:
 	
 	var crdtStorage: CRDTStorage = DefaultCRDTStorage()
 	
-	var crdtRepository: CRDTRepository { DefaultCRDTRepository(crdtStorage: crdtStorage) }
+	var crdtRepository: CRDTRepository { DefaultCRDTRepository(session: session, crdtStorage: crdtStorage) }
 	
 	var persistenceUseCase: PersistenceUseCase { parent.persistenceUseCase }
 	

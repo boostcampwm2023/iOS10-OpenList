@@ -78,6 +78,7 @@ private extension LocalCheckListItem {
 		contentView.isUserInteractionEnabled = true
 		checkButton.translatesAutoresizingMaskIntoConstraints = false
 		checkButton.addTarget(self, action: #selector(checkButtonDidTap), for: .touchUpInside)
+		textView.textColor = .gray1
 		textView.translatesAutoresizingMaskIntoConstraints = false
 		textView.delegate = self
 	}

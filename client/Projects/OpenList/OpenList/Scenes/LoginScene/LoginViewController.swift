@@ -156,7 +156,7 @@ private extension LoginViewController {
 	}
 	
 	func setViewAttributes() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		setWelcomeLabel()
 		setLoginButton()
 	}
@@ -166,12 +166,12 @@ private extension LoginViewController {
 		welcomeLabel.textAlignment = .center
 		welcomeLabel.font = UIFont.notoSansCJKkr(type: .medium, size: .extra)
 		welcomeLabel.text = TextConstant.welcomeText
-		welcomeLabel.textColor = .label
+		welcomeLabel.textColor = .gray1
 	}
 	
 	func setLoginButton() {
 		loginButton.layer.cornerRadius = LayoutConstant.buttonCornerRadius
-		loginButton.backgroundColor = .label
+		loginButton.backgroundColor = .gray1
 		loginButton.setImage(UIImage(systemName: "applelogo"), for: .normal)
 		loginButton.setTitle(TextConstant.signInButtonText, for: .normal)
 		loginButton.setTitleColor(.background, for: .normal)

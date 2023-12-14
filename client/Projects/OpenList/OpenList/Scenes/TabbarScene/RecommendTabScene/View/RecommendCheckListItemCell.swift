@@ -40,8 +40,8 @@ final class RecommendCheckListItemCell: UICollectionViewCell {
 
 private extension RecommendCheckListItemCell {
 	func setViewAttributes() {
-		titleLabel.textColor = .label
-		titleLabel.font = UIFont.notoSansCJKkr(type: .regular, size: .small)
+		titleLabel.textColor = .gray1
+		titleLabel.font = .notoSansCJKkr(type: .regular, size: .small)
 		titleLabel.numberOfLines = 1
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
 		checkListIconView.tintColor = .primary1

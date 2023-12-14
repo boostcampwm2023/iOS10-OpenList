@@ -26,8 +26,8 @@ private extension OpenListTextView {
 		textContainerInset = .zero
 		isScrollEnabled = false
 		backgroundColor = .background
-		textColor = .label
-		font = UIFont.notoSansCJKkr(type: .medium, size: .small)
+		textColor = .gray1
+		font = .notoSansCJKkr(type: .medium, size: .small)
 		returnKeyType = .done
 	}
 }

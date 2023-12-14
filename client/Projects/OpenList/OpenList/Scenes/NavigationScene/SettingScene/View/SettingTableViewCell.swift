@@ -44,6 +44,7 @@ private extension SettingTableViewCell {
 	
 	func setTitleLabelAttributes() {
 		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		titleLabel.textColor = .gray1
 		titleLabel.font = .notoSansCJKkr(type: .medium, size: .medium)
 	}
 	

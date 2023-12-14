@@ -115,7 +115,7 @@ private extension CheckListTabViewController {
 	
 	func setIndicatorViewAttributes() {
 		indicatorView.translatesAutoresizingMaskIntoConstraints = false
-		indicatorView.backgroundColor = .green
+		indicatorView.backgroundColor = .primary1
 		indicatorView.layer.cornerRadius = 1
 	}
 	

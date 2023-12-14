@@ -15,7 +15,7 @@ final class DefaultCRDTRepository {
 	private var number: Int = 0
 	private let name = (UserDefaultsManager.shared.fetch(key: .nickname) as? String) ?? "Unknown"
 	
-	init(session: CustomSession = .init(), crdtStorage: CRDTStorage) {
+	init(session: CustomSession, crdtStorage: CRDTStorage) {
 		self.session = session
 		self.crdtStorage = crdtStorage
 	}

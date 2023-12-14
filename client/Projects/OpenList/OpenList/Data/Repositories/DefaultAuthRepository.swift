@@ -11,7 +11,7 @@ import Foundation
 final class DefaultAuthRepository {
 	private let session: CustomSession
 
-	init(session: CustomSession = .init()) {
+	init(session: CustomSession) {
 		self.session = session
 	}
 }

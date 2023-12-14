@@ -160,7 +160,7 @@ private extension PrivateDetailCheckListViewController {
 // MARK: - View Methods
 private extension PrivateDetailCheckListViewController {
 	func setViewAttributes() {
-		view.backgroundColor = UIColor.background
+		view.backgroundColor = .background
 		
 		setNavigationAttributes()
 		setCheckListViewAttributes()
@@ -179,6 +179,7 @@ private extension PrivateDetailCheckListViewController {
 		checkListView.delegate = self
 		checkListView.allowsSelection = false
 		checkListView.separatorStyle = .none
+		checkListView.backgroundColor = .background
 
 		/// 테이블 뷰 영역 터치 시 키보드를 내린다.
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))

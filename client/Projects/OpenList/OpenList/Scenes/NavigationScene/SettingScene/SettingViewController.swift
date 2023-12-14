@@ -117,6 +117,7 @@ private extension SettingViewController {
 		settingView.translatesAutoresizingMaskIntoConstraints = false
 		settingView.separatorStyle = .none
 		settingView.registerCell(SettingTableViewCell.self)
+		settingView.backgroundColor = .background
 		settingView.delegate = self
 		settingView.dataSource = self
 	}
