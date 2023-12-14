@@ -17,7 +17,7 @@ final class DefaultAuthRepository {
 }
 
 extension DefaultAuthRepository: AuthRepository {
-	func postLoginInfo(loginInfo: LoginInfo) async -> LoginResponseDTO? {
+	func postLoginInfo(loginInfo: LoginInfo) async -> TokenResponseDTO? {
 		var builder = URLRequestBuilder(url: "https://openlist.kro.kr/auth/apple/login/")
 		builder.addHeader(
 			field: "Content-Type",
@@ -35,7 +35,7 @@ extension DefaultAuthRepository: AuthRepository {
 			)
 			
 			let data = try await service.request()
-			let loginResponseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: data)
+			let loginResponseDTO = try JSONDecoder().decode(TokenResponseDTO.self, from: data)
 			dump("Login Success: \(loginResponseDTO.accessToken)")
 			return loginResponseDTO
 		} catch {

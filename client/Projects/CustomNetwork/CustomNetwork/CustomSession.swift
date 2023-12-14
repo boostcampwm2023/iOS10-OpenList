@@ -25,18 +25,24 @@ public final class CustomSession {
 	func data(
 		for request: URLRequest,
 		attempt: Int = 0
-	) async throws -> (Data, URLResponse) {
+	) async throws -> (Data, HTTPURLResponse) {
 		var currentRequest = interceptor?.intercept(request) ?? request
 		var currentAttempt = attempt
 		
 		repeat {
 			do {
 				let (data, response) = try await session.data(for: currentRequest)
-				return (data, response)
+				guard
+					let httpResponse = response as? HTTPURLResponse,
+					httpResponse.statusCode != 401
+				else {
+					throw NetworkError.invalidResponse
+				}
+				return (data, httpResponse)
 			} catch {
 				if let retrier = retrier,
 					retrier.shouldRetry(currentRequest, with: error, attempt: currentAttempt) {
-					if let retriedRequest = retrier.retry(currentRequest, with: error, attempt: currentAttempt) {
+					if let retriedRequest = await retrier.retry(currentRequest, with: error, attempt: currentAttempt) {
 						currentRequest = retriedRequest
 						currentAttempt += 1
 						continue
