@@ -38,4 +38,15 @@ export class ChecklistAiController {
     }
     return this.checklistAiService.publishToGenerateItemsLessThanCount(count);
   }
+
+  @Post('evaluate-item')
+  async postAiItemEvaluate(
+    @Query('count') count: number,
+    @UserId() userId: number,
+  ) {
+    if (userId !== 1) {
+      throw new UnauthorizedException('관리자가 아닙니다.');
+    }
+    return this.checklistAiService.publishToEvaluateItems(count);
+  }
 }

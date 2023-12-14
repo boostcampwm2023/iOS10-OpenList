@@ -165,7 +165,23 @@
     </button>
 
     <button id="clearButton">Clear Screen</button>
+    <button id="generateInfoButton">Generate INFO</button>
+    <input
+      type="number"
+      id="countInput"
+      value="0"
+      min="1"
+      style="margin-right: 10px"
+    />
     <button id="generateButton">Generate</button>
+    <input
+      type="number"
+      id="evaluateCountInput"
+      value="0"
+      min="1"
+      style="margin-right: 10px"
+    />
+    <button id="evaluateButton">evaluate</button>
 
     <div id="loginForm">
       <div id="loginError"></div>
@@ -189,7 +205,7 @@
     </div>
     <ul id="messages"></ul>
     <script>
-      const isLocalhost = false;
+      const isLocalhost = true;
       const SERVER_URL = isLocalhost
         ? 'http://localhost:3000/'
         : 'https://openlist.kro.kr/';
@@ -273,7 +289,7 @@
         }
       };
 
-      evtSource.onmessage = function (event) {
+      function createMessageBlock(event) {
         const newElement = document.createElement('li');
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
@@ -292,10 +308,16 @@
         // 초기 툴팁 설정
         newElement.title = '펼치기';
 
+        return newElement;
+      }
+      function handleMessageEvent(event) {
+        const newElement = createMessageBlock(event);
+
         // 메시지 내용 처리
         const { channel, message } = JSON.parse(event.data);
         newElement.setAttribute('data-channel', channel);
 
+        const contentDiv = newElement.querySelector('.message-content');
         if (isJSON(message)) {
           const jsonData = JSON.parse(message);
           contentDiv.innerHTML = formatJSON(jsonData);
@@ -311,7 +333,9 @@
         // 메시지 목록에 추가
         messagesList.appendChild(newElement);
         filterMessages(); // 새 메시지 추가 시 필터링 적용
-      };
+      }
+
+      evtSource.onmessage = handleMessageEvent;
 
       // 차트 데이터 업데이트 함수
       function updateChartData(channel, data) {
@@ -462,13 +486,71 @@
         const formattedJSON = JSON.stringify(json, null, 2); // Indent with 2 spaces for readability
         return `<pre>${formattedJSON}</pre>`; // Use <pre> to preserve the format
       }
-
       document
         .getElementById('generateButton')
         .addEventListener('click', function (event) {
           event.preventDefault(); // Prevents default action (navigation/refresh)
 
-          fetch(SERVER_URL + 'admin/generate', {
+          const countValue = document.getElementById('countInput').value || 0;
+          const apiUrl =
+            SERVER_URL + `checklist-ai/generate-item?count=${countValue}`;
+
+          fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+              }
+            })
+            .catch((error) => {
+              console.log('error', error);
+              console.error('Request failed:', error);
+            });
+        });
+      document
+        .getElementById('evaluateButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          const countValue =
+            document.getElementById('evaluateCountInput').value || 0;
+          const apiUrl =
+            SERVER_URL + `checklist-ai/evaluate-item?count=${countValue}`;
+
+          fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include', // 쿠키를 포함하여 요청
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+              }
+            })
+            .catch((error) => {
+              console.error('Request failed:', error);
+            });
+        });
+
+      document
+        .getElementById('generateInfoButton')
+        .addEventListener('click', function (event) {
+          event.preventDefault(); // Prevents default action (navigation/refresh)
+
+          fetch(SERVER_URL + 'checklist-ai/count-item', {
             credentials: 'include', // 쿠키를 포함하여 요청
           })
             .then((response) => {
