@@ -1,0 +1,29 @@
+name: Transfer App Directory via using scp command on Push or Merge to Server
+
+on:
+  push:
+    branches:
+      - 'client/release/*'
+  pull_request:
+    types: [closed]
+    branches:
+      - 'client/release/*'
+
+jobs:
+  transfer-app:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Add SSH key to known_hosts
+        run: |
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+      - name: Transfer app directory to the server
+        run: |
+          scp -r app root@223.130.130.221:/var/www/html/

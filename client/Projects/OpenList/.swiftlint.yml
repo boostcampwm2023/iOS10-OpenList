@@ -1,0 +1,80 @@
+# 옵트 인 룰
+opt_in_rules:
+ # 인덴트 룰 적용
+ - indentation_width
+   
+ # 클로저의 끝 괄호를 시작한 행과의 들여쓰기 맞춤
+ - closure_end_indentation
+  
+ # import 시 알파벳 순 정렬
+ - sorted_imports
+ 
+ # 중복 import 방지
+ - duplicate_imports
+
+ # count가 0인지 체크할 때는 isEmpty 사용 권장
+ - empty_count
+
+ # collection, array count 체크 시 isEmpty 사용 권장
+ - empty_collection_literal
+
+ # string empty 체크 시 isEmpty 사용 권장
+ - empty_string
+ 
+ # delegate는 약한 참조 사용 권장
+ - weak_delegate
+ 
+ # 닫는 괄호 ')'와 '}' 사이에는 공백이 없어야 함
+ - closing_brace
+  
+ # comma 사용 시 앞 공백 필수, 뒷 공백이 있으면 안 됨
+ - comma
+ 
+ # colon 사용 시 앞 공백 필수, 뒷 공백이 있으면 안 됨
+ - colon
+ 
+ # ExpressibleByArrayLiteral를 직접 호출하면 안 됨
+ - compiler_protocol_init
+ 
+ # first(where:) != nil, firstIndex(where:) != nil 대신 contains 사용을 권장
+ - contains_over_first_not_nil
+ 
+ # filter.count 사용 시 isEmpty 대신 contains 사용 권장
+ - contains_over_filter_is_empty
+ 
+ # filter.count가 0인지 비교할 때 contains 사용 권장
+ - contains_over_filter_count
+
+ # range(of:) == nil 체크 대신 contains 사용 권장
+ - contains_over_range_nil_comparison
+
+ # if, for, guard, switch, while, catch 사용 시 () 사용 권장하지 않음
+ - control_statement
+
+ # deployment target 보다 낮은 버전의 @available 사용 시 warning
+ - deployment_target
+ 
+ # array, dict 사용 시 동일한 indent로 표현
+ - literal_expression_end_indentation
+
+ # let, var 선언 시 다른 statments와 한 줄 공백이 필요함
+ - let_var_whitespace
+
+ # 수직 공백 2줄 이상 사용 지양
+ - vertical_whitespace
+ 
+ # 여는 괄호 앞에서 한 줄 이상의 공백 사용 지양
+ - vertical_whitespace_opening_braces
+ 
+ # 닫는 괄호 앞에서 한 줄 이상의 공백 사용 지양
+ - vertical_whitespace_closing_braces
+
+# 후행 공백 룰 커스텀 정의
+trailing_whitespace:
+ # 빈 줄은 무시합니다.
+ ignores_empty_lines: true
+
+# 인덴트 커스텀 정의
+indentation_width:
+ indentation_width: 2
+ include_comments: false
